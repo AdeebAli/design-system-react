@@ -83,7 +83,7 @@ Chosen from mockups during planning. Specific values are defined in
 
 - Warm off-white page background; white tiles with soft, low shadows instead
   of borders.
-- Large radii on tiles (~20px), roughly half on controls inside them (~10px),
+- Large radii on tiles (~20px), smaller on controls inside them (~12px),
   fully rounded pills.
 - Warm neutral grays plus **one** accent (indigo in the mockup), reserved for
   primary actions, selected states, and data highlights.
@@ -254,7 +254,7 @@ published release.
 |---|---|---|
 | 00 | Overview (this document) | Accepted |
 | 01 | Repo and tooling | Accepted |
-| 02 | Tokens and themes | Not started |
+| 02 | Tokens and themes | Accepted |
 | 03 | Theme provider | Not started |
 | 04 | Box and style props | Not started |
 | 05 | Component conventions | Not started |

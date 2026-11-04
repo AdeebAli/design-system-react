@@ -1,6 +1,6 @@
 # Handoff: design-system-react planning
 
-- **Date:** 2026-11-03
+- **Date:** 2026-11-04
 
 ## Goal
 
@@ -10,11 +10,12 @@ owner, before any code is written.
 
 ## Status
 
-- **Done:** repo created; ADRs 0001–0004 accepted; specs `00-overview` and
-  `01-repo-and-tooling` **Accepted** (each reviewed by a builder-check
-  subagent and updated with the owner's answers).
-- **In progress:** `02-tokens-and-themes`, gathering the owner's input
-  before drafting.
+- **Done:** repo created and pushed; ADRs 0001-0004 accepted; specs
+  `00-overview`, `01-repo-and-tooling`, and `02-tokens-and-themes` **Accepted**.
+- **In progress:** nothing; `03-theme-provider` is next.
+- **Carry to Spec 09 (from the Soft page review):** checkbox 18px with
+  `radius.sm` and a rounded check mark; switch 36x20px with the knob inside
+  the track and at least 3:1 contrast between knob and track, on and off.
 - **Blocked:** nothing.
 - **No code written.** Planning only; no dependencies installed.
 
