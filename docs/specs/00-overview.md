@@ -177,7 +177,7 @@ This section fixes the contract those specs must honor.
 | Framework | React 19 (peer dependency) |
 | Styling | vanilla-extract |
 | Behavior | Base UI |
-| Icons | Lucide (wrapped by `Icon`) |
+| Icons | `Icon` accepts any SVG component; Lucide is recommended, and each project installs it |
 | Build | Vite library mode + vanilla-extract plugin → ESM, `.d.ts`, one `styles.css` |
 | Package manager | npm |
 | Docs / playground | Storybook |
@@ -259,8 +259,8 @@ published release.
 | 04 | Box and style props | Accepted |
 | 05 | Component conventions | Accepted |
 | 06 | Layout and typography (incl. `Link`, `Code`, `Kbd`, `VisuallyHidden`) | Accepted |
-| 07 | Icon | Draft |
-| 08 | Bento: Tile, Stat, Badge | Not started |
+| 07 | Icon | Accepted |
+| 08 | Bento: Tile, Stat, Badge | Draft |
 | 09 | Forms | Not started |
 | 10 | Navigation: `NavBar`, `Tabs` | Not started |
 | 11 | Prose | Not started |

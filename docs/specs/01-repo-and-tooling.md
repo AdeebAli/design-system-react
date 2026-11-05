@@ -138,7 +138,7 @@ builder.
     `npm run build` runs `vite build --config vite.lib.config.ts`.
 - `build.lib.entry: "src/index.ts"`, `formats: ["es"]`.
 - `rollupOptions.external`: `react`, `react-dom`, `react/jsx-runtime`, and
-  all runtime `dependencies` (Base UI, Lucide), so consumers dedupe them.
+  all runtime `dependencies` (Base UI), so consumers dedupe them.
 - `rollupOptions.output.preserveModules: true`, `preserveModulesRoot: "src"`:
   one output file per source module, so consumers' bundlers can tree-shake.
 - `build.cssCodeSplit: false` and `build.lib.cssFileName: "styles"`: all
@@ -366,7 +366,7 @@ updated manually.
 - The CI visual job passes against baselines produced by the
   `update-visual-baselines` workflow.
 - `dist/` contains ESM files mirroring `src/`, `.d.ts` files, and exactly one
-  `styles.css`. React, Base UI, and Lucide are not bundled.
+  `styles.css`. React and Base UI are not bundled.
 - Both fixtures install the packed tarball, build, and pass their smoke tests.
 - An ESLint error is raised when a source file imports an undeclared package.
 - A dry-run release (`v0.0.1`) publishes to GitHub Packages via the workflow,
