@@ -256,8 +256,8 @@ published release.
 | 01 | Repo and tooling | Accepted |
 | 02 | Tokens and themes | Accepted |
 | 03 | Theme provider | Accepted |
-| 04 | Box and style props | Not started |
-| 05 | Component conventions | Not started |
+| 04 | Box and style props | Accepted |
+| 05 | Component conventions | Draft |
 | 06 | Layout and typography (incl. `Link`, `Code`, `Kbd`, `VisuallyHidden`) | Not started |
 | 07 | Icon | Not started |
 | 08 | Bento: Tile, Stat, Badge | Not started |
