@@ -30,7 +30,7 @@ package name and version at setup time.
   compound parts with our own names and typed props, so the dependency can be
   replaced without breaking consumers.
 - Components with no meaningful interactive behavior (`Box`, `Stack`, `Text`,
-  `Tile`, `Stat`, `Badge`, `Prose`, etc.) do not use Base UI.
+  `Card`, `Stat`, `Badge`, `Prose`, etc.) do not use Base UI.
 
 ## Alternatives considered
 

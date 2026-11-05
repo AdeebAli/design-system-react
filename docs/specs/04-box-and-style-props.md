@@ -97,7 +97,7 @@ Exported as the `LayoutProps` type.
 | `flexWrap` | `nowrap`, `wrap` |
 | `alignItems` | `start`, `center`, `end`, `stretch`, `baseline` |
 | `justifyContent` | `start`, `center`, `end`, `between` |
-| `gridTemplateColumns` | `1` through `12` (equal columns) |
+| `gridTemplateColumns` | `1` through `12` (equal columns, `repeat(n, minmax(0, 1fr))`, so long content can't stretch a column) |
 | `position` | `static`, `relative`, `absolute`, `fixed`, `sticky` |
 | `insetTop`, `insetBottom`, `insetStart`, `insetEnd` | `space` tokens, `auto`, `full` |
 | `overflow`, `overflowX`, `overflowY` | `visible`, `hidden`, `auto`, `scroll` |
@@ -110,8 +110,8 @@ Exported as the `LayoutProps` type.
 | `color` | `inherit` and every `color.fg` token: `default`, `muted`, `accent`, `onAccent`, … |
 | `borderColor` | Every `color.border` token: `subtle`, `control`, `surface`, `danger`, `disabled` |
 | `borderWidth` | `none`, `thin`, `thick`; also sets `border-style: solid` |
-| `borderRadius` | Every `radius` token: `none`, `sm`, `md`, `lg`, `xl`, `full`, `tile`, `control` |
-| `boxShadow` | Every `shadow` token: `none`, `sm`, `md`, `lg`, `xl`, `tile`, `raised`, `dialog` |
+| `borderRadius` | Every `radius` token: `none`, `sm`, `md`, `lg`, `xl`, `full`, `card`, `control` |
+| `boxShadow` | Every `shadow` token: `none`, `sm`, `md`, `lg`, `xl`, `card`, `cardHover`, `raised`, `dialog` |
 | `zIndex` | Every `zIndex` token: `base`, `sticky`, `dropdown`, … |
 
 ### Left out on purpose
