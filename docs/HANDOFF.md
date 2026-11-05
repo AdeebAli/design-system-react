@@ -11,8 +11,9 @@ owner, before any code is written.
 ## Status
 
 - **Done:** repo created and pushed; ADRs 0001-0004 accepted; specs
-  `00-overview`, `01-repo-and-tooling`, and `02-tokens-and-themes` **Accepted**.
-- **In progress:** nothing; `03-theme-provider` is next.
+  `00-overview`, `01-repo-and-tooling`, `02-tokens-and-themes`, and
+  `03-theme-provider` **Accepted**. License is PolyForm Noncommercial 1.0.0.
+- **In progress:** nothing; `04-box-and-style-props` is next.
 - **Carry to Spec 09 (from the Soft page review):** checkbox 18px with
   `radius.sm` and a rounded check mark; switch 36x20px with the knob inside
   the track and at least 3:1 contrast between knob and track, on and off.

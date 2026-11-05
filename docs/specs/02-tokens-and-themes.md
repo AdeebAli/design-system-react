@@ -135,10 +135,27 @@ Every key below is required in every theme. Values for Soft are in
 | `motion.easing.{standard,enter,exit}` | `cubic-bezier` |
 | `zIndex.{base,sticky,dropdown,overlay,modal,popover,toast,tooltip}` | Stacking layers; themeable so a host app with its own stacking can shift them |
 
-Semantic aliases (`radius.tile`, `shadow.tile`, `color.border.surface`, …)
-exist so a theme can change one kind of element without touching the scale.
+Purpose-specific tokens (`radius.tile`, `shadow.tile`, `color.border.surface`,
+…) exist so a theme can change one kind of element without touching the scale.
 This is how a Crisp-style theme would swap tile shadows for borders without
 component changes.
+
+**Aliases reference another token instead of copying its value** (amended by
+[Spec 03](03-theme-provider.md#alias-tokens)). All aliases are on the root, so
+overriding the target updates the alias, and overriding the alias affects only
+that alias:
+
+| Alias | Points at |
+|---|---|
+| `radius.tile` | `radius.xl` |
+| `radius.control` | `radius.md` |
+| `shadow.tile` | `shadow.md` (Soft Light), `shadow.sm` (Soft Dark) |
+| `shadow.raised` | `shadow.lg` |
+| `shadow.dialog` | `shadow.xl` |
+| `color.fg.accent` | `color.bg.accent` |
+| `color.focus` | `color.bg.accent` |
+
+For example, Soft's `radius.control` is `var(--ds-radius-md)`, not `12px`.
 
 ### Static (not themeable)
 
@@ -305,7 +322,7 @@ become `0ms`. No exceptions, so components need no per-animation rules.
 | `bg.canvas` | `#f4f2ee` | | `fg.default` | `#1d1b18` |
 | `bg.surface` | `#ffffff` | | `fg.muted` | `#6b665e` |
 | `bg.raised` | `#ffffff` | | `fg.subtle` | `#8a857c` |
-| `bg.sunken` | `#f7f5f1` | | `fg.accent` | `#4f46e5` |
+| `bg.sunken` | `#f7f5f1` | | `fg.accent` | alias of `bg.accent` (`#4f46e5`) |
 | `bg.muted` | `#efece6` | | `fg.onAccent` | `#ffffff` |
 | `bg.accent` | `#4f46e5` | | `fg.success` | `#137339` |
 | `bg.accentHover` | `#4338ca` | | `fg.warning` | `#965506` |
@@ -315,7 +332,7 @@ become `0ms`. No exceptions, so components need no per-animation rules.
 | `bg.danger` / `Subtle` | `#b91c1c` / `#fdecec` | | `border.subtle` | `#e4e0d8` |
 | `bg.info` / `Subtle` | `#1d4ed8` / `#e8effd` | | `border.control` | `#857f76` |
 | `overlay` | `rgb(29 27 24 / 0.40)` | | `border.surface` | `transparent` |
-| `focus` | `#4f46e5` | | `border.danger` | `#b91c1c` |
+| `focus` | alias of `bg.accent` (`#4f46e5`) | | `border.danger` | `#b91c1c` |
 | `bg.inverse` | `#1d1b18` | | `fg.inverse` | `#f3f1ec` |
 | `bg.disabled` | `#efece6` | | `fg.disabled` | `#8a857c` |
 | | | | `border.disabled` | `#e4e0d8` |
@@ -327,7 +344,7 @@ become `0ms`. No exceptions, so components need no per-animation rules.
 | `bg.canvas` | `#141311` | | `fg.default` | `#f3f1ec` |
 | `bg.surface` | `#1f1d1a` | | `fg.muted` | `#a8a399` |
 | `bg.raised` | `#2a2824` | | `fg.subtle` | `#8a857c` |
-| `bg.sunken` | `#181715` | | `fg.accent` | `#818cf8` |
+| `bg.sunken` | `#181715` | | `fg.accent` | alias of `bg.accent` (`#818cf8`) |
 | `bg.muted` | `#36332e` | | `fg.onAccent` | `#141311` |
 | `bg.accent` | `#818cf8` | | `fg.success` | `#4ade80` |
 | `bg.accentHover` | `#a5b4fc` | | `fg.warning` | `#fbbf24` |
@@ -337,7 +354,7 @@ become `0ms`. No exceptions, so components need no per-animation rules.
 | `bg.danger` / `Subtle` | `#f87171` / `#2f1a19` | | `border.subtle` | `#34312c` |
 | `bg.info` / `Subtle` | `#60a5fa` / `#162334` | | `border.control` | `#837e75` |
 | `overlay` | `rgb(0 0 0 / 0.60)` | | `border.surface` | `rgb(255 255 255 / 0.05)` |
-| `focus` | `#818cf8` | | `border.danger` | `#f87171` |
+| `focus` | alias of `bg.accent` (`#818cf8`) | | `border.danger` | `#f87171` |
 | `bg.inverse` | `#f3f1ec` | | `fg.inverse` | `#1d1b18` |
 | `bg.disabled` | `#262420` | | `fg.disabled` | `#8a857c` |
 | | | | `border.disabled` | `#34312c` |
@@ -370,8 +387,8 @@ and fails below the threshold:
   for purely decorative text only. **Placeholders use `fg.muted`.**
 - `border.subtle` and `border.surface` are decorative and excluded; nothing
   may rely on them alone to identify a control.
-- The contrast helper is **internal** for v1 and parses hex and `rgb()`
-  only, which covers the built-in themes. Exporting it for consumer themes
+- The contrast helper is **internal** for v1. It resolves alias references and
+  parses hex and `rgb()` only, which covers the built-in themes. Exporting it for consumer themes
   (which may use `hsl()` / `oklch()`) is deferred.
 
 ## Focus
@@ -444,8 +461,9 @@ regression.
 - In `fixtures/vite-app`, text renders in Inter and `Prose` body text in
   Source Serif 4 (not the fallbacks) with no
   network requests outside the app's origin.
-- Overriding `--ds-color-bg-accent` in plain consumer CSS changes the accent
-  everywhere.
+- Overriding `--ds-color-bg-accent` in plain consumer CSS changes buttons,
+  selected states, links, accent text, and focus rings. `bg.accentHover`,
+  `bg.accentSubtle`, and `fg.onAccent` are set separately.
 
 ## Left to the builder
 

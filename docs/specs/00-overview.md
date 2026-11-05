@@ -255,7 +255,7 @@ published release.
 | 00 | Overview (this document) | Accepted |
 | 01 | Repo and tooling | Accepted |
 | 02 | Tokens and themes | Accepted |
-| 03 | Theme provider | Not started |
+| 03 | Theme provider | Accepted |
 | 04 | Box and style props | Not started |
 | 05 | Component conventions | Not started |
 | 06 | Layout and typography (incl. `Link`, `Code`, `Kbd`, `VisuallyHidden`) | Not started |
