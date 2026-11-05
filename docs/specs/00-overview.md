@@ -258,8 +258,8 @@ published release.
 | 03 | Theme provider | Accepted |
 | 04 | Box and style props | Accepted |
 | 05 | Component conventions | Accepted |
-| 06 | Layout and typography (incl. `Link`, `Code`, `Kbd`, `VisuallyHidden`) | Draft |
-| 07 | Icon | Not started |
+| 06 | Layout and typography (incl. `Link`, `Code`, `Kbd`, `VisuallyHidden`) | Accepted |
+| 07 | Icon | Draft |
 | 08 | Bento: Tile, Stat, Badge | Not started |
 | 09 | Forms | Not started |
 | 10 | Navigation: `NavBar`, `Tabs` | Not started |
