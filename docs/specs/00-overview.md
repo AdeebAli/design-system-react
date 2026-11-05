@@ -81,18 +81,18 @@ The project fails, even if it technically works, if:
 Chosen from mockups during planning. Specific values are defined in
 [Spec 02](02-tokens-and-themes.md).
 
-- Warm off-white page background; white tiles with soft, low shadows instead
+- Warm off-white page background; white cards with soft, low shadows instead
   of borders.
-- Large radii on tiles (~20px), smaller on controls inside them (~12px),
+- Large radii on cards (~20px), smaller on controls inside them (~12px),
   fully rounded pills.
 - Warm neutral grays plus **one** accent (indigo in the mockup), reserved for
   primary actions, selected states, and data highlights.
 - Clean sans-serif; large, slightly tightened numerals for stats; small
   uppercase labels.
-- Bento layout: tiles of varying sizes (1×1, 2×1, 2×2) on an even gap.
-- Compact controls and modest text sizes, with generous gaps between tiles.
+- Bento layout: cards of varying sizes (1×1, 2×1, 2×2) on an even gap.
+- Compact controls and modest text sizes, with generous gaps between cards.
 - **Soft Dark:** same shapes and spacing; warm near-black background, slightly
-  lighter tiles, accent brightened for contrast.
+  lighter cards, accent brightened for contrast.
 
 ## Theming and customization model
 
@@ -102,8 +102,8 @@ This section fixes the contract those specs must honor.
 - **Soft is the default theme, not the only possible one.** The theme
   contract covers every token category: color, typography (families, sizes,
   weights), spacing, radii, shadows, borders, and motion. Components must not
-  hardcode anything Soft-specific. For example, "tiles use shadows, not
-  borders" is expressed as tile shadow and border tokens, so a Crisp-style
+  hardcode anything Soft-specific. For example, "cards use shadows, not
+  borders" is expressed as card shadow and border tokens, so a Crisp-style
   theme can set the shadow to `none` and add a border without touching
   components.
 - **Themes are CSS custom properties.** All compiled classes, including Box
@@ -141,7 +141,7 @@ This section fixes the contract those specs must honor.
    (See ADR 0001.)
 6. **(proposed) Responsive by default.** Layout style props accept responsive
    values keyed by named breakpoints (e.g., `columns={{ base: 1, md: 4 }}`),
-   implemented as sprinkles conditions. Bento tile spans collapse gracefully
+   implemented as sprinkles conditions. Bento card spans collapse gracefully
    at narrow widths. Breakpoints are defined in Spec 02; the prop shape in
    Spec 04.
 7. **(proposed) Behavior sources.** Components with no complex interaction
@@ -186,7 +186,7 @@ This section fixes the contract those specs must honor.
 
 **(proposed)** **Server rendering:** must work in Next.js App Router and
 other SSR setups. Interactive components are marked `"use client"`;
-non-interactive components (`Box`, `Text`, `Tile`, etc.) remain server
+non-interactive components (`Box`, `Text`, `Card`, etc.) remain server
 components.
 
 ## Consumer setup (target experience)
@@ -194,14 +194,14 @@ components.
 ```tsx
 // .npmrc: @adeebali:registry=https://npm.pkg.github.com (+ read:packages token)
 import '@adeebali/design-system-react/styles.css';
-import { ThemeProvider, Grid, Tile, Stat, Button } from '@adeebali/design-system-react';
+import { ThemeProvider, Grid, Card, Stat, Button } from '@adeebali/design-system-react';
 
 export function App() {
   return (
     <ThemeProvider>
       <Grid columns={4} gap="3">
-        <Tile size="2x2">…</Tile>
-        <Tile><Stat label="Rank" value="#3" /></Tile>
+        <Card size="2x2">…</Card>
+        <Card><Stat label="Rank" value="#3" /></Card>
       </Grid>
       <Button>Compare</Button>
     </ThemeProvider>
@@ -221,7 +221,7 @@ About 39 components, built in dependency order:
 | Typography | `Text`, `Heading`, `Link`, `Code` (inline), `Kbd`, `VisuallyHidden` |
 | Layout | `Box`, `Flex`, `Stack` (vertical), `Inline` (horizontal, wrapping), `Grid`, `Container`, `Center`, `Inset` (padding) |
 | Utility | `ThemeProvider`, `Icon` |
-| Bento | `Tile`, `Stat`, `Badge` |
+| Bento | `Card`, `Stat`, `Badge` |
 | Forms | `Field`, `Input`, `Textarea`, `Select`, `Checkbox`, `Radio`, `Switch`, `Button` |
 | Navigation | `NavBar`, `Tabs` |
 | Reading | `Prose` |
@@ -260,8 +260,8 @@ published release.
 | 05 | Component conventions | Accepted |
 | 06 | Layout and typography (incl. `Link`, `Code`, `Kbd`, `VisuallyHidden`) | Accepted |
 | 07 | Icon | Accepted |
-| 08 | Bento: Tile, Stat, Badge | Draft |
-| 09 | Forms | Not started |
+| 08 | Bento: Card, Stat, Badge | Accepted |
+| 09 | Forms | Draft |
 | 10 | Navigation: `NavBar`, `Tabs` | Not started |
 | 11 | Prose | Not started |
 | 12 | Overlays | Not started |

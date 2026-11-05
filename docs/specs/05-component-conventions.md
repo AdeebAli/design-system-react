@@ -93,7 +93,7 @@ and no extra element is added.
 
 | `as` | Components |
 |---|---|
-| Yes | `Box`, layout components, `Text`, `Tile`, `Link`, `Button` (to render a link) |
+| Yes | `Box`, layout components, `Text`, `Card`, `Link`, `Button` (to render a link) |
 | No | `Heading` (its `level` prop sets the tag), form controls, overlays, and anything else whose behavior depends on its element |
 
 Polymorphic types cost more editor work, so only components on the "Yes" list carry
@@ -194,7 +194,7 @@ Each component spec lists anything beyond these. Every interactive component mus
 7. Respect reduced motion, through the `motion.*` tokens.
 8. Stay usable in forced-colors mode (Windows High Contrast): controls stay
    visible and states stay distinguishable. Checked manually in a story, since it isn't
-   automated. Shadows disappear in this mode, so tiles keep a `1px` border in
+   automated. Shadows disappear in this mode, so cards keep a `1px` border in
    `color.border.surface`: even when it's `transparent`, browsers draw it in forced colors. Rules
    inside `@media (forced-colors: active)` may use system colors, as an exception to the
    raw-value lint rule.

@@ -127,8 +127,8 @@ CSS grid with equal columns. It's the base for bento layouts.
 
 ```tsx
 <Grid columns={{ base: '2', md: '4' }}>
-  <Tile gridColumn="span-2" gridRow="span-2">…</Tile>
-  <Tile>…</Tile>
+  <Card gridColumn="span-2" gridRow="span-2">…</Card>
+  <Card>…</Card>
 </Grid>
 ```
 

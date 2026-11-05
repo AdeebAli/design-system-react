@@ -15,7 +15,7 @@ contain.
 
 ## Decided during planning
 
-- Visual direction: **Soft** (warm off-white canvas, white tiles, soft
+- Visual direction: **Soft** (warm off-white canvas, white cards, soft
   shadows, large radii, one accent). See [Spec 00](00-overview.md#visual-direction-soft).
 - **Sans:** Inter (chosen over Figtree and 14 others for legibility).
 - **Mono:** IBM Plex Mono, for `Code`, `Kbd`, and code blocks.
@@ -37,7 +37,7 @@ Two tiers:
    `src/tokens/`. Themes are built from them. Components **never** reference
    primitives.
 2. **Semantic tokens (the theme contract):** named by purpose
-   (`color.bg.surface`, `radius.tile`). Compiled to CSS custom properties.
+   (`color.bg.surface`, `radius.card`). Compiled to CSS custom properties.
    Every component style references these only.
 
 **Breakpoints** are the only static (non-themeable) values, because media
@@ -73,7 +73,7 @@ Every key below is required in every theme. Values for Soft are in
 | Token | Purpose |
 |---|---|
 | `color.bg.canvas` | Page background |
-| `color.bg.surface` | Tiles, cards, panels |
+| `color.bg.surface` | Cards and panels |
 | `color.bg.raised` | Popovers, menus, dialogs, toasts (above surfaces) |
 | `color.bg.sunken` | Inputs, code blocks, wells inside surfaces |
 | `color.bg.muted` | Chips, pills, inactive bars, hover backgrounds |
@@ -95,7 +95,7 @@ Every key below is required in every theme. Values for Soft are in
 | `color.fg.disabled` | Disabled control text and icons |
 | `color.border.subtle` | Decorative dividers, table rules |
 | `color.border.control` | Boundaries of inputs, checkboxes, and other controls |
-| `color.border.surface` | Tile/card border (Soft Light: transparent) |
+| `color.border.surface` | Card border (Soft Light: transparent) |
 | `color.border.danger` | Invalid field border |
 | `color.border.disabled` | Disabled control border |
 | `color.focus` | Focus ring |
@@ -124,20 +124,21 @@ Every key below is required in every theme. Values for Soft are in
 | `size.container.{sm,md,lg,xl}` | `Container` max widths |
 | `size.prose` | Max line length for reading |
 | `radius.{none,sm,md,lg,xl,full}` | Radius scale |
-| `radius.tile` | Tiles/cards (semantic alias) |
+| `radius.card` | Cards (semantic alias) |
 | `radius.control` | Buttons, inputs, selects (semantic alias) |
 | `borderWidth.{thin,thick}` | 1px / 2px |
 | `shadow.{none,sm,md,lg,xl}` | Elevation scale |
-| `shadow.tile` | Tiles/cards (semantic alias) |
+| `shadow.card` | Cards (semantic alias) |
+| `shadow.cardHover` | Interactive cards on hover (semantic alias) |
 | `shadow.raised` | Popovers, menus, toasts |
 | `shadow.dialog` | Dialogs |
 | `motion.duration.{fast,base,slow}` | ms |
 | `motion.easing.{standard,enter,exit}` | `cubic-bezier` |
 | `zIndex.{base,sticky,dropdown,overlay,modal,popover,toast,tooltip}` | Stacking layers; themeable so a host app with its own stacking can shift them |
 
-Purpose-specific tokens (`radius.tile`, `shadow.tile`, `color.border.surface`,
+Purpose-specific tokens (`radius.card`, `shadow.card`, `color.border.surface`,
 …) exist so a theme can change one kind of element without touching the scale.
-This is how a Crisp-style theme would swap tile shadows for borders without
+This is how a Crisp-style theme would swap card shadows for borders without
 component changes.
 
 **Aliases reference another token instead of copying its value** (amended by
@@ -147,9 +148,10 @@ that alias:
 
 | Alias | Points at |
 |---|---|
-| `radius.tile` | `radius.xl` |
+| `radius.card` | `radius.xl` |
 | `radius.control` | `radius.md` |
-| `shadow.tile` | `shadow.md` (Soft Light), `shadow.sm` (Soft Dark) |
+| `shadow.card` | `shadow.md` (Soft Light), `shadow.sm` (Soft Dark) |
+| `shadow.cardHover` | `shadow.lg` |
 | `shadow.raised` | `shadow.lg` |
 | `shadow.dialog` | `shadow.xl` |
 | `color.fg.accent` | `color.bg.accent` |
@@ -187,7 +189,7 @@ The root font size is never changed.
 | `md` | 0.875 | 14 | **Default UI text**, controls |
 | `lg` | 1 | 16 | Large controls, lead-in UI text |
 | `xl` | 1.125 | 18 | **Prose body text**, small headings |
-| `2xl` | 1.375 | 22 | Tile titles |
+| `2xl` | 1.375 | 22 | Card titles |
 | `3xl` | 1.75 | 28 | Stats, section headings |
 | `4xl` | 2.25 | 36 | Page headings |
 | `5xl` | 3 | 48 | Hero/display |
@@ -267,7 +269,7 @@ Spacing values are emitted in rem (px ÷ 16), except `space.px`, which stays
 | `size.container.sm` / `md` / `lg` / `xl` | 40rem / 48rem / 64rem / 80rem (640 / 768 / 1024 / 1280px) |
 | `size.prose` | 68ch |
 
-- Bento tile gap default: `space.3` (12px); tile padding default: `space.4`
+- Bento card gap default: `space.3` (12px); card padding default: `space.4`
   (16px). Defined as component defaults in Spec 08, listed here for
   orientation.
 - Control and icon sizes are in **rem** so they grow with text when the
@@ -280,7 +282,7 @@ Spacing values are emitted in rem (px ÷ 16), except `space.px`, which stays
 | Token | Value |
 |---|---|
 | `radius.none` / `sm` / `md` / `lg` / `xl` / `full` | 0 / 6px / 12px / 16px / 20px / 9999px |
-| `radius.tile` | `xl` (20px) |
+| `radius.card` | `xl` (20px) |
 | `radius.control` | `md` (12px; chosen by the owner from a side-by-side comparison) |
 | `borderWidth.thin` / `thick` | 1px / 2px |
 
@@ -294,11 +296,11 @@ Soft Light uses low, warm-tinted shadows instead of borders.
 | `shadow.md` | `0 1px 2px rgb(29 27 24 / 0.04), 0 4px 12px rgb(29 27 24 / 0.05)` | `0 1px 2px rgb(0 0 0 / 0.30), 0 4px 12px rgb(0 0 0 / 0.25)` |
 | `shadow.lg` | `0 2px 4px rgb(29 27 24 / 0.04), 0 12px 32px rgb(29 27 24 / 0.10)` | `0 2px 4px rgb(0 0 0 / 0.35), 0 12px 32px rgb(0 0 0 / 0.45)` |
 | `shadow.xl` | `0 4px 8px rgb(29 27 24 / 0.05), 0 24px 64px rgb(29 27 24 / 0.16)` | `0 4px 8px rgb(0 0 0 / 0.40), 0 24px 64px rgb(0 0 0 / 0.55)` |
-| `shadow.tile` | `md` | `sm` |
+| `shadow.card` | `md` | `sm` |
 | `shadow.raised` | `lg` | `lg` |
 | `shadow.dialog` | `xl` | `xl` |
 
-Shadows read weakly on dark backgrounds, so **Soft Dark separates tiles
+Shadows read weakly on dark backgrounds, so **Soft Dark separates cards
 with a lighter surface plus a faint border** (`color.border.surface`).
 
 ### Motion

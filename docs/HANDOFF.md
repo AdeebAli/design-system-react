@@ -13,9 +13,9 @@ owner, before any code is written.
 - **Done:** repo created and pushed; ADRs 0001-0004 accepted; specs
   `00-overview`, `01-repo-and-tooling`, `02-tokens-and-themes`,
   `03-theme-provider`, `04-box-and-style-props`, `05-component-conventions`,
-  `06-layout-and-typography`, and `07-icon` **Accepted** (all of milestone v0.1's
-  specs). License is PolyForm Noncommercial 1.0.0.
-- **In progress:** `08-bento`.
+  `06-layout-and-typography`, `07-icon` (all of milestone v0.1's specs), and
+  `08-bento` **Accepted**. License is PolyForm Noncommercial 1.0.0.
+- **In progress:** `09-forms`.
 - **Carry to Spec 09 (from the Soft page review):** checkbox 18px with
   `radius.sm` and a rounded check mark; switch 36x20px with the knob inside
   the track and at least 3:1 contrast between knob and track, on and off.
@@ -29,7 +29,7 @@ owner, before any code is written.
 | Purpose | Foundation for all future projects (content sites + data tools); share parts, opinionated default look, fully overridable | — |
 | Styling | vanilla-extract; static CSS at library build; Box via sprinkles, variants via recipes ([ADR 0001](adr/0001-styling-with-vanilla-extract.md)) | Tailwind, CSS Modules, Emotion, **Panda** (requires consumer build setup), StyleX |
 | Box | Single `Box` primitive, by **composition** not class inheritance; layout props on all components, visual styling via variants/theme; token-only values | Exposing every Box prop on every component |
-| Look | "Soft" bento: warm off-white, white tiles, soft shadows, ~20px tile radius, one indigo accent; chosen from mockups. Soft Dark also in v1 | Crisp (bordered, mono), Dark (lime accent) |
+| Look | "Soft" bento: warm off-white, white cards, soft shadows, ~20px card radius, one indigo accent; chosen from mockups. Soft Dark also in v1 | Crisp (bordered, mono), Dark (lime accent) |
 | Theming | Themes are CSS variables; contract covers all token categories; 3 levels (token overrides, full theme, per-instance). Color mode follows the OS, can be locked or toggled | — |
 | Behavior | Base UI, wrapped behind our own API; consumers never import it ([ADR 0002](adr/0002-headless-primitives-with-base-ui.md)) | Radix (maintenance mode), React Aria (fallback only), in-house |
 | Scope | Full kit, ~39 components, released in stages (v0.1 → v0.4 → v1.0) | Foundations-only or core-kit-only v1 |
