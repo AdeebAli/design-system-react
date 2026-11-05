@@ -73,6 +73,7 @@ tests/
 .editorconfig
 .gitignore
 .nvmrc
+LICENSE
 .prettierrc
 eslint.config.js
 package.json
@@ -110,7 +111,7 @@ builder.
   "peerDependencies": { "react": "^19", "react-dom": "^19" },
   "publishConfig": { "registry": "https://npm.pkg.github.com" },
   "repository": { "type": "git", "url": "https://github.com/AdeebAli/design-system-react.git" },
-  "license": "UNLICENSED"
+  "license": "PolyForm-Noncommercial-1.0.0"
 }
 ```
 
@@ -119,8 +120,11 @@ builder.
 - **`repository`** is required for GitHub Packages to link the package to
   the repo.
 - **The repo is public** (`github.com/AdeebAli/design-system-react`).
-- **`license: "UNLICENSED"`**: source is visible but all rights are
-  reserved.
+- **`license: "PolyForm-Noncommercial-1.0.0"`**: anyone may use, change, and
+  share the code for noncommercial purposes. The full text and required notice
+  are in `LICENSE`, which npm includes in the package automatically. It is not
+  an OSI open-source license. As copyright holder, the owner can still use the
+  code commercially.
 
 ## Build
 
