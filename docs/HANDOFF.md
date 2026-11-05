@@ -13,12 +13,9 @@ owner, before any code is written.
 - **Done:** repo created and pushed; ADRs 0001-0004 accepted; specs
   `00-overview`, `01-repo-and-tooling`, `02-tokens-and-themes`,
   `03-theme-provider`, `04-box-and-style-props`, `05-component-conventions`,
-  `06-layout-and-typography`, `07-icon` (all of milestone v0.1's specs), and
-  `08-bento` **Accepted**. License is PolyForm Noncommercial 1.0.0.
-- **In progress:** `09-forms`.
-- **Carry to Spec 09 (from the Soft page review):** checkbox 18px with
-  `radius.sm` and a rounded check mark; switch 36x20px with the knob inside
-  the track and at least 3:1 contrast between knob and track, on and off.
+  `06-layout-and-typography`, `07-icon` (all of milestone v0.1's specs),
+  `08-bento`, and `09-forms` **Accepted**. License is PolyForm Noncommercial 1.0.0.
+- **In progress:** `10-navigation`.
 - **Blocked:** nothing.
 - **No code written.** Planning only; no dependencies installed.
 
@@ -32,7 +29,7 @@ owner, before any code is written.
 | Look | "Soft" bento: warm off-white, white cards, soft shadows, ~20px card radius, one indigo accent; chosen from mockups. Soft Dark also in v1 | Crisp (bordered, mono), Dark (lime accent) |
 | Theming | Themes are CSS variables; contract covers all token categories; 3 levels (token overrides, full theme, per-instance). Color mode follows the OS, can be locked or toggled | — |
 | Behavior | Base UI, wrapped behind our own API; consumers never import it ([ADR 0002](adr/0002-headless-primitives-with-base-ui.md)) | Radix (maintenance mode), React Aria (fallback only), in-house |
-| Scope | Full kit, ~39 components, released in stages (v0.1 → v0.4 → v1.0) | Foundations-only or core-kit-only v1 |
+| Scope | Full kit, ~44 components, released in stages (v0.1 → v0.4 → v1.0) | Foundations-only or core-kit-only v1 |
 | Non-goals | No charts; components don't manage form state or validation; React 19+ only; token-only style props | — |
 | Distribution | GitHub Packages, `@adeebali` scope (lowercase) ([ADR 0003](adr/0003-distribution-and-release.md)) | Public npm |
 | Release | Manual: `npm run release -- <bump>` → `npm version` tag → `gh release create --generate-notes` → Actions publishes on `release: published`. Notes live in GitHub Releases, no CHANGELOG.md | Changesets, release-please, semantic-release |
