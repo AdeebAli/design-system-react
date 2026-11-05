@@ -213,7 +213,7 @@ Illustrative only; exact APIs are defined in later specs.
 
 ## v1 scope
 
-About 39 components, built in dependency order:
+About 44 components, built in dependency order:
 
 | Group | Components |
 |---|---|
@@ -222,7 +222,7 @@ About 39 components, built in dependency order:
 | Layout | `Box`, `Flex`, `Stack` (vertical), `Inline` (horizontal, wrapping), `Grid`, `Container`, `Center`, `Inset` (padding) |
 | Utility | `ThemeProvider`, `Icon` |
 | Bento | `Card`, `Stat`, `Badge` |
-| Forms | `Field`, `Input`, `Textarea`, `Select`, `Checkbox`, `Radio`, `Switch`, `Button` |
+| Forms | `Field`, `Input`, `Textarea`, `Select`, `Checkbox`, `RadioGroup`, `Radio`, `Switch`, `Button`, `IconButton`, `ToggleChip`, `ToggleChipGroup`, `ColorModeToggle` |
 | Navigation | `NavBar`, `Tabs` |
 | Reading | `Prose` |
 | Overlays | `Dialog`, `Popover`, `Tooltip`, `Menu`, `Toast` |
@@ -261,8 +261,8 @@ published release.
 | 06 | Layout and typography (incl. `Link`, `Code`, `Kbd`, `VisuallyHidden`) | Accepted |
 | 07 | Icon | Accepted |
 | 08 | Bento: Card, Stat, Badge | Accepted |
-| 09 | Forms | Draft |
-| 10 | Navigation: `NavBar`, `Tabs` | Not started |
+| 09 | Forms | Accepted |
+| 10 | Navigation: `NavBar`, `Tabs` | Draft |
 | 11 | Prose | Not started |
 | 12 | Overlays | Not started |
 | 13 | Data | Not started |

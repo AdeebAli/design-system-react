@@ -93,7 +93,7 @@ and no extra element is added.
 
 | `as` | Components |
 |---|---|
-| Yes | `Box`, layout components, `Text`, `Card`, `Link`, `Button` (to render a link) |
+| Yes | `Box`, layout components, `Text`, `VisuallyHidden`, `Card`, `Link`, `Button` and `IconButton` (to render a link) |
 | No | `Heading` (its `level` prop sets the tag), form controls, overlays, and anything else whose behavior depends on its element |
 
 Polymorphic types cost more editor work, so only components on the "Yes" list carry
@@ -154,8 +154,7 @@ props, and classes.
 - **A check in CI enforces this**, failing the `package` job if `dist/index.d.ts` mentions
   `base-ui`.
 - **Base UI's `render` prop isn't exposed**, and neither are its function-style
-  `className` and `style`. Where `as` is allowed, it maps to `render` internally, setting
-  `nativeButton={false}` when `Button` renders something other than a `button`.
+  `className` and `style`. Where `as` is allowed, it maps to `render` internally. The exception is `Button` rendering a link, which skips Base UI's `Button`, because that would add `role="button"` (Spec 09).
 - **Each component spec lists its public state attributes**, such as `data-open`,
   `data-checked`, and `data-disabled`. Only those are public API. Other Base UI attributes,
   such as `data-starting-style`, are for internal styles only. If Base UI is ever replaced,

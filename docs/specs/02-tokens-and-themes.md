@@ -77,11 +77,13 @@ Every key below is required in every theme. Values for Soft are in
 | `color.bg.raised` | Popovers, menus, dialogs, toasts (above surfaces) |
 | `color.bg.sunken` | Inputs, code blocks, wells inside surfaces |
 | `color.bg.muted` | Chips, pills, inactive bars, hover backgrounds |
+| `color.bg.mutedHover` | Hover state of `bg.muted` |
 | `color.bg.accent` | Primary buttons, selected pills, highlights |
 | `color.bg.accentHover` | Hover/pressed state of `bg.accent` |
 | `color.bg.accentSubtle` | Selected rows, subtle accent backgrounds |
 | `color.bg.{success,warning,danger,info}` | Solid status backgrounds (e.g., destructive button) |
 | `color.bg.{success,warning,danger,info}Subtle` | Status tints (alerts, badges, field errors) |
+| `color.bg.dangerHover` | Hover state of `bg.danger` |
 | `color.bg.inverse` | Inverse surfaces (e.g., tooltips, if Spec 12 styles them inverse) |
 | `color.bg.disabled` | Disabled control fill |
 | `color.fg.default` | Primary text |
@@ -337,7 +339,8 @@ become `0ms`. No exceptions, so components need no per-animation rules.
 | `focus` | alias of `bg.accent` (`#4f46e5`) | | `border.danger` | `#b91c1c` |
 | `bg.inverse` | `#1d1b18` | | `fg.inverse` | `#f3f1ec` |
 | `bg.disabled` | `#efece6` | | `fg.disabled` | `#8a857c` |
-| | | | `border.disabled` | `#e4e0d8` |
+| `bg.mutedHover` | `#e4e0d8` | | `border.disabled` | `#e4e0d8` |
+| `bg.dangerHover` | `#991b1b` | | | |
 
 **Soft Dark**
 
@@ -359,7 +362,8 @@ become `0ms`. No exceptions, so components need no per-animation rules.
 | `focus` | alias of `bg.accent` (`#818cf8`) | | `border.danger` | `#f87171` |
 | `bg.inverse` | `#f3f1ec` | | `fg.inverse` | `#1d1b18` |
 | `bg.disabled` | `#262420` | | `fg.disabled` | `#8a857c` |
-| | | | `border.disabled` | `#34312c` |
+| `bg.mutedHover` | `#423e38` | | `border.disabled` | `#34312c` |
+| `bg.dangerHover` | `#fca5a5` | | | |
 
 Soft Dark's `bg.muted` (`#36332e`) is deliberately distinct from `bg.raised`
 (`#2a2824`) so hover and selected states stay visible inside menus and
@@ -380,7 +384,8 @@ and fails below the threshold:
 | `fg.default`, `fg.muted` on `bg.muted` | 4.5:1 |
 | `fg.{status}` on `bg.{status}Subtle`; `fg.accent` on `bg.accentSubtle` | 4.5:1 |
 | `fg.onAccent` on `bg.accent` and `bg.accentHover` | 4.5:1 |
-| `fg.onStatus` on `bg.{status}` | 4.5:1 |
+| `fg.onStatus` on `bg.{status}` and `bg.dangerHover` | 4.5:1 |
+| `fg.default` on `bg.mutedHover` | 4.5:1 |
 | `fg.inverse` on `bg.inverse` | 4.5:1 |
 | `border.control`, `border.danger`, `focus` on `bg.canvas`, `bg.surface`, `bg.raised`, `bg.sunken` | 3:1 (WCAG 1.4.11 non-text) |
 
