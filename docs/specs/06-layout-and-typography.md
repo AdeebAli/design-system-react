@@ -253,7 +253,7 @@ Default size per level:
 - **`underline="hover"` is only for links that are identifiable without one**, such as in a navigation bar.
   The default keeps links in text from relying on color alone (WCAG 1.4.1).
 - **`external`** does three things: sets `target="_blank"` and `rel="noopener noreferrer"`, shows a small
-  icon, and adds hidden text saying the link opens in a new tab. The default text is
+  icon (`size="inherit"`, so it matches the text), and adds hidden text saying the link opens in a new tab. The default text is
   "(opens in a new tab)", and `externalLabel` changes it for translation.
 - Explicit `target` or `rel` props override what `external` sets.
 - `Icon` comes from [Spec 07](07-icon.md), which ships in the same release.
@@ -290,7 +290,7 @@ Text for screen readers only.
 | `focusable` | boolean: becomes visible when focused, for skip links | `false` |
 
 ```tsx
-<Box as="button"><Icon name="x" /><VisuallyHidden>Close</VisuallyHidden></Box>
+<Box as="button"><Icon icon={X} /><VisuallyHidden>Close</VisuallyHidden></Box>
 <VisuallyHidden as="a" href="#main" focusable>Skip to content</VisuallyHidden>
 ```
 

@@ -28,10 +28,11 @@ Read these first:
 - **Base UI supplies interactive behavior** (ADR 0002). Wrap it behind this library's own component names and typed props. Consumers never import Base UI. Non-interactive components don't use it. If Base UI can't cover a component, the proposed fallback is React Aria for that component only, recorded in a new ADR.
 - **Theming has three levels:** token overrides, a full theme, and per-instance `className`/`style`. Color mode follows the OS by default and can be locked or toggled.
 - **Non-goals:** charts, form state and validation (`Field` only displays labels, hints, and errors), React versions below 19, non-DOM targets.
+- **Icons:** `Icon` accepts any SVG component. Lucide is recommended, but this package doesn't depend on it: projects install `lucide-react` themselves, and internal icons are copied in as small SVG components with Lucide's ISC notice (spec 07).
 - **Accessibility target:** WCAG 2.2 AA in both light and dark modes.
 
 ## Tooling decisions (to be set up in spec 01)
 
 - npm, with `package-lock.json` committed and `npm ci` in CI. Node is pinned via `.nvmrc` and `engines` (ADR 0004). To catch phantom dependencies: a lint rule (`import/no-extraneous-dependencies`) plus a consumer fixture app that installs the packed tarball.
-- Strict TypeScript, React 19 as a peer dependency, Vite library mode, Lucide icons (wrapped by `Icon`), Storybook, Vitest + Testing Library + axe, Playwright visual regression.
+- Strict TypeScript, React 19 as a peer dependency, Vite library mode, Storybook, Vitest + Testing Library + axe, Playwright visual regression.
 - Release (ADR 0003): `npm run release -- <patch|minor|major>` checks that the branch is a clean, up-to-date `main`, runs all checks, then `npm version`, `git push --follow-tags`, and `gh release create --generate-notes`. A GitHub Actions workflow on `release: published` publishes to GitHub Packages. Never publish from a local machine. There is no CHANGELOG.md; release notes live in GitHub Releases.

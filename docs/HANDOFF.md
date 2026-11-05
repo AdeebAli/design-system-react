@@ -12,10 +12,10 @@ owner, before any code is written.
 
 - **Done:** repo created and pushed; ADRs 0001-0004 accepted; specs
   `00-overview`, `01-repo-and-tooling`, `02-tokens-and-themes`,
-  `03-theme-provider`, `04-box-and-style-props`, `05-component-conventions`, and
-  `06-layout-and-typography` **Accepted**. License is PolyForm Noncommercial
-  1.0.0.
-- **In progress:** `07-icon`.
+  `03-theme-provider`, `04-box-and-style-props`, `05-component-conventions`,
+  `06-layout-and-typography`, and `07-icon` **Accepted** (all of milestone v0.1's
+  specs). License is PolyForm Noncommercial 1.0.0.
+- **In progress:** `08-bento`.
 - **Carry to Spec 09 (from the Soft page review):** checkbox 18px with
   `radius.sm` and a rounded check mark; switch 36x20px with the knob inside
   the track and at least 3:1 contrast between knob and track, on and off.
