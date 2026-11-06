@@ -257,6 +257,7 @@ Default size per level:
   "(opens in a new tab)", and `externalLabel` changes it for translation.
 - Explicit `target` or `rel` props override what `external` sets.
 - `Icon` comes from [Spec 07](07-icon.md), which ships in the same release.
+- **`Link` sets `color` for both tones,** with `tone="neutral"` using `color: inherit`, so `Prose`'s link color (Spec 11) doesn't apply to neutral links.
 - There's no global router setting. Each project wraps `Link` once if it wants to avoid repeating `as`.
 
 ### `Code`
@@ -270,6 +271,7 @@ Inline code. Code blocks belong to `Prose` (Spec 11).
 - Sized at `max(var(--ds-font-size-xs), 0.88em)`: relative to the surrounding text, since Plex Mono looks larger
   than Inter at the same size, but never below the 12px minimum. The `em` value is allowed by Spec 02's lint
   rule, which targets colors, `px`, and shadows.
+- **Inside `pre`, it turns off its background, padding, and radius, and inherits its size,** through a `pre &` rule (Spec 11).
 - No props beyond the standard ones.
 
 ### `Kbd`

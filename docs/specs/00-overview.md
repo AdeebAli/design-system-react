@@ -224,7 +224,7 @@ About 44 components, built in dependency order:
 | Bento | `Card`, `Stat`, `Badge` |
 | Forms | `Field`, `Input`, `Textarea`, `Select`, `Checkbox`, `RadioGroup`, `Radio`, `Switch`, `Button`, `IconButton`, `ToggleChip`, `ToggleChipGroup`, `ColorModeToggle` |
 | Navigation | `NavBar`, `Tabs` |
-| Reading | `Prose` |
+| Reading | `Prose`, `NotProse` |
 | Overlays | `Dialog`, `Popover`, `Tooltip`, `Menu`, `Toast` |
 | Data | `Table`, `Pagination`, `Skeleton`, `EmptyState` |
 
@@ -263,8 +263,8 @@ published release.
 | 08 | Bento: Card, Stat, Badge | Accepted |
 | 09 | Forms | Accepted |
 | 10 | Navigation: `NavBar`, `Tabs` | Accepted |
-| 11 | Prose | Draft |
-| 12 | Overlays | Not started |
+| 11 | Prose | Accepted |
+| 12 | Overlays | Draft |
 | 13 | Data | Not started |
 
 ## Quality gates (proposed)
