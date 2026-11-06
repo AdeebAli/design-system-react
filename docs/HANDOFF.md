@@ -14,8 +14,8 @@ owner, before any code is written.
   `00-overview`, `01-repo-and-tooling`, `02-tokens-and-themes`,
   `03-theme-provider`, `04-box-and-style-props`, `05-component-conventions`,
   `06-layout-and-typography`, `07-icon` (all of milestone v0.1's specs),
-  `08-bento`, `09-forms`, `10-navigation`, `11-prose`, and `12-overlays` **Accepted**. License is PolyForm Noncommercial 1.0.0.
-- **In progress:** `13-data`.
+  `08-bento`, `09-forms`, `10-navigation`, `11-prose`, `12-overlays`, and `13-data` **Accepted**. License is PolyForm Noncommercial 1.0.0.
+- **In progress:** `14-advanced-inputs`, then specs 15 and 16, added when v1's scope grew beyond the past projects.
 - **Blocked:** nothing.
 - **No code written.** Planning only; no dependencies installed.
 
@@ -23,7 +23,7 @@ owner, before any code is written.
 
 | Area | Decision | Rejected alternatives |
 |---|---|---|
-| Purpose | Foundation for all future projects (content sites + data tools); share parts, opinionated default look, fully overridable | — |
+| Purpose | Foundation for most future apps, with no single app setting scope or API; share parts, opinionated default look, fully overridable | — |
 | Styling | vanilla-extract; static CSS at library build; Box via sprinkles, variants via recipes ([ADR 0001](adr/0001-styling-with-vanilla-extract.md)) | Tailwind, CSS Modules, Emotion, **Panda** (requires consumer build setup), StyleX |
 | Box | Single `Box` primitive, by **composition** not class inheritance; layout props on all components, visual styling via variants/theme; token-only values | Exposing every Box prop on every component |
 | Look | "Soft" bento: warm off-white, white cards, soft shadows, ~20px card radius, one indigo accent; chosen from mockups. Soft Dark also in v1 | Crisp (bordered, mono), Dark (lime accent) |
@@ -71,21 +71,15 @@ server was started on port 56598 and auto-exits after 4 hours idle.
 
 ## Open threads
 
-- Owner approval of `docs/specs/00-overview.md`.
-- Owner review of the **(proposed)** items in `00-overview.md`.
-- Whether to commit the planning docs (not yet requested).
+- None blocking.
 
 ## Next steps
 
-1. Get approval on `00-overview`, then set its Status to `Accepted`.
-2. Draft `docs/specs/01-repo-and-tooling.md`: project structure, Vite + VE
-   build, lint and import rules, Vitest/axe/Playwright, Storybook, CI gates,
-   consumer fixture, release script, and publish workflow per ADR 0003.
-3. For each spec: draft → builder check → bring only the questions that need
-   the owner → update → owner approves → next spec. Record any new
-   architectural decision as the next ADR (0005+).
-4. Continue through specs 02–13 in index order.
-5. After specs are approved, use `superpowers:writing-plans` to produce
+1. Write specs 14 (`Combobox`, multi-select, `FileUpload`), 15 (`Sidebar`,
+   `Breadcrumbs`, `Accordion`), and 16 (`Alert`, `Spinner`, `Progress`, `Avatar`,
+   `Divider`, `Drawer`) in order: draft → builder check → bring only the
+   questions that need the owner → update → owner approves → next spec.
+2. After the specs are approved, use `superpowers:writing-plans` to produce
    implementation plans, starting with milestone v0.1.
 
 ## Resume prompt
@@ -95,6 +89,5 @@ server was started on port 56598 and auto-exits after 4 hours idle.
 > `docs/HANDOFF.md`, `docs/specs/00-overview.md`, and `docs/adr/*` first.
 > We're writing specs one at a time, interactively. Each spec is drafted,
 > checked by a reviewer, then approved by me before moving on. No code yet.
-> Next: confirm I've approved `00-overview` (mark it Accepted), then draft
-> `docs/specs/01-repo-and-tooling.md`, asking me only the questions whose
-> answers change what gets built.
+> Next: the first spec in the index that isn't Accepted, asking me only the
+> questions whose answers change what gets built.

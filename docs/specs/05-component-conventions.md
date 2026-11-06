@@ -37,7 +37,7 @@ The same concept uses the same name everywhere.
 | `invalid` | Failed validation | boolean |
 | `required` | Must be filled | boolean |
 | `loading` | Waiting on work | boolean |
-| `value`, `defaultValue`, `onValueChange` | Controlled and uncontrolled value, on Base UI controls such as `Select` and `Tabs` | Component-specific |
+| `value`, `defaultValue`, `onValueChange` | Controlled and uncontrolled value, on Base UI controls such as `Select` and `Tabs`. `DataTable` has several independent states, so it uses `selectedKeys`, `sort`, and `page`, each with its own change handler | Component-specific |
 | `checked`, `defaultChecked`, `onCheckedChange` | Controlled and uncontrolled checked state, on `Checkbox` and `Switch` | boolean |
 | `open`, `defaultOpen`, `onOpenChange` | Controlled and uncontrolled visibility | boolean |
 
@@ -93,7 +93,7 @@ and no extra element is added.
 
 | `as` | Components |
 |---|---|
-| Yes | `Box`, layout components, `Text`, `VisuallyHidden`, `Card`, `Link`, `NavBarLink`, `MenuLinkItem`, `Prose`, `NotProse`, `Button` and `IconButton` (to render a link) |
+| Yes | `Box`, layout components, `Text`, `VisuallyHidden`, `Card`, `Link`, `NavBarLink`, `MenuLinkItem`, `Prose`, `NotProse`, `Skeleton`, `Button` and `IconButton` (to render a link), `TableSortHeader` and `Pagination` (for their links, not their root elements) |
 | No | `Heading` (its `level` prop sets the tag), form controls, overlays, and anything else whose behavior depends on its element |
 
 Polymorphic types cost more editor work, so only components on the "Yes" list carry

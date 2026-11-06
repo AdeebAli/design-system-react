@@ -214,7 +214,7 @@ Illustrative only; exact APIs are defined in later specs.
 
 ## v1 scope
 
-About 56 components, built in dependency order:
+About 57 components, built in dependency order:
 
 | Group | Components |
 |---|---|
@@ -227,7 +227,7 @@ About 56 components, built in dependency order:
 | Navigation | `NavBar`, `Tabs`, `Sidebar`, `Breadcrumbs`, `Accordion` |
 | Reading | `Prose`, `NotProse` |
 | Overlays | `Dialog`, `Popover`, `Tooltip`, `Menu`, `Toast` |
-| Data | `Table`, `Pagination`, `Skeleton`, `EmptyState` |
+| Data | `Table`, `DataTable`, `Pagination`, `Skeleton`, `EmptyState` |
 | Feedback | `Alert`, `Spinner`, `Progress` |
 | Display | `Avatar`, `Divider`, `Drawer` |
 
@@ -269,7 +269,7 @@ published release.
 | 10 | Navigation: `NavBar`, `Tabs` | Accepted |
 | 11 | Prose | Accepted |
 | 12 | Overlays | Accepted |
-| 13 | Data | Draft |
+| 13 | Data: `Table`, `DataTable`, `Pagination`, `Skeleton`, `EmptyState` | Accepted |
 | 14 | Advanced inputs: `Combobox`, multi-select, `FileUpload` | Not started |
 | 15 | App navigation: `Sidebar`, `Breadcrumbs`, `Accordion` | Not started |
 | 16 | Feedback and display: `Alert`, `Spinner`, `Progress`, `Avatar`, `Divider`, `Drawer` | Not started |
