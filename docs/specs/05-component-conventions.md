@@ -93,7 +93,7 @@ and no extra element is added.
 
 | `as` | Components |
 |---|---|
-| Yes | `Box`, layout components, `Text`, `VisuallyHidden`, `Card`, `Link`, `Button` and `IconButton` (to render a link) |
+| Yes | `Box`, layout components, `Text`, `VisuallyHidden`, `Card`, `Link`, `NavBarLink`, `Button` and `IconButton` (to render a link) |
 | No | `Heading` (its `level` prop sets the tag), form controls, overlays, and anything else whose behavior depends on its element |
 
 Polymorphic types cost more editor work, so only components on the "Yes" list carry

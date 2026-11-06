@@ -262,8 +262,8 @@ published release.
 | 07 | Icon | Accepted |
 | 08 | Bento: Card, Stat, Badge | Accepted |
 | 09 | Forms | Accepted |
-| 10 | Navigation: `NavBar`, `Tabs` | Draft |
-| 11 | Prose | Not started |
+| 10 | Navigation: `NavBar`, `Tabs` | Accepted |
+| 11 | Prose | Draft |
 | 12 | Overlays | Not started |
 | 13 | Data | Not started |
 
