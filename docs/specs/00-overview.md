@@ -223,7 +223,7 @@ About 57 components, built in dependency order:
 | Layout | `Box`, `Flex`, `Stack` (vertical), `Inline` (horizontal, wrapping), `Grid`, `Container`, `Center`, `Inset` (padding) |
 | Utility | `ThemeProvider`, `Icon` |
 | Bento | `Card`, `Stat`, `Badge` |
-| Forms | `Field`, `Input`, `Textarea`, `Select`, `Checkbox`, `RadioGroup`, `Radio`, `Switch`, `Button`, `IconButton`, `ToggleChip`, `ToggleChipGroup`, `ColorModeToggle`, `Combobox`, multi-select, `FileUpload` |
+| Forms | `Field`, `Input`, `Textarea`, `Select`, `Checkbox`, `RadioGroup`, `Radio`, `Switch`, `Button`, `IconButton`, `ToggleChip`, `ToggleChipGroup`, `ColorModeToggle`, `Combobox`, `MultiSelect`, `FileUpload` |
 | Navigation | `NavBar`, `Tabs`, `Sidebar`, `Breadcrumbs`, `Accordion` |
 | Reading | `Prose`, `NotProse` |
 | Overlays | `Dialog`, `Popover`, `Tooltip`, `Menu`, `Toast` |
@@ -270,7 +270,7 @@ published release.
 | 11 | Prose | Accepted |
 | 12 | Overlays | Accepted |
 | 13 | Data: `Table`, `DataTable`, `Pagination`, `Skeleton`, `EmptyState` | Accepted |
-| 14 | Advanced inputs: `Combobox`, multi-select, `FileUpload` | Not started |
+| 14 | Advanced inputs: `Combobox`, `MultiSelect`, `FileUpload` | Accepted |
 | 15 | App navigation: `Sidebar`, `Breadcrumbs`, `Accordion` | Not started |
 | 16 | Feedback and display: `Alert`, `Spinner`, `Progress`, `Avatar`, `Divider`, `Drawer` | Not started |
 
