@@ -9,7 +9,7 @@
 
 Define `NavBar` and `Tabs`. `Link` is in Spec 06, since links appear everywhere.
 
-Both past projects, the personal site and the fantasy tool, needed navigation.
+Almost every app needs them.
 
 ## `NavBar`
 
@@ -18,11 +18,11 @@ The site's main navigation bar.
 ```tsx
 <NavBar
   aria-label="Main"
-  brand={<Link href="/" tone="neutral" underline="hover">Sideline</Link>}
+  brand={<Link href="/" tone="neutral" underline="hover">Acme</Link>}
   actions={<ColorModeToggle />}
 >
-  <NavBarLink href="/rankings" active>Rankings</NavBarLink>
-  <NavBarLink as={NextLink} href="/players">Players</NavBarLink>
+  <NavBarLink href="/dashboard" active>Dashboard</NavBarLink>
+  <NavBarLink as={NextLink} href="/customers">Customers</NavBarLink>
   <NavBarLink href="/blog">Blog</NavBarLink>
 </NavBar>
 ```
@@ -90,14 +90,14 @@ Below `md`, links collapse behind a menu button, and open as a panel in normal p
 Switches between panels in the same page. Built on Base UI's `Tabs`.
 
 ```tsx
-<Tabs defaultValue="rankings">
-  <TabsList aria-label="Player views">
-    <Tab value="rankings">Rankings</Tab>
-    <Tab value="stats">Stats</Tab>
-    <Tab value="news" disabled>News</Tab>
+<Tabs defaultValue="overview">
+  <TabsList aria-label="Account views">
+    <Tab value="overview">Overview</Tab>
+    <Tab value="activity">Activity</Tab>
+    <Tab value="billing" disabled>Billing</Tab>
   </TabsList>
-  <TabsPanel value="rankings">…</TabsPanel>
-  <TabsPanel value="stats">…</TabsPanel>
+  <TabsPanel value="overview">…</TabsPanel>
+  <TabsPanel value="activity">…</TabsPanel>
 </Tabs>
 ```
 
@@ -184,7 +184,7 @@ Spec 05's definition of done, plus:
 ## Acceptance criteria
 
 - `NavBar` and `Tabs` match this spec, and meet Spec 05's definition of done.
-- The mockups' navigation can be rebuilt without `style` or `className`.
+- A site's main navigation and in-page tabs can be built without `style` or `className`.
 - All states meet Spec 02's contrast rules in both modes.
 
 ## Left to the builder

@@ -8,7 +8,7 @@
 ## Purpose
 
 Define the pieces of a bento layout: `Card`, `Stat`, and `Badge`. They were chosen because cards and stats were among the
-things rebuilt in every past project, and because the Soft direction is built around cards.
+things most apps need, and because the Soft direction is built around cards.
 
 ## Decided during planning
 
@@ -26,15 +26,15 @@ things rebuilt in every past project, and because the Soft direction is built ar
 <Grid columns={{ base: '2', md: '4' }} autoRows="equal">
   <Card span="2x2">
     <Inline>
-      <Badge tone="accent" variant="solid">WR</Badge>
-      <Badge>CIN</Badge>
-      <Badge tone="success">Healthy</Badge>
+      <Badge tone="accent" variant="solid">Pro</Badge>
+      <Badge>Annual</Badge>
+      <Badge tone="success">Active</Badge>
     </Inline>
-    <Heading level={2} size="2xl" marginTop="auto">Ja'Marr Chase</Heading>
-    <Stat label="Projected" value="21.4" change="4.1" trend="up" />
+    <Heading level={2} size="2xl" marginTop="auto">Northwind Labs</Heading>
+    <Stat label="Revenue" value="$21.4k" change="4.1" trend="up" />
   </Card>
-  <Card><Stat label="Rank" value="#3" /></Card>
-  <Card><Stat label="Value" value="+4.1" /></Card>
+  <Card><Stat label="Seats" value="38" /></Card>
+  <Card><Stat label="Uptime" value="99.9%" /></Card>
 </Grid>
 ```
 
@@ -100,7 +100,7 @@ Clipping also cuts off the focus rings of children at the card's edge, so it's o
 For a whole card that's a link, such as a blog post card:
 
 ```tsx
-<Card as="a" href="/blog/projections" interactive>…</Card>
+<Card as="a" href="/blog/first-post" interactive>…</Card>
 ```
 
 - **Hover:** it moves up by `1px` (`transform`) and uses `shadow.cardHover`, inside `@media (hover: hover)`. The shadow changes without
@@ -129,9 +129,9 @@ A labeled number.
 | `trendLabels` | `{ up, down, flat }`: hidden text for translation | `{ up: 'Up', down: 'Down', flat: 'No change' }` |
 
 ```tsx
-<Stat label="Rank" value="#3" />
-<Stat label="Projected" value="21.4" change="4.1" trend="up" hint="Week 9" />
-<Stat label="Injuries" value="3" change="2" trend="up" sentiment="negative" />
+<Stat label="Seats" value="38" />
+<Stat label="Revenue" value="$21.4k" change="4.1" trend="up" hint="This month" />
+<Stat label="Open incidents" value="3" change="2" trend="up" sentiment="negative" />
 ```
 
 - **Markup:** a `dl` with one `dt` (`label`) and one or more `dd`, so screen readers link the label and value. It doesn't accept `as`.
@@ -215,13 +215,13 @@ Spec 05's definition of done, plus:
 
 ## Storybook
 
-- A **Bento** page with the fantasy and blog home examples from the mockups, in both modes.
+- A **Bento** page with a dashboard and a blog home, in both modes.
 - A page per component, as in Spec 05.
 
 ## Acceptance criteria
 
 - `Card`, `Stat`, and `Badge` match this spec, and meet Spec 05's definition of done.
-- The mockups' bento layout can be rebuilt without `style` or `className`.
+- A dashboard and a blog home can be built in a bento layout without `style` or `className`.
 - A Crisp-style token override (no shadow, visible border) restyles cards with no component changes.
 
 ## Left to the builder

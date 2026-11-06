@@ -9,7 +9,7 @@
 
 Define `Prose`, which styles long-form content such as blog posts. Its content is often plain HTML from Markdown or a CMS, so it can't carry this library's components or classes.
 
-The personal site and the fantasy tool both had articles.
+Blogs, docs, and help centers all need it.
 
 ## Decided during planning
 
@@ -27,13 +27,13 @@ The personal site and the fantasy tool both had articles.
 <Container size="lg">
   <Text size="sm" tone="muted">November 5, 2026</Text>
   <Prose as="article" marginX="auto">
-    <h1>Trusting a projection model</h1>
-    <p>The hardest part is the week it's wrong. <a href="/method">Read the method</a>.</p>
+    <h1>Writing a useful changelog</h1>
+    <p>The hardest part is knowing what to leave out. <a href="/guide">Read the guide</a>.</p>
     <NotProse>
-      <Card><Stat label="Projected" value="21.4" /></Card>
+      <Card><Stat label="Readers" value="21.4k" /></Card>
     </NotProse>
     <h2>What changed</h2>
-    <ul><li>Target share now counts for more.</li></ul>
+    <ul><li>Entries now link to their pull requests.</li></ul>
   </Prose>
 </Container>
 ```
@@ -177,7 +177,7 @@ Spec 05's definition of done, plus:
 ## Acceptance criteria
 
 - `Prose` and `NotProse` match this spec, and meet Spec 05's definition of done.
-- The mockups' article can be rebuilt with plain HTML inside `Prose`.
+- A full article can be built with plain HTML inside `Prose`.
 - All text meets Spec 02's contrast rules on the canvas in both modes.
 
 ## Left to the builder
