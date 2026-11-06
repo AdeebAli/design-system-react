@@ -384,7 +384,7 @@ and fails below the threshold:
 |---|---|
 | `fg.default`, `fg.muted`, `fg.accent`, `fg.{status}` on `bg.canvas`, `bg.surface`, `bg.raised`, `bg.sunken` | 4.5:1 |
 | `fg.default`, `fg.muted` on `bg.muted` | 4.5:1 |
-| `fg.{status}` on `bg.{status}Subtle`; `fg.accent` on `bg.accentSubtle` | 4.5:1 |
+| `fg.{status}` on `bg.{status}Subtle`; `fg.default`, `fg.muted`, `fg.accent` on `bg.accentSubtle` | 4.5:1 |
 | `fg.onAccent` on `bg.accent` and `bg.accentHover` | 4.5:1 |
 | `fg.onStatus` on `bg.{status}` and `bg.dangerHover` | 4.5:1 |
 | `fg.default` on `bg.mutedHover` | 4.5:1 |

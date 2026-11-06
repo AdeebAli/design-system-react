@@ -80,7 +80,7 @@ Rules apply to plain elements. Margins and padding use `em`, so they scale with 
 | `dl`, `dt`, `dd` | `dt` is `semibold`, and `dd` has start padding |
 | `sub`, `sup` | Line height `0`, so they don't push lines apart |
 
-- **Block spacing is set by `Prose`:** `p`, `ul`, `ol`, `dl`, `blockquote`, `pre`, `figure`, `table`, `hr`, and direct-child `NotProse` all have vertical margins, which collapse between neighbors. So two adjacent blocks never touch.
+- **Block spacing is set by `Prose`:** `p`, `ul`, `ol`, `dl`, `blockquote`, `pre`, `figure`, `table`, `hr`, direct-child `NotProse`, and `Table`'s wrapper (`data-ds-table`, Spec 13) all have vertical margins, which collapse between neighbors. So two adjacent blocks never touch.
 - **The first child has no top margin, and the last has no bottom margin,** so `Prose` lines up with whatever surrounds it.
 - **Logical properties throughout,** so right-to-left text works.
 - **Headings have `scroll-margin-block-start`,** a fixed value that clears a `sticky` `NavBar` at its default size, so anchor links don't land underneath it.
