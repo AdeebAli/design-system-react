@@ -14,8 +14,8 @@ owner, before any code is written.
   `00-overview`, `01-repo-and-tooling`, `02-tokens-and-themes`,
   `03-theme-provider`, `04-box-and-style-props`, `05-component-conventions`,
   `06-layout-and-typography`, `07-icon` (all of milestone v0.1's specs),
-  `08-bento`, `09-forms`, `10-navigation`, and `11-prose` **Accepted**. License is PolyForm Noncommercial 1.0.0.
-- **In progress:** `12-overlays`.
+  `08-bento`, `09-forms`, `10-navigation`, `11-prose`, and `12-overlays` **Accepted**. License is PolyForm Noncommercial 1.0.0.
+- **In progress:** `13-data`.
 - **Blocked:** nothing.
 - **No code written.** Planning only; no dependencies installed.
 

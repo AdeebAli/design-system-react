@@ -84,7 +84,7 @@ Every key below is required in every theme. Values for Soft are in
 | `color.bg.{success,warning,danger,info}` | Solid status backgrounds (e.g., destructive button) |
 | `color.bg.{success,warning,danger,info}Subtle` | Status tints (alerts, badges, field errors) |
 | `color.bg.dangerHover` | Hover state of `bg.danger` |
-| `color.bg.inverse` | Inverse surfaces (e.g., tooltips, if Spec 12 styles them inverse) |
+| `color.bg.inverse` | Inverse surfaces, such as tooltips (Spec 12) |
 | `color.bg.disabled` | Disabled control fill |
 | `color.fg.default` | Primary text |
 | `color.fg.muted` | Secondary text, labels, hints, placeholders |
@@ -125,6 +125,7 @@ Every key below is required in every theme. Values for Soft are in
 | `size.icon.{sm,md,lg}` | Icon sizes |
 | `size.container.{sm,md,lg,xl}` | `Container` max widths |
 | `size.prose` | Max line length for reading |
+| `size.dialog.{sm,md,lg}` | `Dialog` widths (Spec 12) |
 | `radius.{none,sm,md,lg,xl,full}` | Radius scale |
 | `radius.card` | Cards (semantic alias) |
 | `radius.control` | Buttons, inputs, selects (semantic alias) |
@@ -270,6 +271,7 @@ Spacing values are emitted in rem (px ÷ 16), except `space.px`, which stays
 | `size.icon.sm` / `md` / `lg` | 0.875rem / 1rem / 1.25rem (14 / 16 / 20px) |
 | `size.container.sm` / `md` / `lg` / `xl` | 40rem / 48rem / 64rem / 80rem (640 / 768 / 1024 / 1280px) |
 | `size.prose` | 68ch |
+| `size.dialog.sm` / `md` / `lg` | 24rem / 32rem / 44rem (384 / 512 / 704px) |
 
 - Bento card gap default: `space.3` (12px); card padding default: `space.4`
   (16px). Defined as component defaults in Spec 08, listed here for
