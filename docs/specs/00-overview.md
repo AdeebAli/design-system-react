@@ -264,8 +264,8 @@ published release.
 | 09 | Forms | Accepted |
 | 10 | Navigation: `NavBar`, `Tabs` | Accepted |
 | 11 | Prose | Accepted |
-| 12 | Overlays | Draft |
-| 13 | Data | Not started |
+| 12 | Overlays | Accepted |
+| 13 | Data | Draft |
 
 ## Quality gates (proposed)
 
