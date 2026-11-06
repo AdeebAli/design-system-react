@@ -1,6 +1,6 @@
 # Handoff: design-system-react planning
 
-- **Date:** 2026-11-04
+- **Date:** 2026-11-05
 
 ## Goal
 
@@ -14,8 +14,8 @@ owner, before any code is written.
   `00-overview`, `01-repo-and-tooling`, `02-tokens-and-themes`,
   `03-theme-provider`, `04-box-and-style-props`, `05-component-conventions`,
   `06-layout-and-typography`, `07-icon` (all of milestone v0.1's specs),
-  `08-bento`, and `09-forms` **Accepted**. License is PolyForm Noncommercial 1.0.0.
-- **In progress:** `10-navigation`.
+  `08-bento`, `09-forms`, and `10-navigation` **Accepted**. License is PolyForm Noncommercial 1.0.0.
+- **In progress:** `11-prose`.
 - **Blocked:** nothing.
 - **No code written.** Planning only; no dependencies installed.
 
