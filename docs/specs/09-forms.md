@@ -31,19 +31,19 @@ Define the form controls that were rebuilt in every past project: `Field`, `Inpu
 
 ```tsx
 <Stack gap="4">
-  <Field label="Player" hint="Name or team" required>
-    <Input placeholder="Search players…" startIcon={<Icon icon={Search} />} />
+  <Field label="Search" hint="Name or email" required>
+    <Input placeholder="Search people…" startIcon={<Icon icon={Search} />} />
   </Field>
-  <Field label="Max salary" error="Enter a whole number">
+  <Field label="Seats" error="Enter a whole number">
     <Input inputMode="numeric" />
   </Field>
-  <Field label="Scoring">
-    <Select options={[{ value: 'half', label: 'Half PPR' }, { value: 'full', label: 'Full PPR' }]} />
+  <Field label="Plan">
+    <Select options={[{ value: 'monthly', label: 'Monthly' }, { value: 'annual', label: 'Annual' }]} />
   </Field>
-  <Checkbox label="Include bench" defaultChecked />
+  <Checkbox label="Include archived" defaultChecked />
   <Switch label="Live updates" />
   <Inline>
-    <Button type="submit">Compare</Button>
+    <Button type="submit">Apply</Button>
     <Button variant="soft">Reset</Button>
   </Inline>
 </Stack>
@@ -101,7 +101,7 @@ Plus native attributes, including `value`, `defaultValue`, `onChange`, `type`, `
 - `Textarea` uses Base UI's `Field.Control` rendering a `textarea`, and `ref` and everything else go to it, since it has no wrapper.
 - `Input`'s wrapper has `data-invalid` and `data-disabled`, as does `Textarea`. These are public state attributes.
 - **`Input` and `Textarea` work with `register`** from React Hook Form:
-  `<Input {...register('salary')} />`.
+  `<Input {...register('seats')} />`.
 - **Styles:** `bg.sunken`, a `1px` `border.control` border, `radius.control`, `font.size.md`. Placeholder in `fg.muted`. Invalid uses
   `border.danger`, and disabled uses the disabled tokens. The focus ring is on the wrapper with `:focus-within`, so it surrounds the icons.
 - **Heights** come from `size.control.*`. `Textarea` has a minimum of two rows.
@@ -123,7 +123,7 @@ A single-choice dropdown, built on Base UI's `Select`.
 | `invalid`, `disabled`, `required` | boolean | From `Field` |
 | `name` | string: the value is submitted with forms | none |
 
-- **An `options` array is the API,** not composable parts. It covers every case in the past projects with far less code.
+- **An `options` array is the API,** not composable parts. It covers the common case with far less code.
 - **A custom popup, not a native `<select>`,** so it matches Soft in both modes. The cost is more JavaScript and less native behavior on phones.
 - **The trigger looks like `Input`.** The popup uses `bg.raised`, `shadow.raised`, `radius.lg`, and `zIndex.popover`, and portals automatically. The highlighted option uses
   `bg.muted`, and the selected one shows a check icon and `medium` weight.
@@ -139,8 +139,8 @@ A single-choice dropdown, built on Base UI's `Select`.
 
 ```tsx
 const options = [
-  { value: 'half', label: 'Half PPR' },
-  { value: 'full', label: 'Full PPR', disabled: true },
+  { value: 'monthly', label: 'Monthly' },
+  { value: 'annual', label: 'Annual', disabled: true },
   { label: 'Other', options: [{ value: 'std', label: 'Standard' }] }, // group
 ];
 ```
@@ -155,11 +155,11 @@ const options = [
 
 ### Left out of v1
 
-The owner considered these, then chose to keep `Select` to an options array for now. Each can be added later without breaking anything:
+`Select` stays an options array in this spec.
 
-- **`Combobox`**, for searching long lists, such as a player picker. If it's built, the review notes on `onSearch`, keeping the selected option's label, and live-region announcements should be carried over.
-- **Rich option content**, such as icons or a player's team in a row.
-- **Multi-select.**
+- **`Combobox`,** for searching long lists, such as a person or country picker, moved to Spec 14. That spec should cover `onSearch`, keeping the selected option's label, and live-region announcements.
+- **Multi-select** moved to Spec 14.
+- **Rich option content,** such as icons or secondary text in a row, can be added later without breaking anything.
 
 ## `Checkbox`
 
@@ -180,16 +180,16 @@ The owner considered these, then chose to keep `Select` to an options array for 
 - **`className`, `style`, and layout props go on the outer `label` wrapper**, which is what lays out. With no `label` or `hint`, that's the root. This is a stated difference from Spec 05, and it
   applies to `Radio` and `Switch` as well.
 - **With its own `label`, it's wrapped in Base UI's `Field.Item`,** so it's named by that label rather than a surrounding `Field`'s. Without this, every `Radio` in a group would be announced with the
-  group's name. Tests check that a `Radio` reads "Half PPR", and its group reads "Scoring".
+  group's name. Tests check that a `Radio` reads "Monthly", and its group reads "Plan".
 - Public state attributes: `data-checked`, `data-unchecked`, `data-indeterminate`, `data-disabled`, `data-invalid`.
 
 ## `RadioGroup` and `Radio`
 
 ```tsx
-<Field label="Scoring">
-  <RadioGroup defaultValue="half" name="scoring">
-    <Radio value="half" label="Half PPR" />
-    <Radio value="full" label="Full PPR" />
+<Field label="Plan">
+  <RadioGroup defaultValue="monthly" name="plan">
+    <Radio value="monthly" label="Monthly" />
+    <Radio value="annual" label="Annual" />
   </RadioGroup>
 </Field>
 ```
@@ -224,10 +224,10 @@ The owner considered these, then chose to keep `Select` to an options array for 
 
 ```tsx
 <Controller
-  name="scoring"
+  name="plan"
   control={control}
   render={({ field, fieldState }) => (
-    <Field label="Scoring" error={fieldState.error?.message}>
+    <Field label="Plan" error={fieldState.error?.message}>
       <Select options={options} value={field.value} onValueChange={field.onChange} ref={field.ref} />
     </Field>
   )}
@@ -302,10 +302,10 @@ Selectable pills, such as topic filters.
 ```tsx
 <ToggleChipGroup defaultValue={['all']} aria-label="Topics">
   <ToggleChip value="all">All</ToggleChip>
-  <ToggleChip value="fantasy">Fantasy</ToggleChip>
+  <ToggleChip value="design">Design</ToggleChip>
 </ToggleChipGroup>
 
-<ToggleChip defaultPressed>Bench</ToggleChip>
+<ToggleChip defaultPressed>Archived</ToggleChip>
 ```
 
 - **`ToggleChip`:** `pressed`, `defaultPressed`, `onPressedChange`, `value`, `size` (`sm`, `md`), `disabled`, `startIcon`. Built on Base UI's `Toggle`.
@@ -372,7 +372,7 @@ Spec 05's definition of done, plus:
 ## Acceptance criteria
 
 - All components match this spec, and meet Spec 05's definition of done.
-- The mockup's "Compare players" form can be rebuilt without `style` or `className`.
+- A filter form using every control can be built without `style` or `className`.
 - A React Hook Form example works with every control.
 - Every state in every variant meets Spec 02's contrast rules in both modes.
 

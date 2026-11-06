@@ -7,7 +7,7 @@
 
 ## Purpose
 
-Define `Dialog`, `Popover`, `Tooltip`, `Menu`, and `Toast`, all built on Base UI. The fantasy tool needed them, and they're what v0.4 adds to rebuild it.
+Define `Dialog`, `Popover`, `Tooltip`, `Menu`, and `Toast`, all built on Base UI. Most interactive apps need them, and v0.4 adds them.
 
 ## Decided during planning
 
@@ -25,7 +25,7 @@ Define `Dialog`, `Popover`, `Tooltip`, `Menu`, and `Toast`, all built on Base UI
 Triggers take one element, and pass behavior to it:
 
 ```tsx
-<DialogTrigger><Button>Delete player</Button></DialogTrigger>
+<DialogTrigger><Button>Delete project</Button></DialogTrigger>
 <MenuTrigger><IconButton aria-label="Row actions" icon={<Icon icon={MoreHorizontal} />} /></MenuTrigger>
 ```
 
@@ -60,10 +60,10 @@ Popups flip and shift to stay on screen, which is Base UI's behavior. `start` an
 
 ```tsx
 <Dialog>
-  <DialogTrigger><Button>Edit lineup</Button></DialogTrigger>
+  <DialogTrigger><Button>Edit profile</Button></DialogTrigger>
   <DialogContent>
-    <DialogTitle>Edit lineup</DialogTitle>
-    <DialogDescription>Changes apply from Week 9.</DialogDescription>
+    <DialogTitle>Edit profile</DialogTitle>
+    <DialogDescription>Your team will see these changes.</DialogDescription>
     <Field label="Name"><Input /></Field>
     <Inline justify="end">
       <DialogClose><Button variant="soft">Cancel</Button></DialogClose>
@@ -131,8 +131,8 @@ For confirming something destructive. It's built on Base UI's `AlertDialog`.
 A short text hint on hover or keyboard focus. One component, not parts:
 
 ```tsx
-<Tooltip content="Delete player">
-  <IconButton aria-label="Delete player" icon={<Icon icon={Trash} />} />
+<Tooltip content="Delete project">
+  <IconButton aria-label="Delete project" icon={<Icon icon={Trash} />} />
 </Tooltip>
 ```
 
@@ -163,7 +163,7 @@ A list of actions.
   <MenuTrigger><Button variant="soft">Actions</Button></MenuTrigger>
   <MenuContent>
     <MenuItem startIcon={<Icon icon={Pencil} />} onClick={edit}>Edit</MenuItem>
-    <MenuLinkItem as={NextLink} href="/players/1">View player</MenuLinkItem>
+    <MenuLinkItem as={NextLink} href="/projects/1">View project</MenuLinkItem>
     <MenuSeparator />
     <MenuItem tone="danger" onClick={remove}>Delete</MenuItem>
   </MenuContent>
@@ -206,7 +206,7 @@ A brief message that appears and goes away by itself.
 
 // Anywhere below it
 const toast = useToast();
-toast.add({ title: 'Lineup saved', tone: 'success' });
+toast.add({ title: 'Changes saved', tone: 'success' });
 toast.add({
   title: 'Could not save',
   description: 'Check your connection.',
@@ -225,9 +225,9 @@ toast.add({
 - `promise(promise, { loading, success, error })`, which ties one toast to a promise.
 
 ```tsx
-toast.promise(saveLineup(), {
-  loading: 'Saving lineup…',
-  success: 'Lineup saved',
+toast.promise(saveChanges(), {
+  loading: 'Saving…',
+  success: 'Changes saved',
   error: (err) => ({ title: 'Could not save', description: err.message }),
 });
 ```

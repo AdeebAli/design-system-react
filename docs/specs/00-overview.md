@@ -10,8 +10,8 @@
 ## Purpose
 
 A personal React design system that is the foundation for all of the owner's
-future projects. Past projects (a personal site/blog, a fantasy football
-analysis tool with cards, forms, navigation, and long-form reading) each
+future projects. Past projects (such as a personal site/blog and a data-heavy
+analysis tool, with cards, forms, navigation, and long-form reading) each
 required rebuilding the same groundwork: form inputs, theme selection, spacing,
 and display components. This library eliminates that repetition.
 
@@ -31,8 +31,9 @@ which should feel like the owner's own.
    the spacing scale).
 4. **Clean and composable.** Every component is built on a single `Box`
    primitive that models the CSS box model. Composition, not inheritance.
-5. **Covers both kinds of projects.** Content/reading sites (personal site,
-   blog) and data-heavy tools (dashboards, cards, forms, tables).
+5. **Covers most kinds of apps.** Content and reading sites, dashboards and
+   data-heavy tools, and form-driven products. No single app's needs set the
+   library's scope or API.
 6. **Accessible.** WCAG 2.2 AA in both light and dark modes, including
    keyboard support, focus management, and screen reader semantics.
 7. **Light and dark mode from day one.**
@@ -71,8 +72,8 @@ The project fails, even if it technically works, if:
 
 - **(proposed)** A new project goes from `npm install` to a themed, working
   page in under 30 minutes, following only the README.
-- The fantasy football tool and the personal site could be rebuilt using only
-  this library plus escape hatches for one-off cases.
+- Typical apps, such as a content site, a dashboard, and an admin tool, can be
+  built using only this library plus escape hatches for one-off cases.
 - Every component passes automated accessibility checks (axe) in light and
   dark mode and has Storybook stories for every variant and state.
 
@@ -201,9 +202,9 @@ export function App() {
     <ThemeProvider>
       <Grid columns={4} gap="3">
         <Card size="2x2">…</Card>
-        <Card><Stat label="Rank" value="#3" /></Card>
+        <Card><Stat label="Seats" value="38" /></Card>
       </Grid>
-      <Button>Compare</Button>
+      <Button>Save</Button>
     </ThemeProvider>
   );
 }
@@ -213,7 +214,7 @@ Illustrative only; exact APIs are defined in later specs.
 
 ## v1 scope
 
-About 44 components, built in dependency order:
+About 56 components, built in dependency order:
 
 | Group | Components |
 |---|---|
@@ -222,11 +223,13 @@ About 44 components, built in dependency order:
 | Layout | `Box`, `Flex`, `Stack` (vertical), `Inline` (horizontal, wrapping), `Grid`, `Container`, `Center`, `Inset` (padding) |
 | Utility | `ThemeProvider`, `Icon` |
 | Bento | `Card`, `Stat`, `Badge` |
-| Forms | `Field`, `Input`, `Textarea`, `Select`, `Checkbox`, `RadioGroup`, `Radio`, `Switch`, `Button`, `IconButton`, `ToggleChip`, `ToggleChipGroup`, `ColorModeToggle` |
-| Navigation | `NavBar`, `Tabs` |
+| Forms | `Field`, `Input`, `Textarea`, `Select`, `Checkbox`, `RadioGroup`, `Radio`, `Switch`, `Button`, `IconButton`, `ToggleChip`, `ToggleChipGroup`, `ColorModeToggle`, `Combobox`, multi-select, `FileUpload` |
+| Navigation | `NavBar`, `Tabs`, `Sidebar`, `Breadcrumbs`, `Accordion` |
 | Reading | `Prose`, `NotProse` |
 | Overlays | `Dialog`, `Popover`, `Tooltip`, `Menu`, `Toast` |
 | Data | `Table`, `Pagination`, `Skeleton`, `EmptyState` |
+| Feedback | `Alert`, `Spinner`, `Progress` |
+| Display | `Avatar`, `Divider`, `Drawer` |
 
 ## Release milestones
 
@@ -240,8 +243,9 @@ published release.
 |---|---|---|
 | **v0.1** | 01–07: tooling, tokens/themes, theme provider, Box, conventions, layout/typography, Icon | Themed layouts and type in a real project; full release pipeline proven end to end |
 | **v0.2** | 08–09: Bento, Forms | Cards, stats, and forms, the most-rebuilt pieces |
-| **v0.3** | 10–11: Navigation, Prose | Personal site and blog can be rebuilt |
-| **v0.4** | 12–13: Overlays, Data | Fantasy tool can be rebuilt |
+| **v0.3** | 10–11: Navigation, Prose | Content sites and blogs can be built |
+| **v0.4** | 12–13: Overlays, Data | Data-heavy apps can be built |
+| **v0.5** | 14–16: Advanced inputs, App navigation, Feedback and display | App shells, richer forms, and status feedback |
 | **v1.0** | Stabilization: API review, docs, fixes from real use | Stability guarantee begins |
 
 **Versioning before 1.0:** following semver convention, minor releases in
@@ -266,6 +270,9 @@ published release.
 | 11 | Prose | Accepted |
 | 12 | Overlays | Accepted |
 | 13 | Data | Draft |
+| 14 | Advanced inputs: `Combobox`, multi-select, `FileUpload` | Not started |
+| 15 | App navigation: `Sidebar`, `Breadcrumbs`, `Accordion` | Not started |
+| 16 | Feedback and display: `Alert`, `Spinner`, `Progress`, `Avatar`, `Divider`, `Drawer` | Not started |
 
 ## Quality gates (proposed)
 
