@@ -45,6 +45,11 @@ export function Link<E extends ElementType = 'a'>({
 }: LinkProps<E>) {
   // The rest depends on the generic `as`, which Box can't infer through.
   const rest: object = props;
+  const target =
+    (props as { target?: string }).target ?? (external ? '_blank' : undefined);
+  // An explicit target other than _blank wins, so the link doesn't open a new
+  // tab and mustn't say it does.
+  const newTab = external && target === '_blank';
   const element: ElementType = as ?? 'a';
 
   return (
@@ -60,7 +65,7 @@ export function Link<E extends ElementType = 'a'>({
       {...rest}
     >
       {children}
-      {external && (
+      {newTab && (
         <>
           <Icon icon={ExternalLinkIcon} size="inherit" marginStart="1" />
           {/* The space is hidden too, so punctuation can follow the icon. */}

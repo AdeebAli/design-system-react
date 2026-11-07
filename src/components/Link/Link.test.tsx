@@ -51,6 +51,29 @@ it('explicit target and rel override external', () => {
   expect(a).toHaveAttribute('rel', 'nofollow');
 });
 
+it('external with another target drops the new-tab icon and text', () => {
+  render(
+    <Link href="/x" external target="_self">
+      Docs
+    </Link>,
+  );
+  const a = screen.getByRole('link');
+  expect(a.textContent).toBe('Docs');
+  expect(a.querySelector('svg')).toBeNull();
+  expect(a).toHaveAttribute('target', '_self');
+});
+
+it('external with an explicit _blank target keeps the icon and text', () => {
+  render(
+    <Link href="/x" external target="_blank">
+      Docs
+    </Link>,
+  );
+  const a = screen.getByRole('link');
+  expect(a.textContent).toBe('Docs (opens in a new tab)');
+  expect(a.querySelector('svg')).not.toBeNull();
+});
+
 it('externalLabel changes the hidden text', () => {
   render(
     <Link href="/x" external externalLabel="(neue Registerkarte)">
