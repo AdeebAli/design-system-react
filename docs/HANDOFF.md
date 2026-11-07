@@ -8,8 +8,8 @@ Build `@adeebali/design-system-react`, a general-purpose React design system. Sp
 
 ## Status
 
-- **Done:** all 15 plan tasks are committed on `feat/v0.1-foundations`, for draft PR #17: tooling, tokens and Soft themes, `ThemeProvider`, `Box`, conventions, `Icon`, 13 layout and typography components, and the Foundations pages.
-- **Waiting on:** visual baselines and CI on PR #17.
+- **Done:** all 15 plan tasks are on `feat/v0.1-foundations`, in draft PR #17: tooling, tokens and Soft themes, `ThemeProvider`, `Box`, conventions, `Icon`, 13 layout and typography components, and the Foundations pages. A fresh review's fixes are in, visual baselines are generated, and all five CI jobs pass.
+- **Waiting on:** the owner's screen reader pass and merge.
 - **Not started:** v0.2. The first real release is the owner's.
 
 ## Decisions
@@ -24,9 +24,11 @@ Architecture decisions are in `docs/adr/`. Build decisions, with what each costs
 
 ## Next steps
 
-1. Push the branch, add the `update-baselines` label to PR #17, and review the baseline diff. Expect all five CI jobs to pass.
-2. Do the screen reader pass on `Link`, `VisuallyHidden`, and `Icon`.
+1. Do the screen reader pass on `Link`, `VisuallyHidden`, and `Icon`.
+2. Decide whether `engines.node` should stay `>=26`. It applies to consumers too, and Node 24 is still a supported LTS.
 3. Mark PR #17 ready, merge it, and run `npm run release -- minor`. Then confirm the hosted Storybook is reachable.
+
+After the `update-baselines` workflow commits, CI on the PR fails with no jobs, because the bot pushes with `GITHUB_TOKEN`. Close and reopen the PR to run CI on the new baselines.
 
 ## Resume prompt
 
