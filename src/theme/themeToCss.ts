@@ -1,3 +1,4 @@
+import { contractShape } from '../themes/shape';
 import { tokenToVarName } from '../themes/varName';
 import type { Theme, ThemeOverrides } from './defineTheme';
 import { validateTheme } from './validateTheme';
@@ -31,8 +32,10 @@ function modeRules(mode: 'light' | 'dark', overrides?: ThemeOverrides) {
 // The built-in reduced motion rule is layered, so any unlayered duration
 // override beats it. This restores it, last and at the mode rules' specificity
 // (Spec 02: no exceptions).
-const REDUCED_MOTION =
-  '@media (prefers-reduced-motion: reduce){:root:not([data-ds-mode]),:root[data-ds-mode]{--ds-motion-duration-fast:0ms;--ds-motion-duration-base:0ms;--ds-motion-duration-slow:0ms}}';
+const zeroDurations = Object.keys(contractShape.motion.duration)
+  .map((name) => `${tokenToVarName(['motion', 'duration', name])}:0ms`)
+  .join(';');
+const REDUCED_MOTION = `@media (prefers-reduced-motion: reduce){:root:not([data-ds-mode]),:root[data-ds-mode]{${zeroDurations}}}`;
 
 function setsDuration(overrides: ThemeOverrides | undefined) {
   const durations = overrides?.motion?.duration;
