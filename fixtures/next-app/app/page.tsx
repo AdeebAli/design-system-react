@@ -1,4 +1,4 @@
-import { Box, Icon } from '@adeebali/design-system-react';
+import { Box, Icon, Link, Stack, Text } from '@adeebali/design-system-react';
 import { Search } from 'lucide-react';
 import { PortalProbe } from './PortalProbe';
 
@@ -10,6 +10,14 @@ export default function Page() {
       <Box data-testid="stub">
         Next fixture <Icon icon={Search} data-testid="icon" />
       </Box>
+      <Stack data-testid="layout">
+        <Text data-testid="text" size="lg">
+          Text
+        </Text>
+        <Link href="https://example.com" external data-testid="link">
+          Docs
+        </Link>
+      </Stack>
       <PortalProbe />
     </>
   );

@@ -33,6 +33,23 @@ test('an icon renders at its token size', async ({ page }) => {
   expect(await icon.evaluate((el) => getComputedStyle(el).width)).toBe('16px');
 });
 
+test('layout and typography components render with their styles', async ({
+  page,
+}) => {
+  await page.goto('/');
+  const display = await page
+    .getByTestId('layout')
+    .evaluate((el) => getComputedStyle(el).display);
+  expect(display).toBe('flex');
+  const size = await page
+    .getByTestId('text')
+    .evaluate((el) => getComputedStyle(el).fontSize);
+  expect(size).toBe('16px');
+  await expect(
+    page.getByRole('link', { name: 'Docs (opens in a new tab)' }),
+  ).toHaveAttribute('target', '_blank');
+});
+
 test('text renders in the bundled Inter', async ({ page }) => {
   await page.goto('/');
   const loaded = await page.evaluate(async () => {
