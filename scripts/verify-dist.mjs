@@ -90,6 +90,35 @@ if (existsSync(stylesPath)) {
     failures.push('styles.css has no Soft Light variables');
   }
 }
+// Everything but font faces must sit in a layer, so consumers' unlayered CSS and
+// the layer order always decide (Spec 02, Spec 05).
+if (existsSync(stylesPath)) {
+  const styles = readFileSync(stylesPath, 'utf8').replace(
+    /\/\*[\s\S]*?\*\//g,
+    '',
+  );
+  let depth = 0;
+  let prelude = '';
+  for (const char of styles) {
+    if (char === '{') {
+      if (depth === 0) {
+        const name = prelude.trim();
+        if (!name.startsWith('@layer') && !name.startsWith('@font-face')) {
+          failures.push(
+            `styles.css has an unlayered rule: ${name.slice(0, 60)}`,
+          );
+        }
+      }
+      depth += 1;
+    } else if (char === '}') {
+      depth -= 1;
+      if (depth === 0) prelude = '';
+    } else if (depth === 0) {
+      prelude = char === ';' ? '' : prelude + char;
+    }
+  }
+}
+
 for (const name of [
   'inter-latin-opsz-normal.woff2',
   'source-serif-4-latin-opsz-normal.woff2',

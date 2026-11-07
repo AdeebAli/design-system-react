@@ -3,12 +3,15 @@ import { appendFileSync, readFileSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
 
 const files = {
-  'styles.css': 'dist/styles.css',
-  'Box JavaScript': 'dist/components/Box/Box.js',
+  'styles.css': ['dist/styles.css'],
+  'Box JavaScript': [
+    'dist/components/Box/Box.js',
+    'dist/components/Box/sprinkles.css.js',
+  ],
 };
 
-const rows = Object.entries(files).map(([name, path]) => {
-  const source = readFileSync(path);
+const rows = Object.entries(files).map(([name, paths]) => {
+  const source = Buffer.concat(paths.map((path) => readFileSync(path)));
   return `| ${name} | ${(source.length / 1024).toFixed(1)} KB | ${(gzipSync(source).length / 1024).toFixed(1)} KB |`;
 });
 
