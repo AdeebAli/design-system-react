@@ -16,17 +16,21 @@ const stories = Object.values(index.entries).filter(
   (entry) => entry.type === 'story',
 );
 
-// Foundation pages show both themes' values side by side, so one mode is enough
-// (Spec 02).
-const foundationPages = Object.values(index.entries).filter(
-  (entry) => entry.type === 'docs' && entry.id.startsWith('foundations-'),
+// MDX pages, such as Foundations and Box's style props. They don't follow the
+// color mode, so one mode is enough (Spec 02).
+const docsPages = Object.values(index.entries).filter(
+  (entry) => entry.type === 'docs',
 );
 
-for (const docs of foundationPages) {
+for (const docs of docsPages) {
   test(docs.id, async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto(`/iframe.html?id=${docs.id}&viewMode=docs`);
     await page.locator('#storybook-docs h1').waitFor();
+    // A Markdown table that MDX didn't parse shows up as a paragraph of pipes.
+    await expect(
+      page.locator('#storybook-docs p', { hasText: /\|\s*-{3,}/ }),
+    ).toHaveCount(0);
     await page.evaluate(() => document.fonts.ready);
     await expect(page).toHaveScreenshot(`${docs.id}.png`, { fullPage: true });
   });
