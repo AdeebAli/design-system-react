@@ -73,6 +73,8 @@ export default tseslint.config(
             '.storybook/**',
             '*.config.*',
             'vitest.setup.ts',
+            'vitest.browser.setup.ts',
+            '**/*.browser.*',
           ],
         },
       ],

@@ -1,0 +1,58 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Components/Box/All style props" />
+
+# All style props
+
+Style props take tokens only. For an arbitrary value, use `style` or `className`.
+
+## Layout props
+
+Every component accepts these, and each is responsive: `padding={{ base: '2', md: '4' }}`.
+
+| Props                                                                                   | Values                                                                                                                                                 |
+| --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `margin`, `marginX`, `marginY`, `marginTop`, `marginBottom`, `marginStart`, `marginEnd` | `space` tokens, `auto`                                                                                                                                 |
+| `width`, `minWidth`                                                                     | `space` tokens, `auto`, `full`, `fit`, `min`, `max`, `1/2`, `1/3`, `2/3`, `1/4`, `3/4`, `container.sm`, `container.md`, `container.lg`, `container.xl` |
+| `height`, `minHeight`                                                                   | The same, plus `screen`                                                                                                                                |
+| `maxWidth`                                                                              | `none`, `full`, `fit`, `container.sm`, `container.md`, `container.lg`, `container.xl`, `prose`                                                         |
+| `maxHeight`                                                                             | `none`, `full`, `fit`, `screen`                                                                                                                        |
+| `flexGrow`, `flexShrink`                                                                | `0`, `1`                                                                                                                                               |
+| `alignSelf`, `justifySelf`                                                              | `auto`, `start`, `center`, `end`, `stretch`                                                                                                            |
+| `gridColumn`, `gridRow`                                                                 | `span-1` through `span-12`, `full`                                                                                                                     |
+
+## Responsive `Box` props
+
+| Props                                                                                          | Values                                                                                  |
+| ---------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `padding`, `paddingX`, `paddingY`, `paddingTop`, `paddingBottom`, `paddingStart`, `paddingEnd` | `space` tokens                                                                          |
+| `gap`, `rowGap`, `columnGap`                                                                   | `space` tokens                                                                          |
+| `display`                                                                                      | `none`, `block`, `inline`, `inline-block`, `flex`, `inline-flex`, `grid`, `inline-grid` |
+| `flexDirection`                                                                                | `row`, `column`, `row-reverse`, `column-reverse`                                        |
+| `flexWrap`                                                                                     | `nowrap`, `wrap`                                                                        |
+| `alignItems`                                                                                   | `start`, `center`, `end`, `stretch`, `baseline`                                         |
+| `justifyContent`                                                                               | `start`, `center`, `end`, `between`                                                     |
+| `gridTemplateColumns`                                                                          | `1` through `12`                                                                        |
+| `position`                                                                                     | `static`, `relative`, `absolute`, `fixed`, `sticky`                                     |
+| `insetTop`, `insetBottom`, `insetStart`, `insetEnd`                                            | `space` tokens, `auto`, `full`                                                          |
+| `overflow`, `overflowX`, `overflowY`                                                           | `visible`, `hidden`, `auto`, `scroll`                                                   |
+
+## Visual `Box` props
+
+These aren't responsive.
+
+| Props          | Values                                              |
+| -------------- | --------------------------------------------------- |
+| `background`   | `transparent` and every `color.bg` token            |
+| `color`        | `inherit` and every `color.fg` token                |
+| `borderColor`  | Every `color.border` token                          |
+| `borderWidth`  | `none`, `thin`, `thick`; also sets the border style |
+| `borderRadius` | Every `radius` token                                |
+| `boxShadow`    | Every `shadow` token                                |
+| `zIndex`       | Every `zIndex` token                                |
+
+## Precedence
+
+- A larger breakpoint wins, regardless of which prop set it.
+- Within one breakpoint, the more specific prop wins: all sides, then axis, then single side.
+- Style props beat component styles, and a project's unlayered CSS beats style props.

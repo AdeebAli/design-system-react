@@ -36,9 +36,27 @@ export default defineConfig({
             environment: 'jsdom',
             setupFiles: ['./vitest.setup.ts'],
             include: ['src/**/*.test.{ts,tsx}'],
+            exclude: ['src/**/*.browser.test.tsx'],
             typecheck: {
               enabled: true,
               include: ['src/**/*.test-d.{ts,tsx}'],
+            },
+          },
+        }),
+      ),
+      mergeConfig(
+        shared,
+        defineConfig({
+          test: {
+            name: 'browser',
+            globals: true,
+            include: ['src/**/*.browser.test.tsx'],
+            setupFiles: ['./vitest.browser.setup.ts'],
+            browser: {
+              enabled: true,
+              headless: true,
+              provider: playwright(),
+              instances: [{ browser: 'chromium' }],
             },
           },
         }),
