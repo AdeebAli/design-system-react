@@ -4,7 +4,8 @@
   "description": "A personal React design system.",
   "type": "module",
   "sideEffects": [
-    "**/*.css"
+    "**/*.css",
+    "./src/styles/**"
   ],
   "files": [
     "dist"
@@ -33,7 +34,7 @@
   },
   "license": "PolyForm-Noncommercial-1.0.0",
   "scripts": {
-    "build": "vite build --config vite.lib.config.ts && node scripts/verify-dist.mjs",
+    "build": "vite build --config vite.lib.config.ts && node scripts/build-fonts.mjs && node scripts/verify-dist.mjs",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . && node scripts/check-raw-values.mjs",
     "format": "prettier --write .",
@@ -50,6 +51,9 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.5",
     "@eslint/js": "^9.39.5",
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource-variable/source-serif-4": "^5.3.1",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
     "@microsoft/api-extractor": "^7.60.1",
     "@playwright/test": "^1.65.0",
     "@storybook/addon-a11y": "^10.6.6",

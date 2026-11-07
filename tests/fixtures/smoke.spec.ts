@@ -1,16 +1,76 @@
 import { expect, test } from '@playwright/test';
 
+// The minifier may write a duration as .2s or 200ms, and either is correct.
+function toMs(duration: string) {
+  return duration.endsWith('ms')
+    ? parseFloat(duration)
+    : parseFloat(duration) * 1000;
+}
+
 test('renders with styles and no console errors', async ({ page }) => {
   const errors: string[] = [];
   page.on('console', (message) => {
     if (message.type() === 'error') errors.push(message.text());
   });
+  const origins = new Set<string>();
+  page.on('request', (request) => origins.add(new URL(request.url()).origin));
   await page.goto('/');
-  const stub = page.getByTestId('stub');
-  await expect(stub).toBeVisible();
-  // The stub's class sets a known property. Task 5 changes this to a token value.
-  expect(await stub.evaluate((el) => getComputedStyle(el).boxSizing)).toBe(
-    'border-box',
-  );
+  await expect(page.getByTestId('stub')).toBeVisible();
+  // The canvas comes from Soft Light's token values.
+  expect(
+    await page.evaluate(() => getComputedStyle(document.body).backgroundColor),
+  ).toBe('rgb(244, 242, 238)');
   expect(errors).toEqual([]);
+  expect(
+    [...origins].filter((origin) => origin !== new URL(page.url()).origin),
+  ).toEqual([]);
+});
+
+test('text renders in the bundled Inter', async ({ page }) => {
+  await page.goto('/');
+  const loaded = await page.evaluate(async () => {
+    await document.fonts.ready;
+    return [...document.fonts]
+      .filter((face) => face.status === 'loaded')
+      .map((face) => face.family.replace(/"/g, ''));
+  });
+  expect(loaded).toContain('Inter');
+});
+
+for (const attribute of [null, 'light', 'dark']) {
+  test(`reduced motion gives 0ms with mode ${attribute}`, async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/');
+    const duration = await page.evaluate((mode) => {
+      if (mode) document.documentElement.setAttribute('data-ds-mode', mode);
+      return getComputedStyle(document.documentElement)
+        .getPropertyValue('--ds-motion-duration-base')
+        .trim();
+    }, attribute);
+    expect(toMs(duration)).toBe(0);
+  });
+}
+
+test('motion tokens keep their values without reduced motion', async ({
+  page,
+}) => {
+  await page.goto('/');
+  const duration = await page.evaluate(() =>
+    getComputedStyle(document.documentElement)
+      .getPropertyValue('--ds-motion-duration-base')
+      .trim(),
+  );
+  expect(toMs(duration)).toBe(200);
+});
+
+test('the OS setting and a locked mode select the canvas', async ({ page }) => {
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await page.goto('/');
+  const canvas = () =>
+    page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+  expect(await canvas()).toBe('rgb(20, 19, 17)');
+  await page.evaluate(() =>
+    document.documentElement.setAttribute('data-ds-mode', 'light'),
+  );
+  expect(await canvas()).toBe('rgb(244, 242, 238)');
 });

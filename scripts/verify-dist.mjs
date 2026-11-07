@@ -64,6 +64,43 @@ for (const module of clientModules) {
   }
 }
 
+const stylesPath = join(dist, 'styles.css');
+if (existsSync(stylesPath)) {
+  const styles = readFileSync(stylesPath, 'utf8');
+  if (
+    !styles
+      .trimStart()
+      .startsWith('@layer ds.theme,ds.reset,ds.base,ds.components,ds.utilities')
+  ) {
+    failures.push('styles.css does not declare the layer order first');
+  }
+  if (!/url\(["']?\.\/fonts\//.test(styles)) {
+    failures.push('styles.css has no relative font URLs');
+  }
+  if (styles.includes('googleapis')) {
+    failures.push('styles.css requests fonts from another origin');
+  }
+  if (!/font-family:\s*["']?Inter Fallback/.test(styles)) {
+    failures.push('styles.css has no metric-matched fallback faces');
+  }
+  if (styles.split('--ds-color-bg-canvas:#141311').length - 1 !== 2) {
+    failures.push('Soft Dark variables should appear exactly twice');
+  }
+  if (!styles.includes('--ds-color-bg-canvas:#f4f2ee')) {
+    failures.push('styles.css has no Soft Light variables');
+  }
+}
+for (const name of [
+  'inter-latin-opsz-normal.woff2',
+  'source-serif-4-latin-opsz-normal.woff2',
+  'ibm-plex-mono-latin-400-normal.woff2',
+  'LICENSE-inter.txt',
+]) {
+  if (!existsSync(join(dist, 'fonts', name))) {
+    failures.push(`dist/fonts/${name} is missing`);
+  }
+}
+
 if (failures.length > 0) {
   console.error(
     failures.map((failure) => `verify-dist: ${failure}`).join('\n'),

@@ -1,3 +1,5 @@
+import './fonts.css';
+import '../src/styles';
 import type { Preview } from '@storybook/react-vite';
 
 declare const __DS_MODE__: string | undefined;

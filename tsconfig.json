@@ -9,7 +9,12 @@
     "jsx": "react-jsx",
     "target": "ES2022",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "types": ["vitest/globals", "@testing-library/jest-dom", "node"],
+    "types": [
+      "vite/client",
+      "vitest/globals",
+      "@testing-library/jest-dom",
+      "node"
+    ],
     "noEmit": true,
     "skipLibCheck": true,
     "allowImportingTsExtensions": true,
