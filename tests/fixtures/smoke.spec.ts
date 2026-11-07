@@ -66,6 +66,26 @@ test('layout and typography components render with their styles', async ({
   ).toHaveAttribute('target', '_blank');
 });
 
+test("Inter's alternates make I, l, and 1 distinct", async ({ page }) => {
+  await page.goto('/');
+  await page.evaluate(async () => {
+    for (const [id, features] of [
+      ['plain', 'normal'],
+      ['alternates', '"cv05", "cv08"'],
+    ] as const) {
+      const el = document.createElement('div');
+      el.id = id;
+      el.textContent = 'Il1';
+      el.style.cssText = `font: 64px Inter; font-feature-settings: ${features}; width: max-content`;
+      document.body.append(el);
+    }
+    await document.fonts.load('64px Inter', 'Il1');
+  });
+  const plain = await page.locator('#plain').screenshot();
+  const alternates = await page.locator('#alternates').screenshot();
+  expect(alternates.equals(plain)).toBe(false);
+});
+
 test('text renders in the bundled Inter', async ({ page }) => {
   await page.goto('/');
   const loaded = await page.evaluate(async () => {

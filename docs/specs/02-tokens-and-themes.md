@@ -238,11 +238,14 @@ The root font size is never changed.
 
 - Fonts are **bundled with the package**: no requests to Google Fonts and no
   consumer setup.
-- Sources: `@fontsource-variable/inter` and `@fontsource-variable/source-serif-4`
-  (upright and italic), and `@fontsource/ibm-plex-mono`
-  (build-time dev dependencies). The build copies the **woff2** files for the
-  **latin and latin-ext** subsets into `dist/fonts/` and emits `@font-face`
-  rules in `styles.css` with relative URLs and `unicode-range`.
+- Sources: `inter-ui` (Inter's own release, pinned to an exact version),
+  `@fontsource-variable/source-serif-4` (upright and italic), and
+  `@fontsource/ibm-plex-mono` (build-time dev dependencies). Inter doesn't come
+  from Fontsource, because Fontsource's files drop `cv05` and `cv08`. The build
+  copies **woff2** files covering the **latin and latin-ext** subsets into
+  `dist/fonts/` and emits `@font-face` rules in `styles.css` with relative URLs
+  and `unicode-range`. Inter's Latin subset file covers common characters, and
+  its full file covers the rest of latin-ext.
 - `font-display: swap`.
 - **Metric-matched fallback faces** (`size-adjust`, `ascent-override`,
   etc. on a local system font) to minimize layout shift while fonts load.

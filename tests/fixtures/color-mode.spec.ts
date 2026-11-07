@@ -66,6 +66,11 @@ test('typed overrides apply per mode, with no leak', async ({ page }) => {
   expect(await accent(page)).toBe('#0f766e');
   await page.emulateMedia({ colorScheme: 'dark' });
   expect(await accent(page)).toBe('#2dd4bf');
+  // The provider handles the OS change in a media query event, which fires
+  // before animation frames. Waiting for one stops it racing the lock below.
+  await page.evaluate(
+    () => new Promise((resolve) => requestAnimationFrame(resolve)),
+  );
   await page.evaluate(() =>
     document.documentElement.setAttribute('data-ds-mode', 'light'),
   );

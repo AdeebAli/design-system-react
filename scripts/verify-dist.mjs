@@ -135,6 +135,9 @@ if (existsSync(stylesPath)) {
 
 for (const name of [
   'inter-latin-opsz-normal.woff2',
+  'inter-extended-opsz-normal.woff2',
+  'inter-latin-opsz-italic.woff2',
+  'inter-extended-opsz-italic.woff2',
   'source-serif-4-latin-opsz-normal.woff2',
   'ibm-plex-mono-latin-400-normal.woff2',
   'LICENSE-inter.txt',

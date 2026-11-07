@@ -32,6 +32,7 @@ Read these first:
 - Items marked **(proposed)** in specs are the assistant's calls and not owner-confirmed. Don't treat them as settled.
 - Implementation plans come only after the specs are approved, starting with milestone v0.1 (specs 01–07).
 - Brainstorm mockups live in `.superpowers/` (gitignored).
+- A subagent may act as a fresh reviewer of a finished branch or plan, such as the final whole-branch review in `superpowers:executing-plans`. This is an exception to the owner's general limits on subagents. Give it read-only work, and validate its findings before acting on them.
 
 ## Architecture constraints (from the ADRs and spec 00)
 

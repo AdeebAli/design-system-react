@@ -9,7 +9,7 @@ Build `@adeebali/design-system-react`, a general-purpose React design system. Sp
 ## Status
 
 - **Done:** all 15 plan tasks are committed on `feat/v0.1-foundations`, for draft PR #17: tooling, tokens and Soft themes, `ThemeProvider`, `Box`, conventions, `Icon`, 13 layout and typography components, and the Foundations pages.
-- **Blocked on the owner:** the Inter decision below. Visual baselines wait for it, because changing the font changes every baseline.
+- **Waiting on:** visual baselines and CI on PR #17.
 - **Not started:** v0.2. The first real release is the owner's.
 
 ## Decisions
@@ -18,16 +18,15 @@ Architecture decisions are in `docs/adr/`. Build decisions, with what each costs
 
 ## Open threads
 
-1. **Inter's alternates don't ship.** Spec 02 sets `"cv05", "cv08"` so `I`, `l`, and `1` differ, but Fontsource's files don't contain those features, so they do nothing. The Foundations Typography page shows on and off as identical until this is fixed. `inter-ui` 4.1.1 (OFL) has both features and the `opsz` axis, in a 100 KB subset.
+1. **Inter comes from `inter-ui` 4.1.1, pinned exactly,** because Fontsource's files drop `cv05` and `cv08`. `scripts/build-fonts.mjs` hardcodes each file's `unicode-range`, read from that version's character maps, so recompute them if the version changes.
 2. **`fixtures/next-app/tsconfig.tsbuildinfo` is tracked,** and every fixture run rewrites it, so the tree stays dirty.
 3. **`.vitest/` isn't ignored.** A failing browser test writes screenshots there.
 
 ## Next steps
 
-1. Decide on Inter, then apply it if it changes the font files.
-2. Push the branch, add the `update-baselines` label to PR #17, and review the baseline diff. Expect all five CI jobs to pass.
-3. Do the screen reader pass on `Link`, `VisuallyHidden`, and `Icon`.
-4. Mark PR #17 ready, merge it, and run `npm run release -- minor`. Then confirm the hosted Storybook is reachable.
+1. Push the branch, add the `update-baselines` label to PR #17, and review the baseline diff. Expect all five CI jobs to pass.
+2. Do the screen reader pass on `Link`, `VisuallyHidden`, and `Icon`.
+3. Mark PR #17 ready, merge it, and run `npm run release -- minor`. Then confirm the hosted Storybook is reachable.
 
 ## Resume prompt
 
