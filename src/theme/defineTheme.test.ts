@@ -1,6 +1,6 @@
 import { softDark } from '../themes/softDark';
 import { softLight } from '../themes/softLight';
-import { defineFullTheme, defineTheme } from './defineTheme';
+import { defineFullTheme, defineTheme, type Theme } from './defineTheme';
 import { themeToCss } from './themeToCss';
 
 const accent = { color: { bg: { accent: '#0f766e' } } };
@@ -82,4 +82,42 @@ it('validates full themes too', () => {
 it('stays serializable', () => {
   const theme = defineTheme({ light: accent });
   expect(JSON.parse(JSON.stringify(theme))).toEqual(theme);
+});
+
+const reducedMotion =
+  '@media (prefers-reduced-motion: reduce){:root:not([data-ds-mode]),:root[data-ds-mode]{--ds-motion-duration-fast:0ms;--ds-motion-duration-base:0ms;--ds-motion-duration-slow:0ms}}';
+
+it.each([
+  [
+    'shared',
+    defineTheme({ shared: { motion: { duration: { base: '250ms' } } } }),
+  ],
+  ['dark', defineTheme({ dark: { motion: { duration: { fast: '90ms' } } } })],
+  ['full', defineFullTheme({ light: softLight, dark: softDark })],
+])('keeps reduced motion last when a %s theme sets durations', (_, theme) => {
+  expect(themeToCss(theme).endsWith(reducedMotion)).toBe(true);
+});
+
+it('adds no reduced motion rule when durations are untouched', () => {
+  expect(themeToCss(defineTheme({ light: accent }))).not.toContain(
+    'prefers-reduced-motion',
+  );
+});
+
+it.each([
+  ['a value', { shared: { color: { bg: { accent: '</style><script>' } } } }],
+  ['a key', { shared: { 'a{b': 'red' } }],
+])('validates %s even without defineTheme', (_, theme) => {
+  expect(() => themeToCss(theme as Theme)).toThrow(/Invalid theme/);
+});
+
+it('skips undefined and null values', () => {
+  const missing: string | undefined = undefined;
+  const css = themeToCss(
+    defineTheme({
+      shared: { radius: { control: missing, sm: '4px' } },
+      dark: { color: { fg: { default: null as unknown as string } } },
+    }),
+  );
+  expect(css).toBe(':root{--ds-radius-sm:4px}');
 });

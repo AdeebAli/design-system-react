@@ -66,6 +66,18 @@ test('layout and typography components render with their styles', async ({
   ).toHaveAttribute('target', '_blank');
 });
 
+test('Chrome names an external link with its hidden text', async ({ page }) => {
+  await page.goto('/');
+  const cdp = await page.context().newCDPSession(page);
+  const { nodes } = (await cdp.send('Accessibility.getFullAXTree')) as {
+    nodes: { role?: { value: string }; name?: { value: string } }[];
+  };
+  const names = nodes
+    .filter((node) => node.role?.value === 'link')
+    .map((node) => node.name?.value);
+  expect(names).toContain('Docs (opens in a new tab)');
+});
+
 test("Inter's alternates make I, l, and 1 distinct", async ({ page }) => {
   await page.goto('/');
   await page.evaluate(async () => {

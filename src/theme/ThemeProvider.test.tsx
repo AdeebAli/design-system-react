@@ -240,3 +240,29 @@ it('re-renders only components calling the hook when the mode changes', () => {
   expect(plainRendered.mock.calls.length).toBe(before);
   expect(probeRendered.mock.calls.length).toBeGreaterThan(probeBefore);
 });
+
+it('removes the OS listener from the same query it was added to', () => {
+  const queries: { added: number; removed: number }[] = [];
+  vi.stubGlobal(
+    'matchMedia',
+    vi.fn(() => {
+      const query = { added: 0, removed: 0 };
+      queries.push(query);
+      return {
+        matches: false,
+        addEventListener: () => (query.added += 1),
+        removeEventListener: () => (query.removed += 1),
+      };
+    }),
+  );
+  const { unmount } = render(
+    <StrictMode>
+      <ThemeProvider>
+        <Probe />
+      </ThemeProvider>
+    </StrictMode>,
+  );
+  unmount();
+  expect(queries.some((query) => query.added > 0)).toBe(true);
+  for (const query of queries) expect(query.removed).toBe(query.added);
+});

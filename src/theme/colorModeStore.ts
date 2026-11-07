@@ -29,6 +29,7 @@ export function createColorModeStore({
   forcedMode,
 }: StoreOptions) {
   const listeners = new Set<() => void>();
+  let osQuery: MediaQueryList | undefined;
   // Holds the choice when storage is blocked, and is cleared on storage events.
   let memory: ColorMode | undefined;
 
@@ -76,11 +77,11 @@ export function createColorModeStore({
     subscribe: (listener: () => void) => {
       if (listeners.size === 0) {
         window.addEventListener('storage', onStorage);
+        // Each matchMedia call returns a new object, so the same one is kept
+        // for removing the listener.
         if (typeof matchMedia === 'function') {
-          matchMedia('(prefers-color-scheme: dark)').addEventListener(
-            'change',
-            notify,
-          );
+          osQuery = matchMedia('(prefers-color-scheme: dark)');
+          osQuery.addEventListener('change', notify);
         }
       }
       listeners.add(listener);
@@ -88,12 +89,8 @@ export function createColorModeStore({
         listeners.delete(listener);
         if (listeners.size === 0) {
           window.removeEventListener('storage', onStorage);
-          if (typeof matchMedia === 'function') {
-            matchMedia('(prefers-color-scheme: dark)').removeEventListener(
-              'change',
-              notify,
-            );
-          }
+          osQuery?.removeEventListener('change', notify);
+          osQuery = undefined;
         }
       };
     },

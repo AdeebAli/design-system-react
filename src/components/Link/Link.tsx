@@ -62,8 +62,9 @@ export function Link<E extends ElementType = 'a'>({
       {children}
       {external && (
         <>
-          <Icon icon={ExternalLinkIcon} size="inherit" marginStart="1" />{' '}
-          <VisuallyHidden>{externalLabel}</VisuallyHidden>
+          <Icon icon={ExternalLinkIcon} size="inherit" marginStart="1" />
+          {/* The space is hidden too, so punctuation can follow the icon. */}
+          <VisuallyHidden> {externalLabel}</VisuallyHidden>
         </>
       )}
     </Box>

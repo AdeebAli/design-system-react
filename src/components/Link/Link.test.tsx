@@ -17,10 +17,27 @@ it('external sets target, rel, an icon, and hidden text', () => {
       Docs
     </Link>,
   );
-  const a = screen.getByRole('link', { name: 'Docs (opens in a new tab)' });
+  const a = screen.getByRole('link');
+  // Chrome's name is checked in the fixtures. Testing Library's name
+  // computation trims the hidden text's leading space, which browsers keep.
+  expect(a.textContent).toBe('Docs (opens in a new tab)');
   expect(a).toHaveAttribute('target', '_blank');
   expect(a).toHaveAttribute('rel', 'noopener noreferrer');
   expect(a.querySelector('svg')).toHaveAttribute('aria-hidden', 'true');
+});
+
+it('external adds no visible space, so punctuation can follow it', () => {
+  render(
+    <Link href="/x" external data-testid="a">
+      Docs
+    </Link>,
+  );
+  const a = screen.getByTestId('a');
+  const blank = [...a.childNodes].filter(
+    (node) => node.nodeType === Node.TEXT_NODE && !node.textContent?.trim(),
+  );
+  expect(blank).toHaveLength(0);
+  expect(a.textContent).toBe('Docs (opens in a new tab)');
 });
 
 it('explicit target and rel override external', () => {
@@ -40,9 +57,9 @@ it('externalLabel changes the hidden text', () => {
       Docs
     </Link>,
   );
-  expect(
-    screen.getByRole('link', { name: 'Docs (neue Registerkarte)' }),
-  ).toBeInTheDocument();
+  expect(screen.getByRole('link').textContent).toBe(
+    'Docs (neue Registerkarte)',
+  );
 });
 
 it('renders as a router link', () => {

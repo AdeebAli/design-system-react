@@ -1,4 +1,5 @@
 import type { ThemeTokens } from '../themes/types';
+import { validateTheme } from './validateTheme';
 
 type Overrides<T, V = string> = {
   [K in keyof T]?: T[K] extends string ? V : Overrides<T[K], V>;
@@ -25,26 +26,13 @@ export interface Theme {
   readonly dark?: ThemeOverrides;
 }
 
-function validate(node: unknown, path: string) {
-  for (const [key, value] of Object.entries(node as Record<string, unknown>)) {
-    const next = path ? `${path}.${key}` : key;
-    if (typeof value === 'object' && value !== null) {
-      validate(value, next);
-    } else if (typeof value === 'string' && /[{};<]/.test(value)) {
-      throw new Error(
-        `Invalid theme value for ${next}: "${value}". Values can't contain {, }, ;, or <.`,
-      );
-    }
-  }
-}
-
 /** Builds a theme from token overrides. Mode values beat `shared`, which beats Soft. */
 export function defineTheme(input: {
   shared?: ThemeOverrides;
   light?: ThemeOverrides;
   dark?: ThemeOverrides;
 }): Theme {
-  validate(input, '');
+  validateTheme(input);
   return input;
 }
 
@@ -53,6 +41,6 @@ export function defineFullTheme(input: {
   light: ThemeTokens;
   dark: ThemeTokens;
 }): Theme {
-  validate(input, '');
+  validateTheme(input);
   return input;
 }
