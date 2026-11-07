@@ -124,6 +124,13 @@ for (const [pkg, name] of [
   );
 }
 
+const licenses = join('dist', 'licenses');
+mkdirSync(licenses, { recursive: true });
+copyFileSync(
+  join('node_modules', 'lucide-react', 'LICENSE'),
+  join(licenses, 'LICENSE-lucide.txt'),
+);
+
 const stylesPath = join('dist', 'styles.css');
 const styles = readFileSync(stylesPath, 'utf8');
 writeFileSync(

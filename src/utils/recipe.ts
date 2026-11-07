@@ -6,5 +6,5 @@ import { componentsLayer } from '../styles/layers.css';
  * every component style goes through this (Spec 05).
  */
 export function layered(rule: StyleRule): StyleRule {
-  return { '@layer': { [componentsLayer]: rule } } as StyleRule;
+  return { '@layer': { [componentsLayer]: rule } };
 }

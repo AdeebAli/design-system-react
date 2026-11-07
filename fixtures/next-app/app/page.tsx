@@ -1,4 +1,5 @@
-import { Box } from '@adeebali/design-system-react';
+import { Box, Icon } from '@adeebali/design-system-react';
+import { Search } from 'lucide-react';
 import { PortalProbe } from './PortalProbe';
 
 // A server page: this verifies server rendering of a server component, and of a
@@ -6,7 +7,9 @@ import { PortalProbe } from './PortalProbe';
 export default function Page() {
   return (
     <>
-      <Box data-testid="stub">Next fixture</Box>
+      <Box data-testid="stub">
+        Next fixture <Icon icon={Search} data-testid="icon" />
+      </Box>
       <PortalProbe />
     </>
   );

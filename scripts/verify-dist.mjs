@@ -37,6 +37,7 @@ if (declarations.length !== 1 || declarations[0] !== join(dist, 'index.d.ts')) {
   if (/from\s+['"]\.\.?\//.test(types))
     failures.push('index.d.ts has relative imports');
   if (types.includes('base-ui')) failures.push('index.d.ts mentions base-ui');
+  if (/lucide/i.test(types)) failures.push('index.d.ts mentions Lucide');
 }
 
 const boxModule = join(dist, 'components/Box/Box.js');
@@ -90,6 +91,19 @@ if (existsSync(stylesPath)) {
     failures.push('styles.css has no Soft Light variables');
   }
 }
+if (!existsSync(join(dist, 'licenses', 'LICENSE-lucide.txt'))) {
+  failures.push('dist/licenses/LICENSE-lucide.txt is missing');
+}
+if (
+  files.some(
+    (file) =>
+      file.endsWith('.js') &&
+      /from ["']lucide/.test(readFileSync(file, 'utf8')),
+  )
+) {
+  failures.push('dist imports lucide-react');
+}
+
 // Everything but font faces must sit in a layer, so consumers' unlayered CSS and
 // the layer order always decide (Spec 02, Spec 05).
 if (existsSync(stylesPath)) {

@@ -1,6 +1,7 @@
 import './styles';
 
 export * from './components/Box';
+export * from './components/Icon';
 export { breakpoints } from './tokens/breakpoints';
 export { tokens } from './tokens/primitives';
 export { vars } from './themes/contract.css';

@@ -26,6 +26,13 @@ test('renders with styles and no console errors', async ({ page }) => {
   ).toEqual([]);
 });
 
+test('an icon renders at its token size', async ({ page }) => {
+  await page.goto('/');
+  const icon = page.getByTestId('icon');
+  await expect(icon).toHaveAttribute('aria-hidden', 'true');
+  expect(await icon.evaluate((el) => getComputedStyle(el).width)).toBe('16px');
+});
+
 test('text renders in the bundled Inter', async ({ page }) => {
   await page.goto('/');
   const loaded = await page.evaluate(async () => {

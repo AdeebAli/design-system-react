@@ -51,6 +51,17 @@ for (const fixture of fixtures) {
   run('npm', ['run', 'typecheck'], fixture);
 }
 
+// Importing one Lucide icon must not bundle the rest. This is path data from an
+// icon the fixture doesn't use.
+const unusedIconMarker = 'M15.914 4a1.5 1.5';
+const bundled = globSync('fixtures/vite-app/dist/assets/*.js');
+if (bundled.length === 0) throw new Error('The Vite fixture has no JS output.');
+if (
+  bundled.some((file) => readFileSync(file, 'utf8').includes(unusedIconMarker))
+) {
+  throw new Error('The Vite fixture bundled an unused Lucide icon.');
+}
+
 run('npx', [
   'playwright',
   'test',

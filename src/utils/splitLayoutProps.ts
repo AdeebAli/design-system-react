@@ -31,5 +31,5 @@ export function splitLayoutProps<P extends object>(
   for (const [name, value] of Object.entries(props)) {
     (LAYOUT_PROPS.has(name) ? layout : rest)[name] = value;
   }
-  return [layout as LayoutProps, rest as Omit<P, keyof LayoutProps>];
+  return [layout, rest as Omit<P, keyof LayoutProps>];
 }
