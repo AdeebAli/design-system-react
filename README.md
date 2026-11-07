@@ -28,7 +28,7 @@ Keep the `${GITHUB_TOKEN}` placeholder, and never commit a real token.
 npm install @adeebali/design-system-react
 ```
 
-React 19 is a peer dependency, and Node 24 or later is required.
+React 19 is a peer dependency, and Node 22 or later is required.
 
 ### 3. Import the stylesheet
 

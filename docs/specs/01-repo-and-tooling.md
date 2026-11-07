@@ -27,8 +27,9 @@ an (almost empty) package end to end.
 ## Runtime and language
 
 - **Node:** development uses the current active LTS at setup time, pinned in
-  `.nvmrc`. `engines.node` is the oldest supported LTS (`">=24"`), since it
-  also applies to consumers. CI reads `.nvmrc`, and also runs the package job
+  `.nvmrc`. `engines.node` is the oldest Node line still supported upstream
+  (`">=22"`, maintenance LTS until April 2027), since it also applies to
+  consumers. Raise it when that line reaches end of life. CI reads `.nvmrc`, and also runs the package job
   on the `engines` minimum.
 - **TypeScript:** latest stable. `tsconfig.json`:
   - `strict: true`, `noUncheckedIndexedAccess: true`,

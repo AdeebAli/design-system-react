@@ -19,7 +19,7 @@
     "./package.json": "./package.json"
   },
   "engines": {
-    "node": ">=24"
+    "node": ">=22"
   },
   "peerDependencies": {
     "react": "^19",
@@ -54,7 +54,7 @@
     "@fontsource-variable/source-serif-4": "^5.3.1",
     "@fontsource/ibm-plex-mono": "^5.3.0",
     "@microsoft/api-extractor": "^7.60.1",
-    "@playwright/test": "^1.65.0",
+    "@playwright/test": "1.65.0",
     "@storybook/addon-a11y": "^10.6.6",
     "@storybook/addon-docs": "^10.6.6",
     "@storybook/addon-vitest": "^10.6.6",
@@ -79,7 +79,7 @@
     "inter-ui": "4.1.1",
     "jsdom": "^31.0.0",
     "lucide-react": "^1.70.0",
-    "playwright": "^1.65.0",
+    "playwright": "1.65.0",
     "prettier": "^3.9.10",
     "publint": "^0.3.25",
     "react": "^19.3.1",

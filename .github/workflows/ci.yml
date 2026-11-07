@@ -55,6 +55,7 @@ jobs:
 
   visual:
     runs-on: ubuntu-latest
+    # Matches the exact @playwright/test version in package.json.
     container: mcr.microsoft.com/playwright:v1.65.0-noble
     steps:
       - uses: actions/checkout@v4
@@ -79,7 +80,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: [nvmrc, '24']
+        node: [nvmrc, '22']
     name: package (node ${{ matrix.node }})
     runs-on: ubuntu-latest
     steps:
