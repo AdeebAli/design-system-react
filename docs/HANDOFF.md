@@ -19,8 +19,7 @@ Architecture decisions are in `docs/adr/`. Build decisions, with what each costs
 ## Open threads
 
 1. **Inter comes from `inter-ui` 4.1.1, pinned exactly,** because Fontsource's files drop `cv05` and `cv08`. `scripts/build-fonts.mjs` hardcodes each file's `unicode-range`, read from that version's character maps, so recompute them if the version changes.
-2. **`fixtures/next-app/tsconfig.tsbuildinfo` is tracked,** and every fixture run rewrites it, so the tree stays dirty.
-3. **`.vitest/` isn't ignored.** A failing browser test writes screenshots there.
+2. **`.vitest/` isn't ignored.** A failing browser test writes screenshots there.
 
 ## Next steps
 
