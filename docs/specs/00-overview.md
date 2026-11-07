@@ -271,7 +271,7 @@ published release.
 | 12 | Overlays | Accepted |
 | 13 | Data: `Table`, `DataTable`, `Pagination`, `Skeleton`, `EmptyState` | Accepted |
 | 14 | Advanced inputs: `Combobox`, `MultiSelect`, `FileUpload` | Accepted |
-| 15 | App navigation: `Sidebar`, `Breadcrumbs`, `Accordion` | Not started |
+| 15 | App navigation: `Sidebar`, `Breadcrumbs`, `Accordion` | Accepted |
 | 16 | Feedback and display: `Alert`, `Spinner`, `Progress`, `Avatar`, `Divider`, `Drawer` | Not started |
 
 ## Quality gates (proposed)

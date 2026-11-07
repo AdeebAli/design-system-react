@@ -126,6 +126,7 @@ Every key below is required in every theme. Values for Soft are in
 | `size.container.{sm,md,lg,xl}` | `Container` max widths |
 | `size.prose` | Max line length for reading |
 | `size.dialog.{sm,md,lg}` | `Dialog` widths (Spec 12) |
+| `size.sidebar`, `size.sidebarRail` | `Sidebar` widths (Spec 15) |
 | `radius.{none,sm,md,lg,xl,full}` | Radius scale |
 | `radius.card` | Cards (semantic alias) |
 | `radius.control` | Buttons, inputs, selects (semantic alias) |
@@ -272,6 +273,7 @@ Spacing values are emitted in rem (px ÷ 16), except `space.px`, which stays
 | `size.container.sm` / `md` / `lg` / `xl` | 40rem / 48rem / 64rem / 80rem (640 / 768 / 1024 / 1280px) |
 | `size.prose` | 68ch |
 | `size.dialog.sm` / `md` / `lg` | 24rem / 32rem / 44rem (384 / 512 / 704px) |
+| `size.sidebar` / `sidebarRail` | 15rem / 3.5rem (240 / 56px) |
 
 - Bento card gap default: `space.3` (12px); card padding default: `space.4`
   (16px). Defined as component defaults in Spec 08, listed here for

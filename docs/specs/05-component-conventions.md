@@ -93,7 +93,7 @@ and no extra element is added.
 
 | `as` | Components |
 |---|---|
-| Yes | `Box`, layout components, `Text`, `VisuallyHidden`, `Card`, `Link`, `NavBarLink`, `MenuLinkItem`, `Prose`, `NotProse`, `Skeleton`, `Button` and `IconButton` (to render a link), `TableSortHeader` and `Pagination` (for their links, not their root elements) |
+| Yes | `Box`, layout components, `Text`, `VisuallyHidden`, `Card`, `Link`, `NavBarLink`, `SidebarLink`, `BreadcrumbItem`, `MenuLinkItem`, `Prose`, `NotProse`, `Skeleton`, `Button` and `IconButton` (to render a link), `TableSortHeader` and `Pagination` (for their links, not their root elements) |
 | No | `Heading` (its `level` prop sets the tag), form controls, overlays, and anything else whose behavior depends on its element |
 
 Polymorphic types cost more editor work, so only components on the "Yes" list carry
