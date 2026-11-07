@@ -38,15 +38,95 @@ Import it once, at your app's root:
 import '@adeebali/design-system-react/styles.css';
 ```
 
-### 4. Render a component
+### 4. Wrap the app in the provider
+
+`ThemeProvider` remembers a user's color mode and applies typed theme overrides. Without it, the stylesheet still renders the Soft theme following the OS.
 
 ```tsx
-import { Box } from '@adeebali/design-system-react';
+import { Box, ThemeProvider } from '@adeebali/design-system-react';
 
 export function App() {
-  return <Box>Hello</Box>;
+  return (
+    <ThemeProvider>
+      <Box>Hello</Box>
+    </ThemeProvider>
+  );
 }
 ```
+
+### 5. Avoid a flash of the wrong mode
+
+If users can change the mode, apply their choice before first paint.
+
+**Next.js App Router:** render `ColorModeScript` first in `body`, and add `suppressHydrationWarning` to `html`.
+
+```tsx
+<html lang="en" suppressHydrationWarning>
+  <body>
+    <ColorModeScript />
+    <ThemeProvider>{children}</ThemeProvider>
+  </body>
+</html>
+```
+
+**Vite:** inject `getColorModeScript()` into `index.html` with a small plugin, since React doesn't run script elements it creates on the client.
+
+```ts
+import { getColorModeScript } from '@adeebali/design-system-react';
+
+export default defineConfig({
+  plugins: [
+    react(),
+    {
+      name: 'color-mode-script',
+      transformIndexHtml: () => [
+        {
+          tag: 'script',
+          children: getColorModeScript(),
+          injectTo: 'head-prepend',
+        },
+      ],
+    },
+  ],
+});
+```
+
+Options such as `storageKey` must match `ThemeProvider`, so keep them in one shared object.
+
+## Theming
+
+Override tokens with typed objects. Anything you leave out stays Soft.
+
+```ts
+const theme = defineTheme({
+  shared: { radius: { control: '8px' } },
+  light: { color: { bg: { accent: '#0f766e' } } },
+  dark: { color: { bg: { accent: '#2dd4bf' } } },
+});
+
+<ThemeProvider theme={theme}>…</ThemeProvider>;
+```
+
+Or use plain CSS. It must be unlayered, or in a layer declared after `ds.theme`.
+
+```css
+/* Both modes */
+:root {
+  --ds-radius-control: 8px;
+}
+
+/* Per mode: a plain :root rule would apply to both modes */
+:root[data-ds-mode='light'] {
+  --ds-color-bg-accent: #0f766e;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-ds-mode]) {
+    --ds-color-bg-accent: #0f766e;
+  }
+}
+```
+
+Changing the accent takes more than one token. `bg.accentHover`, `bg.accentSubtle`, and `fg.onAccent` are separate values, so set those too.
 
 ## Maintaining
 

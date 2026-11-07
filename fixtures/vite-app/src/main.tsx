@@ -1,7 +1,12 @@
 import '@adeebali/design-system-react/styles.css';
-import { Box } from '@adeebali/design-system-react';
+import { Box, ThemeProvider } from '@adeebali/design-system-react';
 import { createRoot } from 'react-dom/client';
+import { PortalProbe } from './PortalProbe';
+import { theme } from './theme';
 
 createRoot(document.getElementById('root')!).render(
-  <Box data-testid="stub">Vite fixture</Box>,
+  <ThemeProvider theme={theme}>
+    <Box data-testid="stub">Vite fixture</Box>
+    <PortalProbe />
+  </ThemeProvider>,
 );

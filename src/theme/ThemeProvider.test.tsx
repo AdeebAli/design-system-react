@@ -1,21 +1,21 @@
 import { act, render, screen } from '@testing-library/react';
-import { StrictMode, useRef } from 'react';
+import { StrictMode } from 'react';
 import { renderToString } from 'react-dom/server';
 import { defineTheme } from './defineTheme';
 import { ThemeProvider, useColorMode } from './ThemeProvider';
 
 const root = document.documentElement;
 
+const probeRendered = vi.fn();
+
 function Probe() {
   const { mode, resolvedMode, setMode, isForced } = useColorMode();
-  const renders = useRef(0);
-  renders.current += 1;
+  probeRendered();
   return (
     <div>
       <output data-testid="mode">{mode}</output>
       <output data-testid="resolved">resolved:{String(resolvedMode)}</output>
       <output data-testid="forced">{String(isForced)}</output>
-      <output data-testid="renders">{renders.current}</output>
       <button onClick={() => setMode('dark')}>dark</button>
       <button onClick={() => setMode('light')}>light</button>
       <button onClick={() => setMode('system')}>system</button>
@@ -223,9 +223,9 @@ it('renders no element without a theme', () => {
 });
 
 it('re-renders only components calling the hook when the mode changes', () => {
-  let plainRenders = 0;
+  const plainRendered = vi.fn();
   function Plain() {
-    plainRenders += 1;
+    plainRendered();
     return null;
   }
   render(
@@ -234,9 +234,9 @@ it('re-renders only components calling the hook when the mode changes', () => {
       <Probe />
     </ThemeProvider>,
   );
-  const before = plainRenders;
-  const probeBefore = Number(text('renders'));
+  const before = plainRendered.mock.calls.length;
+  const probeBefore = probeRendered.mock.calls.length;
   act(() => screen.getByText('dark').click());
-  expect(plainRenders).toBe(before);
-  expect(Number(text('renders'))).toBeGreaterThan(probeBefore);
+  expect(plainRendered.mock.calls.length).toBe(before);
+  expect(probeRendered.mock.calls.length).toBeGreaterThan(probeBefore);
 });

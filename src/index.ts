@@ -17,3 +17,7 @@ export type {
   ThemeProviderProps,
   UseColorModeResult,
 } from './theme/ThemeProvider';
+export { ColorModeScript } from './theme/ColorModeScript';
+export type { ColorModeScriptProps } from './theme/ColorModeScript';
+export { getColorModeScript } from './theme/getColorModeScript';
+export type { ColorModeScriptOptions } from './theme/getColorModeScript';
