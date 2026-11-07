@@ -64,6 +64,25 @@ it('emits every token for a full theme', () => {
   expect(css).not.toContain(':root{');
 });
 
+it.each(['"Inter', "Inter'", 'a/*b', 'a\\', '"a" "b'])(
+  'rejects %s, which would break the rules after it',
+  (bad) => {
+    expect(() =>
+      defineTheme({ shared: { font: { family: { sans: bad } } } }),
+    ).toThrow(/Invalid theme value/);
+  },
+);
+
+it('accepts quoted font names', () => {
+  expect(() =>
+    defineTheme({
+      shared: {
+        font: { family: { sans: '"Inter Var", \'Helvetica\', sans-serif' } },
+      },
+    }),
+  ).not.toThrow();
+});
+
 it.each(['red;}', '{', '<style>', 'a;b'])('rejects %s', (bad) => {
   expect(() => defineTheme({ shared: { radius: { control: bad } } })).toThrow(
     /radius\.control/,
