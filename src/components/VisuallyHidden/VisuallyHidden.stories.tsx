@@ -21,6 +21,13 @@ export default meta;
 type Story = StoryObj<typeof VisuallyHidden>;
 
 export const Playground: Story = {
+  decorators: [
+    (Story) => (
+      <p>
+        Visible text, with hidden text after it. <Story />
+      </p>
+    ),
+  ],
   args: { children: 'Only screen readers read this' },
 };
 
@@ -36,8 +43,11 @@ export const NamingAButton: Story = {
 export const SkipLink: Story = {
   name: 'Skip link (tab to reveal)',
   render: () => (
-    <VisuallyHidden as="a" href="#main" focusable>
-      Skip to content
-    </VisuallyHidden>
+    <>
+      <VisuallyHidden as="a" href="#main" focusable>
+        Skip to content
+      </VisuallyHidden>
+      <main id="main">Press Tab to reveal the skip link.</main>
+    </>
   ),
 };

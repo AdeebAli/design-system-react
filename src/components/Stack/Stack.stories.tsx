@@ -58,6 +58,14 @@ export const Aligned: Story = {
 };
 
 export const HiddenOnSmallScreens: Story = {
+  decorators: [
+    (Story) => (
+      <>
+        <p>The stack below appears from the md breakpoint up.</p>
+        <Story />
+      </>
+    ),
+  ],
   args: {
     display: { base: 'none', md: 'flex' },
     children: (

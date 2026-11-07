@@ -33,6 +33,22 @@ test('an icon renders at its token size', async ({ page }) => {
   expect(await icon.evaluate((el) => getComputedStyle(el).width)).toBe('16px');
 });
 
+test('a toned icon uses the forced text color in forced colors', async ({
+  page,
+}) => {
+  await page.goto('/');
+  const color = () =>
+    page.getByTestId('toned-icon').evaluate((el) => getComputedStyle(el).color);
+  const toned = await color();
+  await page.emulateMedia({ forcedColors: 'active' });
+  const forced = await color();
+  expect(forced).not.toBe(toned);
+  const text = await page
+    .getByTestId('text')
+    .evaluate((el) => getComputedStyle(el).color);
+  expect(forced).toBe(text);
+});
+
 test('layout and typography components render with their styles', async ({
   page,
 }) => {

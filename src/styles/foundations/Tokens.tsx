@@ -16,10 +16,12 @@ const swatch: CSSProperties = {
 };
 
 function ratio(theme: ThemeTokens, path: string, against: string) {
+  // A translucent value's contrast depends on what's behind it.
+  if (resolve(theme, path).includes('/')) return '—';
   try {
     return `${contrastRatio(resolve(theme, path), resolve(theme, against)).toFixed(2)}:1`;
   } catch {
-    // Transparent and translucent values have no single contrast.
+    // A transparent value has no contrast of its own.
     return '—';
   }
 }
@@ -112,7 +114,14 @@ export function TypeScale() {
       rows={Object.entries(font.size).map(([name, value]) => [
         name,
         <code key="value">{value}</code>,
-        <span key="sample" style={{ fontSize: value, lineHeight: 1.2 }}>
+        <span
+          key="sample"
+          style={{
+            fontFamily: font.family.sans,
+            fontSize: value,
+            lineHeight: 1.2,
+          }}
+        >
           Quick fox
         </span>,
       ])}
@@ -128,7 +137,10 @@ export function Weights() {
       rows={Object.entries(font.weight).map(([name, value]) => [
         name,
         <code key="value">{value}</code>,
-        <span key="sample" style={{ fontWeight: value }}>
+        <span
+          key="sample"
+          style={{ fontFamily: font.family.sans, fontWeight: value }}
+        >
           Quick fox
         </span>,
       ])}

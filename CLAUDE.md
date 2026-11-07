@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project state
 
-Personal React design system, published as `@adeebali/design-system-react`. All specs (00–16) are accepted. Milestone v0.1 is being built from `docs/superpowers/plans/2026-11-06-v0-1-foundations.md`.
+Personal React design system, published as `@adeebali/design-system-react`. All specs (00–16) are accepted. Milestone v0.1 is built on `feat/v0.1-foundations` (PR #17) and awaiting the owner, per `docs/HANDOFF.md`. Its plan is `docs/superpowers/plans/2026-11-06-v0-1-foundations.md`.
 
 ## Commands
 

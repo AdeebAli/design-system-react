@@ -15,7 +15,8 @@ import { theme } from './theme';
 createRoot(document.getElementById('root')!).render(
   <ThemeProvider theme={theme}>
     <Box data-testid="stub">
-      Vite fixture <Icon icon={Search} data-testid="icon" />
+      Vite fixture <Icon icon={Search} data-testid="icon" />{' '}
+      <Icon icon={Search} tone="muted" data-testid="toned-icon" />
     </Box>
     <Stack data-testid="layout">
       <Text data-testid="text" size="lg">

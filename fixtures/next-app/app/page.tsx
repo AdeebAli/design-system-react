@@ -8,7 +8,8 @@ export default function Page() {
   return (
     <>
       <Box data-testid="stub">
-        Next fixture <Icon icon={Search} data-testid="icon" />
+        Next fixture <Icon icon={Search} data-testid="icon" />{' '}
+        <Icon icon={Search} tone="muted" data-testid="toned-icon" />
       </Box>
       <Stack data-testid="layout">
         <Text data-testid="text" size="lg">
