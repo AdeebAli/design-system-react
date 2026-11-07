@@ -25,8 +25,7 @@ Architecture decisions are in `docs/adr/`. Build decisions, with what each costs
 ## Next steps
 
 1. Do the screen reader pass on `Link`, `VisuallyHidden`, and `Icon`.
-2. Decide whether `engines.node` should stay `>=26`. It applies to consumers too, and Node 24 is still a supported LTS.
-3. Mark PR #17 ready, merge it, and run `npm run release -- minor`. Then confirm the hosted Storybook is reachable.
+2. Mark PR #17 ready, merge it, and run `npm run release -- minor`. Then confirm the hosted Storybook is reachable.
 
 After the `update-baselines` workflow commits, CI on the PR fails with no jobs, because the bot pushes with `GITHUB_TOKEN`. Close and reopen the PR to run CI on the new baselines.
 

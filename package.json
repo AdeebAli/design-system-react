@@ -19,7 +19,7 @@
     "./package.json": "./package.json"
   },
   "engines": {
-    "node": ">=26"
+    "node": ">=24"
   },
   "peerDependencies": {
     "react": "^19",

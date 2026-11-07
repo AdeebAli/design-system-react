@@ -47,6 +47,6 @@ Read these first:
 
 ## Tooling decisions (spec 01)
 
-- npm, with `package-lock.json` committed and `npm ci` in CI. Node is pinned via `.nvmrc` and `engines` (ADR 0004). To catch phantom dependencies: a lint rule (`import/no-extraneous-dependencies`) plus a consumer fixture app that installs the packed tarball.
+- npm, with `package-lock.json` committed and `npm ci` in CI. Development and CI use the Node in `.nvmrc`. `engines.node` is the oldest version consumers may use (`>=24`), and CI also runs the package job on it (ADR 0004). To catch phantom dependencies: a lint rule (`import/no-extraneous-dependencies`) plus a consumer fixture app that installs the packed tarball.
 - Strict TypeScript, React 19 as a peer dependency, Vite library mode, Storybook, Vitest + Testing Library + axe, Playwright visual regression.
 - Release (ADR 0003): `npm run release -- <patch|minor|major>` checks that the branch is a clean, up-to-date `main`, runs all checks, then `npm version`, `git push --follow-tags`, and `gh release create --generate-notes`. A GitHub Actions workflow on `release: published` publishes to GitHub Packages. Never publish from a local machine. There is no CHANGELOG.md; release notes live in GitHub Releases.

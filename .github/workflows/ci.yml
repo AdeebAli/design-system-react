@@ -74,12 +74,20 @@ jobs:
             playwright-report
 
   package:
+    # Consumers may use any Node from engines.node up, so the tarball and both
+    # fixtures are also tested on the oldest supported version.
+    strategy:
+      fail-fast: false
+      matrix:
+        node: [nvmrc, '24']
+    name: package (node ${{ matrix.node }})
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version-file: .nvmrc
+          node-version-file: ${{ matrix.node == 'nvmrc' && '.nvmrc' || '' }}
+          node-version: ${{ matrix.node != 'nvmrc' && matrix.node || '' }}
           cache: npm
       - run: npm ci
       - uses: actions/cache@v4
@@ -88,4 +96,5 @@ jobs:
           key: playwright-${{ hashFiles('package-lock.json') }}
       - run: npx playwright install --with-deps chromium
       - run: npm run test:fixtures
-      - run: node scripts/size-report.mjs
+      - if: matrix.node == 'nvmrc'
+        run: node scripts/size-report.mjs

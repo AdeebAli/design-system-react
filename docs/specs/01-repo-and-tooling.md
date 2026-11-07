@@ -26,8 +26,10 @@ an (almost empty) package end to end.
 
 ## Runtime and language
 
-- **Node:** the current active LTS at setup time, pinned in `.nvmrc` and
-  `engines.node` (e.g., `">=24"`). CI reads `.nvmrc`.
+- **Node:** development uses the current active LTS at setup time, pinned in
+  `.nvmrc`. `engines.node` is the oldest supported LTS (`">=24"`), since it
+  also applies to consumers. CI reads `.nvmrc`, and also runs the package job
+  on the `engines` minimum.
 - **TypeScript:** latest stable. `tsconfig.json`:
   - `strict: true`, `noUncheckedIndexedAccess: true`,
     `noImplicitOverride: true`, `verbatimModuleSyntax: true`
