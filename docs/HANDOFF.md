@@ -14,8 +14,8 @@ owner, before any code is written.
   `00-overview`, `01-repo-and-tooling`, `02-tokens-and-themes`,
   `03-theme-provider`, `04-box-and-style-props`, `05-component-conventions`,
   `06-layout-and-typography`, `07-icon` (all of milestone v0.1's specs),
-  `08-bento`, `09-forms`, `10-navigation`, `11-prose`, `12-overlays`, `13-data`, `14-advanced-inputs`, and `15-app-navigation` **Accepted**. License is PolyForm Noncommercial 1.0.0.
-- **In progress:** `16-feedback-and-display`. Specs 14-16 were added when v1's scope grew beyond the past projects.
+  `08-bento`, `09-forms`, `10-navigation`, `11-prose`, `12-overlays`, `13-data`, `14-advanced-inputs`, `15-app-navigation`, and `16-feedback-and-display` **Accepted**, so all specs are complete. License is PolyForm Noncommercial 1.0.0.
+- **In progress:** the implementation plan for milestone v0.1. Specs 14-16 were added when v1's scope grew beyond the past projects.
 - **Blocked:** nothing.
 - **No code written.** Planning only; no dependencies installed.
 
@@ -75,18 +75,14 @@ server was started on port 56598 and auto-exits after 4 hours idle.
 
 ## Next steps
 
-1. Write spec 16 (`Alert`, `Spinner`, `Progress`, `Avatar`,
-   `Divider`, `Drawer`): draft → builder check → bring only the
-   questions that need the owner → update → owner approves.
-2. After the specs are approved, use `superpowers:writing-plans` to produce
-   implementation plans, starting with milestone v0.1.
+1. Use `superpowers:writing-plans` to produce implementation plans, starting
+   with milestone v0.1 (specs 01–07).
 
 ## Resume prompt
 
 > We're planning a personal React design system in
 > `~/projects/design-system-react` (`@adeebali/design-system-react`). Read
 > `docs/HANDOFF.md`, `docs/specs/00-overview.md`, and `docs/adr/*` first.
-> We're writing specs one at a time, interactively. Each spec is drafted,
-> checked by a reviewer, then approved by me before moving on. No code yet.
-> Next: the first spec in the index that isn't Accepted, asking me only the
-> questions whose answers change what gets built.
+> All specs are accepted, and there's no code yet. Next: the implementation
+> plan for milestone v0.1, asking me only the questions whose answers change
+> what gets built.
