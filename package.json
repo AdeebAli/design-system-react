@@ -1,0 +1,71 @@
+{
+  "name": "@adeebali/design-system-react",
+  "version": "0.0.0",
+  "description": "A personal React design system.",
+  "type": "module",
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./styles.css": "./dist/styles.css",
+    "./package.json": "./package.json"
+  },
+  "engines": {
+    "node": ">=26"
+  },
+  "peerDependencies": {
+    "react": "^19",
+    "react-dom": "^19"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AdeebAli/design-system-react.git"
+  },
+  "license": "PolyForm-Noncommercial-1.0.0",
+  "scripts": {
+    "build": "vite build --config vite.lib.config.ts && node scripts/verify-dist.mjs",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run --typecheck"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "@microsoft/api-extractor": "^7.60.1",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.8",
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vanilla-extract/css": "^1.21.3",
+    "@vanilla-extract/vite-plugin": "^5.2.6",
+    "@vitejs/plugin-react": "^6.2.1",
+    "eslint": "^9.39.5",
+    "eslint-plugin-import-x": "^4.18.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^17.14.0",
+    "jsdom": "^31.0.0",
+    "prettier": "^3.9.10",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "typescript": "~6.0",
+    "typescript-eslint": "^8.72.1",
+    "vite": "^8.3.6",
+    "vite-plugin-dts": "^5.1.2",
+    "vitest": "^5.1.0"
+  }
+}

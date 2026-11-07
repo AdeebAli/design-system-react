@@ -1,1 +1,10 @@
 .superpowers/
+node_modules
+dist
+storybook-static
+*.tgz
+test-results
+playwright-report
+fixtures/*/package-lock.json
+fixtures/*/.next
+fixtures/*/next-env.d.ts

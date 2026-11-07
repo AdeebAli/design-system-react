@@ -7,6 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 Personal React design system, published as `@adeebali/design-system-react`. The repo is in the **planning phase**: no code, no `package.json`, no dependencies. There are no build, lint, or test commands yet. Spec 01 (repo and tooling) will define them; update this file when it does.
 
 Read these first:
+
 - `docs/HANDOFF.md`: current status, decisions with rejected alternatives, open threads, next steps.
 - `docs/specs/00-overview.md`: goals, non-goals, the theming contract, v1 scope, milestones, and the spec index.
 - `docs/adr/0001`–`0004`: accepted architecture decisions.
