@@ -9,6 +9,8 @@ export * from './components/Grid';
 export * from './components/Container';
 export * from './components/Center';
 export * from './components/Inset';
+export * from './components/Text';
+export * from './components/Heading';
 export { breakpoints } from './tokens/breakpoints';
 export { tokens } from './tokens/primitives';
 export { vars } from './themes/contract.css';
