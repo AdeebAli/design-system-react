@@ -14,8 +14,8 @@ owner, before any code is written.
   `00-overview`, `01-repo-and-tooling`, `02-tokens-and-themes`,
   `03-theme-provider`, `04-box-and-style-props`, `05-component-conventions`,
   `06-layout-and-typography`, `07-icon` (all of milestone v0.1's specs),
-  `08-bento`, `09-forms`, `10-navigation`, `11-prose`, `12-overlays`, `13-data`, and `14-advanced-inputs` **Accepted**. License is PolyForm Noncommercial 1.0.0.
-- **In progress:** `15-app-navigation`, then spec 16. Specs 14-16 were added when v1's scope grew beyond the past projects.
+  `08-bento`, `09-forms`, `10-navigation`, `11-prose`, `12-overlays`, `13-data`, `14-advanced-inputs`, and `15-app-navigation` **Accepted**. License is PolyForm Noncommercial 1.0.0.
+- **In progress:** `16-feedback-and-display`. Specs 14-16 were added when v1's scope grew beyond the past projects.
 - **Blocked:** nothing.
 - **No code written.** Planning only; no dependencies installed.
 
@@ -75,10 +75,9 @@ server was started on port 56598 and auto-exits after 4 hours idle.
 
 ## Next steps
 
-1. Write specs 15 (`Sidebar`,
-   `Breadcrumbs`, `Accordion`), and 16 (`Alert`, `Spinner`, `Progress`, `Avatar`,
-   `Divider`, `Drawer`) in order: draft → builder check → bring only the
-   questions that need the owner → update → owner approves → next spec.
+1. Write spec 16 (`Alert`, `Spinner`, `Progress`, `Avatar`,
+   `Divider`, `Drawer`): draft → builder check → bring only the
+   questions that need the owner → update → owner approves.
 2. After the specs are approved, use `superpowers:writing-plans` to produce
    implementation plans, starting with milestone v0.1.
 
