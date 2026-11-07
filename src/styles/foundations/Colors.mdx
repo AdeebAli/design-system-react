@@ -1,0 +1,26 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { ColorTable } from './Tokens';
+
+<Meta title="Foundations/Colors" />
+
+# Colors
+
+Soft Light and Soft Dark, side by side. Components read these through `vars`, so overriding a token changes every component that uses it. Text needs 4.5:1, and control borders and focus rings need 3:1.
+
+## Backgrounds
+
+Contrast is `color.fg.default` on each background. Solid backgrounds such as `accent` and the statuses pair with their own `onAccent` and `onStatus` text, so a low value here isn't a failure.
+
+<ColorTable group="bg" against="color.fg.default" />
+
+## Text and icons
+
+Contrast is against `color.bg.surface`. `onAccent`, `onStatus`, and `inverse` sit on their own backgrounds, so a low value here isn't a failure.
+
+<ColorTable group="fg" against="color.bg.surface" />
+
+## Borders
+
+Contrast is against `color.bg.surface`. `subtle` is decorative. `surface` is transparent in Soft.
+
+<ColorTable group="border" against="color.bg.surface" />

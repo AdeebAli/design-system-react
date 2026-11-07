@@ -16,6 +16,22 @@ const stories = Object.values(index.entries).filter(
   (entry) => entry.type === 'story',
 );
 
+// Foundation pages show both themes' values side by side, so one mode is enough
+// (Spec 02).
+const foundationPages = Object.values(index.entries).filter(
+  (entry) => entry.type === 'docs' && entry.id.startsWith('foundations-'),
+);
+
+for (const docs of foundationPages) {
+  test(docs.id, async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto(`/iframe.html?id=${docs.id}&viewMode=docs`);
+    await page.locator('#storybook-docs h1').waitFor();
+    await page.evaluate(() => document.fonts.ready);
+    await expect(page).toHaveScreenshot(`${docs.id}.png`, { fullPage: true });
+  });
+}
+
 for (const story of stories) {
   for (const mode of ['light', 'dark'] as const) {
     test(`${story.id} ${mode}`, async ({ page }) => {

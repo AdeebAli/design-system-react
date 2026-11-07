@@ -128,6 +128,19 @@ Or use plain CSS. It must be unlayered, or in a layer declared after `ds.theme`.
 
 Changing the accent takes more than one token. `bg.accentHover`, `bg.accentSubtle`, and `fg.onAccent` are separate values, so set those too.
 
+## Icons
+
+`Icon` accepts any SVG component. [Lucide](https://lucide.dev/icons) is recommended, and you install it yourself, since this package doesn't depend on it.
+
+```tsx
+import { Icon } from '@adeebali/design-system-react';
+import { X } from 'lucide-react';
+
+<Icon icon={X} label="Close" />;
+```
+
+Without `label`, an icon is decorative. Don't set `color` through Lucide's `LucideProvider`, because it overrides `tone`.
+
 ## Maintaining
 
 ### Scripts

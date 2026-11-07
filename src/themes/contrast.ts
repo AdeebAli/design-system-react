@@ -89,7 +89,8 @@ export function contrastRatio(a: string, b: string): number {
   return (light + 0.05) / (dark + 0.05);
 }
 
-function resolve(theme: ThemeTokens, path: string): string {
+/** A token's final value, following aliases to other tokens. */
+export function resolve(theme: ThemeTokens, path: string): string {
   const value = path
     .split('.')
     .reduce<unknown>(
