@@ -93,6 +93,7 @@ Every key below is required in every theme. Values for Soft are in
 | `color.fg.onAccent` | Text/icons on `bg.accent` |
 | `color.fg.{success,warning,danger,info}` | Status text (on surface, canvas, or the matching subtle bg) |
 | `color.fg.onStatus` | Text/icons on solid status backgrounds |
+| `color.bg.avatar.{1-6}`, `color.fg.avatar.{1-6}` | `Avatar`'s `colorFromName` pairs (Spec 16). Values are set when `Avatar` is built, within the contrast rule below |
 | `color.fg.inverse` | Text/icons on `bg.inverse` |
 | `color.fg.disabled` | Disabled control text and icons |
 | `color.border.subtle` | Decorative dividers, table rules |
@@ -127,6 +128,8 @@ Every key below is required in every theme. Values for Soft are in
 | `size.prose` | Max line length for reading |
 | `size.dialog.{sm,md,lg}` | `Dialog` widths (Spec 12) |
 | `size.sidebar`, `size.sidebarRail` | `Sidebar` widths (Spec 15) |
+| `size.drawer.{sm,md,lg}` | `Drawer` widths (Spec 16) |
+| `size.avatar.{sm,md,lg,xl}` | `Avatar` sizes (Spec 16) |
 | `radius.{none,sm,md,lg,xl,full}` | Radius scale |
 | `radius.card` | Cards (semantic alias) |
 | `radius.control` | Buttons, inputs, selects (semantic alias) |
@@ -274,6 +277,8 @@ Spacing values are emitted in rem (px ÷ 16), except `space.px`, which stays
 | `size.prose` | 68ch |
 | `size.dialog.sm` / `md` / `lg` | 24rem / 32rem / 44rem (384 / 512 / 704px) |
 | `size.sidebar` / `sidebarRail` | 15rem / 3.5rem (240 / 56px) |
+| `size.drawer.sm` / `md` / `lg` | 20rem / 28rem / 40rem (320 / 448 / 640px) |
+| `size.avatar.sm` / `md` / `lg` / `xl` | 1.5rem / 2rem / 2.5rem / 4rem (24 / 32 / 40 / 64px) |
 
 - Bento card gap default: `space.3` (12px); card padding default: `space.4`
   (16px). Defined as component defaults in Spec 08, listed here for
@@ -386,12 +391,14 @@ and fails below the threshold:
 |---|---|
 | `fg.default`, `fg.muted`, `fg.accent`, `fg.{status}` on `bg.canvas`, `bg.surface`, `bg.raised`, `bg.sunken` | 4.5:1 |
 | `fg.default`, `fg.muted` on `bg.muted` | 4.5:1 |
-| `fg.{status}` on `bg.{status}Subtle`; `fg.default`, `fg.muted`, `fg.accent` on `bg.accentSubtle` | 4.5:1 |
+| `fg.{status}`, `fg.default` on `bg.{status}Subtle`; `fg.default`, `fg.muted`, `fg.accent` on `bg.accentSubtle` | 4.5:1 |
+| `fg.avatar.{n}` on `bg.avatar.{n}` | 4.5:1 |
 | `fg.onAccent` on `bg.accent` and `bg.accentHover` | 4.5:1 |
 | `fg.onStatus` on `bg.{status}` and `bg.dangerHover` | 4.5:1 |
 | `fg.default` on `bg.mutedHover` | 4.5:1 |
 | `fg.inverse` on `bg.inverse` | 4.5:1 |
 | `border.control`, `border.danger`, `focus` on `bg.canvas`, `bg.surface`, `bg.raised`, `bg.sunken` | 3:1 (WCAG 1.4.11 non-text) |
+| `bg.accent`, `bg.{status}` on `bg.muted`, `bg.canvas`, `bg.surface`, `bg.raised` (`Progress` and `Avatar` status, Spec 16) | 3:1 (WCAG 1.4.11 non-text) |
 
 - `fg.subtle`, `fg.disabled`, `bg.disabled`, and `border.disabled` are
   **excluded**: disabled controls are exempt under WCAG, and `fg.subtle` is
