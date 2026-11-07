@@ -54,7 +54,7 @@ for (const file of files.filter((name) => name.endsWith('.js'))) {
   }
 }
 
-const clientModules = ['utils/clientProbe.js'];
+const clientModules = ['theme/ThemeProvider.js'];
 for (const module of clientModules) {
   const path = join(dist, module);
   if (!existsSync(path)) {
