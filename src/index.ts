@@ -2,6 +2,13 @@ import './styles';
 
 export * from './components/Box';
 export * from './components/Icon';
+export * from './components/Flex';
+export * from './components/Stack';
+export * from './components/Inline';
+export * from './components/Grid';
+export * from './components/Container';
+export * from './components/Center';
+export * from './components/Inset';
 export { breakpoints } from './tokens/breakpoints';
 export { tokens } from './tokens/primitives';
 export { vars } from './themes/contract.css';
