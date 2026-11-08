@@ -66,7 +66,11 @@ for (const module of clientModules) {
 }
 
 // Server-safe components must not become client modules (Spec 08).
-const serverModules = ['components/Card/Card.js'];
+const serverModules = [
+  'components/Card/Card.js',
+  'components/Stat/Stat.js',
+  'components/Badge/Badge.js',
+];
 for (const module of serverModules) {
   const path = join(dist, module);
   if (!existsSync(path)) {

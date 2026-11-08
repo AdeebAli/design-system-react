@@ -16,6 +16,8 @@ export * from './components/Code';
 export * from './components/Kbd';
 export * from './components/VisuallyHidden';
 export * from './components/Card';
+export * from './components/Stat';
+export * from './components/Badge';
 export { breakpoints } from './tokens/breakpoints';
 export { tokens } from './tokens/primitives';
 export { vars } from './themes/contract.css';

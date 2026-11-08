@@ -1,0 +1,52 @@
+import { render, screen } from '@testing-library/react';
+import { Icon } from '../Icon';
+import { ArrowUpIcon } from '../Icon/internal/ArrowUp';
+import { badge } from './Badge.css';
+import { Badge, type BadgeTone } from './index';
+
+const TONES: BadgeTone[] = [
+  'neutral',
+  'accent',
+  'success',
+  'warning',
+  'danger',
+  'info',
+];
+
+it.each(
+  TONES.flatMap((tone) =>
+    (['soft', 'solid'] as const).map((variant) => [tone, variant] as const),
+  ),
+)('Badge %s %s applies its class', (tone, variant) => {
+  render(
+    <Badge tone={tone} variant={variant}>
+      Label
+    </Badge>,
+  );
+  expect(screen.getByText('Label').className).toContain(
+    badge({ tone, variant, size: 'md' }),
+  );
+});
+
+it('defaults to neutral soft md', () => {
+  render(<Badge>Label</Badge>);
+  expect(screen.getByText('Label').className).toContain(
+    badge({ tone: 'neutral', variant: 'soft', size: 'md' }),
+  );
+});
+
+it('renders a span', () => {
+  render(<Badge>Label</Badge>);
+  expect(screen.getByText('Label').tagName).toBe('SPAN');
+});
+
+it('renders startIcon before the text', () => {
+  render(
+    <Badge startIcon={<Icon icon={ArrowUpIcon} data-testid="i" />}>
+      Label
+    </Badge>,
+  );
+  const icon = screen.getByTestId('i');
+  expect(icon.closest('span')?.parentElement).toBe(screen.getByText('Label'));
+  expect(screen.getByText('Label').firstElementChild).toContainElement(icon);
+});

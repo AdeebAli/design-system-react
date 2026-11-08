@@ -1,0 +1,44 @@
+import { render, screen } from '@testing-library/react';
+import { Icon } from '../Icon';
+import { ArrowUpIcon } from '../Icon/internal/ArrowUp';
+import { Badge } from './index';
+
+it('sizes startIcon to its 12px text', () => {
+  render(
+    <Badge startIcon={<Icon icon={ArrowUpIcon} data-testid="i" />}>Up</Badge>,
+  );
+  const box = screen.getByTestId('i').getBoundingClientRect();
+  expect(box.width).toBe(12);
+  expect(box.height).toBe(12);
+});
+
+it('is a fully rounded pill', () => {
+  render(<Badge data-testid="b">Pro</Badge>);
+  const b = screen.getByTestId('b');
+  expect(
+    parseFloat(getComputedStyle(b).borderTopLeftRadius),
+  ).toBeGreaterThanOrEqual(b.getBoundingClientRect().height / 2);
+});
+
+it.each([
+  ['success', 'soft', '--ds-color-bg-success-subtle', '--ds-color-fg-success'],
+  ['success', 'solid', '--ds-color-bg-success', '--ds-color-fg-on-status'],
+  ['neutral', 'solid', '--ds-color-bg-inverse', '--ds-color-fg-inverse'],
+  ['accent', 'soft', '--ds-color-bg-accent-subtle', '--ds-color-fg-accent'],
+] as const)('%s %s uses its token colors', (tone, variant, bg, fg) => {
+  render(
+    <>
+      <Badge data-testid="b" tone={tone} variant={variant}>
+        x
+      </Badge>
+      <span
+        data-testid="probe"
+        style={{ background: `var(${bg})`, color: `var(${fg})` }}
+      />
+    </>,
+  );
+  const badge = getComputedStyle(screen.getByTestId('b'));
+  const probe = getComputedStyle(screen.getByTestId('probe'));
+  expect(badge.backgroundColor).toBe(probe.backgroundColor);
+  expect(badge.color).toBe(probe.color);
+});
