@@ -64,6 +64,11 @@ const clientModules = [
   'components/Field/FieldContext.js',
   'components/Input/Input.js',
   'components/Textarea/Textarea.js',
+  'components/Checkbox/Checkbox.js',
+  'components/Checkbox/ChoiceLabel.js',
+  'components/RadioGroup/RadioGroup.js',
+  'components/Radio/Radio.js',
+  'components/Switch/Switch.js',
 ];
 for (const module of clientModules) {
   const path = join(dist, module);

@@ -1,0 +1,113 @@
+'use client';
+
+import { RadioGroup as BaseRadioGroup } from '@base-ui/react/radio-group';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useRef,
+  type ReactNode,
+  type Ref,
+} from 'react';
+import { cx } from '../../utils/cx';
+import { splitLayoutProps } from '../../utils/splitLayoutProps';
+import type { ComponentProps } from '../../utils/types';
+import { box } from '../Box';
+import type { Responsive, SpaceToken } from '../Box/types';
+import { useFieldControl } from '../Field/FieldContext';
+
+const RadioGroupContext = createContext<{
+  invalid: boolean;
+  inField: boolean;
+} | null>(null);
+
+function assignRef<T>(ref: Ref<T> | undefined, value: T) {
+  if (typeof ref === 'function') ref(value);
+  else if (ref) ref.current = value;
+}
+
+/** Reads the surrounding `RadioGroup`, for `Radio`. */
+export function useRadioGroup() {
+  return useContext(RadioGroupContext);
+}
+
+interface RadioGroupOwnProps {
+  /** The selected value, when controlled. */
+  value?: string;
+  /** The value selected at first, when uncontrolled. */
+  defaultValue?: string;
+  /** Called with the newly selected value. */
+  onValueChange?: (value: string) => void;
+  /** The name submitted with a form. */
+  name?: string;
+  /** Marks the group invalid. @default From `Field` */
+  invalid?: boolean;
+  /** Disables every radio. @default From `Field` */
+  disabled?: boolean;
+  /** Sets `aria-required`. It doesn't validate. @default From `Field` */
+  required?: boolean;
+  /** The space between radios. @default '2' */
+  gap?: Responsive<SpaceToken>;
+  children?: ReactNode;
+}
+
+/** `RadioGroup`'s props. Label it with a surrounding `Field`. */
+export type RadioGroupProps = ComponentProps<'div', RadioGroupOwnProps>;
+
+/** A group of `Radio`s, one of which can be selected. */
+export function RadioGroup({
+  onValueChange,
+  invalid: invalidProp,
+  disabled: disabledProp,
+  required: requiredProp,
+  gap = '2',
+  className,
+  children,
+  ref,
+  ...props
+}: RadioGroupProps) {
+  const root = useRef<HTMLDivElement | null>(null);
+  // Focuses the checked radio, or the first enabled one, as Tab would.
+  const focus = useCallback(() => {
+    const radios = root.current?.querySelectorAll<HTMLElement>(
+      '[role="radio"]:not([data-disabled])',
+    );
+    const list = [...(radios ?? [])];
+    (
+      list.find((r) => r.getAttribute('aria-checked') === 'true') ?? list[0]
+    )?.focus();
+  }, []);
+  const field = useFieldControl('button', focus);
+  const setRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      root.current = node;
+      assignRef(ref, node);
+    },
+    [ref],
+  );
+  const invalid = invalidProp ?? field.invalid;
+  const disabled = disabledProp ?? field.disabled;
+  const required = requiredProp ?? field.required;
+  const [layout, rest] = splitLayoutProps(props);
+
+  return (
+    <RadioGroupContext.Provider value={{ invalid, inField: field.inField }}>
+      <BaseRadioGroup
+        ref={setRef}
+        className={cx(
+          box({ ...layout, display: 'flex', flexDirection: 'column', gap }),
+          className,
+        )}
+        disabled={disabled}
+        aria-invalid={invalid || undefined}
+        aria-required={required || undefined}
+        onValueChange={
+          onValueChange && ((value: unknown) => onValueChange(value as string))
+        }
+        {...rest}
+      >
+        {children}
+      </BaseRadioGroup>
+    </RadioGroupContext.Provider>
+  );
+}

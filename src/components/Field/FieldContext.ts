@@ -11,6 +11,8 @@ export interface FieldContextValue {
   required: boolean;
   hasLabel: boolean;
   setKind: (kind: FieldControlKind) => void;
+  /** Lets a control that Base UI's label can't focus, such as a group, focus itself. */
+  focusRef: { current: (() => void) | null };
 }
 
 export const FieldContext = createContext<FieldContextValue | null>(null);
@@ -30,13 +32,24 @@ export interface FieldControlState {
  * A `button` control gets a non-`label` label, so a click focuses it without
  * activating it. Outside a `Field`, everything is `false`.
  */
-export function useFieldControl(kind: FieldControlKind): FieldControlState {
+export function useFieldControl(
+  kind: FieldControlKind,
+  focus?: () => void,
+): FieldControlState {
   const field = useContext(FieldContext);
   const setKind = field?.setKind;
+  const focusRef = field?.focusRef;
   // A layout effect, so the label switches before the first paint.
   useLayoutEffect(() => {
     setKind?.(kind);
   }, [setKind, kind]);
+  useLayoutEffect(() => {
+    if (!focusRef || !focus) return;
+    focusRef.current = focus;
+    return () => {
+      focusRef.current = null;
+    };
+  }, [focusRef, focus]);
   return {
     invalid: field?.invalid ?? false,
     disabled: field?.disabled ?? false,

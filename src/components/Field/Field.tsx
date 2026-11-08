@@ -1,7 +1,7 @@
 'use client';
 
 import { Field as BaseField } from '@base-ui/react/field';
-import { useMemo, useState, type ReactNode } from 'react';
+import { useMemo, useRef, useState, type ReactNode } from 'react';
 import { cx } from '../../utils/cx';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
@@ -45,10 +45,11 @@ export function Field({
   ...props
 }: FieldProps) {
   const [kind, setKind] = useState<FieldControlKind>('native');
+  const focusRef = useRef<(() => void) | null>(null);
   const invalid = invalidProp || error != null;
   const hasLabel = label != null;
   const context = useMemo(
-    () => ({ invalid, disabled, required, hasLabel, setKind }),
+    () => ({ invalid, disabled, required, hasLabel, setKind, focusRef }),
     [invalid, disabled, required, hasLabel],
   );
   const [layout, rest] = splitLayoutProps(props);
@@ -84,6 +85,7 @@ export function Field({
               nativeLabel={false}
               render={<div />}
               className={styles.label}
+              onClick={() => focusRef.current?.()}
             >
               {labelContent}
             </BaseField.Label>
