@@ -15,6 +15,7 @@ export * from './components/Link';
 export * from './components/Code';
 export * from './components/Kbd';
 export * from './components/VisuallyHidden';
+export * from './components/Card';
 export { breakpoints } from './tokens/breakpoints';
 export { tokens } from './tokens/primitives';
 export { vars } from './themes/contract.css';
