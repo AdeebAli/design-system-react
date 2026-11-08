@@ -69,6 +69,7 @@ const clientModules = [
   'components/RadioGroup/RadioGroup.js',
   'components/Radio/Radio.js',
   'components/Switch/Switch.js',
+  'components/Select/Select.js',
 ];
 for (const module of clientModules) {
   const path = join(dist, module);

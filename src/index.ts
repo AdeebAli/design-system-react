@@ -27,6 +27,7 @@ export * from './components/Checkbox';
 export * from './components/RadioGroup';
 export * from './components/Radio';
 export * from './components/Switch';
+export * from './components/Select';
 export { breakpoints } from './tokens/breakpoints';
 export { tokens } from './tokens/primitives';
 export { vars } from './themes/contract.css';
