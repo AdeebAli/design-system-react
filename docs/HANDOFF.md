@@ -9,7 +9,7 @@ Build `@adeebali/design-system-react`, a general-purpose React design system. Sp
 ## Status
 
 - **Done:** milestone v0.1 (specs 01–07) is merged to `main` as `9c49e84` (PR #17): tooling and the release pipeline, tokens and Soft themes, `ThemeProvider`, `Box`, component conventions, `Icon`, 13 layout and typography components, and the Foundations pages. Its plan was `docs/superpowers/plans/2026-11-06-v0-1-foundations.md`.
-- **Not released yet:** the first release, `npm run release -- minor`, is the owner's.
+- **Released:** v0.1.0 (`f49377f`), published to GitHub Packages, with Storybook deployed at https://adeebali.github.io/design-system-react/.
 - **Not started:** v0.2, which is Spec 08 (Bento) and Spec 09 (Forms).
 - **Accessibility:** the owner's screen reader pass on `Link`, `VisuallyHidden`, and `Icon` is done.
 
@@ -25,7 +25,7 @@ Architecture decisions are in `docs/adr/`. Build decisions from v0.1, with what 
 
 ## Next steps
 
-1. Release v0.1 with `npm run release -- minor` from a clean, up-to-date `main`. Then confirm the hosted Storybook is reachable, and install the package from GitHub Packages with a `read:packages` token (Spec 01).
+1. Install `@adeebali/design-system-react@0.1.0` from GitHub Packages with a `read:packages` token, to finish Spec 01's registry check. It needs the owner's token.
 2. Write the v0.2 implementation plan from Specs 08 and 09, asking the owner only questions whose answers change what gets built.
 
 After the `update-baselines` workflow commits to a PR, CI on that commit fails with no jobs, because the bot pushes with `GITHUB_TOKEN`. Close and reopen the PR to run CI on the new baselines.
