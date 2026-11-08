@@ -60,6 +60,10 @@ const clientModules = [
   'components/Button/ButtonBase.js',
   'components/Button/Button.js',
   'components/IconButton/IconButton.js',
+  'components/Field/Field.js',
+  'components/Field/FieldContext.js',
+  'components/Input/Input.js',
+  'components/Textarea/Textarea.js',
 ];
 for (const module of clientModules) {
   const path = join(dist, module);
