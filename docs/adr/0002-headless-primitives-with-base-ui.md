@@ -32,6 +32,23 @@ package name and version at setup time.
 - Components with no meaningful interactive behavior (`Box`, `Stack`, `Text`,
   `Card`, `Stat`, `Badge`, `Prose`, etc.) do not use Base UI.
 
+## Package (verified 2026-11-08)
+
+- The package is **`@base-ui/react`**. The earlier `@base-ui-components/react`
+  is deprecated with "Package was renamed to @base-ui/react".
+- Latest stable is **1.9.0** (MIT). Its peers are `react` and `react-dom`
+  `^17 || ^18 || ^19`, so React 19 is covered. `date-fns` and `@date-fns/tz`
+  are optional peers, needed only for date components.
+- 1.9.0 exports every part Spec 09 builds on: `field`, `select`, `checkbox`,
+  `radio-group` and `radio`, `switch`, `toggle`, `toggle-group`, and `button`.
+  Spec 09's specific API claims hold in its types: `Field.Root` has `invalid`
+  but no `required`, `Field.Label` has `nativeLabel`, parts take a `render`
+  prop, `Select.Root` takes `items` and passes event details to
+  `onValueChange`, `Checkbox` and `Switch` use `onCheckedChange`, `Toggle` uses
+  `pressed` and `onPressedChange`, `ToggleGroup` has `multiple`, and buttons
+  have `nativeButton`.
+- Install it as `^1.9.0` when v0.2 begins.
+
 ## Alternatives considered
 
 | Option | Why not chosen |

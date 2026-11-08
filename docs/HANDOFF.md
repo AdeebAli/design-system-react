@@ -11,6 +11,7 @@ Build `@adeebali/design-system-react`, a general-purpose React design system. Sp
 - **Done:** milestone v0.1 (specs 01–07) is merged to `main` as `9c49e84` (PR #17): tooling and the release pipeline, tokens and Soft themes, `ThemeProvider`, `Box`, component conventions, `Icon`, 13 layout and typography components, and the Foundations pages. Its plan was `docs/superpowers/plans/2026-11-06-v0-1-foundations.md`.
 - **Not released yet:** the first release, `npm run release -- minor`, is the owner's.
 - **Not started:** v0.2, which is Spec 08 (Bento) and Spec 09 (Forms).
+- **Accessibility:** the owner's screen reader pass on `Link`, `VisuallyHidden`, and `Icon` is done.
 
 ## Decisions
 
@@ -18,11 +19,9 @@ Architecture decisions are in `docs/adr/`. Build decisions from v0.1, with what 
 
 ## Open threads
 
-1. **The screen reader pass** on `Link`, `VisuallyHidden`, and `Icon` hasn't been recorded as done.
-2. **Inter comes from `inter-ui` 4.1.1, pinned exactly,** because Fontsource's files drop `cv05` and `cv08`. `scripts/build-fonts.mjs` hardcodes each file's `unicode-range`, read from that version's character maps, so recompute them if the version changes.
-3. **`engines.node` is `>=22`,** the oldest Node line still supported upstream. Raise it when Node 22 reaches end of life in April 2027.
-4. **`.vitest/` isn't ignored.** A failing browser test writes screenshots there.
-5. **Base UI arrives in v0.2.** Forms are the first interactive components, so ADR 0002's Base UI package and version are still unverified, as is whether it covers every component Spec 09 lists.
+1. **Inter comes from `inter-ui`,** because Fontsource's files drop `cv05` and `cv08`. The build reads each font file's `unicode-range` from its character map (`scripts/font-ranges.mjs`), so an `inter-ui` update needs no manual range work. A test pins the 4.1.1 ranges, so an update that changes them fails until someone reviews the new ones.
+2. **`engines.node` is `>=22`.** The release script refuses to release after Node 22's end of life, April 30, 2027, until the floor and CI's Node matrix are raised.
+3. **Base UI is verified** in ADR 0002: `@base-ui/react` 1.9.0 covers everything Spec 09 needs. v0.2 installs it.
 
 ## Next steps
 
