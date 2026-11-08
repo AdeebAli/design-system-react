@@ -70,6 +70,8 @@ const clientModules = [
   'components/Radio/Radio.js',
   'components/Switch/Switch.js',
   'components/Select/Select.js',
+  'components/ToggleChip/ToggleChip.js',
+  'components/ToggleChipGroup/ToggleChipGroup.js',
 ];
 for (const module of clientModules) {
   const path = join(dist, module);

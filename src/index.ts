@@ -28,6 +28,8 @@ export * from './components/RadioGroup';
 export * from './components/Radio';
 export * from './components/Switch';
 export * from './components/Select';
+export * from './components/ToggleChip';
+export * from './components/ToggleChipGroup';
 export { breakpoints } from './tokens/breakpoints';
 export { tokens } from './tokens/primitives';
 export { vars } from './themes/contract.css';
