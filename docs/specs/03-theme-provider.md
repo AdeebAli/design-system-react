@@ -206,8 +206,10 @@ const crisp = defineFullTheme({ light: crispLight, dark: crispDark });
 - **Value types:** strings, plus numbers for the unitless categories
   (`zIndex`, `font.weight`, `font.lineHeight`). A number elsewhere is a type
   error, so `radius: { control: 8 }` can't produce invalid CSS.
-- **Values are validated.** A value containing `{`, `}`, `;`, or `<` throws,
-  which prevents CSS injection if a value ever comes from user input.
+- **Values are validated.** A value containing `{`, `}`, `;`, `<`, `\`, or
+  `/*`, or an unclosed quote, throws. This prevents CSS injection if a value
+  ever comes from user input, and stops one malformed value from swallowing
+  the rules after it.
 - **A custom font is the project's to load.** Browsers won't download the
   bundled fonts when nothing uses them (Spec 02).
 

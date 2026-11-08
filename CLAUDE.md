@@ -4,7 +4,20 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project state
 
-Personal React design system, published as `@adeebali/design-system-react`. The repo is in the **planning phase**: no code, no `package.json`, no dependencies. There are no build, lint, or test commands yet. Spec 01 (repo and tooling) will define them; update this file when it does.
+Personal React design system, published as `@adeebali/design-system-react`. All specs (00–16) are accepted. Milestone v0.1 is built on `feat/v0.1-foundations` (PR #17) and awaiting the owner, per `docs/HANDOFF.md`. Its plan is `docs/superpowers/plans/2026-11-06-v0-1-foundations.md`.
+
+## Commands
+
+Node comes from `.nvmrc`, so run `nvm use` first.
+
+- `npm run dev`: Storybook.
+- `npm run build`: library build into `dist/`, then `scripts/verify-dist.mjs`.
+- `npm run typecheck`, `npm run lint`, `npm run format:check`.
+- `npm test`: unit, behavior, type, and script tests. For one file: `npx vitest run --project unit src/components/Box`.
+- `npm run test:stories`: every story as a browser test, with axe in both modes.
+- `npm run test:fixtures`: packs the tarball and tests it in `fixtures/vite-app` and `fixtures/next-app`.
+- `npm run test:visual`: local runs are a preview only. Baselines come only from the `update-visual-baselines` workflow.
+- `npm run check`: everything except `test:visual`.
 
 Read these first:
 - `docs/HANDOFF.md`: current status, decisions with rejected alternatives, open threads, next steps.
@@ -19,6 +32,7 @@ Read these first:
 - Items marked **(proposed)** in specs are the assistant's calls and not owner-confirmed. Don't treat them as settled.
 - Implementation plans come only after the specs are approved, starting with milestone v0.1 (specs 01–07).
 - Brainstorm mockups live in `.superpowers/` (gitignored).
+- A subagent may act as a fresh reviewer of a finished branch or plan, such as the final whole-branch review in `superpowers:executing-plans`. This is an exception to the owner's general limits on subagents. Give it read-only work, and validate its findings before acting on them.
 
 ## Architecture constraints (from the ADRs and spec 00)
 
@@ -31,8 +45,8 @@ Read these first:
 - **Icons:** `Icon` accepts any SVG component. Lucide is recommended, but this package doesn't depend on it: projects install `lucide-react` themselves, and internal icons are copied in as small SVG components with Lucide's ISC notice (spec 07).
 - **Accessibility target:** WCAG 2.2 AA in both light and dark modes.
 
-## Tooling decisions (to be set up in spec 01)
+## Tooling decisions (spec 01)
 
-- npm, with `package-lock.json` committed and `npm ci` in CI. Node is pinned via `.nvmrc` and `engines` (ADR 0004). To catch phantom dependencies: a lint rule (`import/no-extraneous-dependencies`) plus a consumer fixture app that installs the packed tarball.
+- npm, with `package-lock.json` committed and `npm ci` in CI. Development and CI use the Node in `.nvmrc`. `engines.node` is the oldest version consumers may use (`>=22`, the oldest Node line still supported upstream), and CI also runs the package job on it (ADR 0004). To catch phantom dependencies: a lint rule (`import/no-extraneous-dependencies`) plus a consumer fixture app that installs the packed tarball.
 - Strict TypeScript, React 19 as a peer dependency, Vite library mode, Storybook, Vitest + Testing Library + axe, Playwright visual regression.
 - Release (ADR 0003): `npm run release -- <patch|minor|major>` checks that the branch is a clean, up-to-date `main`, runs all checks, then `npm version`, `git push --follow-tags`, and `gh release create --generate-notes`. A GitHub Actions workflow on `release: published` publishes to GitHub Packages. Never publish from a local machine. There is no CHANGELOG.md; release notes live in GitHub Releases.
