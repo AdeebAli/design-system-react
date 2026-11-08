@@ -9,7 +9,8 @@
   "dependencies": {
     "lucide-react": "^1",
     "react": "^19",
-    "react-dom": "^19"
+    "react-dom": "^19",
+    "react-hook-form": "^7"
   },
   "devDependencies": {
     "@types/react": "^19",

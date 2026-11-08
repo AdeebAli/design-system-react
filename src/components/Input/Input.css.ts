@@ -28,7 +28,7 @@ export const control = style(
         cursor: 'not-allowed',
       },
     },
-    // iOS Safari zooms into text under 16px (Spec 09).
+    // iOS Safari zooms into text smaller than font.size.lg (Spec 09).
     '@media': { '(pointer: coarse)': { fontSize: vars.font.size.lg } },
   }),
 );
@@ -83,7 +83,7 @@ export const textarea = style(
     display: 'block',
     width: '100%',
     // Two rows of text, plus padding and border.
-    minHeight: `calc(2lh + 2 * ${vars.space['2']} + 2px)`,
+    minHeight: `calc(2lh + 2 * ${vars.space['2']} + 2 * 1px)`,
     paddingBlock: vars.space['2'],
     paddingInline: vars.space['3'],
     selectors: {

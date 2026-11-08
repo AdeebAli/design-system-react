@@ -24,7 +24,7 @@ export const label = style(
     lineHeight: vars.font.lineHeight.normal,
     color: fg.default,
     cursor: 'pointer',
-    // The whole label is the target, so the 18px box still meets 24px (Spec 09).
+    // The whole label is the target, so the small box still meets the 24 CSS pixel minimum (Spec 09).
     minHeight: '1.5rem',
     selectors: {
       '&[data-disabled]': { color: fg.disabled, cursor: 'not-allowed' },
@@ -94,7 +94,7 @@ const boxStates = {
     color: fg.disabled,
     cursor: 'not-allowed',
   },
-  // With no label, a larger invisible hit area meets 24px (Spec 09).
+  // With no label, a larger invisible hit area meets the 24 CSS pixel minimum (Spec 09).
   '&::before': {
     content: '""',
     position: 'absolute',

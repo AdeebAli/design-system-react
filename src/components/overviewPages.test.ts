@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 const here = dirname(fileURLToPath(import.meta.url));
 
 // Spec 08 and 09: these pages must be buildable without escape hatches.
-it.each([['Bento.stories.tsx']])(
+it.each([['Bento.stories.tsx'], ['Forms.stories.tsx']])(
   '%s uses no style or className',
   (file: string) => {
     const source = readFileSync(join(here, file), 'utf8');

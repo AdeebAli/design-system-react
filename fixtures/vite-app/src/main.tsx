@@ -14,6 +14,7 @@ import {
 import { Search } from 'lucide-react';
 import { createRoot } from 'react-dom/client';
 import { PortalProbe } from './PortalProbe';
+import { RhfForm } from './RhfForm';
 import { theme } from './theme';
 
 createRoot(document.getElementById('root')!).render(
@@ -37,6 +38,7 @@ createRoot(document.getElementById('root')!).render(
       </Badge>
       <Stat label="Revenue" value="$21.4k" change="4.1" trend="up" />
     </Card>
+    <RhfForm />
     <PortalProbe />
   </ThemeProvider>,
 );

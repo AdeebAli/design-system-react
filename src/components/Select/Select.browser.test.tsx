@@ -26,7 +26,8 @@ it('opens and chooses with the keyboard, and Escape returns focus to the trigger
   await expect
     .poll(() => trigger().getAttribute('aria-expanded'))
     .toBe('false');
-  expect(trigger()).toHaveFocus();
+  // Focus returns once the popup's exit animation ends.
+  await expect.poll(() => document.activeElement).toBe(trigger());
 });
 
 it('opens with the mouse, below the trigger, on the raised surface', async () => {
