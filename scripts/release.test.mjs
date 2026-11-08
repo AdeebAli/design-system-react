@@ -44,3 +44,20 @@ test('preflight reports every failure', () => {
 test('preflight rejects a branch that is behind', () => {
   assert.match(preflightFailures({ ...ready, behind: 2 })[0], /origin\/main/);
 });
+
+test('preflight refuses a Node floor past its end of life', () => {
+  const failures = preflightFailures({
+    ...ready,
+    enginesNode: '>=22',
+    today: '2027-05-01',
+  });
+  assert.equal(failures.length, 1);
+  assert.match(failures[0], /Node 22 reached end of life on 2027-04-30/);
+});
+
+test('preflight accepts a Node floor before its end of life', () => {
+  assert.deepEqual(
+    preflightFailures({ ...ready, enginesNode: '>=22', today: '2027-04-30' }),
+    [],
+  );
+});

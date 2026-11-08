@@ -12,6 +12,15 @@ export function parseBump(arg) {
   return arg;
 }
 
+// End-of-life dates of Node's LTS lines, from https://nodejs.org/en/about/previous-releases.
+// Add new lines as they reach LTS.
+const NODE_END_OF_LIFE = {
+  20: '2026-04-30',
+  22: '2027-04-30',
+  24: '2028-04-30',
+  26: '2029-04-30',
+};
+
 export function preflightFailures({
   ghAuthed,
   branch,
@@ -19,6 +28,8 @@ export function preflightFailures({
   ahead,
   behind,
   ciSucceeded,
+  enginesNode,
+  today,
 }) {
   const failures = [];
   if (!ghAuthed) failures.push('gh is not installed or not authenticated.');
@@ -30,6 +41,15 @@ export function preflightFailures({
     );
   }
   if (!ciSucceeded) failures.push('CI has not succeeded on HEAD.');
+  // engines.node applies to consumers, so it shouldn't name a line that's no
+  // longer supported (Spec 01).
+  const floor = /^>=\s*(\d+)/.exec(enginesNode ?? '')?.[1];
+  const endOfLife = floor && NODE_END_OF_LIFE[floor];
+  if (endOfLife && today > endOfLife) {
+    failures.push(
+      `engines.node is ${enginesNode}, but Node ${floor} reached end of life on ${endOfLife}. Raise it to the oldest supported Node line, and update the package job's matrix in ci.yml.`,
+    );
+  }
   return failures;
 }
 
@@ -81,6 +101,8 @@ function readState() {
     ahead,
     behind,
     ciSucceeded,
+    enginesNode: JSON.parse(readFileSync('package.json', 'utf8')).engines?.node,
+    today: new Date().toISOString().slice(0, 10),
   };
 }
 
