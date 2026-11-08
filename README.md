@@ -177,5 +177,5 @@ PR titles become release notes, so write them as changelog entries.
 
 These are set by hand, once:
 
-- **Branch protection:** a ruleset on `main` requires a pull request and the `static`, `unit`, `stories`, `visual`, and `package` jobs. The owner is on the bypass list, so the release script can push the version commit and tag.
-- **Pages:** Settings → Pages → Source: GitHub Actions.
+- **Branch protection:** a ruleset on `main` requires a pull request and the `static`, `unit`, `stories`, `visual`, `package (node nvmrc)`, and `package (node 22)` jobs. Repository admins are on the bypass list, so the release script can push the version commit and tag. If a CI job is renamed, update the required checks too, or pull requests wait forever for the old name.
+- **Pages:** Settings → Pages → Source: GitHub Actions. Under Settings → Environments → `github-pages`, allow the `v*` tag pattern as well as `main`, because Storybook deploys from the release tag.
