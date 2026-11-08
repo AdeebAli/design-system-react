@@ -72,6 +72,7 @@ const clientModules = [
   'components/Select/Select.js',
   'components/ToggleChip/ToggleChip.js',
   'components/ToggleChipGroup/ToggleChipGroup.js',
+  'components/ColorModeToggle/ColorModeToggle.js',
 ];
 for (const module of clientModules) {
   const path = join(dist, module);

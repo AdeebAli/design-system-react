@@ -96,3 +96,15 @@ test('typed overrides are in the server HTML, unescaped', async ({
   const html = await (await request.get('/')).text();
   expect(html).toContain('--ds-font-family-mono:"Fixture Mono", monospace');
 });
+
+test('ColorModeToggle switches the mode and stores it', async ({ page }) => {
+  await page.emulateMedia({ colorScheme: 'light' });
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Switch to dark mode' }).click();
+  expect(await canvas(page)).toBe(DARK);
+  expect(await page.evaluate(() => localStorage.getItem('ds-color-mode'))).toBe(
+    'dark',
+  );
+  await page.getByRole('button', { name: 'Switch to light mode' }).click();
+  expect(await canvas(page)).toBe(LIGHT);
+});

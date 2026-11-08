@@ -30,6 +30,7 @@ export * from './components/Switch';
 export * from './components/Select';
 export * from './components/ToggleChip';
 export * from './components/ToggleChipGroup';
+export * from './components/ColorModeToggle';
 export { breakpoints } from './tokens/breakpoints';
 export { tokens } from './tokens/primitives';
 export { vars } from './themes/contract.css';

@@ -3,6 +3,7 @@ import {
   Badge,
   Box,
   Card,
+  ColorModeToggle,
   Icon,
   Link,
   Stack,
@@ -17,6 +18,7 @@ import { theme } from './theme';
 
 createRoot(document.getElementById('root')!).render(
   <ThemeProvider theme={theme}>
+    <ColorModeToggle />
     <Box data-testid="stub">
       Vite fixture <Icon icon={Search} data-testid="icon" />{' '}
       <Icon icon={Search} tone="muted" data-testid="toned-icon" />
