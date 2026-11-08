@@ -10,3 +10,4 @@ fixtures/*/.next
 fixtures/*/next-env.d.ts
 fixtures/*/tsconfig.tsbuildinfo
 .vitest
+.npmrc
