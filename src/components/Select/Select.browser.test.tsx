@@ -20,6 +20,8 @@ it('opens and chooses with the keyboard, and Escape returns focus to the trigger
   await expect.poll(() => trigger().getAttribute('aria-expanded')).toBe('true');
   await userEvent.keyboard('{ArrowDown}{Enter}');
   await expect.poll(() => trigger().textContent).toContain('Annual');
+  // Choosing closes the popup; focus is back once its exit animation ends.
+  await expect.poll(() => document.activeElement).toBe(trigger());
   await userEvent.keyboard('{Enter}');
   await expect.poll(() => trigger().getAttribute('aria-expanded')).toBe('true');
   await userEvent.keyboard('{Escape}');

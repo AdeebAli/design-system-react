@@ -141,6 +141,11 @@ test('the OS setting and a locked mode select the canvas', async ({ page }) => {
   const canvas = () =>
     page.evaluate(() => getComputedStyle(document.body).backgroundColor);
   expect(await canvas()).toBe('rgb(20, 19, 17)');
+  // ThemeProvider syncs the attribute when it hydrates, so lock it after that.
+  // The toggle's specific name only appears once hydrated.
+  await expect(
+    page.getByRole('button', { name: /^Switch to (light|dark) mode$/ }),
+  ).toBeVisible();
   await page.evaluate(() =>
     document.documentElement.setAttribute('data-ds-mode', 'light'),
   );
