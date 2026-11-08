@@ -18,6 +18,8 @@ export * from './components/VisuallyHidden';
 export * from './components/Card';
 export * from './components/Stat';
 export * from './components/Badge';
+export * from './components/Button';
+export * from './components/IconButton';
 export { breakpoints } from './tokens/breakpoints';
 export { tokens } from './tokens/primitives';
 export { vars } from './themes/contract.css';

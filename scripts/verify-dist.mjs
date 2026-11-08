@@ -55,7 +55,12 @@ for (const file of files.filter((name) => name.endsWith('.js'))) {
   }
 }
 
-const clientModules = ['theme/ThemeProvider.js'];
+const clientModules = [
+  'theme/ThemeProvider.js',
+  'components/Button/ButtonBase.js',
+  'components/Button/Button.js',
+  'components/IconButton/IconButton.js',
+];
 for (const module of clientModules) {
   const path = join(dist, module);
   if (!existsSync(path)) {
@@ -119,8 +124,9 @@ if (
   failures.push('dist imports lucide-react');
 }
 
-// Everything but font faces must sit in a layer, so consumers' unlayered CSS and
-// the layer order always decide (Spec 02, Spec 05).
+// Everything but font faces and keyframes must sit in a layer, so consumers'
+// unlayered CSS and the layer order always decide (Spec 02, Spec 05).
+// vanilla-extract can't layer keyframes, and their hashed names can't clash.
 if (existsSync(stylesPath)) {
   const styles = readFileSync(stylesPath, 'utf8').replace(
     /\/\*[\s\S]*?\*\//g,
@@ -132,7 +138,11 @@ if (existsSync(stylesPath)) {
     if (char === '{') {
       if (depth === 0) {
         const name = prelude.trim();
-        if (!name.startsWith('@layer') && !name.startsWith('@font-face')) {
+        if (
+          !name.startsWith('@layer') &&
+          !name.startsWith('@font-face') &&
+          !name.startsWith('@keyframes')
+        ) {
           failures.push(
             `styles.css has an unlayered rule: ${name.slice(0, 60)}`,
           );
