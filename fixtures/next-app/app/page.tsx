@@ -1,4 +1,13 @@
-import { Box, Icon, Link, Stack, Text } from '@adeebali/design-system-react';
+import {
+  Badge,
+  Box,
+  Card,
+  Icon,
+  Link,
+  Stack,
+  Stat,
+  Text,
+} from '@adeebali/design-system-react';
 import { Search } from 'lucide-react';
 import { PortalProbe } from './PortalProbe';
 
@@ -19,6 +28,12 @@ export default function Page() {
           Docs
         </Link>
       </Stack>
+      <Card data-testid="card">
+        <Badge data-testid="badge" tone="accent" variant="solid">
+          Pro
+        </Badge>
+        <Stat label="Revenue" value="$21.4k" change="4.1" trend="up" />
+      </Card>
       <PortalProbe />
     </>
   );

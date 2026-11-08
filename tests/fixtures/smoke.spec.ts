@@ -146,3 +146,20 @@ test('the OS setting and a locked mode select the canvas', async ({ page }) => {
   );
   expect(await canvas()).toBe('rgb(244, 242, 238)');
 });
+
+test('bento components render with their styles', async ({ page }) => {
+  await page.goto('/');
+  const card = page.getByTestId('card');
+  const radius = await card.evaluate((el) => {
+    const probe = document.createElement('div');
+    probe.style.borderTopLeftRadius = 'var(--ds-radius-card)';
+    document.body.append(probe);
+    const expected = getComputedStyle(probe).borderTopLeftRadius;
+    probe.remove();
+    return [getComputedStyle(el).borderTopLeftRadius, expected];
+  });
+  expect(radius[0]).toBe(radius[1]);
+  expect(radius[0]).not.toBe('0px');
+  await expect(card.getByRole('term')).toHaveText('Revenue');
+  await expect(card.getByTestId('badge')).toHaveText('Pro');
+});
