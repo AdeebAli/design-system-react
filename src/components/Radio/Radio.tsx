@@ -50,7 +50,7 @@ export function Radio({
       layout={layout}
       className={className}
       style={style}
-      disabled={disabled}
+      disabled={(group?.disabled ?? false) || disabled}
       inField={group?.inField ?? false}
       hintIndent="checkbox"
     >

@@ -32,6 +32,9 @@ export const label = style(
   }),
 );
 
+/** The control's row when it has a hint but no label. */
+export const unlabeled = style(layered({ cursor: 'default' }));
+
 /** Keeps the control centered on the label's first line. */
 export const slot = style(
   layered({

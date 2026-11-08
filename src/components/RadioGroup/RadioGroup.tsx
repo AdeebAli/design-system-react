@@ -18,6 +18,7 @@ import { useFieldControl } from '../Field/FieldContext';
 
 const RadioGroupContext = createContext<{
   invalid: boolean;
+  disabled: boolean;
   inField: boolean;
 } | null>(null);
 
@@ -32,10 +33,10 @@ export function useRadioGroup() {
 }
 
 interface RadioGroupOwnProps {
-  /** The selected value, when controlled. */
-  value?: string;
-  /** The value selected at first, when uncontrolled. */
-  defaultValue?: string;
+  /** The selected value, when controlled. `null` selects nothing. */
+  value?: string | null;
+  /** The value selected at first, when uncontrolled. `null` selects nothing. */
+  defaultValue?: string | null;
   /** Called with the newly selected value. */
   onValueChange?: (value: string) => void;
   /** The name submitted with a form. */
@@ -91,7 +92,9 @@ export function RadioGroup({
   const [layout, rest] = splitLayoutProps(props);
 
   return (
-    <RadioGroupContext.Provider value={{ invalid, inField: field.inField }}>
+    <RadioGroupContext.Provider
+      value={{ invalid, disabled, inField: field.inField }}
+    >
       <BaseRadioGroup
         ref={setRef}
         className={cx(

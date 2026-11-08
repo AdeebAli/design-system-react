@@ -42,22 +42,41 @@ export function ChoiceLabel({
     return children(cx(box(layout), className) || undefined);
   }
 
-  const Wrapper = inField ? BaseField.Item : BaseField.Root;
-  return (
-    <Wrapper
-      disabled={disabled}
-      className={cx(box(layout), styles.item, className)}
-      style={style}
-    >
-      <BaseField.Label className={styles.label}>
-        <span className={styles.slot}>{children(undefined)}</span>
-        {label}
-      </BaseField.Label>
+  const wrapperClass = cx(box(layout), styles.item, className);
+  const content = (
+    <>
+      {label != null ? (
+        <BaseField.Label className={styles.label}>
+          <span className={styles.slot}>{children(undefined)}</span>
+          {label}
+        </BaseField.Label>
+      ) : (
+        // No label of its own, so a surrounding Field's label names it.
+        <span className={cx(styles.label, styles.unlabeled)}>
+          <span className={styles.slot}>{children(undefined)}</span>
+        </span>
+      )}
       {hint != null && (
         <BaseField.Description className={styles.hint[hintIndent]}>
           {hint}
         </BaseField.Description>
       )}
+    </>
+  );
+
+  // Without its own label inside a Field, the Field's label must name the
+  // control, so no Field.Item may start a new label scope.
+  if (label == null && inField) {
+    return (
+      <div className={wrapperClass} style={style}>
+        {content}
+      </div>
+    );
+  }
+  const Wrapper = inField ? BaseField.Item : BaseField.Root;
+  return (
+    <Wrapper disabled={disabled} className={wrapperClass} style={style}>
+      {content}
     </Wrapper>
   );
 }

@@ -83,3 +83,39 @@ it('sets data-checked and data-unchecked', () => {
     'data-unchecked',
   );
 });
+
+it('a disabled RadioGroup marks its radio labels disabled', () => {
+  render(
+    <RadioGroup disabled aria-label="Plan">
+      <Radio value="m" label="Monthly" />
+    </RadioGroup>,
+  );
+  expect(screen.getByText('Monthly').closest('label')).toHaveAttribute(
+    'data-disabled',
+  );
+});
+
+it('a controlled null value selects nothing, and stays controlled', async () => {
+  const onValueChange = vi.fn();
+  const errors = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+  const { rerender } = render(
+    <RadioGroup aria-label="Plan" value={null} onValueChange={onValueChange}>
+      <Radio value="m" label="Monthly" />
+      <Radio value="a" label="Annual" />
+    </RadioGroup>,
+  );
+  expect(screen.getByRole('radio', { name: 'Monthly' })).not.toBeChecked();
+  expect(screen.getByRole('radio', { name: 'Annual' })).not.toBeChecked();
+  await userEvent.click(screen.getByText('Annual'));
+  expect(onValueChange).toHaveBeenCalledWith('a');
+  expect(screen.getByRole('radio', { name: 'Annual' })).not.toBeChecked();
+  rerender(
+    <RadioGroup aria-label="Plan" value="a" onValueChange={onValueChange}>
+      <Radio value="m" label="Monthly" />
+      <Radio value="a" label="Annual" />
+    </RadioGroup>,
+  );
+  expect(screen.getByRole('radio', { name: 'Annual' })).toBeChecked();
+  expect(errors).not.toHaveBeenCalled();
+  errors.mockRestore();
+});

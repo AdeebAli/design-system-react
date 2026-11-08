@@ -43,3 +43,19 @@ it('warns when it has no name', () => {
   expect(warn).toHaveBeenCalledTimes(1);
   warn.mockRestore();
 });
+
+it.each(['Switch', 'Checkbox'] as const)(
+  'a %s with a hint but no label is named by its Field label',
+  async (name) => {
+    const { Checkbox } = await import('../Checkbox');
+    const Control = name === 'Switch' ? Switch : Checkbox;
+    render(
+      <Field label="Live">
+        <Control hint="Refreshes every minute" />
+      </Field>,
+    );
+    const el = screen.getByRole(name === 'Switch' ? 'switch' : 'checkbox');
+    expect(el).toHaveAccessibleName('Live');
+    expect(el).toHaveAccessibleDescription('Refreshes every minute');
+  },
+);
