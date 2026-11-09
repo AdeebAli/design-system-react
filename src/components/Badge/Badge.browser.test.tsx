@@ -70,6 +70,23 @@ it('a short label keeps its natural width', () => {
   );
 });
 
+it('a long label truncates as a flex item, without overflowing its row', () => {
+  const text = 'An unusually long status label from user data';
+  render(
+    <div data-testid="row" style={{ display: 'flex', width: 120 }}>
+      <Badge data-testid="b">{text}</Badge>
+    </div>,
+  );
+  const row = screen.getByTestId('row');
+  const badge = screen.getByTestId('b');
+  expect(badge.getBoundingClientRect().right).toBeLessThanOrEqual(
+    row.getBoundingClientRect().right,
+  );
+  expect(row.scrollWidth).toBe(row.clientWidth);
+  const label = badge.lastElementChild as HTMLElement;
+  expect(label.scrollWidth).toBeGreaterThan(label.clientWidth);
+});
+
 it('a long label truncates as a grid item, without widening its column', () => {
   const text = 'An unusually long status label from user data';
   render(
