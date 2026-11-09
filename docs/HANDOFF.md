@@ -33,6 +33,7 @@ Architecture decisions are in `docs/adr/`. Build decisions, with what each costs
    - `Textarea` spreads its props `as object`, which hides type mismatches.
    - `verify-dist`'s client-module list is kept by hand. A rule that any module importing Base UI or hooks must start with `"use client"` would catch future misses.
    - The React Hook Form fixture and docs don't pass `field.ref` to `RadioGroup`.
+4. **`ColorModeToggle` doesn't accept `ref`, `style`, or pass-through button props,** which Spec 05 requires and Spec 12's `Tooltip` needs to wrap it. The owner deferred this to v0.4. Trigger: the v0.4 plan must include a task that adds them, with a test that wraps the toggle in a `Tooltip`.
 
 The resolved threads: Base UI is installed as `@base-ui/react` `^1.9.0` (v0.2), the registry check is done (above), and the owner chose to keep `ColorModeToggle`'s `variant` and `size` props, now documented in Spec 09.
 
