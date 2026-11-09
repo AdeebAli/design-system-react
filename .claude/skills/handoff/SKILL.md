@@ -1,7 +1,7 @@
 ---
 name: handoff
 description: Summarize the current session (decisions, changes, open threads, next steps) into a handoff note before /clear or ending work. Use when the user wants to wrap up, pause, or hand off a session.
-argument-hint: '[optional file path to save the note]'
+argument-hint: '[optional file path; defaults to docs/HANDOFF.md]'
 ---
 
 # Session handoff
@@ -41,4 +41,4 @@ none exists, so the reader can decide.
 ## Output
 
 - If a path was given ($ARGUMENTS), write the note there.
-- Otherwise print it in chat. Offer to save it as `HANDOFF.md` in the repo root.
+- Otherwise write it to `docs/HANDOFF.md`, this repo's handoff.

@@ -388,7 +388,7 @@ it('inherits invalid, disabled, and required from Field');
 
 - [ ] **Step 4: Audit.** Walk the acceptance criteria and test lists of Specs 08 and 09 and record each as passed or as needing the owner. Run `npm ci && npm run check`. Expected: all pass.
 
-- [ ] **Step 5: Baselines.** Push, open the PR as a draft, add the `update-baselines` label, review the committed screenshots, then close and reopen the PR so CI runs on them. Expected: all five CI jobs pass.
+- [ ] **Step 5: Baselines.** Push, open the PR as a draft, add the `update-baselines` label, review the committed screenshots, then select **Approve workflows to run** in the PR's merge box so CI runs on them. GitHub holds CI on a commit pushed with `GITHUB_TOKEN` for approval; closing the PR kills the held run. Expected: all five CI jobs pass.
 
 - [ ] **Step 6: Manual checks to hand to the owner, not mark done:** forced colors on every new component, 200% text, and the screen reader pass on `Field`, `Select`, and `RadioGroup` (Spec 09), plus interactive `Card` and `Button`/`IconButton`/`ToggleChip`/`Checkbox`/`Switch`/`ColorModeToggle` (Spec 05's checklist for anything interactive). List each in the PR body.
 
