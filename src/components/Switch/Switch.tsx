@@ -52,7 +52,7 @@ export function Switch({
   style,
   ...props
 }: SwitchProps) {
-  const field = useFieldControl(label != null ? 'choice' : 'button');
+  const field = useFieldControl(label != null ? 'choice' : 'native');
   const invalid = invalidProp ?? field.invalid;
   const disabled = disabledProp ?? field.disabled;
   const required = requiredProp ?? field.required;

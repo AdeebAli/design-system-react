@@ -72,7 +72,7 @@ It also accepts layout props, `className`, `style`, and `ref`, on its root eleme
 - **`Field.Error` is only mounted when `error` is set,** since it would otherwise render empty, and be referenced by `aria-describedby`.
 - **Controls inside inherit `invalid`, `disabled`, `required`, and the label, hint, and error associations.** A control's own `invalid`
   or `disabled` prop also works.
-- **Clicking the label focuses the control,** and doesn't open a `Select`. Base UI names every control through `aria-labelledby`, but its `nativeLabel` setting changes
+- **Clicking the label focuses the control,** and doesn't open a `Select`. For a `Checkbox` or `Switch` with no label of its own, it also toggles it, as a native label does. Base UI names every control through `aria-labelledby`, but its `nativeLabel` setting changes
   what a click does, and `Field` can't see its child's type. So controls tell `Field` through its context. The mechanism is left to the builder, and a test covers this behavior for
   each control type.
 - **`required` doesn't use native validation.** It sets `aria-required`, not the native attribute, because the native one would trigger browser error bubbles and Base UI's

@@ -58,7 +58,7 @@ export function Checkbox({
   ...props
 }: CheckboxProps) {
   const ownLabel = label != null;
-  const field = useFieldControl(ownLabel ? 'choice' : 'button');
+  const field = useFieldControl(ownLabel ? 'choice' : 'native');
   const invalid = invalidProp ?? field.invalid;
   const disabled = disabledProp ?? field.disabled;
   const required = requiredProp ?? field.required;

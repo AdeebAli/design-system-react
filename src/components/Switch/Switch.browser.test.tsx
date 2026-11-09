@@ -46,12 +46,14 @@ it.each([
   ['Checkbox', () => <Checkbox />, 'checkbox'],
   ['Switch', () => <Switch />, 'switch'],
 ] as const)(
-  'clicking a Field label focuses an unlabeled %s without toggling it',
+  'clicking a Field label toggles and focuses an unlabeled %s, like a native label',
   async (_, control, role) => {
     render(<Field label="Setting">{control()}</Field>);
-    await userEvent.click(screen.getByText('Setting'));
     const el = screen.getByRole(role, { name: 'Setting' });
+    await userEvent.click(screen.getByText('Setting'));
+    expect(el).toBeChecked();
     expect(el).toHaveFocus();
+    await userEvent.click(screen.getByText('Setting'));
     expect(el).not.toBeChecked();
   },
 );
