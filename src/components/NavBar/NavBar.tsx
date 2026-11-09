@@ -52,7 +52,6 @@ export function NavBar({
   ...props
 }: NavBarProps) {
   const [open, setOpen] = useState(false);
-  const navRef = useRef<HTMLElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const [layout, rest] = splitLayoutProps(props);
 
@@ -82,7 +81,7 @@ export function NavBar({
       open &&
       event.key === 'Escape' &&
       !event.defaultPrevented &&
-      navRef.current?.contains(event.target as Node)
+      event.currentTarget.contains(event.target as Node)
     ) {
       close();
     }
@@ -97,7 +96,7 @@ export function NavBar({
         render={
           // Delegates Escape from the links and the menu button inside it.
           // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
-          <nav ref={navRef} onKeyDown={handleKeyDown} {...rest} />
+          <nav onKeyDown={handleKeyDown} {...rest} />
         }
         className={cx(
           box(layout),

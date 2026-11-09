@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import { createRef } from 'react';
 import { createPortal } from 'react-dom';
 import { renderToString } from 'react-dom/server';
 import { cdp, page, userEvent } from 'vitest/browser';
@@ -196,6 +197,45 @@ describe('below md', () => {
     await userEvent.keyboard('{Escape}');
     await expect.poll(isOpen).toBe(false);
     expect(menu()).toHaveFocus();
+  });
+
+  it('Escape still closes when the NavBar has a ref of its own', async () => {
+    const ref = createRef<HTMLElement>();
+    render(
+      <NavBar aria-label="Main" ref={ref}>
+        <NavBarLink href="#a">A</NavBarLink>
+      </NavBar>,
+    );
+    expect(ref.current?.tagName).toBe('NAV');
+    await open();
+    screen.getByRole('link', { name: 'A' }).focus();
+    await userEvent.keyboard('{Escape}');
+    await expect.poll(isOpen).toBe(false);
+    expect(menu()).toHaveFocus();
+  });
+
+  it('an open sticky panel taller than the viewport scrolls, so every link is reachable', async () => {
+    await page.viewport(390, 300);
+    const names = Array.from({ length: 8 }, (_, i) => `Link ${i + 1}`);
+    render(
+      <div>
+        <NavBar aria-label="Main" sticky>
+          {names.map((name) => (
+            <NavBarLink key={name} href={`#${name}`}>
+              {name}
+            </NavBarLink>
+          ))}
+        </NavBar>
+        <div style={{ height: 2000 }} />
+      </div>,
+    );
+    await open();
+    const last = screen.getByRole('link', { name: 'Link 8' });
+    last.focus();
+    await expect
+      .poll(() => last.getBoundingClientRect().bottom)
+      .toBeLessThanOrEqual(window.innerHeight);
+    expect(last.getBoundingClientRect().top).toBeGreaterThanOrEqual(0);
   });
 
   it('a link click closes and focuses the menu button', async () => {

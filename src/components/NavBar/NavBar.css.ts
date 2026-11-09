@@ -1,4 +1,5 @@
-import { style } from '@vanilla-extract/css';
+import { globalStyle, style } from '@vanilla-extract/css';
+import { componentsLayer } from '../../styles/layers.css';
 import { vars } from '../../themes/contract.css';
 import { breakpoints } from '../../tokens/breakpoints';
 import { layered } from '../../utils/recipe';
@@ -153,3 +154,28 @@ export const link = style(
 export const linkIcon = style(
   layered({ display: 'inline-flex', flexShrink: 0 }),
 );
+
+// A sticky bar stays pinned, so an open panel taller than the viewport would
+// leave links out of reach. Below md it scrolls instead, with room for focus
+// rings, and fits between the bar and the bottom of the viewport.
+globalStyle(`${sticky} ${panel}[data-open]`, {
+  '@layer': {
+    [componentsLayer]: {
+      maxBlockSize: `calc(100dvh - ${stickyClearance} - ${stickyOffset})`,
+      overflowY: 'auto',
+      overscrollBehavior: 'contain',
+      paddingInline: vars.space['1'],
+      marginInline: `calc(-1 * ${vars.space['1']})`,
+      paddingBlockEnd: vars.space['1'],
+      '@media': {
+        [md]: {
+          maxBlockSize: 'none',
+          overflowY: 'visible',
+          paddingInline: 0,
+          marginInline: 0,
+          paddingBlockEnd: 0,
+        },
+      },
+    },
+  },
+});
