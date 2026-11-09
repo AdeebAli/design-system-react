@@ -45,6 +45,8 @@ import { Meta } from '@storybook/addon-docs/blocks';
 | `Switch`          | `checked`          | `onCheckedChange` |
 | `ToggleChipGroup` | `value` (an array) | `onValueChange`   |
 
+Pass `field.ref` too, so React Hook Form can focus the first invalid control after a failed submit. `RadioGroup` is the exception: its `ref` is the group element, which can't take focus, so leave it out. People reach the group through its error message, which `Field` connects to it.
+
 ## Defaults
 
 - **`Select` starts at `null`,** not `''` or `undefined`. `null` shows the placeholder. `undefined` would switch the `Select` from uncontrolled to controlled.

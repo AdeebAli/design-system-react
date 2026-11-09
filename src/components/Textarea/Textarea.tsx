@@ -28,12 +28,15 @@ export function Textarea({
 }: TextareaProps) {
   const field = useFieldControl('native');
   const invalid = invalidProp ?? field.invalid;
-  const disabled = disabledProp ?? field.disabled;
+  // A disabled Field wins, so the control can't be enabled inside it.
+  const disabled = field.disabled || disabledProp === true;
   const [layout, rest] = splitLayoutProps(props);
 
   return (
     <BaseField.Control
-      render={<textarea />}
+      // Field.Control is typed for an input, so the textarea's own props go on
+      // the rendered element, which Base UI merges, and keep their types.
+      render={<textarea {...rest} />}
       className={cx(
         box(layout),
         styles.control,
@@ -46,7 +49,6 @@ export function Textarea({
       data-disabled={disabled ? '' : undefined}
       aria-invalid={invalid || undefined}
       aria-required={field.required || undefined}
-      {...(rest as object)}
     />
   );
 }

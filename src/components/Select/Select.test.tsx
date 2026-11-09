@@ -165,3 +165,37 @@ it('marks the selected option', async () => {
   expect(annual).toHaveAttribute('data-selected');
   expect(annual).toHaveAttribute('aria-selected', 'true');
 });
+
+it.each(['toString', 'constructor'])(
+  'value="%s" with no such option shows the placeholder',
+  (value) => {
+    render(
+      <Select
+        aria-label="Plan"
+        options={options}
+        value={value}
+        placeholder="Pick"
+      />,
+    );
+    expect(trigger()).toHaveTextContent('Pick');
+  },
+);
+
+it('two groups with the same label render without a duplicate-key warning', async () => {
+  const error = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+  render(
+    <Select
+      aria-label="Plan"
+      options={[
+        { label: 'Same', options: [{ value: 'a', label: 'A' }] },
+        { label: 'Same', options: [{ value: 'b', label: 'B' }] },
+      ]}
+    />,
+  );
+  await userEvent.click(trigger());
+  await screen.findAllByRole('group');
+  expect(
+    error.mock.calls.filter((call) => String(call[0]).includes('same key')),
+  ).toEqual([]);
+  error.mockRestore();
+});

@@ -115,3 +115,15 @@ it('does not pass size to the native input', () => {
   render(<Input aria-label="q" size="lg" />);
   expect(screen.getByRole('textbox')).not.toHaveAttribute('size');
 });
+
+it('disabled={false} inside a disabled Field stays disabled, with disabled styling', () => {
+  render(
+    <Field label="Seats" disabled>
+      <Input disabled={false} />
+    </Field>,
+  );
+  const input = screen.getByRole('textbox');
+  expect(input).toBeDisabled();
+  // The wrapper, not the Field root, which has its own data-disabled.
+  expect(input.parentElement).toHaveAttribute('data-disabled');
+});

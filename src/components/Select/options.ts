@@ -34,7 +34,8 @@ export function normalizeOptions(options: readonly (Option | OptionGroup)[]): {
   items: Record<string, string>;
 } {
   const groups: NormalizedGroup[] = [];
-  const items: Record<string, string> = {};
+  // No prototype, so values such as "toString" aren't already present.
+  const items = Object.create(null) as Record<string, string>;
   let loose: Option[] | null = null;
   for (const option of options) {
     if (isGroup(option)) {

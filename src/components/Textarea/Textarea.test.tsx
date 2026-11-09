@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { createRef } from 'react';
+import { Field } from '../Field';
 import * as styles from '../Input/Input.css';
 import { Textarea } from './index';
 
@@ -32,4 +33,15 @@ it('sets data-invalid and data-disabled', () => {
   expect(t).toHaveAttribute('data-invalid');
   expect(t).toHaveAttribute('data-disabled');
   expect(t).toHaveAttribute('aria-invalid', 'true');
+});
+
+it('disabled={false} inside a disabled Field stays disabled, with disabled styling', () => {
+  render(
+    <Field label="Notes" disabled>
+      <Textarea disabled={false} />
+    </Field>,
+  );
+  const textarea = screen.getByRole('textbox');
+  expect(textarea).toBeDisabled();
+  expect(textarea).toHaveAttribute('data-disabled');
 });

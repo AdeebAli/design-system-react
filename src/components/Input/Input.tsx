@@ -42,7 +42,8 @@ export function Input({
 }: InputProps) {
   const field = useFieldControl('native');
   const invalid = invalidProp ?? field.invalid;
-  const disabled = disabledProp ?? field.disabled;
+  // A disabled Field wins, so the control can't be enabled inside it.
+  const disabled = field.disabled || disabledProp === true;
   const [layout, rest] = splitLayoutProps(props);
 
   return (

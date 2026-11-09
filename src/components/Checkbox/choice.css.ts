@@ -205,6 +205,9 @@ export const thumb = style(
         transform: `translateX(calc(${switchSize.width} - ${switchSize.height}))`,
         background: fg.onAccent,
       },
+      '&[data-checked]:dir(rtl)': {
+        transform: `translateX(calc(${switchSize.height} - ${switchSize.width}))`,
+      },
       '&[data-disabled]': { background: fg.disabled },
     },
   }),
