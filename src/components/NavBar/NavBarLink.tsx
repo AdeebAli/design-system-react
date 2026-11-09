@@ -1,6 +1,6 @@
 'use client';
 
-import type { ElementType, ReactElement, ReactNode } from 'react';
+import type { ElementType, MouseEvent, ReactElement, ReactNode } from 'react';
 import { focusRing } from '../../styles/focus.css';
 import { cx } from '../../utils/cx';
 import type { PolymorphicProps } from '../../utils/types';
@@ -33,6 +33,14 @@ export function NavBarLink<E extends ElementType = 'a'>({
   ...props
 }: NavBarLinkProps<E>) {
   const navBar = useNavBar();
+  const { onClick } = props as {
+    onClick?: (event: MouseEvent<HTMLElement>) => void;
+  };
+  // The panel closes after the project's own handler, unless it cancels the click.
+  const handleClick = (event: MouseEvent<HTMLElement>) => {
+    onClick?.(event);
+    if (!event.defaultPrevented) navBar?.closeFromLink();
+  };
   // The rest depends on the generic `as`, which Box can't infer through.
   const rest: object = props;
   const element: ElementType = as ?? 'a';
@@ -44,6 +52,7 @@ export function NavBarLink<E extends ElementType = 'a'>({
       aria-current={active ? 'page' : undefined}
       data-active={active ? '' : undefined}
       {...rest}
+      onClick={handleClick}
     >
       {startIcon && <span className={styles.linkIcon}>{startIcon}</span>}
       {children}

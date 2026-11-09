@@ -1,6 +1,8 @@
 import { render, screen } from '@testing-library/react';
+import { createPortal } from 'react-dom';
 import { renderToString } from 'react-dom/server';
-import { cdp, page } from 'vitest/browser';
+import { cdp, page, userEvent } from 'vitest/browser';
+import { Select } from '../Select';
 import { NavBar, NavBarLink } from './index';
 
 afterEach(async () => {
@@ -144,4 +146,171 @@ it('the active bar stays visible in forced colors', async () => {
   expect(after.borderBottomColor).not.toBe(
     getComputedStyle(screen.getByRole('navigation')).backgroundColor,
   );
+});
+
+describe('below md', () => {
+  beforeEach(async () => {
+    await page.viewport(390, 800);
+  });
+
+  const menu = () =>
+    document.querySelector<HTMLButtonElement>('button[aria-label="Menu"]')!;
+  const panel = () => document.querySelector('nav ul')!.parentElement!;
+  const isOpen = () => panel().hasAttribute('data-open');
+
+  async function open() {
+    await userEvent.click(menu());
+    await expect.poll(isOpen).toBe(true);
+  }
+
+  it('opens the panel below the bar, pushing content down', async () => {
+    render(
+      <>
+        <Example />
+        <div data-testid="after">After</div>
+      </>,
+    );
+    const after = screen.getByTestId('after');
+    const before = after.getBoundingClientRect().top;
+    await open();
+    for (const a of links()) expect(visible(a)).toBe(true);
+    const bar = screen.getByRole('link', { name: 'Acme' });
+    expect(links()[0]!.getBoundingClientRect().top).toBeGreaterThan(
+      bar.getBoundingClientRect().bottom,
+    );
+    expect(after.getBoundingClientRect().top).toBeGreaterThan(before);
+  });
+
+  it('the menu button has data-panel-open and the panel data-open while open', async () => {
+    render(<Example />);
+    expect(menu()).not.toHaveAttribute('data-panel-open');
+    await open();
+    expect(menu()).toHaveAttribute('data-panel-open');
+    expect(menu()).toHaveAttribute('aria-expanded', 'true');
+  });
+
+  it('Escape inside the nav closes and focuses the menu button', async () => {
+    render(<Example />);
+    await open();
+    links()[1]!.focus();
+    await userEvent.keyboard('{Escape}');
+    await expect.poll(isOpen).toBe(false);
+    expect(menu()).toHaveFocus();
+  });
+
+  it('a link click closes and focuses the menu button', async () => {
+    render(<Example />);
+    await open();
+    await userEvent.click(links()[1]!);
+    await expect.poll(isOpen).toBe(false);
+    expect(menu()).toHaveFocus();
+  });
+
+  it('stacked links are at least 44px tall', async () => {
+    render(<Example />);
+    await open();
+    for (const a of links())
+      expect(a.getBoundingClientRect().height).toBeGreaterThanOrEqual(44);
+  });
+
+  it('after widening to 1280px with the panel open, a link click does not focus the hidden button', async () => {
+    render(<Example />);
+    await open();
+    await page.viewport(1280, 800);
+    await userEvent.click(links()[1]!);
+    await expect.poll(isOpen).toBe(false);
+    expect(menu()).not.toHaveFocus();
+    expect(document.activeElement).not.toBe(document.body);
+  });
+
+  it('Escape that closes a Select in actions leaves the panel open', async () => {
+    render(
+      <NavBar
+        aria-label="Main"
+        actions={
+          <Select
+            aria-label="Language"
+            options={[
+              { value: 'en', label: 'English' },
+              { value: 'fr', label: 'French' },
+            ]}
+            defaultValue="en"
+          />
+        }
+      >
+        <NavBarLink href="#a">A</NavBarLink>
+      </NavBar>,
+    );
+    await open();
+    const combobox = screen.getByRole('combobox', { name: 'Language' });
+    await userEvent.click(combobox);
+    await screen.findByRole('listbox');
+    await userEvent.keyboard('{Escape}');
+    await expect.poll(() => screen.queryByRole('listbox')).toBeNull();
+    expect(combobox).toHaveFocus();
+    expect(isOpen()).toBe(true);
+  });
+
+  it('Escape from a portaled element in actions leaves the panel open', async () => {
+    render(
+      <NavBar
+        aria-label="Main"
+        actions={createPortal(<input aria-label="Search" />, document.body)}
+      >
+        <NavBarLink href="#a">A</NavBarLink>
+      </NavBar>,
+    );
+    await open();
+    screen.getByRole('textbox', { name: 'Search' }).focus();
+    await userEvent.keyboard('{Escape}');
+    expect(isOpen()).toBe(true);
+  });
+
+  it('Escape that a control in the nav cancels leaves the panel open', async () => {
+    render(
+      <NavBar
+        aria-label="Main"
+        actions={
+          <input
+            aria-label="Search"
+            onKeyDown={(event) => {
+              if (event.key === 'Escape') event.preventDefault();
+            }}
+          />
+        }
+      >
+        <NavBarLink href="#a">A</NavBarLink>
+      </NavBar>,
+    );
+    await open();
+    screen.getByRole('textbox', { name: 'Search' }).focus();
+    await userEvent.keyboard('{Escape}');
+    expect(isOpen()).toBe(true);
+  });
+
+  it("a link's own onClick runs, and preventDefault keeps the panel open", async () => {
+    const onClick = vi.fn();
+    const { rerender } = render(
+      <NavBar aria-label="Main">
+        <NavBarLink href="#a" onClick={onClick}>
+          A
+        </NavBarLink>
+      </NavBar>,
+    );
+    await open();
+    await userEvent.click(screen.getByRole('link', { name: 'A' }));
+    expect(onClick).toHaveBeenCalledTimes(1);
+    await expect.poll(isOpen).toBe(false);
+
+    rerender(
+      <NavBar aria-label="Main">
+        <NavBarLink href="#a" onClick={(event) => event.preventDefault()}>
+          A
+        </NavBarLink>
+      </NavBar>,
+    );
+    await open();
+    await userEvent.click(screen.getByRole('link', { name: 'A' }));
+    expect(isOpen()).toBe(true);
+  });
 });
