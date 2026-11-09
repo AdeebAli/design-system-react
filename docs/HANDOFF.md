@@ -16,7 +16,7 @@ Build `@adeebali/design-system-react`, a general-purpose React design system. Sp
 
 Architecture decisions are in `docs/adr/`. Build decisions, with what each costs if wrong, are the `Ruling:` lines in `.superpowers/sdd/2026-11-06-v0-1-foundations/progress.md` and `.superpowers/sdd/2026-11-08-v0-2-bento-and-forms/progress.md`, which are local and gitignored. The v0.2 ones worth knowing without opening the file:
 
-- `Field` learns each control's kind through an internal `useFieldControl(kind)` hook. Button-like controls (`Select`, an unlabeled `Checkbox` or `Switch`, `RadioGroup`) get a non-`label` label that focuses without activating.
+- `Field` learns each control's kind through an internal `useFieldControl(kind)` hook. `Select` and `RadioGroup` get a non-`label` label that focuses without activating. An unlabeled `Checkbox` or `Switch` gets a native label that toggles it, as a native label does.
 - `required` sets `aria-required` only, on every control, never the native attribute on Base UI's hidden inputs, which would block submission with no visible message.
 - Browser tests can emulate media through CDP (`cdp()` from `vitest/browser`): reduced motion, forced colors, and a coarse pointer are all tested that way now.
 - `vite.config.ts` pre-bundles the `@base-ui/react` subpaths, because story tests failed when Vite found them mid-run.
@@ -33,9 +33,8 @@ Architecture decisions are in `docs/adr/`. Build decisions, with what each costs
    - `Textarea` spreads its props `as object`, which hides type mismatches.
    - `verify-dist`'s client-module list is kept by hand. A rule that any module importing Base UI or hooks must start with `"use client"` would catch future misses.
    - The React Hook Form fixture and docs don't pass `field.ref` to `RadioGroup`.
-4. **`ColorModeToggle` takes `variant` and `size`,** beyond Spec 09's `labels`. Revisit at the 1.0 API review.
 
-The resolved threads: Base UI is installed as `@base-ui/react` `^1.9.0` (v0.2), and the registry check is done (above).
+The resolved threads: Base UI is installed as `@base-ui/react` `^1.9.0` (v0.2), the registry check is done (above), and `ColorModeToggle`'s `variant` and `size` props are removed, so it takes only Spec 09's `labels`.
 
 ## Next steps
 
@@ -44,7 +43,7 @@ The resolved threads: Base UI is installed as `@base-ui/react` `^1.9.0` (v0.2), 
    - A screen reader pass on `Field`, `Select`, and `RadioGroup`, and on the other interactive pieces: an interactive `Card`, `Button`, `IconButton`, `Checkbox`, `Switch`, `ToggleChip`, and `ColorModeToggle`.
    - Forced-colors mode on every new component. The `ForcedColorsCheck` stories on `Card` and `Switch` are the starting points.
    - 200% browser text.
-3. **Release v0.2.0** with `npm run release -- minor` after merging.
+3. **Release v0.2.0** with `npm run release -- minor` after merging. Edit the generated notes to call out the breaking change: a full theme from `defineFullTheme` must now supply `size.checkbox`, `size.switch.width` and `.height`, and `size.chip.sm` and `.md`.
 4. **Write the v0.3 plan** from Spec 10 (Navigation) and Spec 11 (Prose).
 
 ## Resume prompt

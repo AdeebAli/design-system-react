@@ -1,7 +1,6 @@
 'use client';
 
 import { useColorMode } from '../../theme/ThemeProvider';
-import type { ButtonSize, ButtonVariant } from '../Button';
 import { Box } from '../Box';
 import { Icon } from '../Icon';
 import { MoonIcon } from '../Icon/internal/Moon';
@@ -23,10 +22,6 @@ export interface ColorModeToggleLabels {
 export interface ColorModeToggleProps extends LayoutProps {
   /** The names for each state. */
   labels?: ColorModeToggleLabels;
-  /** The button style. @default 'ghost' */
-  variant?: Exclude<ButtonVariant, 'solid'>;
-  /** The size. @default 'md' */
-  size?: ButtonSize;
   className?: string;
 }
 
@@ -34,12 +29,7 @@ export interface ColorModeToggleProps extends LayoutProps {
  * Switches between light and dark, storing the opposite of what's on screen.
  * It renders nothing when a `ThemeProvider` forces the mode.
  */
-export function ColorModeToggle({
-  labels,
-  variant = 'ghost',
-  size = 'md',
-  ...props
-}: ColorModeToggleProps) {
+export function ColorModeToggle({ labels, ...props }: ColorModeToggleProps) {
   const { resolvedMode, setMode, isForced } = useColorMode();
   if (isForced) return null;
 
@@ -63,8 +53,7 @@ export function ColorModeToggle({
     <IconButton
       icon={icon}
       aria-label={name}
-      variant={variant}
-      size={size}
+      variant="ghost"
       onClick={() =>
         resolvedMode && setMode(resolvedMode === 'dark' ? 'light' : 'dark')
       }

@@ -30,13 +30,3 @@ export default meta;
 type Story = StoryObj<typeof ColorModeToggle>;
 
 export const Playground: Story = {};
-
-export const Variants: Story = {
-  render: () => (
-    <>
-      <ColorModeToggle variant="ghost" />
-      <ColorModeToggle variant="soft" />
-      <ColorModeToggle variant="outline" />
-    </>
-  ),
-};
