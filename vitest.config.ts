@@ -26,6 +26,9 @@ function storiesProject(mode: 'light' | 'dark') {
 
 export default defineConfig({
   test: {
+    // The on-disk module cache misses changes to files a .css.ts imports,
+    // such as the theme contract, and runs tests against stale styles.
+    fsModuleCache: false,
     projects: [
       mergeConfig(
         shared,
