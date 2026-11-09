@@ -211,7 +211,7 @@ const options = [
 | `name`, `value` | string | none |
 | `inputRef` | Ref to the hidden `input` | none |
 
-- **Geometry:** a 36×20px track (`size.switch`), with a 14px knob that stays inside it. The knob's size and travel derive from the track, so a theme that resizes the track keeps the knob inside.
+- **Geometry:** a 36×20px track (`size.switch`), with a 14px knob that stays inside it. The knob's size and travel derive from the track, so a theme that resizes the track keeps the knob inside. A theme must keep `size.switch.width` at least `size.switch.height`, or the knob travels backward out of the track.
 - **Off:** `bg.sunken` track, `border.control` border and knob. **On:** `bg.accent` track, `fg.onAccent` knob. The knob's position is the non-color signal. Each pair meets 3:1 in Spec 02's
   contrast test.
 - **The knob animates with `transform`,** using `motion.duration.base`.

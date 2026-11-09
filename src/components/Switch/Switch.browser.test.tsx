@@ -58,6 +58,23 @@ it.each([
   },
 );
 
+it.each([
+  ['Checkbox', () => <Checkbox />, 'checkbox'],
+  ['Switch', () => <Switch />, 'switch'],
+] as const)(
+  'clicking a disabled Field label leaves an unlabeled %s unchanged',
+  async (_, control, role) => {
+    render(
+      <Field label="Setting" disabled>
+        {control()}
+      </Field>,
+    );
+    // Playwright won't click a disabled control's label unless forced.
+    await userEvent.click(screen.getByText('Setting'), { force: true });
+    expect(screen.getByRole(role, { name: 'Setting' })).not.toBeChecked();
+  },
+);
+
 it('clicking a Field label focuses the RadioGroup', async () => {
   render(
     <Field label="Plan">
