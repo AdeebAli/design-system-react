@@ -45,7 +45,7 @@ The resolved threads: Base UI is installed as `@base-ui/react` `^1.9.0` (v0.2), 
    - Forced-colors mode on every new component. The `ForcedColorsCheck` stories on `Card` and `Switch` are the starting points.
    - 200% browser text.
 3. **Release v0.2.0** with `npm run release -- minor` after merging. Edit the generated notes to call out the breaking change: a full theme from `defineFullTheme` must now supply `size.checkbox`, `size.switch.width` and `.height`, and `size.chip.sm` and `.md`.
-4. **Write the v0.3 plan** from Spec 10 (Navigation) and Spec 11 (Prose).
+4. **Write the v0.3 plan** from Spec 10 (Navigation) and Spec 11 (Prose), and decide each deferred minor in open thread 3 as a plan task or a drop.
 
 ## Resume prompt
 

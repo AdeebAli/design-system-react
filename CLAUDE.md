@@ -6,6 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Personal React design system, published as `@adeebali/design-system-react`. Current status, open threads, and next steps live only in `docs/HANDOFF.md`, not here.
 
+Update `docs/HANDOFF.md` through the `handoff` skill, never by hand, so every open thread keeps a trigger.
+
 ## Commands
 
 Node comes from `.nvmrc`, so run `nvm use` first.
