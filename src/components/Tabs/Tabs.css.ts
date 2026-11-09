@@ -1,4 +1,5 @@
-import { style, styleVariants } from '@vanilla-extract/css';
+import { globalStyle, style, styleVariants } from '@vanilla-extract/css';
+import { componentsLayer } from '../../styles/layers.css';
 import { vars } from '../../themes/contract.css';
 import { layered } from '../../utils/recipe';
 
@@ -141,5 +142,49 @@ export const tabIcon = style(
   layered({ display: 'inline-flex', flexShrink: 0 }),
 );
 
-/** Base UI's sliding marker. */
-export const indicator = style(layered({ display: 'none' }));
+/**
+ * Base UI's sliding marker, positioned from the variables it sets. It's in the
+ * server HTML with `hidden`, which Base UI removes once it has measured the
+ * selected tab. It doesn't animate in, since it leaves `display: none`.
+ */
+export const indicator = style(
+  layered({
+    position: 'absolute',
+    insetInlineStart: 0,
+    zIndex: 0,
+    pointerEvents: 'none',
+    width: 'var(--active-tab-width)',
+    transform: 'translateX(var(--active-tab-left))',
+    transitionProperty: 'transform, width',
+    transitionDuration: vars.motion.duration.base,
+    transitionTimingFunction: vars.motion.easing.standard,
+    selectors: { '&[hidden]': { display: 'none' } },
+  }),
+);
+
+// Both markers use the same tokens and position, so the handoff can't be seen.
+export const indicatorVariant = styleVariants({
+  underline: layered({
+    insetBlockEnd: 0,
+    borderBlockEnd: `${vars.borderWidth.thick} solid ${vars.color.bg.accent}`,
+    '@media': { [forced]: { borderBlockEndColor: 'Highlight' } },
+  }),
+  pill: layered({
+    insetBlockStart: 'var(--active-tab-top)',
+    height: 'var(--active-tab-height)',
+    borderRadius: vars.radius.full,
+    background: vars.color.bg.muted,
+    border: `${vars.borderWidth.thin} solid ${vars.color.border.control}`,
+    '@media': { [forced]: { borderColor: 'Highlight' } },
+  }),
+});
+
+// The handoff: once the Indicator is shown, the CSS marker turns off. Only
+// CSS, so it needs no React state or inline script, and if the Indicator is
+// hidden again, the CSS marker returns.
+globalStyle(
+  `${list}:has(> ${indicator}:not([hidden])) ${tab}[data-active]::after`,
+  {
+    '@layer': { [componentsLayer]: { display: 'none' } },
+  },
+);

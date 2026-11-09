@@ -36,7 +36,9 @@ export function TabsList({ className, children, ...props }: TabsListProps) {
       )}
     >
       {children}
-      <BaseTabs.Indicator className={styles.indicator} />
+      <BaseTabs.Indicator
+        className={cx(styles.indicator, styles.indicatorVariant[variant])}
+      />
     </BaseTabs.List>
   );
 }
