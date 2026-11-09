@@ -35,3 +35,15 @@ it('emits spacing in rem, except the hairline', () => {
   expect(softLight.space.px).toBe('1px');
   expect(softLight.space['0.5']).toBe('0.125rem');
 });
+
+it('has size tokens for the choice controls and chips (Spec 09)', () => {
+  expect(softLight.size.checkbox).toBe('1.125rem');
+  expect(softLight.size.switch).toEqual({
+    width: '2.25rem',
+    height: '1.25rem',
+  });
+  expect(softLight.size.chip).toEqual({ sm: '1.75rem', md: '2rem' });
+  expect(vars.size.checkbox).toBe('var(--ds-size-checkbox)');
+  expect(vars.size.switch.width).toBe('var(--ds-size-switch-width)');
+  expect(vars.size.chip.md).toBe('var(--ds-size-chip-md)');
+});

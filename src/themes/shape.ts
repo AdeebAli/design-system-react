@@ -84,6 +84,9 @@ export const contractShape = {
   size: {
     control: { sm: n, md: n, lg: n },
     icon: { sm: n, md: n, lg: n },
+    checkbox: n,
+    switch: { width: n, height: n },
+    chip: { sm: n, md: n },
     container: { sm: n, md: n, lg: n, xl: n },
     prose: n,
     dialog: { sm: n, md: n, lg: n },

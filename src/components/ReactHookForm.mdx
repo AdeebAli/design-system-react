@@ -1,0 +1,59 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Overview/React Hook Form" />
+
+# React Hook Form
+
+`Field` displays labels, hints, and errors. It doesn't manage form state or validate, so pair the controls with React Hook Form or plain React state. `fixtures/vite-app` runs this wiring in CI, so it stays correct.
+
+## Native controls: `register`
+
+`Input` and `Textarea` keep the native `value` and `onChange`, and pass `ref` to the real element, so `register` works directly:
+
+```tsx
+<Field label="Seats" error={errors.seats?.message}>
+  <Input inputMode="numeric" {...register('seats')} />
+</Field>
+```
+
+## Base UI controls: `Controller`
+
+`Select`, `Checkbox`, `RadioGroup`, `Switch`, and `ToggleChipGroup` call their change handlers with a value, not a DOM event, so use `Controller`:
+
+```tsx
+<Controller
+  name="plan"
+  control={control}
+  render={({ field, fieldState }) => (
+    <Field label="Plan" error={fieldState.error?.message}>
+      <Select
+        options={options}
+        value={field.value}
+        onValueChange={field.onChange}
+        ref={field.ref}
+      />
+    </Field>
+  )}
+/>
+```
+
+| Control           | Value prop         | Change prop       |
+| ----------------- | ------------------ | ----------------- |
+| `Select`          | `value`            | `onValueChange`   |
+| `RadioGroup`      | `value`            | `onValueChange`   |
+| `Checkbox`        | `checked`          | `onCheckedChange` |
+| `Switch`          | `checked`          | `onCheckedChange` |
+| `ToggleChipGroup` | `value` (an array) | `onValueChange`   |
+
+## Defaults
+
+- **`Select` starts at `null`,** not `''` or `undefined`. `null` shows the placeholder. `undefined` would switch the `Select` from uncontrolled to controlled.
+- **`Checkbox` and `Switch` start at `false`**, and `RadioGroup` at one of its values.
+
+```tsx
+useForm({ defaultValues: { plan: null, archived: false, billing: 'monthly' } });
+```
+
+## Required fields
+
+`Field`'s `required` sets `aria-required` and shows a `*`, but doesn't validate. Put the rule in React Hook Form, as `register('seats', { required: 'Enter a number' })` or `rules` on `Controller`, and pass the message to `Field`'s `error`.

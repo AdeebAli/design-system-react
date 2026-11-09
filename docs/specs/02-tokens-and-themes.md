@@ -124,6 +124,9 @@ Every key below is required in every theme. Values for Soft are in
 | `space.{0,px,0.5,1,1.5,2,3,4,5,6,8,10,12,16,20,24}` | Spacing scale; used by all padding, margin, and gap props |
 | `size.control.{sm,md,lg}` | Heights of buttons, inputs, selects |
 | `size.icon.{sm,md,lg}` | Icon sizes |
+| `size.checkbox` | `Checkbox` and `Radio` boxes (Spec 09) |
+| `size.switch.{width,height}` | The `Switch` track (Spec 09) |
+| `size.chip.{sm,md}` | `ToggleChip` heights (Spec 09) |
 | `size.container.{sm,md,lg,xl}` | `Container` max widths |
 | `size.prose` | Max line length for reading |
 | `size.dialog.{sm,md,lg}` | `Dialog` widths (Spec 12) |
@@ -277,6 +280,9 @@ Spacing values are emitted in rem (px ÷ 16), except `space.px`, which stays
 |---|---|
 | `size.control.sm` / `md` / `lg` | 1.75rem / 2.25rem / 2.75rem (28 / 36 / 44px) |
 | `size.icon.sm` / `md` / `lg` | 0.875rem / 1rem / 1.25rem (14 / 16 / 20px) |
+| `size.checkbox` | 1.125rem (18px) |
+| `size.switch.width` / `height` | 2.25rem / 1.25rem (36 / 20px) |
+| `size.chip.sm` / `md` | 1.75rem / 2rem (28 / 32px) |
 | `size.container.sm` / `md` / `lg` / `xl` | 40rem / 48rem / 64rem / 80rem (640 / 768 / 1024 / 1280px) |
 | `size.prose` | 68ch |
 | `size.dialog.sm` / `md` / `lg` | 24rem / 32rem / 44rem (384 / 512 / 704px) |

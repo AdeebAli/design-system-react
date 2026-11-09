@@ -2,9 +2,11 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Project state
+## Project
 
-Personal React design system, published as `@adeebali/design-system-react`. All specs (00–16) are accepted. Milestone v0.1 (specs 01–07) is merged to `main`. v0.2 (specs 08–09) is next, per `docs/HANDOFF.md`.
+Personal React design system, published as `@adeebali/design-system-react`. Current status, open threads, and next steps live only in `docs/HANDOFF.md`, not here.
+
+Update `docs/HANDOFF.md` through the `handoff` skill, never by hand, so every open thread keeps a trigger.
 
 ## Commands
 
@@ -30,7 +32,7 @@ Read these first:
 - When a spec is accepted, commit it on a branch, open a PR, squash merge it, delete the branch, then start the next spec. Don't ask first. This covers accepted specs only; other commits and pushes need a request.
 - Record new architectural decisions as the next ADR (`docs/adr/0005-…`), using the existing ADR format (Status, Date, Context, Decision, Alternatives considered, Consequences).
 - Items marked **(proposed)** in specs are the assistant's calls and not owner-confirmed. Don't treat them as settled.
-- Implementation plans come only after the specs are approved, starting with milestone v0.1 (specs 01–07).
+- Implementation plans come only after the specs are approved.
 - Brainstorm mockups live in `.superpowers/` (gitignored).
 - A subagent may act as a fresh reviewer of a finished branch or plan, such as the final whole-branch review in `superpowers:executing-plans`. This is an exception to the owner's general limits on subagents. Give it read-only work, and validate its findings before acting on them.
 

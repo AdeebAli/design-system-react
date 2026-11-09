@@ -1,5 +1,9 @@
 import '@adeebali/design-system-react/styles.css';
-import { ColorModeScript, ThemeProvider } from '@adeebali/design-system-react';
+import {
+  ColorModeScript,
+  ColorModeToggle,
+  ThemeProvider,
+} from '@adeebali/design-system-react';
 import type { ReactNode } from 'react';
 import { theme } from './theme';
 
@@ -10,7 +14,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en" suppressHydrationWarning>
       <body>
         <ColorModeScript />
-        <ThemeProvider theme={theme}>{children}</ThemeProvider>
+        <ThemeProvider theme={theme}>
+          <ColorModeToggle />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -22,6 +22,8 @@ Define the form controls that were rebuilt in every past project: `Field`, `Inpu
   Other Base UI controls use `value` and `onValueChange` (Spec 05).
 - Checkbox: 18px, `radius.sm`, a rounded check mark. Switch: 36×20px, the knob inside the track, with at least 3:1 contrast
   between knob and track in both states. These came from reviewing the Soft page.
+- **These sizes are tokens,** so a theme can resize the controls: `size.checkbox` for `Checkbox` and `Radio`, `size.switch.{width,height}`, and
+  `size.chip.{sm,md}`. This amends Spec 02 (added 2026-11-08). The check mark and radio dot scale with `size.checkbox`.
 - Controls use `radius.control` (12px), and heights of 28, 36, and 44px (Spec 02).
 - Icons are passed as elements, not components (Spec 07).
 - All interactive parts wrap Base UI (`@base-ui/react`), and those wrappers are client components.
@@ -70,7 +72,7 @@ It also accepts layout props, `className`, `style`, and `ref`, on its root eleme
 - **`Field.Error` is only mounted when `error` is set,** since it would otherwise render empty, and be referenced by `aria-describedby`.
 - **Controls inside inherit `invalid`, `disabled`, `required`, and the label, hint, and error associations.** A control's own `invalid`
   or `disabled` prop also works.
-- **Clicking the label focuses the control,** and doesn't open a `Select`. Base UI names every control through `aria-labelledby`, but its `nativeLabel` setting changes
+- **Clicking the label focuses the control,** and doesn't open a `Select`. For a `Checkbox` or `Switch` with no label of its own, it also toggles it, as a native label does. Base UI names every control through `aria-labelledby`, but its `nativeLabel` setting changes
   what a click does, and `Field` can't see its child's type. So controls tell `Field` through its context. The mechanism is left to the builder, and a test covers this behavior for
   each control type.
 - **`required` doesn't use native validation.** It sets `aria-required`, not the native attribute, because the native one would trigger browser error bubbles and Base UI's
@@ -209,7 +211,7 @@ const options = [
 | `name`, `value` | string | none |
 | `inputRef` | Ref to the hidden `input` | none |
 
-- **Geometry:** a 36×20px track (in `rem`), with a 14px knob that stays inside it.
+- **Geometry:** a 36×20px track (`size.switch`), with a 14px knob that stays inside it. The knob's size and travel derive from the track, so a theme that resizes the track keeps the knob inside. A theme must keep `size.switch.width` at least `size.switch.height`, or the knob travels backward out of the track.
 - **Off:** `bg.sunken` track, `border.control` border and knob. **On:** `bg.accent` track, `fg.onAccent` knob. The knob's position is the non-color signal. Each pair meets 3:1 in Spec 02's
   contrast test.
 - **The knob animates with `transform`,** using `motion.duration.base`.
@@ -312,7 +314,7 @@ Selectable pills, such as topic filters.
 - **`ToggleChipGroup`:** `value` and `defaultValue` (arrays), `onValueChange`, `multiple`, `disabled`, plus `gap`. It lays out like `Inline`, and needs `aria-label` or `aria-labelledby`. Built on `ToggleGroup`.
 - **Pressing the selected chip clears it,** which is Base UI's behavior, even without `multiple`. To keep one always selected, as with an "All" filter, control `value` and ignore empty changes. The docs show this.
 - **Styles:** `radius.full`. Unpressed: `bg.muted`, `fg.default`, hover `bg.mutedHover`. Pressed: `bg.accent`, `fg.onAccent`, hover `bg.accentHover`, **with a check icon**, so state isn't shown by color alone.
-- **Height:** at least 24px (WCAG 2.5.8), with 28px at `sm` and 32px at `md`.
+- **Height:** at least 24px (WCAG 2.5.8), with 28px at `sm` and 32px at `md` (`size.chip`).
 - Public state attributes: `data-pressed`, `data-disabled`.
 
 ## `ColorModeToggle`
@@ -326,6 +328,7 @@ An `IconButton` that switches between light and dark, using `useColorMode` (Spec
 - **Two states, not three.** Clicking stores the opposite of the current mode. "System" stays the starting point until someone clicks. Offering all three takes a `Menu`, which arrives with Spec 12, and a project can build that with `useColorMode`.
 - **Before hydration,** `resolvedMode` is `undefined`, so it renders with no icon at its final size, which avoids layout shift, and with a neutral name, so axe doesn't flag an unnamed button. The icon and specific name appear after hydration.
 - **`labels`:** `{ toLight, toDark, neutral }`, for translation. Defaults: "Switch to light mode", "Switch to dark mode", and "Switch color mode".
+- **`variant` and `size`** pass to the `IconButton`: `variant` is `ghost` (default), `soft`, or `outline`, with no `solid`, and `size` is `sm`, `md` (default), or `lg`.
 - **Renders nothing when `isForced`** is true.
 - Sun and moon icons are internal (Spec 07).
 

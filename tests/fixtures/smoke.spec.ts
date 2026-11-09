@@ -141,8 +141,68 @@ test('the OS setting and a locked mode select the canvas', async ({ page }) => {
   const canvas = () =>
     page.evaluate(() => getComputedStyle(document.body).backgroundColor);
   expect(await canvas()).toBe('rgb(20, 19, 17)');
+  // ThemeProvider syncs the attribute when it hydrates, so lock it after that.
+  // The toggle's specific name only appears once hydrated.
+  await expect(
+    page.getByRole('button', { name: /^Switch to (light|dark) mode$/ }),
+  ).toBeVisible();
   await page.evaluate(() =>
     document.documentElement.setAttribute('data-ds-mode', 'light'),
   );
   expect(await canvas()).toBe('rgb(244, 242, 238)');
+});
+
+test('bento components render with their styles', async ({ page }) => {
+  await page.goto('/');
+  const card = page.getByTestId('card');
+  const radius = await card.evaluate((el) => {
+    const probe = document.createElement('div');
+    probe.style.borderTopLeftRadius = 'var(--ds-radius-card)';
+    document.body.append(probe);
+    const expected = getComputedStyle(probe).borderTopLeftRadius;
+    probe.remove();
+    return [getComputedStyle(el).borderTopLeftRadius, expected];
+  });
+  expect(radius[0]).toBe(radius[1]);
+  expect(radius[0]).not.toBe('0px');
+  await expect(card.getByRole('term')).toHaveText('Revenue');
+  await expect(card.getByTestId('badge')).toHaveText('Pro');
+});
+
+test('a React Hook Form form submits every control', async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== 'vite-app', 'Vite fixture only');
+  await page.goto('/');
+  const form = page.getByRole('form', { name: 'Filters' });
+  await form.getByRole('textbox', { name: 'Seats' }).fill('12');
+  await form.getByRole('textbox', { name: 'Notes' }).fill('Hello');
+  await form.getByRole('combobox', { name: 'Plan' }).click();
+  await page.getByRole('option', { name: 'Annual' }).click();
+  await form.getByRole('checkbox', { name: 'Include archived' }).click();
+  await form.getByRole('radio', { name: 'Yearly' }).click();
+  await form.getByRole('switch', { name: 'Live updates' }).click();
+  await form.getByRole('button', { name: 'Code' }).click();
+  await form.getByRole('button', { name: 'Apply' }).click();
+  expect(
+    JSON.parse((await page.getByTestId('submitted').textContent()) ?? ''),
+  ).toEqual({
+    seats: '12',
+    notes: 'Hello',
+    plan: 'annual',
+    archived: true,
+    billing: 'yearly',
+    live: true,
+    topics: ['design', 'code'],
+  });
+});
+
+test('a Select with server-built options shows its label in the server HTML', async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== 'next-app', 'Next.js only');
+  const html = await (await page.request.get('/')).text();
+  expect(html).toMatch(/data-testid="server-select"[^>]*>[\s\S]*?Annual/);
+  await page.goto('/');
+  await expect(page.getByTestId('server-select')).toHaveText(/Annual/);
 });
