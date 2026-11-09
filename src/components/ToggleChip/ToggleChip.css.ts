@@ -51,12 +51,12 @@ export const chip = style(
 
 export const size = styleVariants({
   sm: layered({
-    height: '1.75rem',
+    height: vars.size.chip.sm,
     paddingInline: vars.space['2'],
     fontSize: vars.font.size.sm,
   }),
   md: layered({
-    height: '2rem',
+    height: vars.size.chip.md,
     paddingInline: vars.space['3'],
     fontSize: vars.font.size.md,
   }),

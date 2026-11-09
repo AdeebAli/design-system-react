@@ -3,6 +3,12 @@ import { vars } from '../../themes/contract.css';
 import { layered } from '../../utils/recipe';
 
 const { bg, fg, border } = vars.color;
+const { checkbox: boxSize, switch: switchSize } = vars.size;
+
+/** WCAG 2.5.8's minimum target, a fixed rule rather than a theme value. */
+const MIN_TARGET = '1.5rem';
+/** The controls' border, which the derived sizes account for. */
+const BORDER = '1px';
 
 /** The outer wrapper of a choice control with its own label (Checkbox, Radio, Switch). */
 export const item = style(
@@ -24,8 +30,8 @@ export const label = style(
     lineHeight: vars.font.lineHeight.normal,
     color: fg.default,
     cursor: 'pointer',
-    // The whole label is the target, so the small box still meets the 24 CSS pixel minimum (Spec 09).
-    minHeight: '1.5rem',
+    // The whole label is the target, so the small box still meets the minimum (Spec 09).
+    minHeight: MIN_TARGET,
     selectors: {
       '&[data-disabled]': { color: fg.disabled, cursor: 'not-allowed' },
     },
@@ -50,13 +56,13 @@ export const hint = styleVariants({
     margin: 0,
     fontSize: vars.font.size.xs,
     color: fg.muted,
-    paddingInlineStart: `calc(1.125rem + ${vars.space['2']})`,
+    paddingInlineStart: `calc(${boxSize} + ${vars.space['2']})`,
   }),
   switch: layered({
     margin: 0,
     fontSize: vars.font.size.xs,
     color: fg.muted,
-    paddingInlineStart: `calc(2.25rem + ${vars.space['2']})`,
+    paddingInlineStart: `calc(${switchSize.width} + ${vars.space['2']})`,
   }),
 });
 
@@ -71,10 +77,10 @@ const boxBase = {
   alignItems: 'center',
   justifyContent: 'center',
   flexShrink: 0,
-  width: '1.125rem',
-  height: '1.125rem',
+  width: boxSize,
+  height: boxSize,
   background: bg.sunken,
-  borderWidth: '1px',
+  borderWidth: BORDER,
   borderStyle: 'solid',
   borderColor: border.control,
   color: fg.onAccent,
@@ -97,12 +103,12 @@ const boxStates = {
     color: fg.disabled,
     cursor: 'not-allowed',
   },
-  // With no label, a larger invisible hit area meets the 24 CSS pixel minimum (Spec 09).
+  // With no label, a larger invisible hit area meets the minimum (Spec 09).
   '&::before': {
     content: '""',
     position: 'absolute',
-    // Inside the 1px border, so 1px more each way.
-    inset: 'calc((1.125rem - 1.5rem) / 2 - 1px)',
+    // Measured inside the border, so one border width more each way.
+    inset: `calc(min(0rem, (${boxSize} - ${MIN_TARGET}) / 2) - ${BORDER})`,
   },
 } as const;
 
@@ -115,7 +121,12 @@ export const radio = style(
 );
 
 export const indicator = style(
-  layered({ display: 'inline-flex', width: '0.875rem', height: '0.875rem' }),
+  // 7/9 of the box (Soft: a 14 in 18 check), so it scales with the box.
+  layered({
+    display: 'inline-flex',
+    width: `calc(${boxSize} * 7 / 9)`,
+    height: `calc(${boxSize} * 7 / 9)`,
+  }),
 );
 globalStyle(`${indicator} > svg`, layered({ width: '100%', height: '100%' }));
 
@@ -130,8 +141,9 @@ const forcedMark = {
 
 export const dot = style(
   layered({
-    width: '0.5rem',
-    height: '0.5rem',
+    // 4/9 of the box (Soft: an 8 in 18 dot), so it scales with the box.
+    width: `calc(${boxSize} * 4 / 9)`,
+    height: `calc(${boxSize} * 4 / 9)`,
     borderRadius: vars.radius.full,
     background: 'currentColor',
     '@media': forcedMark,
@@ -144,12 +156,12 @@ export const track = style(
     display: 'inline-flex',
     alignItems: 'center',
     flexShrink: 0,
-    width: '2.25rem',
-    height: '1.25rem',
-    padding: '0.125rem',
+    width: switchSize.width,
+    height: switchSize.height,
+    padding: vars.space['0.5'],
     borderRadius: vars.radius.full,
     background: bg.sunken,
-    borderWidth: '1px',
+    borderWidth: BORDER,
     borderStyle: 'solid',
     borderColor: border.control,
     cursor: 'pointer',
@@ -165,15 +177,23 @@ export const track = style(
         borderColor: border.disabled,
         cursor: 'not-allowed',
       },
-      '&::before': { content: '""', position: 'absolute', inset: '-0.25rem' },
+      '&::before': {
+        content: '""',
+        position: 'absolute',
+        insetBlock: `calc(min(0rem, (${switchSize.height} - ${MIN_TARGET}) / 2) - ${BORDER})`,
+        insetInline: `calc(-1 * ${BORDER})`,
+      },
     },
   }),
 );
 
+const thumbSize = `calc(${switchSize.height} - 2 * ${BORDER} - 2 * ${vars.space['0.5']})`;
+
 export const thumb = style(
   layered({
-    width: '0.875rem',
-    height: '0.875rem',
+    // Fills the track's height inside its border and padding.
+    width: thumbSize,
+    height: thumbSize,
     borderRadius: vars.radius.full,
     background: border.control,
     '@media': forcedMark,
@@ -182,7 +202,7 @@ export const thumb = style(
     transitionTimingFunction: vars.motion.easing.standard,
     selectors: {
       '&[data-checked]': {
-        transform: 'translateX(1rem)',
+        transform: `translateX(calc(${switchSize.width} - ${switchSize.height}))`,
         background: fg.onAccent,
       },
       '&[data-disabled]': { background: fg.disabled },

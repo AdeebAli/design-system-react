@@ -79,6 +79,12 @@ export interface ThemeTokens {
   size: {
     control: Record<'sm' | 'md' | 'lg', string>;
     icon: Record<'sm' | 'md' | 'lg', string>;
+    /** Checkbox and Radio boxes. */
+    checkbox: string;
+    /** The Switch track. */
+    switch: Record<'width' | 'height', string>;
+    /** ToggleChip heights. */
+    chip: Record<'sm' | 'md', string>;
     container: Record<'sm' | 'md' | 'lg' | 'xl', string>;
     prose: string;
     dialog: Record<'sm' | 'md' | 'lg', string>;

@@ -20,6 +20,9 @@ export const softShared: Omit<ThemeTokens, 'color' | 'shadow'> = {
   size: {
     control: { sm: '1.75rem', md: '2.25rem', lg: '2.75rem' },
     icon: { sm: '0.875rem', md: '1rem', lg: '1.25rem' },
+    checkbox: '1.125rem',
+    switch: { width: '2.25rem', height: '1.25rem' },
+    chip: { sm: '1.75rem', md: '2rem' },
     container: { sm: '40rem', md: '48rem', lg: '64rem', xl: '80rem' },
     prose: '68ch',
     dialog: { sm: '24rem', md: '32rem', lg: '44rem' },

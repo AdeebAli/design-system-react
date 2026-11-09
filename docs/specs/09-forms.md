@@ -22,6 +22,8 @@ Define the form controls that were rebuilt in every past project: `Field`, `Inpu
   Other Base UI controls use `value` and `onValueChange` (Spec 05).
 - Checkbox: 18px, `radius.sm`, a rounded check mark. Switch: 36×20px, the knob inside the track, with at least 3:1 contrast
   between knob and track in both states. These came from reviewing the Soft page.
+- **These sizes are tokens,** so a theme can resize the controls: `size.checkbox` for `Checkbox` and `Radio`, `size.switch.{width,height}`, and
+  `size.chip.{sm,md}`. This amends Spec 02 (added 2026-11-08). The check mark and radio dot scale with `size.checkbox`.
 - Controls use `radius.control` (12px), and heights of 28, 36, and 44px (Spec 02).
 - Icons are passed as elements, not components (Spec 07).
 - All interactive parts wrap Base UI (`@base-ui/react`), and those wrappers are client components.
@@ -209,7 +211,7 @@ const options = [
 | `name`, `value` | string | none |
 | `inputRef` | Ref to the hidden `input` | none |
 
-- **Geometry:** a 36×20px track (in `rem`), with a 14px knob that stays inside it.
+- **Geometry:** a 36×20px track (`size.switch`), with a 14px knob that stays inside it. The knob's size and travel derive from the track, so a theme that resizes the track keeps the knob inside.
 - **Off:** `bg.sunken` track, `border.control` border and knob. **On:** `bg.accent` track, `fg.onAccent` knob. The knob's position is the non-color signal. Each pair meets 3:1 in Spec 02's
   contrast test.
 - **The knob animates with `transform`,** using `motion.duration.base`.
@@ -312,7 +314,7 @@ Selectable pills, such as topic filters.
 - **`ToggleChipGroup`:** `value` and `defaultValue` (arrays), `onValueChange`, `multiple`, `disabled`, plus `gap`. It lays out like `Inline`, and needs `aria-label` or `aria-labelledby`. Built on `ToggleGroup`.
 - **Pressing the selected chip clears it,** which is Base UI's behavior, even without `multiple`. To keep one always selected, as with an "All" filter, control `value` and ignore empty changes. The docs show this.
 - **Styles:** `radius.full`. Unpressed: `bg.muted`, `fg.default`, hover `bg.mutedHover`. Pressed: `bg.accent`, `fg.onAccent`, hover `bg.accentHover`, **with a check icon**, so state isn't shown by color alone.
-- **Height:** at least 24px (WCAG 2.5.8), with 28px at `sm` and 32px at `md`.
+- **Height:** at least 24px (WCAG 2.5.8), with 28px at `sm` and 32px at `md` (`size.chip`).
 - Public state attributes: `data-pressed`, `data-disabled`.
 
 ## `ColorModeToggle`
