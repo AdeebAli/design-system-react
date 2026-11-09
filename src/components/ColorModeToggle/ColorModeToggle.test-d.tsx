@@ -1,9 +1,12 @@
 import { ColorModeToggle } from './index';
 
-test('takes labels but no button style or size', () => {
+test('takes a button style other than solid, and a size', () => {
   <ColorModeToggle labels={{ toDark: 'Dark' }} />;
-  // @ts-expect-error the toggle has one style
+  <ColorModeToggle variant="ghost" />;
+  <ColorModeToggle variant="soft" />;
   <ColorModeToggle variant="outline" />;
-  // @ts-expect-error the toggle has one size
   <ColorModeToggle size="sm" />;
+  <ColorModeToggle size="lg" />;
+  // @ts-expect-error solid is too loud for a utility control
+  <ColorModeToggle variant="solid" />;
 });

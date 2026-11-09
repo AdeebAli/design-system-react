@@ -34,7 +34,7 @@ Architecture decisions are in `docs/adr/`. Build decisions, with what each costs
    - `verify-dist`'s client-module list is kept by hand. A rule that any module importing Base UI or hooks must start with `"use client"` would catch future misses.
    - The React Hook Form fixture and docs don't pass `field.ref` to `RadioGroup`.
 
-The resolved threads: Base UI is installed as `@base-ui/react` `^1.9.0` (v0.2), the registry check is done (above), and `ColorModeToggle`'s `variant` and `size` props are removed, so it takes only Spec 09's `labels`.
+The resolved threads: Base UI is installed as `@base-ui/react` `^1.9.0` (v0.2), the registry check is done (above), and the owner chose to keep `ColorModeToggle`'s `variant` and `size` props, now documented in Spec 09.
 
 ## Next steps
 

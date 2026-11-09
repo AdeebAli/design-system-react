@@ -328,6 +328,7 @@ An `IconButton` that switches between light and dark, using `useColorMode` (Spec
 - **Two states, not three.** Clicking stores the opposite of the current mode. "System" stays the starting point until someone clicks. Offering all three takes a `Menu`, which arrives with Spec 12, and a project can build that with `useColorMode`.
 - **Before hydration,** `resolvedMode` is `undefined`, so it renders with no icon at its final size, which avoids layout shift, and with a neutral name, so axe doesn't flag an unnamed button. The icon and specific name appear after hydration.
 - **`labels`:** `{ toLight, toDark, neutral }`, for translation. Defaults: "Switch to light mode", "Switch to dark mode", and "Switch color mode".
+- **`variant` and `size`** pass to the `IconButton`: `variant` is `ghost` (default), `soft`, or `outline`, with no `solid`, and `size` is `sm`, `md` (default), or `lg`.
 - **Renders nothing when `isForced`** is true.
 - Sun and moon icons are internal (Spec 07).
 
