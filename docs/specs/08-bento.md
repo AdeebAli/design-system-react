@@ -173,7 +173,7 @@ All of these pairs are in Spec 02's contrast test.
 and `md` has `space.1` and `space.2`.
 
 - Badge text has to carry the meaning, since color alone can't (Spec 05).
-- **A label too long for its container ends in an ellipsis,** so the pill keeps its shape and doesn't overflow. The full text stays in the
+- **A label too long for its container ends in an ellipsis,** so the pill keeps its shape and doesn't overflow, including as a grid or flex item. The full text stays in the
   accessibility tree. Keep badge text short; truncation is a fallback for data you don't control.
 - **`Badge` isn't clickable.** Selectable filter pills like the topics in the blog mockup aren't part of this spec. See below.
 

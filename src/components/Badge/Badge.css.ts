@@ -15,8 +15,10 @@ export const badge = recipe({
     fontWeight: vars.font.weight.medium,
     lineHeight: vars.font.lineHeight.normal,
     whiteSpace: 'nowrap',
-    // A long label truncates instead of overflowing its container.
+    // A long label truncates instead of overflowing its container, and
+    // minWidth lets it shrink as a grid or flex item.
     maxWidth: '100%',
+    minWidth: 0,
   }),
   variants: {
     tone: {

@@ -69,3 +69,23 @@ it('a short label keeps its natural width', () => {
     60,
   );
 });
+
+it('a long label truncates as a grid item, without widening its column', () => {
+  const text = 'An unusually long status label from user data';
+  render(
+    <div
+      data-testid="grid"
+      style={{ display: 'grid', gridTemplateColumns: '1fr', width: 120 }}
+    >
+      <Badge data-testid="b">{text}</Badge>
+    </div>,
+  );
+  const grid = screen.getByTestId('grid');
+  const badge = screen.getByTestId('b');
+  expect(badge.getBoundingClientRect().right).toBeLessThanOrEqual(
+    grid.getBoundingClientRect().right,
+  );
+  expect(grid.scrollWidth).toBe(grid.clientWidth);
+  const label = badge.lastElementChild as HTMLElement;
+  expect(label.scrollWidth).toBeGreaterThan(label.clientWidth);
+});
