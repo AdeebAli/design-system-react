@@ -33,6 +33,14 @@ const components = {
 
 Mapped components keep their own styles: a component's class beats `Prose`'s element rules.
 
+In a Next.js server component, `next/link` is a server wrapper, which works with `Link` but can't be passed to a client component such as `NavBarLink`. For those, re-export it from a client module and import that instead:
+
+```tsx
+// app/next-link.tsx
+'use client';
+export { default } from 'next/link';
+```
+
 ## Code blocks need a keyboard route
 
 A `pre` that scrolls sideways must be reachable by keyboard, and not every browser makes a scrolling region focusable. `Prose` can't add `tabindex` to plain HTML, so add it where the HTML is made. In MDX:

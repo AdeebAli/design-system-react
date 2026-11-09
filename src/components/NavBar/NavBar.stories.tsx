@@ -44,7 +44,7 @@ const meta: Meta<typeof NavBar> = {
     docs: {
       description: {
         component:
-          'The site’s main navigation, for links between pages. For switching views within a page, use `Tabs`. Children must be `NavBarLink`s; anything else goes in `brand` or `actions`. Set `active` on the current page’s link: the library doesn’t read the URL. Below `md`, links collapse behind a menu button into a panel that pushes content down; it closes on `Escape` and on a link click. Pass a router link through `as`, such as `as={NextLink}`.',
+          "The site’s main navigation, for links between pages. For switching views within a page, use `Tabs`. Children must be `NavBarLink`s; anything else goes in `brand` or `actions`. Set `active` on the current page’s link: the library doesn’t read the URL. Below `md`, links collapse behind a menu button into a panel that pushes content down; it closes on `Escape` and on a link click. Pass a router link through `as`, such as `as={NextLink}`. In a Next.js server component, `next/link` is a server wrapper that can't be passed to `NavBarLink`, so re-export it from a client module first: a file containing `'use client'; export { default } from 'next/link';`.",
       },
     },
   },

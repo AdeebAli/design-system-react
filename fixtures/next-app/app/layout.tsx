@@ -5,6 +5,7 @@ import {
   ThemeProvider,
 } from '@adeebali/design-system-react';
 import type { ReactNode } from 'react';
+import { SiteNav } from './SiteNav';
 import { theme } from './theme';
 
 export const metadata = { title: 'Next fixture' };
@@ -16,6 +17,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <ColorModeScript />
         <ThemeProvider theme={theme}>
           <ColorModeToggle />
+          <SiteNav />
           {children}
         </ThemeProvider>
       </body>
