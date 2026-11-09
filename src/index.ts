@@ -32,6 +32,7 @@ export * from './components/ToggleChip';
 export * from './components/ToggleChipGroup';
 export * from './components/ColorModeToggle';
 export * from './components/NavBar';
+export * from './components/Tabs';
 export { breakpoints } from './tokens/breakpoints';
 export { tokens } from './tokens/primitives';
 export { vars } from './themes/contract.css';
