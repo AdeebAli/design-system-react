@@ -46,7 +46,7 @@ export function Badge({
       {...props}
     >
       {startIcon && <span className={styles.icon}>{startIcon}</span>}
-      {children}
+      <span className={styles.label}>{children}</span>
     </Box>
   );
 }

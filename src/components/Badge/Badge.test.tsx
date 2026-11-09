@@ -19,34 +19,37 @@ it.each(
   ),
 )('Badge %s %s applies its class', (tone, variant) => {
   render(
-    <Badge tone={tone} variant={variant}>
+    <Badge data-testid="b" tone={tone} variant={variant}>
       Label
     </Badge>,
   );
-  expect(screen.getByText('Label').className).toContain(
+  expect(screen.getByTestId('b').className).toContain(
     badge({ tone, variant, size: 'md' }),
   );
 });
 
 it('defaults to neutral soft md', () => {
-  render(<Badge>Label</Badge>);
-  expect(screen.getByText('Label').className).toContain(
+  render(<Badge data-testid="b">Label</Badge>);
+  expect(screen.getByTestId('b').className).toContain(
     badge({ tone: 'neutral', variant: 'soft', size: 'md' }),
   );
 });
 
 it('renders a span', () => {
-  render(<Badge>Label</Badge>);
-  expect(screen.getByText('Label').tagName).toBe('SPAN');
+  render(<Badge data-testid="b">Label</Badge>);
+  expect(screen.getByTestId('b').tagName).toBe('SPAN');
 });
 
 it('renders startIcon before the text', () => {
   render(
-    <Badge startIcon={<Icon icon={ArrowUpIcon} data-testid="i" />}>
+    <Badge
+      data-testid="b"
+      startIcon={<Icon icon={ArrowUpIcon} data-testid="i" />}
+    >
       Label
     </Badge>,
   );
-  const icon = screen.getByTestId('i');
-  expect(icon.closest('span')?.parentElement).toBe(screen.getByText('Label'));
-  expect(screen.getByText('Label').firstElementChild).toContainElement(icon);
+  const root = screen.getByTestId('b');
+  expect(root.firstElementChild).toContainElement(screen.getByTestId('i'));
+  expect(root.lastElementChild).toHaveTextContent('Label');
 });

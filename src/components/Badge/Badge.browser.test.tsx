@@ -42,3 +42,30 @@ it.each([
   expect(badge.backgroundColor).toBe(probe.backgroundColor);
   expect(badge.color).toBe(probe.color);
 });
+
+it('a long label truncates inside a narrow container, keeping its full text', () => {
+  const text = 'An unusually long status label from user data';
+  render(
+    <div data-testid="box" style={{ width: 120 }}>
+      <Badge data-testid="b">{text}</Badge>
+    </div>,
+  );
+  const badge = screen.getByTestId('b');
+  const box = screen.getByTestId('box').getBoundingClientRect();
+  expect(badge.getBoundingClientRect().right).toBeLessThanOrEqual(box.right);
+  expect(badge.textContent).toBe(text);
+  const label = badge.lastElementChild as HTMLElement;
+  expect(getComputedStyle(label).textOverflow).toBe('ellipsis');
+  expect(label.scrollWidth).toBeGreaterThan(label.clientWidth);
+});
+
+it('a short label keeps its natural width', () => {
+  render(
+    <div style={{ width: 400 }}>
+      <Badge data-testid="b">Pro</Badge>
+    </div>,
+  );
+  expect(screen.getByTestId('b').getBoundingClientRect().width).toBeLessThan(
+    60,
+  );
+});

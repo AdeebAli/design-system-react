@@ -15,6 +15,8 @@ export const badge = recipe({
     fontWeight: vars.font.weight.medium,
     lineHeight: vars.font.lineHeight.normal,
     whiteSpace: 'nowrap',
+    // A long label truncates instead of overflowing its container.
+    maxWidth: '100%',
   }),
   variants: {
     tone: {
@@ -90,3 +92,8 @@ export const badge = recipe({
 export const icon = style(layered({ display: 'inline-flex' }));
 
 globalStyle(`${icon} > svg`, layered({ width: '1em', height: '1em' }));
+
+/** The text, which ends in an ellipsis when the badge runs out of room. */
+export const label = style(
+  layered({ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis' }),
+);
