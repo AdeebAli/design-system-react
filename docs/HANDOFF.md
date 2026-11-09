@@ -9,9 +9,9 @@ Build `@adeebali/design-system-react`, a general-purpose React design system. Sp
 ## Status
 
 - **Done:** milestone v0.1 (specs 01–07) is merged to `main` as `9c49e84` (PR #17), and released as v0.1.0 (`f49377f`) to GitHub Packages, with Storybook at https://adeebali.github.io/design-system-react/. The owner installed 0.1.0 from GitHub Packages in another project, which finishes Spec 01's registry check.
-- **In review:** milestone v0.2 (Spec 08 Bento, Spec 09 Forms) is PR #20, branch `feat/v0.2-bento-and-forms`, from the plan `docs/superpowers/plans/2026-11-08-v0-2-bento-and-forms.md`. It adds `Card`, `Stat`, `Badge`, `Field`, `Input`, `Textarea`, `Select`, `Checkbox`, `RadioGroup`, `Radio`, `Switch`, `Button`, `IconButton`, `ToggleChip`, `ToggleChipGroup`, and `ColorModeToggle`, plus the Bento, Forms, and React Hook Form pages.
-- **Since the whole-branch review:** size tokens for the checkbox, switch, and chips; a `Field` label toggles an unlabeled `Checkbox` or `Switch`; a long `Badge` truncates, including in a grid cell; `ColorModeToggle` keeps `variant` and `size`, now in Spec 09; Vitest's on-disk module cache is off; the `handoff` skill ships in `.claude/skills/`.
-- **Accessibility:** the owner's screen reader pass on `Link`, `VisuallyHidden`, and `Icon` is done. v0.2's manual checks are under Next steps.
+- **Done:** milestone v0.2 (Spec 08 Bento, Spec 09 Forms) is merged to `main` as `ffb1104` (PR #20) and released as v0.2.0 (`78202da`). It adds `Card`, `Stat`, `Badge`, `Field`, `Input`, `Textarea`, `Select`, `Checkbox`, `RadioGroup`, `Radio`, `Switch`, `Button`, `IconButton`, `ToggleChip`, `ToggleChipGroup`, and `ColorModeToggle`, plus the Bento, Forms, and React Hook Form pages. The release notes call out the breaking change: a full theme from `defineFullTheme` must now supply the `size.checkbox`, `size.switch`, and `size.chip` tokens.
+- **Accessibility:** the owner's screen reader pass on `Link`, `VisuallyHidden`, and `Icon` is done, and v0.2's manual checks came out clean.
+- **Next milestone:** v0.3 (Spec 10 Navigation, Spec 11 Prose). No plan yet.
 
 ## Decisions
 
@@ -27,23 +27,23 @@ Architecture decisions are in `docs/adr/`. Build decisions, with what each costs
 
 ## Changes
 
-- **Branch:** `feat/v0.2-bento-and-forms`, PR #20, head `3bfe2e9`: 385 files, +7,831 −30, of which 252 files are baseline screenshots.
-- The last seven commits were rewritten to remove a `Co-Authored-By` trailer and force-pushed. Their file contents are unchanged.
-- The v0.2 plan's baseline step and this note describe approving the held CI run, and `Badge.browser.test.tsx` has a flex-row truncation test.
+- PR #20 merged as `ffb1104`, and its branch is deleted locally and on GitHub.
+- `npm run release -- minor` made `78202da` (v0.2.0) and the `v0.2.0` tag and GitHub Release. The release's notes were edited to add the breaking change and a component summary above the generated list.
+- This note is on branch `docs/handoff-after-v0.2.0`.
 
 ## Verification
 
-- `npm run check` passes on the branch's final code, and CI passes on all six jobs at `3bfe2e9`.
-- **Reviews:** an Opus whole-branch review ran at `58571f3`, and its three findings are fixed with tests in `6b3b285`. A Sonnet review of `94e8d93..4e3cf76` found only minors, and the two worth taking are done. A Sonnet review of the remaining commits (`6b3b285`, `94e8d93`, `e62aa85`, `3bfe2e9`) found no Critical or Important issues. Every commit on the branch has now been reviewed.
-- **`Badge` truncation** is tested in a block container, a flex row, and a grid cell. The flex test fails only with both `maxWidth: '100%'` and `minWidth: 0` removed, because either one keeps a flex item inside its row. The grid test fails with `minWidth: 0` removed.
-- **Checked and left alone:** a disabled control's hint doesn't dim, inside a `Field` or out. All cases render `fg.muted`, which matches Spec 09.
-- **Not verified:** v0.2's manual checks (Next steps, item 2).
+- CI passes on `main` at `ffb1104` and at `78202da`.
+- The Publish workflow logged `+ @adeebali/design-system-react@0.2.0`, and the Storybook workflow deployed: the live site's `index.json` lists the new stories.
+- Every commit on PR #20 was reviewed (an Opus whole-branch review, then two Sonnet reviews of the later commits), and the owner reviewed the PR before merging.
+- v0.2's manual checks (screen reader, forced colors, 200% text) came out clean, per the owner.
+- **Not verified:** installing 0.2.0 from GitHub Packages into a project. Trigger: none; the v0.1 install proved the pipeline, and Publish succeeded.
 
 ## Open threads
 
 1. **Inter comes from `inter-ui`,** because Fontsource's files drop `cv05` and `cv08`. The build reads each font file's `unicode-range` from its character map (`scripts/font-ranges.mjs`), so an `inter-ui` update needs no manual range work. Trigger: a test pins the 4.1.1 ranges, so an update that changes them fails until someone reviews the new ones.
 2. **`engines.node` is `>=22`.** Trigger: the release script refuses to release after Node 22's end of life, April 30, 2027, until the floor and CI's Node matrix are raised.
-3. **Deferred minors from the v0.2 review,** each a small change. Trigger: the v0.3 plan (Next steps, item 4) decides each as a plan task or a drop.
+3. **Deferred minors from the v0.2 review,** each a small change. Trigger: the v0.3 plan (Next steps, item 1) decides each as a plan task or a drop.
    - `Select` treats `value="toString"` or `"constructor"` as a known option. Build its labels with `Object.create(null)` and check with `Object.hasOwn`.
    - `Input disabled={false}` in a disabled `Field` stays disabled but loses the disabled styling.
    - The `Switch` knob moves with a physical `translateX`, which breaks if Spec 00's proposed RTL support lands.
@@ -52,19 +52,16 @@ Architecture decisions are in `docs/adr/`. Build decisions, with what each costs
    - `verify-dist`'s client-module list is kept by hand. A rule that any module importing Base UI or hooks must start with `"use client"` would catch future misses.
    - The React Hook Form fixture and docs don't pass `field.ref` to `RadioGroup`.
 4. **`ColorModeToggle` doesn't accept `ref`, `style`, or pass-through button props,** which Spec 05 requires and Spec 12's `Tooltip` needs to wrap it. The owner deferred this to v0.4. Trigger: the v0.4 plan must include a task that adds them, with a test that wraps the toggle in a `Tooltip`.
+5. **The repo's `handoff` skill is shadowed by the owner's personal one.** `.claude/skills/handoff/` saves to `docs/HANDOFF.md` by default, but Claude Code loads `~/.claude/skills/handoff/` when both exist, and that copy saves to the repo root. Until that changes, pass `docs/HANDOFF.md` as the argument. Trigger: none; the owner decides how to reconcile the two copies.
+6. **PR preview deploys** of Storybook: options were Vercel (its GitHub app appears to be installed but not linked to this repo), subfolders on GitHub Pages from a `gh-pages` branch, or a CI artifact. Trigger: none; the owner hasn't chosen.
 
-Resolved threads: Base UI is installed as `@base-ui/react` `^1.9.0` (v0.2), the registry check is done (above), the owner chose to keep `ColorModeToggle`'s `variant` and `size` props, now documented in Spec 09, and the repo's `handoff` skill now saves to `docs/HANDOFF.md` by default.
+Resolved: Base UI is installed as `@base-ui/react` `^1.9.0` (v0.2); the registry check is done; the owner kept `ColorModeToggle`'s `variant` and `size`, now in Spec 09; PR #20 is reviewed and merged; v0.2's manual checks are done; v0.2.0 is released with the breaking change in its notes.
 
 ## Next steps
 
-1. **Review and merge PR #20.** If the visual baselines change, add the `update-baselines` label, review the committed screenshots, then select **Approve workflows to run** in the PR's merge box. Don't close and reopen the PR.
-2. **Do v0.2's manual checks** (Spec 05 and Spec 09) before releasing:
-   - A screen reader pass on `Field`, `Select`, and `RadioGroup`, and on the other interactive pieces: an interactive `Card`, `Button`, `IconButton`, `Checkbox`, `Switch`, `ToggleChip`, and `ColorModeToggle`.
-   - Forced-colors mode on every new component. The `ForcedColorsCheck` stories on `Card` and `Switch` are the starting points.
-   - 200% browser text.
-3. **Release v0.2.0** with `npm run release -- minor` after merging. Edit the generated notes to call out the breaking change: a full theme from `defineFullTheme` must now supply `size.checkbox`, `size.switch.width` and `.height`, and `size.chip.sm` and `.md`.
-4. **Write the v0.3 plan** from Spec 10 (Navigation) and Spec 11 (Prose), and decide each deferred minor in open thread 3 as a plan task or a drop.
+1. **Write the v0.3 plan** from Spec 10 (Navigation) and Spec 11 (Prose), and decide each deferred minor in open thread 3 as a plan task or a drop.
+2. When a PR's visual baselines change, add the `update-baselines` label, review the committed screenshots, then select **Approve workflows to run** in the PR's merge box. Don't close and reopen the PR.
 
 ## Resume prompt
 
-> Read `docs/HANDOFF.md`. v0.2 is PR #20, in review with CI passing. Continue from its next steps: merge after review, do the manual checks, release v0.2.0, then plan v0.3.
+> Read `docs/HANDOFF.md`. v0.2.0 is released. Write the v0.3 plan from Specs 10 and 11, deciding each deferred v0.2 minor in open thread 3.
