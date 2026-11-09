@@ -5,6 +5,17 @@ import { layered } from '../../utils/recipe';
 
 const md = `screen and (min-width: ${breakpoints.md})`;
 
+const paddingBlock = vars.space['2'];
+
+/** The default top offset of a `sticky` bar. */
+export const stickyOffset = vars.space['2'];
+
+/**
+ * How far a `sticky` bar at its default size reaches down the page: its offset,
+ * padding, border, and menu button height. Prose's headings scroll clear of it.
+ */
+export const stickyClearance = `calc(${stickyOffset} + 2 * ${paddingBlock} + 2 * ${vars.borderWidth.thin} + ${vars.size.control.md})`;
+
 /**
  * One grid that rearranges at `md`. Below it, the menu button sits beside the
  * actions and the panel spans the row beneath. From `md`, the panel takes the
@@ -17,7 +28,7 @@ export const root = style(
     gridTemplateAreas: '"brand actions menu" "panel panel panel"',
     alignItems: 'center',
     columnGap: vars.space['3'],
-    paddingBlock: vars.space['2'],
+    paddingBlock,
     paddingInline: vars.space['3'],
     background: vars.color.bg.surface,
     borderRadius: vars.radius.card,
@@ -34,9 +45,6 @@ export const root = style(
     },
   }),
 );
-
-/** The default top offset of a `sticky` bar. Prose's heading scroll margin reads it. */
-export const stickyOffset = vars.space['2'];
 
 export const sticky = style(
   layered({

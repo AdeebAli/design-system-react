@@ -1,4 +1,4 @@
-import { withDefaultDisplay } from './withDefaultDisplay';
+import { withDefault, withDefaultDisplay } from './withDefaultDisplay';
 
 it('uses the fallback when unset', () => {
   expect(withDefaultDisplay(undefined, 'flex')).toBe('flex');
@@ -26,5 +26,13 @@ it('keeps an explicit base', () => {
   expect(withDefaultDisplay({ base: 'none', md: 'flex' }, 'flex')).toEqual({
     base: 'none',
     md: 'flex',
+  });
+});
+
+it('withDefault works for any responsive value', () => {
+  expect(withDefault(undefined, 'prose')).toBe('prose');
+  expect(withDefault({ lg: 'full' }, 'prose')).toEqual({
+    base: 'prose',
+    lg: 'full',
   });
 });

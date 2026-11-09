@@ -70,6 +70,8 @@ const serverModules = [
   'components/Card/Card.js',
   'components/Stat/Stat.js',
   'components/Badge/Badge.js',
+  'components/Prose/Prose.js',
+  'components/Prose/NotProse.js',
 ];
 for (const module of serverModules) {
   const path = join(dist, module);
