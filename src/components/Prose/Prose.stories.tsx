@@ -112,7 +112,7 @@ const meta: Meta<typeof Prose> = {
     docs: {
       description: {
         component:
-          'Styles long-form content, given as elements or MDX. Set the width on `Prose` itself, not on a wrapper, since `ch` depends on its own font; add `marginX="auto"` to center it. Keep a post’s date and byline outside, in `Text`. Wrap library components that should keep the interface font, such as a `Card`, in `NotProse`. It doesn’t take an HTML string. See the Markdown and MDX page for setup.',
+          'Styles long-form content, including plain HTML from Markdown or a CMS. Set the width on `Prose` itself, not on a wrapper, since `ch` depends on its own font; add `marginX="auto"` to center it. Keep a post’s date and byline outside, in `Text`. Wrap library components that should keep the interface font, such as a `Card`, in `NotProse`. `Prose` doesn’t sanitize HTML. See the Markdown and MDX page for setup.',
       },
     },
   },

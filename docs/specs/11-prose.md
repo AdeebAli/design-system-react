@@ -7,7 +7,7 @@
 
 ## Purpose
 
-Define `Prose`, which styles long-form content such as blog posts. Its content is often plain elements compiled from Markdown or MDX, so it can't carry this library's components or classes.
+Define `Prose`, which styles long-form content such as blog posts. Its content is often plain HTML from Markdown, MDX, or a CMS, so it can't carry this library's components or classes.
 
 Blogs, docs, and help centers all need it.
 
@@ -46,6 +46,12 @@ With MDX:
 </Prose>
 ```
 
+With an HTML string from Markdown or a CMS:
+
+```tsx
+<Prose as="article" dangerouslySetInnerHTML={{ __html: html }} />
+```
+
 ## `Prose`
 
 | Prop | Values | Default |
@@ -58,7 +64,8 @@ It accepts layout props, and `as`, with `article`, `section`, and `main` as the 
 - **It doesn't center itself.** Add `marginX="auto"` to center it.
 - **Don't wrap it in `Container size="prose"` or `maxWidth="prose"`.** `ch` depends on the element's own font, so 68ch at the surrounding 14px Inter is narrower than 68ch at `Prose`'s 18px serif. Set the width on `Prose`. `Container size="prose"` is for text in the 14px interface font.
 - **A post's date and byline go outside `Prose`,** using `Text`, so they stay in Inter. The title can go either side.
-- **Content comes from `children` or MDX, not an HTML string.** `dangerouslySetInnerHTML` is a type error. At runtime it isn't checked, so it still renders when passed from JavaScript or through a cast. This isn't a security boundary: v1 just doesn't offer or document an HTML-string path. Accepting HTML later, such as through a sanitizing `html` prop, would add to the API without breaking anything.
+- **`Prose` is a styled element, and doesn't process content.** Its only own prop is `size`. `children` and `dangerouslySetInnerHTML` pass through, as on any element, and MDX arrives as `children`.
+- **`Prose` doesn't sanitize HTML.** The project sanitizes HTML it didn't write, where the HTML is produced, such as with a sanitizer step in its Markdown pipeline. Blocking `dangerouslySetInnerHTML` was rejected: the same HTML then goes in a wrapper `div`, which adds no safety and leaves the first and last margins untrimmed (58px above the title and 23px below the last paragraph, measured in Chromium). An `html` prop that sanitizes, or a `markdown` prop that parses, were rejected too: each adds a dependency (`jsdom` on the server to sanitize, or a Markdown parser) for work the project's own content pipeline already does.
 
 ## What it styles
 
@@ -152,7 +159,7 @@ Spec 05's definition of done, plus:
 
 **Unit:**
 
-- `size` and `as` apply. `dangerouslySetInnerHTML` is a type error (type test), and isn't checked at runtime.
+- `size` and `as` apply, and `dangerouslySetInnerHTML` renders.
 
 **Browser (story tests):**
 
@@ -179,7 +186,7 @@ Spec 05's definition of done, plus:
 ## Acceptance criteria
 
 - `Prose` and `NotProse` match this spec, and meet Spec 05's definition of done.
-- A full article can be built with plain elements inside `Prose`.
+- A full article can be built with plain HTML inside `Prose`.
 - All text meets Spec 02's contrast rules on the canvas in both modes.
 
 ## Left to the builder

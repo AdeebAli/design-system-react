@@ -28,16 +28,14 @@ it('size="sm" applies the sm class', () => {
   expect(screen.getByTestId('p')).not.toHaveClass(styles.proseSize.md);
 });
 
-it('rejects dangerouslySetInnerHTML only in the type: at runtime it passes through, without a warning', () => {
-  const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
-  // Spread untyped, as from JavaScript, since the type rejects it.
-  const html: object = {
-    dangerouslySetInnerHTML: { __html: '<h2>Title</h2><p>Body</p>' },
-  };
-  render(<Prose data-testid="p" {...html} />);
+it('dangerouslySetInnerHTML renders the HTML', () => {
+  render(
+    <Prose
+      as="article"
+      dangerouslySetInnerHTML={{ __html: '<h2>Title</h2><p>Body</p>' }}
+    />,
+  );
   expect(screen.getByRole('heading', { level: 2 })).toHaveTextContent('Title');
-  expect(warn).not.toHaveBeenCalled();
-  warn.mockRestore();
 });
 
 it('maxWidth="full" removes the limit', () => {

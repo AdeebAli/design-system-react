@@ -11,10 +11,8 @@ export type ProseSize = 'sm' | 'md';
 interface ProseOwnProps {
   /** The reading size. @default 'md' */
   size?: ProseSize;
-  /** The content, as elements or MDX. */
+  /** The content: elements, MDX, or nothing when `dangerouslySetInnerHTML` sets it. */
   children?: ReactNode;
-  /** Not accepted: content comes from `children` or MDX, not an HTML string. */
-  dangerouslySetInnerHTML?: never;
 }
 
 /** `Prose`'s props. */
@@ -24,7 +22,8 @@ export type ProseProps<E extends ElementType = 'div'> = PolymorphicProps<
 >;
 
 /**
- * Styles long-form content, given as elements or MDX. Set its width here
+ * Styles long-form content, including plain HTML from Markdown or a CMS. It
+ * doesn't sanitize `dangerouslySetInnerHTML`. Set its width here
  * rather than on a wrapper, since `ch` depends on its own font, and add
  * `marginX="auto"` to center it.
  */

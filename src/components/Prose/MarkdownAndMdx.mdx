@@ -4,7 +4,7 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 # Markdown and MDX
 
-`Prose` styles plain elements, so content written in JSX, or compiled from Markdown or MDX, needs no classes.
+`Prose` styles plain HTML, so content written in JSX, compiled from MDX, or rendered from Markdown or a CMS needs no classes.
 
 ## Children
 
@@ -17,7 +17,15 @@ Write the content as elements inside `Prose`:
 </Prose>
 ```
 
-`Prose` doesn't take an HTML string: `dangerouslySetInnerHTML` is a type error. Compile Markdown with MDX, or turn trusted HTML into elements before rendering it.
+## An HTML string
+
+If your Markdown pipeline or CMS produces an HTML string, pass it to `Prose` itself, not to a wrapper inside it, so `Prose` can trim the first and last margins:
+
+```tsx
+<Prose as="article" marginX="auto" dangerouslySetInnerHTML={{ __html: html }} />
+```
+
+**`Prose` doesn't sanitize it.** Sanitize HTML you didn't write where you produce it, for example with a sanitizer step in your Markdown pipeline. MDX and children avoid HTML strings altogether.
 
 ## MDX: map elements to components
 
