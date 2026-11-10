@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import { createRef } from 'react';
 import userEvent from '@testing-library/user-event';
 import { Field } from '../Field';
 import { RadioGroup } from '../RadioGroup';
@@ -118,4 +119,35 @@ it('a controlled null value selects nothing, and stays controlled', async () => 
   expect(screen.getByRole('radio', { name: 'Annual' })).toBeChecked();
   expect(errors).not.toHaveBeenCalled();
   errors.mockRestore();
+});
+
+describe("the group's ref", () => {
+  it('is the group element, and focusing it focuses the checked radio', () => {
+    const ref = createRef<HTMLDivElement>();
+    render(
+      <Field label="Plan">
+        <RadioGroup ref={ref} defaultValue="annual">
+          <Radio value="monthly" label="Monthly" />
+          <Radio value="annual" label="Annual" />
+        </RadioGroup>
+      </Field>,
+    );
+    expect(ref.current).toBe(screen.getByRole('radiogroup', { name: 'Plan' }));
+    ref.current!.focus();
+    expect(screen.getByRole('radio', { name: 'Annual' })).toHaveFocus();
+  });
+
+  it('with nothing checked, focusing it focuses the first enabled radio', () => {
+    const ref = createRef<HTMLDivElement>();
+    render(
+      <Field label="Plan">
+        <RadioGroup ref={ref} defaultValue={null}>
+          <Radio value="lifetime" label="Lifetime" disabled />
+          <Radio value="monthly" label="Monthly" />
+        </RadioGroup>
+      </Field>,
+    );
+    ref.current!.focus();
+    expect(screen.getByRole('radio', { name: 'Monthly' })).toHaveFocus();
+  });
 });

@@ -83,10 +83,19 @@ export function RhfForm() {
         <Controller
           name="billing"
           control={control}
-          render={({ field }) => (
-            <Field label="Billing">
-              <RadioGroup value={field.value} onValueChange={field.onChange}>
+          rules={{
+            validate: (value) =>
+              value !== 'quarterly' || 'Quarterly billing is paused.',
+          }}
+          render={({ field, fieldState }) => (
+            <Field label="Billing" error={fieldState.error?.message}>
+              <RadioGroup
+                value={field.value}
+                onValueChange={field.onChange}
+                ref={field.ref}
+              >
                 <Radio value="monthly" label="Monthly" />
+                <Radio value="quarterly" label="Quarterly" />
                 <Radio value="yearly" label="Yearly" />
               </RadioGroup>
             </Field>
