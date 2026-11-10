@@ -76,6 +76,37 @@ test('no CSP violations or console errors through load, hydration, and a mode ch
   expect(errors).toEqual([]);
 });
 
+test('Checkbox, Switch, and RadioGroup keep their native inputs hidden, and style props apply, under the CSP', async ({
+  page,
+}, testInfo) => {
+  nextOnly(testInfo.project.name);
+  const { violations } = await watch(page);
+  await page.goto('/csp');
+  const controls = page.getByTestId('csp-controls');
+  await expect(
+    controls.getByRole('checkbox', { name: 'Remember me' }),
+  ).toBeVisible();
+  await expect(
+    controls.getByRole('switch', { name: 'Live updates' }),
+  ).toBeVisible();
+  await expect(controls.getByRole('radio', { name: 'Monthly' })).toBeVisible();
+  // Every native input in this section is one Base UI hides.
+  const inputs = controls.locator('input');
+  expect(await inputs.count()).toBeGreaterThanOrEqual(3);
+  // Soft, so a run reports both the inputs and the style prop.
+  for (const input of await inputs.all())
+    expect.soft((await input.boundingBox())?.width).toBeLessThanOrEqual(1);
+  // A style prop renders as a style attribute in the server HTML.
+  expect
+    .soft(
+      await page
+        .getByTestId('styled')
+        .evaluate((element) => getComputedStyle(element).outlineStyle),
+    )
+    .toBe('dashed');
+  expect(await violations()).toEqual([]);
+});
+
 test('a stored choice applies before the app script loads, under the CSP', async ({
   page,
 }, testInfo) => {
