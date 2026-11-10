@@ -33,6 +33,7 @@ export * from './components/ToggleChipGroup';
 export * from './components/ColorModeToggle';
 export * from './components/NavBar';
 export * from './components/Tabs';
+export * from './components/Dialog';
 export * from './components/Prose';
 export { breakpoints } from './tokens/breakpoints';
 export { tokens } from './tokens/primitives';
