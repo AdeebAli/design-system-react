@@ -35,6 +35,7 @@ export * from './components/NavBar';
 export * from './components/Tabs';
 export * from './components/Dialog';
 export * from './components/Popover';
+export * from './components/Tooltip';
 export * from './components/Prose';
 export { breakpoints } from './tokens/breakpoints';
 export { tokens } from './tokens/primitives';
