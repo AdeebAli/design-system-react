@@ -1,8 +1,10 @@
 import { act, render, screen } from '@testing-library/react';
+import { createRef } from 'react';
 import userEvent from '@testing-library/user-event';
 import { hydrateRoot } from 'react-dom/client';
 import { renderToString } from 'react-dom/server';
 import { ThemeProvider } from '../../theme/ThemeProvider';
+import { Tooltip } from '../Tooltip';
 import { ColorModeToggle } from './index';
 
 const root = document.documentElement;
@@ -107,4 +109,72 @@ it('server-renders a neutral, icon-less button that hydrates without a mismatch'
   );
   errors.mockRestore();
   container.remove();
+});
+
+it('forwards ref, style, data-*, and onClick to the button', async () => {
+  const ref = createRef<HTMLButtonElement>();
+  const onClick = vi.fn();
+  render(
+    <ThemeProvider>
+      <ColorModeToggle
+        ref={ref}
+        style={{ opacity: 0.5 }}
+        data-testid="toggle"
+        onClick={onClick}
+      />
+    </ThemeProvider>,
+  );
+  const button = screen.getByTestId('toggle');
+  expect(ref.current).toBe(button);
+  expect(button).toHaveStyle({ opacity: '0.5' });
+  await userEvent.click(button);
+  expect(onClick).toHaveBeenCalledTimes(1);
+  expect(localStorage.getItem('ds-color-mode')).toBe('dark');
+});
+
+it('does not flip when the consumer onClick prevents default', async () => {
+  render(
+    <ThemeProvider>
+      <ColorModeToggle onClick={(event) => event.preventDefault()} />
+    </ThemeProvider>,
+  );
+  await userEvent.click(screen.getByRole('button'));
+  expect(localStorage.getItem('ds-color-mode')).toBeNull();
+  expect(root.getAttribute('data-ds-mode')).toBeNull();
+});
+
+it('works as a Tooltip child: hover shows the tooltip, click toggles the mode', async () => {
+  render(
+    <ThemeProvider>
+      <Tooltip content="Hint" delay={0}>
+        <ColorModeToggle />
+      </Tooltip>
+    </ThemeProvider>,
+  );
+  const button = screen.getByRole('button', { name: 'Switch to dark mode' });
+  await userEvent.hover(button);
+  expect(await screen.findByText('Hint')).toBeInTheDocument();
+  await userEvent.click(button);
+  expect(localStorage.getItem('ds-color-mode')).toBe('dark');
+});
+
+it('a forced ThemeProvider inside a Tooltip renders nothing and does not throw', async () => {
+  const errors = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+  const warns = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+  const { container } = render(
+    <ThemeProvider forcedMode="dark">
+      <Tooltip content="Hint" delay={0}>
+        <ColorModeToggle />
+      </Tooltip>
+    </ThemeProvider>,
+  );
+  expect(screen.queryByRole('button')).toBeNull();
+  await userEvent.hover(container);
+  await userEvent.tab();
+  expect(screen.queryByRole('button')).toBeNull();
+  expect(screen.queryByText('Hint')).toBeNull();
+  expect(errors).not.toHaveBeenCalled();
+  expect(warns).not.toHaveBeenCalled();
+  errors.mockRestore();
+  warns.mockRestore();
 });
