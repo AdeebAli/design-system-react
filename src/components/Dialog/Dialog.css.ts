@@ -31,7 +31,7 @@ export const title = style(
   layered({
     selectors: {
       '[data-close-shown] &': {
-        paddingInlineEnd: `max(0px, calc(${vars.space['3']} + ${vars.size.control.sm} + ${vars.space['2']} - ${vars.space['6']}))`,
+        paddingInlineEnd: `calc(${vars.space['3']} + ${vars.size.control.sm} + ${vars.space['2']} - ${vars.space['6']})`,
       },
     },
   }),
