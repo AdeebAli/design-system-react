@@ -6,6 +6,7 @@ export function SiteNav() {
   return (
     <NavBar
       aria-label="Main"
+      sticky
       brand={
         <Link as={NextLink} href="/" tone="neutral" underline="hover">
           Fixture

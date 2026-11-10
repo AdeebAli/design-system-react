@@ -7,7 +7,7 @@
 
 ## Purpose
 
-Define `Prose`, which styles long-form content such as blog posts. Its content is often plain HTML from Markdown or a CMS, so it can't carry this library's components or classes.
+Define `Prose`, which styles long-form content such as blog posts. Its content is often plain elements compiled from Markdown or MDX, so it can't carry this library's components or classes.
 
 Blogs, docs, and help centers all need it.
 
@@ -38,10 +38,12 @@ Blogs, docs, and help centers all need it.
 </Container>
 ```
 
-With Markdown or a CMS:
+With MDX:
 
 ```tsx
-<Prose as="article" dangerouslySetInnerHTML={{ __html: html }} />
+<Prose as="article">
+  <Content components={components} />
+</Prose>
 ```
 
 ## `Prose`
@@ -56,7 +58,7 @@ It accepts layout props, and `as`, with `article`, `section`, and `main` as the 
 - **It doesn't center itself.** Add `marginX="auto"` to center it.
 - **Don't wrap it in `Container size="prose"` or `maxWidth="prose"`.** `ch` depends on the element's own font, so 68ch at the surrounding 14px Inter is narrower than 68ch at `Prose`'s 18px serif. Set the width on `Prose`. `Container size="prose"` is for text in the 14px interface font.
 - **A post's date and byline go outside `Prose`,** using `Text`, so they stay in Inter. The title can go either side.
-- **`Prose` doesn't sanitize HTML.** `dangerouslySetInnerHTML` is passed through, and the project is responsible for what it renders.
+- **Content comes from `children` or MDX, not an HTML string.** `dangerouslySetInnerHTML` is a type error. At runtime it isn't checked, so it still renders when passed from JavaScript or through a cast. This isn't a security boundary: v1 just doesn't offer or document an HTML-string path. Accepting HTML later, such as through a sanitizing `html` prop, would add to the API without breaking anything.
 
 ## What it styles
 
@@ -83,7 +85,7 @@ Rules apply to plain elements. Margins and padding use `em`, so they scale with 
 - **Block spacing is set by `Prose`:** `p`, `ul`, `ol`, `dl`, `blockquote`, `pre`, `figure`, `table`, `hr`, direct-child `NotProse`, and `Table`'s wrapper (`data-ds-table`, Spec 13) all have vertical margins, which collapse between neighbors. So two adjacent blocks never touch.
 - **The first child has no top margin, and the last has no bottom margin,** so `Prose` lines up with whatever surrounds it.
 - **Logical properties throughout,** so right-to-left text works.
-- **Headings have `scroll-margin-block-start`,** a fixed value that clears a `sticky` `NavBar` at its default size, so anchor links don't land underneath it.
+- **Headings have `scroll-margin-block-start`,** which by default clears a `sticky` `NavBar` at its default size, so anchor links don't land underneath it. A project with a taller header sets `--ds-prose-scroll-margin` (on `:root` or on `Prose`) to replace it.
 
 ### Heading sizes
 
@@ -125,7 +127,7 @@ Marks an area that `Prose` leaves alone, such as a `Card` in the middle of an ar
 
 ## Behavior
 
-- **`pre` needs a keyboard route when it scrolls.** Not every browser makes scrolling regions focusable. `Prose` can't add `tabindex` to plain HTML, so the docs show adding `tabIndex={0}` through MDX or a rehype plugin.
+- **`pre` needs a keyboard route when it scrolls.** Not every browser makes scrolling regions focusable. `Prose` can't add `tabindex` to the elements it's given, so the docs show adding `tabIndex={0}` through MDX or a rehype plugin.
 - **`Code` inside `pre` turns off its own background, padding, and size.** `Code`'s class would otherwise beat `Prose`'s rules, so this is a `pre &` rule in `Code`'s own styles. It's an addition to Spec 06.
 - **Tables aren't given `display: block`,** because that can remove their table semantics in some browsers. They fit by wrapping their cells, including long URLs. A table too wide for that should use `Table` (Spec 13), which owns its scroll container.
 - **Forced colors:** the `blockquote`, `pre`, `hr`, and table lines are real borders, so they stay visible.
@@ -150,7 +152,7 @@ Spec 05's definition of done, plus:
 
 **Unit:**
 
-- `size` and `as` apply, and `dangerouslySetInnerHTML` renders.
+- `size` and `as` apply. `dangerouslySetInnerHTML` is a type error (type test), and isn't checked at runtime.
 
 **Browser (story tests):**
 
@@ -162,10 +164,10 @@ Spec 05's definition of done, plus:
 - Adjacent `NotProse` blocks, and a `NotProse` beside a `ul` or `pre`, keep their spacing.
 - A `Card` with a `p` inside `NotProse` matches the same `Card` outside `Prose`, a `NotProse` nested in a list stops list styling, and one inside a `blockquote` isn't italic.
 - The first and last children have no outer margins.
-- An anchor link clears a `sticky` `NavBar`.
+- An anchor link clears a `sticky` `NavBar`, both by scrolling in a story and by clicking a real in-page link in `fixtures/next-app`. `--ds-prose-scroll-margin` replaces the default.
 - The article passes axe in both modes on the canvas, with a focusable `pre`.
 
-**`fixtures/next-app`:** `Prose` renders from a server component with HTML content.
+**`fixtures/next-app`:** `Prose` renders from a server component with plain elements as children.
 
 **Manual:** a screen reader pass, forced colors, and text enlarged to 200%, per Spec 05.
 
@@ -177,7 +179,7 @@ Spec 05's definition of done, plus:
 ## Acceptance criteria
 
 - `Prose` and `NotProse` match this spec, and meet Spec 05's definition of done.
-- A full article can be built with plain HTML inside `Prose`.
+- A full article can be built with plain elements inside `Prose`.
 - All text meets Spec 02's contrast rules on the canvas in both modes.
 
 ## Left to the builder

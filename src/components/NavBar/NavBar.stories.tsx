@@ -76,6 +76,16 @@ export const SmallScreen: Story = {
   },
 };
 
+/** The menu button before the brand, as an outline button. */
+export const MenuAtStart: Story = {
+  globals: { viewport: { value: 'mobile1', isRotated: false } },
+  args: {
+    actions: <ColorModeToggle variant="ghost" />,
+    menuPosition: 'start',
+    menuVariant: 'outline',
+  },
+};
+
 export const Sticky: Story = {
   args: { sticky: true },
   render: (args) => (

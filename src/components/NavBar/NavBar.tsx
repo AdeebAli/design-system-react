@@ -15,6 +15,7 @@ import type { ComponentProps } from '../../utils/types';
 import { box } from '../Box';
 import { Icon } from '../Icon';
 import { MenuIcon } from '../Icon/internal/Menu';
+import type { ButtonVariant } from '../Button';
 import { IconButton } from '../IconButton';
 import * as styles from './NavBar.css';
 import { NavBarContext, type NavBarContextValue } from './NavBarContext';
@@ -30,6 +31,10 @@ interface NavBarOwnProps {
   sticky?: boolean;
   /** The menu button's accessible name. @default 'Menu' */
   menuLabel?: string;
+  /** The menu button's style, as an `IconButton` variant. @default 'ghost' */
+  menuVariant?: ButtonVariant;
+  /** Where the menu button sits below `md`: after the actions, or before the brand. @default 'end' */
+  menuPosition?: 'start' | 'end';
   /** `NavBarLink`s, or components rendering them. */
   children?: ReactNode;
 }
@@ -46,6 +51,8 @@ export function NavBar({
   actions,
   sticky = false,
   menuLabel = 'Menu',
+  menuVariant = 'ghost',
+  menuPosition = 'end',
   className,
   children,
   onKeyDown,
@@ -101,6 +108,7 @@ export function NavBar({
         className={cx(
           box(layout),
           styles.root,
+          menuPosition === 'start' && styles.menuStart,
           sticky && styles.sticky,
           className,
         )}
@@ -114,7 +122,7 @@ export function NavBar({
             <IconButton
               icon={<Icon icon={MenuIcon} />}
               aria-label={menuLabel}
-              variant="ghost"
+              variant={menuVariant}
               size="md"
             />
           }

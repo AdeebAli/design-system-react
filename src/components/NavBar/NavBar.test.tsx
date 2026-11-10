@@ -2,6 +2,7 @@ import { render, screen, within } from '@testing-library/react';
 import { forwardRef, type ComponentPropsWithoutRef } from 'react';
 import { Icon } from '../Icon';
 import { ArrowUpIcon } from '../Icon/internal/ArrowUp';
+import { IconButton } from '../IconButton';
 import { NavBar, NavBarLink } from './index';
 import * as styles from './NavBar.css';
 
@@ -169,4 +170,35 @@ it('className, style, and layout props go on the nav', () => {
   const nav = screen.getByRole('navigation');
   expect(nav).toHaveClass('extra');
   expect(nav.style.color).toBe('red');
+});
+
+it.each(['ghost', 'solid', 'soft', 'outline'] as const)(
+  'menuVariant="%s" styles the menu button as that IconButton variant',
+  (variant) => {
+    render(
+      <>
+        <NavBar aria-label="Main" menuVariant={variant} />
+        <IconButton
+          data-testid="reference"
+          icon={<Icon icon={ArrowUpIcon} />}
+          aria-label="Reference"
+          variant={variant}
+          size="md"
+        />
+      </>,
+    );
+    const menu = document.querySelector('button[aria-label="Menu"]')!;
+    const reference = screen.getByTestId('reference');
+    for (const name of reference.classList)
+      expect(menu.classList, name).toContain(name);
+  },
+);
+
+it('the menu button is ghost by default', () => {
+  render(<NavBar aria-label="Main" />);
+  const ghost = document.querySelector('button[aria-label="Menu"]')!.className;
+  render(<NavBar aria-label="Other" menuVariant="outline" />);
+  const outline = document.querySelectorAll('button[aria-label="Menu"]')[1]!
+    .className;
+  expect(ghost).not.toBe(outline);
 });

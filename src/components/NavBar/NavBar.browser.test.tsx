@@ -10,11 +10,18 @@ afterEach(async () => {
   await cdp().send('Emulation.setEmulatedMedia', { features: [] });
 });
 
-function Example({ sticky = false }: { sticky?: boolean }) {
+function Example({
+  sticky = false,
+  menuPosition,
+}: {
+  sticky?: boolean;
+  menuPosition?: 'start' | 'end';
+}) {
   return (
     <NavBar
       aria-label="Main"
       sticky={sticky}
+      menuPosition={menuPosition}
       brand={<a href="#home">Acme</a>}
       actions={<button type="button">Sign in</button>}
     >
@@ -101,6 +108,45 @@ it('below md, the menu button shows and the links are hidden', async () => {
   for (const a of links()) expect(visible(a)).toBe(false);
   expect(visible(screen.getByRole('link', { name: 'Acme' }))).toBe(true);
   expect(visible(screen.getByRole('button', { name: 'Sign in' }))).toBe(true);
+});
+
+describe('menuPosition', () => {
+  const left = (el: Element) => el.getBoundingClientRect().left;
+  const parts = () => ({
+    brand: left(screen.getByRole('link', { name: 'Acme' })),
+    actions: left(screen.getByRole('button', { name: 'Sign in' })),
+    menu: left(screen.getByRole('button', { name: 'Menu' })),
+  });
+
+  it('below md, end (the default) puts the menu button after the actions', async () => {
+    await page.viewport(390, 800);
+    render(<Example />);
+    const { brand, actions, menu } = parts();
+    expect(brand).toBeLessThan(actions);
+    expect(actions).toBeLessThan(menu);
+  });
+
+  it('below md, start puts the menu button before the brand', async () => {
+    await page.viewport(390, 800);
+    render(<Example menuPosition="start" />);
+    const { brand, actions, menu } = parts();
+    expect(menu).toBeLessThan(brand);
+    expect(brand).toBeLessThan(actions);
+  });
+
+  it('from md, start leaves the desktop layout unchanged', async () => {
+    await page.viewport(1280, 800);
+    render(<Example menuPosition="start" />);
+    const brand = left(screen.getByRole('link', { name: 'Acme' }));
+    const [first] = links();
+    expect(brand).toBeLessThan(left(first!));
+    expect(left(first!)).toBeLessThan(
+      left(screen.getByRole('button', { name: 'Sign in' })),
+    );
+    expect(visible(document.querySelector('button[aria-label="Menu"]')!)).toBe(
+      false,
+    );
+  });
 });
 
 it('server HTML shows the links from md before JavaScript runs', async () => {

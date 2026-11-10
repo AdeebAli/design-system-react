@@ -63,6 +63,36 @@ test.describe('Next.js', () => {
     expect(errors).toEqual([]);
   });
 
+  test('an in-page link lands its heading just below the sticky NavBar', async ({
+    page,
+  }, testInfo) => {
+    nextOnly(testInfo.project.name);
+    await page.goto('/blog');
+    // Fonts loading later would shift the layout after scrolling.
+    await page.evaluate(() => document.fonts.ready);
+    await page.getByRole('link', { name: 'Jump to the details' }).click();
+    await expect(page).toHaveURL(/#details$/);
+    const heading = page.getByRole('heading', { name: 'The details' });
+    const nav = page.getByRole('navigation', { name: 'Main' });
+    const top = async () => (await heading.boundingBox())!.y;
+    const navBottom = async () => {
+      const box = (await nav.boundingBox())!;
+      return box.y + box.height;
+    };
+    // It scrolled, and the heading is neither under the bar nor far below it.
+    await expect.poll(top).toBeLessThan(400);
+    // Not stopped by the end of the page, so the scroll margin set the position.
+    expect(
+      await page.evaluate(
+        () =>
+          window.scrollY + window.innerHeight <
+          document.documentElement.scrollHeight - 1,
+      ),
+    ).toBe(true);
+    expect(await top()).toBeGreaterThanOrEqual(await navBottom());
+    expect(await top()).toBeLessThan((await navBottom()) + 48);
+  });
+
   test('on a small screen, a next/link in the menu navigates client-side, closes the panel, and focuses the menu button', async ({
     page,
   }, testInfo) => {

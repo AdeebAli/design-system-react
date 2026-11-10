@@ -3,19 +3,17 @@ import { componentsLayer } from '../../styles/layers.css';
 import { vars } from '../../themes/contract.css';
 import { breakpoints } from '../../tokens/breakpoints';
 import { layered } from '../../utils/recipe';
+import {
+  navBarPaddingBlock,
+  stickyClearance,
+  stickyOffset,
+} from '../../styles/sticky';
 
 const md = `screen and (min-width: ${breakpoints.md})`;
+// Everything md doesn't match, so a below-md rule can't override md's layout.
+const belowMd = `not all and (min-width: ${breakpoints.md})`;
 
-const paddingBlock = vars.space['2'];
-
-/** The default top offset of a `sticky` bar. */
-export const stickyOffset = vars.space['2'];
-
-/**
- * How far a `sticky` bar at its default size reaches down the page: its offset,
- * padding, border, and menu button height. Prose's headings scroll clear of it.
- */
-export const stickyClearance = `calc(${stickyOffset} + 2 * ${paddingBlock} + 2 * ${vars.borderWidth.thin} + ${vars.size.control.md})`;
+const paddingBlock = navBarPaddingBlock;
 
 /**
  * One grid that rearranges at `md`. Below it, the menu button sits beside the
@@ -42,6 +40,18 @@ export const root = style(
         gridTemplateColumns: 'auto minmax(0, 1fr) auto',
         gridTemplateAreas: '"brand panel actions"',
         columnGap: vars.space['4'],
+      },
+    },
+  }),
+);
+
+/** `menuPosition="start"`: below md, the menu button comes before the brand. */
+export const menuStart = style(
+  layered({
+    '@media': {
+      [belowMd]: {
+        gridTemplateColumns: 'auto minmax(0, 1fr) auto',
+        gridTemplateAreas: '"menu brand actions" "panel panel panel"',
       },
     },
   }),

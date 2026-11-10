@@ -25,3 +25,11 @@ test('NavBarLink accepts its component props through as', () => {
   // @ts-expect-error active is a boolean
   <NavBarLink href="/a" active="yes" />;
 });
+
+test('menuVariant is a Button variant and menuPosition is start or end', () => {
+  <NavBar aria-label="Main" menuVariant="outline" menuPosition="start" />;
+  // @ts-expect-error menuVariant is solid, soft, outline, or ghost
+  <NavBar aria-label="Main" menuVariant="link" />;
+  // @ts-expect-error menuPosition is start or end
+  <NavBar aria-label="Main" menuPosition="middle" />;
+});

@@ -2,7 +2,7 @@ import { globalStyle, style, type GlobalStyleRule } from '@vanilla-extract/css';
 import { componentsLayer } from '../../styles/layers.css';
 import { vars } from '../../themes/contract.css';
 import { layered } from '../../utils/recipe';
-import { stickyClearance } from '../NavBar/NavBar.css';
+import { stickyClearance } from '../../styles/sticky';
 
 const { font, color, space, radius, borderWidth } = vars;
 
@@ -97,8 +97,9 @@ rule('h1, h2, h3, h4, h5, h6', {
   // More space above than below, so a heading belongs to what follows it.
   marginBlockStart: '1.6em',
   marginBlockEnd: '0.6em',
-  // Anchor links land clear of a sticky NavBar at its default size.
-  scrollMarginBlockStart: `calc(${stickyClearance} + ${space['4']})`,
+  // Anchor links land clear of a sticky NavBar at its default size. A project
+  // with a taller header sets --ds-prose-scroll-margin.
+  scrollMarginBlockStart: `var(--ds-prose-scroll-margin, calc(${stickyClearance} + ${space['4']}))`,
 });
 
 type FontSize = keyof typeof font.size;

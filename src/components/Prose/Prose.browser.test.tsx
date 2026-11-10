@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import type { CSSProperties } from 'react';
 import { page } from 'vitest/browser';
 import { Button } from '../Button';
 import { Card } from '../Card';
@@ -303,6 +304,26 @@ it('the first and last children have no outer margins', () => {
   );
   expect(css(byTestId('first')).marginTop).toBe('0px');
   expect(css(byTestId('last')).marginBottom).toBe('0px');
+});
+
+it('--ds-prose-scroll-margin overrides the heading scroll margin', () => {
+  render(
+    <>
+      <Prose>
+        <h2 data-testid="default">Default</h2>
+      </Prose>
+      <Prose style={{ '--ds-prose-scroll-margin': '100px' } as CSSProperties}>
+        <h2 data-testid="custom">Custom</h2>
+        <h3 data-testid="custom-h3">Custom</h3>
+      </Prose>
+    </>,
+  );
+  expect(css(byTestId('custom')).scrollMarginTop).toBe('100px');
+  expect(css(byTestId('custom-h3')).scrollMarginTop).toBe('100px');
+  // Without it, the default (which clears a sticky NavBar) still applies.
+  const fallback = css(byTestId('default')).scrollMarginTop;
+  expect(parseFloat(fallback)).toBeGreaterThan(0);
+  expect(fallback).not.toBe('100px');
 });
 
 it('list markers are muted and headings have a scroll margin', () => {
