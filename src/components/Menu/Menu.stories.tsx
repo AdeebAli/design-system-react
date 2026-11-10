@@ -1,8 +1,17 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Pencil, Trash2 } from 'lucide-react';
+import { Ellipsis, Pencil, Trash2 } from 'lucide-react';
+import { useRef, useState } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { Button } from '../Button';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from '../Dialog';
 import { Icon } from '../Icon';
+import { IconButton } from '../IconButton';
 import {
   Menu,
   MenuCheckboxItem,
@@ -14,6 +23,9 @@ import {
   MenuRadioGroup,
   MenuRadioItem,
   MenuSeparator,
+  MenuSubmenu,
+  MenuSubmenuContent,
+  MenuSubmenuTrigger,
   MenuTrigger,
 } from './index';
 
@@ -130,5 +142,128 @@ export const TallMenu: Story = {
   play: async ({ canvasElement }) => {
     const menu = await openIt(canvasElement);
     await expect(menu.scrollHeight).toBeGreaterThan(menu.clientHeight);
+  },
+};
+
+export const Submenu: Story = {
+  parameters: baseUiFocusGuards,
+  render: () => (
+    <Menu>
+      <MenuTrigger>
+        <Button variant="soft">Actions</Button>
+      </MenuTrigger>
+      <MenuContent>
+        <MenuItem>Open</MenuItem>
+        <MenuSubmenu>
+          <MenuSubmenuTrigger startIcon={<Icon icon={Pencil} />}>
+            Share
+          </MenuSubmenuTrigger>
+          <MenuSubmenuContent>
+            <MenuItem>Copy link</MenuItem>
+            <MenuItem>Email</MenuItem>
+          </MenuSubmenuContent>
+        </MenuSubmenu>
+        <MenuSubmenu disabled>
+          <MenuSubmenuTrigger>Move to</MenuSubmenuTrigger>
+          <MenuSubmenuContent>
+            <MenuItem>Archive</MenuItem>
+          </MenuSubmenuContent>
+        </MenuSubmenu>
+      </MenuContent>
+    </Menu>
+  ),
+  play: async ({ canvasElement }) => {
+    await openIt(canvasElement);
+    await userEvent.click(body().getByRole('menuitem', { name: 'Share' }));
+    const nested = await body().findByRole('menuitem', { name: 'Copy link' });
+    await waitFor(() => expect(nested).toBeVisible());
+  },
+};
+
+/** Row actions on an `IconButton`: a labeled trigger with a menu of view options and actions. */
+export const RowActions: Story = {
+  parameters: baseUiFocusGuards,
+  render: () => (
+    <Menu>
+      <MenuTrigger>
+        <IconButton
+          aria-label="Row actions"
+          icon={<Icon icon={Ellipsis} />}
+          variant="ghost"
+        />
+      </MenuTrigger>
+      <MenuContent>
+        <MenuItem startIcon={<Icon icon={Pencil} />}>Edit</MenuItem>
+        <MenuCheckboxItem defaultChecked>Pinned</MenuCheckboxItem>
+        <MenuSeparator />
+        <MenuItem tone="danger" startIcon={<Icon icon={Trash2} />}>
+          Delete
+        </MenuItem>
+      </MenuContent>
+    </Menu>
+  ),
+  play: async ({ canvasElement }) => {
+    await userEvent.click(
+      within(canvasElement).getByRole('button', { name: 'Row actions' }),
+    );
+    const menu = await body().findByRole('menu');
+    await waitFor(() => expect(menu).toBeVisible());
+  },
+};
+
+function ConfirmDelete() {
+  const [confirming, setConfirming] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  return (
+    <>
+      <Menu>
+        <MenuTrigger>
+          <IconButton
+            ref={triggerRef}
+            aria-label="Row actions"
+            icon={<Icon icon={Ellipsis} />}
+            variant="ghost"
+          />
+        </MenuTrigger>
+        <MenuContent>
+          <MenuItem tone="danger" onClick={() => setConfirming(true)}>
+            Delete
+          </MenuItem>
+        </MenuContent>
+      </Menu>
+      <Dialog alert open={confirming} onOpenChange={setConfirming}>
+        <DialogContent finalFocus={triggerRef}>
+          <DialogTitle>Delete this project?</DialogTitle>
+          <DialogDescription>This can&apos;t be undone.</DialogDescription>
+          <DialogClose>
+            <Button variant="soft">Cancel</Button>
+          </DialogClose>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}
+
+/**
+ * Confirm-delete recipe. A `MenuItem` can't be a `DialogTrigger`, so open a
+ * controlled `Dialog alert` from its `onClick`, and point `finalFocus` at the
+ * `MenuTrigger`'s child, because the item is gone once the menu closes.
+ */
+export const ConfirmDeleteFromMenu: Story = {
+  render: () => <ConfirmDelete />,
+  play: async ({ canvasElement }) => {
+    const trigger = () =>
+      within(canvasElement).getByRole('button', { name: 'Row actions' });
+    await userEvent.click(trigger());
+    await userEvent.click(
+      await body().findByRole('menuitem', { name: 'Delete' }),
+    );
+    const dialog = await body().findByRole('alertdialog');
+    await waitFor(() => expect(dialog).toBeVisible());
+    await userEvent.click(body().getByRole('button', { name: 'Cancel' }));
+    await waitFor(() =>
+      expect(body().queryByRole('alertdialog')).not.toBeInTheDocument(),
+    );
+    await waitFor(() => expect(trigger()).toHaveFocus());
   },
 };

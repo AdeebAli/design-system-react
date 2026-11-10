@@ -61,6 +61,16 @@ export const menuItem = style(
   }),
 );
 
+/** Pushes the chevron to the inline end. */
+export const submenuLabel = style(layered({ flexGrow: 1 }));
+
+/** The chevron points inline-end, so it mirrors in right-to-left text. */
+export const chevron = style(
+  layered({
+    selectors: { '&:dir(rtl)': { transform: 'scaleX(-1)' } },
+  }),
+);
+
 export const danger = style(
   layered({
     color: fg.danger,

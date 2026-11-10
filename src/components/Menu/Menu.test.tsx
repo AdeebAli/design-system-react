@@ -14,6 +14,9 @@ import {
   MenuRadioGroup,
   MenuRadioItem,
   MenuSeparator,
+  MenuSubmenu,
+  MenuSubmenuContent,
+  MenuSubmenuTrigger,
   MenuTrigger,
   type MenuProps,
 } from './index';
@@ -334,4 +337,43 @@ it('MenuGroupLabel names its group', async () => {
     await screen.findByRole('group', { name: 'Sort by' }),
   ).toBeInTheDocument();
   expect(screen.getByRole('separator')).toBeInTheDocument();
+});
+
+describe('MenuSubmenu', () => {
+  it('reports open changes with only the boolean, and shows its content when controlled open', async () => {
+    const onOpenChange = vi.fn();
+    render(
+      <Example defaultOpen>
+        <MenuSubmenu onOpenChange={onOpenChange}>
+          <MenuSubmenuTrigger>More</MenuSubmenuTrigger>
+          <MenuSubmenuContent>
+            <MenuItem>Nested</MenuItem>
+          </MenuSubmenuContent>
+        </MenuSubmenu>
+      </Example>,
+    );
+    await userEvent.click(screen.getByRole('menuitem', { name: 'More' }));
+    expect(
+      await screen.findByRole('menuitem', { name: 'Nested' }),
+    ).toBeInTheDocument();
+    expect(onOpenChange).toHaveBeenCalledWith(true);
+    expect(onOpenChange.mock.calls[0]).toHaveLength(1);
+  });
+
+  it('disabled: the trigger is disabled and the submenu does not open', async () => {
+    render(
+      <Example defaultOpen>
+        <MenuSubmenu disabled>
+          <MenuSubmenuTrigger>More</MenuSubmenuTrigger>
+          <MenuSubmenuContent>
+            <MenuItem>Nested</MenuItem>
+          </MenuSubmenuContent>
+        </MenuSubmenu>
+      </Example>,
+    );
+    const item = screen.getByRole('menuitem', { name: 'More' });
+    expect(item).toHaveAttribute('aria-disabled', 'true');
+    await userEvent.click(item);
+    expect(screen.queryByRole('menuitem', { name: 'Nested' })).toBeNull();
+  });
 });

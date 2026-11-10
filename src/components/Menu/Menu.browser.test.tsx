@@ -6,6 +6,9 @@ import {
   MenuCheckboxItem,
   MenuContent,
   MenuItem,
+  MenuSubmenu,
+  MenuSubmenuContent,
+  MenuSubmenuTrigger,
   MenuTrigger,
   type MenuContentProps,
 } from './index';
@@ -184,5 +187,105 @@ describe('the check column', () => {
     // Unchecked checkable and plain items line their labels up, one icon wider than without.
     expect(labelLeft('Alpha')).toBe(labelLeft('Beta'));
     expect(labelLeft('Alpha') - menuLeft).toBeGreaterThan(plain + icon * 0.5);
+  });
+});
+
+describe('submenus', () => {
+  function Nested() {
+    return (
+      <Menu>
+        <MenuTrigger>
+          <Button
+            style={{
+              position: 'fixed',
+              insetBlockStart: 20,
+              insetInlineStart: 20,
+            }}
+          >
+            Actions
+          </Button>
+        </MenuTrigger>
+        <MenuContent>
+          <MenuItem>Alpha</MenuItem>
+          <MenuSubmenu>
+            <MenuSubmenuTrigger>More</MenuSubmenuTrigger>
+            <MenuSubmenuContent>
+              <MenuItem>Nested one</MenuItem>
+              <MenuItem>Nested two</MenuItem>
+            </MenuSubmenuContent>
+          </MenuSubmenu>
+        </MenuContent>
+      </Menu>
+    );
+  }
+  const more = () => screen.getByRole('menuitem', { name: 'More' });
+  const sub = () => screen.queryByRole('menuitem', { name: 'Nested one' });
+  const openMain = async () => {
+    await userEvent.click(trigger());
+    await settled();
+  };
+
+  it('opens on hover', async () => {
+    render(<Nested />);
+    await openMain();
+    await userEvent.hover(more());
+    await expect.poll(sub).toBeInTheDocument();
+    expect(more()).toHaveAttribute('aria-haspopup', 'menu');
+  });
+
+  it('opens on tap', async () => {
+    render(<Nested />);
+    await openMain();
+    await userEvent.click(more());
+    await expect.poll(sub).toBeInTheDocument();
+  });
+
+  it.each([
+    ['ltr', '{ArrowRight}', '{ArrowLeft}'],
+    ['rtl', '{ArrowLeft}', '{ArrowRight}'],
+  ])(
+    '%s: the toward arrow opens it, the opposite arrow closes only it',
+    async (dir, toward, away) => {
+      document.documentElement.dir = dir;
+      render(<Nested />);
+      trigger().focus();
+      await userEvent.keyboard('{ArrowDown}');
+      await settled();
+      // End, not ArrowDown: a leftover pointer position can pre-highlight an item.
+      await userEvent.keyboard('{End}');
+      await expect
+        .poll(() => more().hasAttribute('data-highlighted'))
+        .toBe(true);
+      await userEvent.keyboard(away);
+      expect(sub()).not.toBeInTheDocument();
+      await userEvent.keyboard(toward);
+      await expect.poll(sub).toBeInTheDocument();
+      await userEvent.keyboard(away);
+      await expect.poll(sub).not.toBeInTheDocument();
+      expect(screen.getByRole('menu')).toBeInTheDocument();
+    },
+  );
+
+  it('Escape closes only the submenu', async () => {
+    render(<Nested />);
+    await openMain();
+    await userEvent.click(more());
+    await expect.poll(sub).toBeInTheDocument();
+    await userEvent.keyboard('{Escape}');
+    await expect.poll(sub).not.toBeInTheDocument();
+    expect(screen.getByRole('menu', { name: 'Actions' })).toBeInTheDocument();
+  });
+
+  it('the chevron flips in RTL', async () => {
+    const chevron = () =>
+      getComputedStyle(more().querySelector('[aria-hidden="true"]')!).transform;
+    const { unmount } = render(<Nested />);
+    await openMain();
+    expect(chevron()).toBe('none');
+    unmount();
+    document.documentElement.dir = 'rtl';
+    render(<Nested />);
+    await openMain();
+    expect(chevron()).toBe('matrix(-1, 0, 0, 1, 0, 0)');
   });
 });
