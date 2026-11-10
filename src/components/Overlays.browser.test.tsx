@@ -83,6 +83,8 @@ it('Select, Menu, and Tooltip open above a Dialog and work inside it', async () 
 });
 
 it('a Dialog opened from a MenuItem returns focus to the MenuTrigger child via finalFocus', async () => {
+  // This passes even without `finalFocus`, since Base UI returns focus to the
+  // MenuTrigger anyway. The next test is the one that proves `finalFocus` is used.
   function Recipe() {
     const [confirming, setConfirming] = useState(false);
     const triggerRef = useRef<HTMLButtonElement>(null);

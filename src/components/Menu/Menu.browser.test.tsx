@@ -276,6 +276,46 @@ describe('submenus', () => {
     expect(screen.getByRole('menu', { name: 'Actions' })).toBeInTheDocument();
   });
 
+  it('follows a dir change after mount', async () => {
+    render(<Nested />);
+    document.documentElement.dir = 'rtl';
+    // The observer runs as a microtask, so let it flush before the keys.
+    await new Promise((r) => setTimeout(r, 50));
+    trigger().focus();
+    await userEvent.keyboard('{ArrowDown}');
+    await settled();
+    await userEvent.keyboard('{End}');
+    await expect.poll(() => more().hasAttribute('data-highlighted')).toBe(true);
+    await userEvent.keyboard('{ArrowLeft}');
+    await expect.poll(sub).toBeInTheDocument();
+  });
+
+  it('controlled: open shows the content, and onOpenChange gets only the boolean', async () => {
+    const onOpenChange = vi.fn();
+    render(
+      <Menu defaultOpen>
+        <MenuTrigger>
+          <Button>Actions</Button>
+        </MenuTrigger>
+        <MenuContent>
+          <MenuSubmenu open onOpenChange={onOpenChange}>
+            <MenuSubmenuTrigger>More</MenuSubmenuTrigger>
+            <MenuSubmenuContent>
+              <MenuItem>Nested one</MenuItem>
+            </MenuSubmenuContent>
+          </MenuSubmenu>
+        </MenuContent>
+      </Menu>,
+    );
+    await expect.poll(sub).toBeInTheDocument();
+    await userEvent.keyboard('{Escape}');
+    await expect.poll(() => onOpenChange.mock.calls.length).toBeGreaterThan(0);
+    expect(onOpenChange).toHaveBeenCalledWith(false);
+    expect(onOpenChange.mock.calls[0]).toHaveLength(1);
+    // Controlled: it stays open since `open` wasn't updated.
+    expect(sub()).toBeInTheDocument();
+  });
+
   it('the chevron flips in RTL', async () => {
     const chevron = () =>
       getComputedStyle(more().querySelector('[aria-hidden="true"]')!).transform;

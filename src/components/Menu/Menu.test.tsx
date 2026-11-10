@@ -340,7 +340,7 @@ it('MenuGroupLabel names its group', async () => {
 });
 
 describe('MenuSubmenu', () => {
-  it('reports open changes with only the boolean, and shows its content when controlled open', async () => {
+  it('reports open changes with only the boolean, and opens when its trigger is clicked', async () => {
     const onOpenChange = vi.fn();
     render(
       <Example defaultOpen>
