@@ -25,6 +25,11 @@ jobs:
       - run: npm run typecheck
       - run: npm run lint
       - run: npm run format:check
+      # Runtime dependencies reach consumers, so any advisory fails. Dev tooling
+      # fails at high or critical; known moderate ones are an open thread in
+      # docs/HANDOFF.md.
+      - run: npm audit --omit=dev
+      - run: npm audit --audit-level=high
 
   unit:
     runs-on: ubuntu-latest
