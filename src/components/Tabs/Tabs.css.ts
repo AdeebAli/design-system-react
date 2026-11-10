@@ -150,7 +150,9 @@ export const tabIcon = style(
 export const indicator = style(
   layered({
     position: 'absolute',
-    insetInlineStart: 0,
+    // Physical on purpose: Base UI's --active-tab-left is a physical left
+    // offset, so left: 0 plus translateX is correct in both directions.
+    left: 0,
     zIndex: 0,
     pointerEvents: 'none',
     width: 'var(--active-tab-width)',

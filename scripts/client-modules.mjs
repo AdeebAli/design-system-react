@@ -2,7 +2,10 @@
 // needs it when it imports Base UI, a hook (React's or ours), or createContext,
 // since a server component can't run any of them.
 
-const IMPORT = /^import\s*\{([^}]*)\}\s*from\s*["']([^"']+)["']/gm;
+const IMPORT =
+  /^import\s*(?:\w+\s*,\s*)?\{([^}]*)\}\s*from\s*["']([^"']+)["']/gm;
+const NAMESPACE =
+  /^import\s+(?:\w+\s*,\s*)?\*\s+as\s+(\w+)\s+from\s*["']react["']/m;
 const HOOK = /^(?:use[A-Z]\w*|createContext)$/;
 
 // A barrel only imports and re-exports, so it runs nothing itself.
@@ -23,6 +26,14 @@ function needsDirective(source) {
       .map((name) => name.trim().split(/\s+/)[0]);
     if (imported.some((name) => HOOK.test(name))) return true;
   }
+  const namespace = source.match(NAMESPACE)?.[1];
+  if (
+    namespace &&
+    new RegExp(`\\b${namespace}\\.(?:use[A-Z]\\w*|createContext)\\b`).test(
+      source,
+    )
+  )
+    return true;
   return /^import\s*["']@base-ui\/react/m.test(source);
 }
 

@@ -187,6 +187,19 @@ describe.each(['underline', 'pill'] as const)('the %s marker', (variant) => {
     expect(cssMarker(active()).display).toBe('none');
   });
 
+  it('the Indicator sits under the active tab in RTL', async () => {
+    container.dir = 'rtl';
+    await hydrate();
+    const indicatorRect = indicator().getBoundingClientRect();
+    const tabRect = active().getBoundingClientRect();
+    expect(Math.abs(indicatorRect.left - tabRect.left)).toBeLessThanOrEqual(
+      0.5,
+    );
+    expect(Math.abs(indicatorRect.width - tabRect.width)).toBeLessThanOrEqual(
+      0.5,
+    );
+  });
+
   it('switching tabs slides the Indicator', async () => {
     await hydrate();
     await userEvent.click(container.querySelectorAll('button')[1]!);

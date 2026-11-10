@@ -55,6 +55,27 @@ it('controlled: onValueChange receives only the value', async () => {
   );
 });
 
+it('onValueChange is never called with null when defaultValue matches no tab and none is enabled', () => {
+  const onValueChange = vi.fn();
+  render(
+    <Tabs defaultValue="zzz" onValueChange={onValueChange}>
+      <TabsList aria-label="Views">
+        <Tab value="a" disabled>
+          A
+        </Tab>
+        <Tab value="b" disabled>
+          B
+        </Tab>
+      </TabsList>
+      <TabsPanel value="a">Panel A</TabsPanel>
+      <TabsPanel value="b">Panel B</TabsPanel>
+    </Tabs>,
+  );
+  // Base UI reports null on mount here (the test fails with the guard removed);
+  // the consumer must see no call at all.
+  expect(onValueChange).not.toHaveBeenCalled();
+});
+
 it('controlled: follows the value', async () => {
   function Controlled() {
     const [value, setValue] = useState('a');

@@ -187,7 +187,7 @@ rule('kbd', {
   borderStyle: 'solid',
   borderColor: color.border.control,
   borderWidth: borderWidth.thin,
-  borderBottomWidth: borderWidth.thick,
+  borderBlockEndWidth: borderWidth.thick,
 });
 rule('pre code', {
   fontSize: 'inherit',
