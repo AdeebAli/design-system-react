@@ -206,10 +206,16 @@ const crisp = defineFullTheme({ light: crispLight, dark: crispDark });
 - **Value types:** strings, plus numbers for the unitless categories
   (`zIndex`, `font.weight`, `font.lineHeight`). A number elsewhere is a type
   error, so `radius: { control: 8 }` can't produce invalid CSS.
-- **Values are validated.** A value containing `{`, `}`, `;`, `<`, `\`, or
-  `/*`, or an unclosed quote, throws. This prevents CSS injection if a value
-  ever comes from user input, and stops one malformed value from swallowing
-  the rules after it.
+- **Values are validated.** A value containing `{`, `}`, `;`, `<`, `\`, `/*`,
+  a line break inside quotes, a control character other than a tab or line
+  break, an unclosed quote, or an unclosed or misordered `(` or `[` (outside
+  quotes) throws. This prevents CSS injection if a value ever comes from user
+  input, and stops one malformed value, such as a `calc(` missing its `)`, from
+  swallowing the rules after it. Tabs, and line breaks outside quotes, are
+  whitespace, so a multi-line template literal works.
+- **Values can't load resources.** A value using `url()` or `image-set()`
+  (any case, including `-webkit-image-set()`) throws, so a theme from user
+  input can't make the browser fetch a URL.
 - **A custom font is the project's to load.** Browsers won't download the
   bundled fonts when nothing uses them (Spec 02).
 
@@ -217,6 +223,15 @@ const crisp = defineFullTheme({ light: crispLight, dark: crispDark });
 
 Returns the theme as a CSS string, for projects that want a static stylesheet,
 for example under a strict Content Security Policy.
+
+### Under a strict Content Security Policy
+
+`ColorModeScript` and `ThemeProvider` take the page's `nonce`. The policy must
+also allow style attributes (`style-src-attr 'unsafe-inline'`): Base UI hides
+the native inputs of form controls with a `style` attribute in server HTML, and
+`style` props render the same way. Style attributes can't run script, so
+scripts and style elements stay nonce-only. `fixtures/next-app` serves `/csp`
+with such a policy and checks there are no violations or console errors.
 
 ## How overrides reach the page
 

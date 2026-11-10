@@ -6,7 +6,7 @@ import {
 } from '@adeebali/design-system-react';
 import type { ReactNode } from 'react';
 import { SiteNav } from './SiteNav';
-import { theme } from './theme';
+import { theme } from '../theme';
 
 export const metadata = { title: 'Next fixture' };
 

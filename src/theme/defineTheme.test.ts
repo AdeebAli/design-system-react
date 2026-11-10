@@ -64,14 +64,33 @@ it('emits every token for a full theme', () => {
   expect(css).not.toContain(':root{');
 });
 
-it.each(['"Inter', "Inter'", 'a/*b', 'a\\', '"a" "b'])(
-  'rejects %s, which would break the rules after it',
-  (bad) => {
-    expect(() =>
-      defineTheme({ shared: { font: { family: { sans: bad } } } }),
-    ).toThrow(/Invalid theme value/);
-  },
-);
+it.each([
+  '"Inter',
+  "Inter'",
+  'a/*b',
+  'a\\',
+  '"a" "b',
+  // An unclosed block swallows every rule after it, including reduced motion.
+  'calc(8px + 2px',
+  '8px [x',
+  'a)(b',
+  '8px]',
+  '"a(" calc(1px',
+  // A line break ends a quoted string early. Other control characters are
+  // rejected anywhere.
+  '"a\nb"',
+  '"a\rb"',
+  '"a\fb"',
+  "'a\nb'",
+  'a\u0000b',
+  'a\u000bb',
+  'a\u001fb',
+  'a\u007fb',
+])('rejects %j, which would break the rules after it', (bad) => {
+  expect(() =>
+    defineTheme({ shared: { font: { family: { sans: bad } } } }),
+  ).toThrow(/Invalid theme value/);
+});
 
 it('accepts quoted font names', () => {
   expect(() =>
@@ -81,6 +100,39 @@ it('accepts quoted font names', () => {
       },
     }),
   ).not.toThrow();
+});
+
+it.each([
+  'calc(1px + (2px * 3))',
+  'rgb(0 0 0 / 0.1)',
+  '0 1px 2px rgb(0 0 0 / 0.1), 0 0 0 1px hsl(0 0% 0% / 0.05)',
+  '"Font (Beta)", "a[1]", sans-serif',
+  // Outside quotes, line breaks and tabs are whitespace, as in a multi-line
+  // template literal. A tab inside quotes is fine too.
+  '0 1px 2px rgb(0 0 0 / 0.1),\n  0 0 0 1px rgb(0 0 0 / 0.05)',
+  '0 1px 2px red,\r\n  0 0 1px blue',
+  '0 1px 2px red,\t0 0 1px blue',
+  '"Inter",\n  sans-serif',
+  '"a\tb"',
+])('accepts value %j', (good) => {
+  expect(() =>
+    defineTheme({ shared: { font: { family: { sans: good } } } }),
+  ).not.toThrow();
+});
+
+// A theme value can't make the browser fetch anything, so a theme from user
+// input can't be used to track people.
+it.each([
+  'url(https://example.com/x.png)',
+  'URL(x.png)',
+  'url("x.png")',
+  'image-set("x.png" 1x)',
+  '-webkit-image-set("x.png" 1x)',
+  'Image-Set("x.png" 1x)',
+])('rejects %j, which loads a resource', (bad) => {
+  expect(() => defineTheme({ shared: { radius: { control: bad } } })).toThrow(
+    /radius\.control/,
+  );
 });
 
 it.each(['red;}', '{', '<style>', 'a;b'])('rejects %s', (bad) => {

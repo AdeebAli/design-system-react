@@ -93,6 +93,23 @@ export default defineConfig({
 
 Options such as `storageKey` must match `ThemeProvider`, so keep them in one shared object.
 
+### 6. A strict Content Security Policy
+
+Pass your nonce to `ColorModeScript` and `ThemeProvider`, which add inline `<script>` and `<style>` elements. In Next.js, read it from the request in the root layout. This makes the page dynamic, as any nonce does:
+
+```tsx
+const nonce = (await headers()).get('x-nonce') ?? undefined;
+
+<ColorModeScript nonce={nonce} />
+<ThemeProvider nonce={nonce}>{children}</ThemeProvider>
+```
+
+The policy must also allow style attributes: `style-src-attr 'unsafe-inline'`. Form controls such as `Select`, `Checkbox`, `Switch`, and `RadioGroup` hide their native input with a `style` attribute in the server HTML. Without it, that input shows on the page. Your own `style` props need it too. Style attributes can't run script, so scripts and style elements stay nonce-only:
+
+```text
+script-src 'self' 'nonce-…' 'strict-dynamic'; style-src 'self' 'nonce-…'; style-src-attr 'unsafe-inline'
+```
+
 ## Theming
 
 Override tokens with typed objects. Anything you leave out stays Soft.
