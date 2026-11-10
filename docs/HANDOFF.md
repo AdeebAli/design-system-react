@@ -10,84 +10,99 @@ Build `@adeebali/design-system-react`, a general-purpose React design system. Sp
 
 - **Done:** milestone v0.1 (specs 01–07) is merged to `main` as `9c49e84` (PR #17), and released as v0.1.0 (`f49377f`) to GitHub Packages, with Storybook at https://adeebali.github.io/design-system-react/.
 - **Done:** milestone v0.2 (Spec 08 Bento, Spec 09 Forms) is merged as `ffb1104` (PR #20) and released as v0.2.0 (`78202da`).
-- **In review:** milestone v0.3 (Spec 10 Navigation, Spec 11 Prose) is built on `feat/v0.3-navigation-and-prose`, in draft PR #22. It adds `NavBar`, `NavBarLink`, `Tabs`, `TabsList`, `Tab`, `TabsPanel`, `Prose`, `NotProse`, the "Navigation and prose" overview page, and the "Markdown and MDX" docs. It also fixes the deferred v0.2 minors. The plan is `docs/superpowers/plans/2026-11-09-v0-3-navigation-and-prose.md`.
-- **Blocked on the owner:** two decisions (open threads 1 and 2), the manual checks, approving the baseline run, merging, and releasing v0.3.0.
+- **In review:** milestone v0.3 (Spec 10 Navigation, Spec 11 Prose) is on `feat/v0.3-navigation-and-prose`, in draft PR #22. It adds `NavBar`, `NavBarLink`, `Tabs`, `TabsList`, `Tab`, `TabsPanel`, `Prose`, `NotProse`, the "Navigation and prose" overview page, and the "Markdown and MDX" docs. After review, the owner asked for more, which is in the same PR as separate commits:
+  - `NavBar` `menuVariant` and `menuPosition`; `Prose` children-only, with `--ds-prose-scroll-margin`; a real anchor-link test.
+  - Fixes to older code: stricter theme validation, a tested nonce-based CSP, `RadioGroup` focus through `field.ref`, the split Vite fixture bundle, and dependency audits in CI.
+  - The plan is `docs/superpowers/plans/2026-11-09-v0-3-navigation-and-prose.md`.
+- **Blocked on the owner:** approving the held baseline run, the manual checks, merging, and releasing v0.3.0. Open threads 1–3 should be fixed before merging.
 
 ## Decisions
 
 Architecture decisions are in `docs/adr/`. Build decisions, with what each costs if wrong, are the `Ruling:` lines in `.superpowers/sdd/2026-11-09-v0-3-navigation-and-prose/progress.md` (local and gitignored), and the v0.1 and v0.2 ledgers beside it. The v0.3 ones worth knowing without opening the file:
 
 - **`NavBar` structure:**
-  - `Collapsible.Root` renders the `nav`, which is one CSS grid. Below `md`, the menu button (`IconButton variant="ghost"`) sits after `actions`.
-  - From `md` up, CSS overrides the closed panel's `hidden`, so links show without JavaScript.
-  - The active bar is a `::after` border, so forced colors keeps it.
-- **`NavBar` `Escape` handling:** it acts only when the panel is open, the event isn't `defaultPrevented`, and `event.currentTarget` (the `nav`) contains the target.
-  - Rejected: a `ref` on the `nav`, because a consumer's `ref` overrode it and silently disabled `Escape`.
-  - Base UI's `Select` handles `Escape` natively, so the tests use a portaled input and a cancelling control instead.
+  - `Collapsible.Root` renders the `nav`, which is one CSS grid. Below `md`, the menu button sits after `actions` by default (`menuPosition="end"`), or before the brand (`"start"`), through a rule scoped to `not all and (min-width: md)` so it can't override the desktop layout.
+  - `menuVariant` takes any `IconButton` variant, with that variant's default tone (so `solid` is accent). Rejected: a `menuTone` prop, and a third position between brand and actions.
+  - From `md` up, CSS overrides the closed panel's `hidden`, so links show without JavaScript. The active bar is an `::after` border, so forced colors keeps it.
+- **`NavBar` `Escape` handling:** it acts only when the panel is open, the event isn't `defaultPrevented`, and `event.currentTarget` (the `nav`) contains the target. Rejected: a `ref` on the `nav`, because a consumer's `ref` overrode it.
+- **`next/link` from a server component (Spec 10 amended in `9d2e227`):** a one-line `'use client'` re-export, shown in the docs and used by the fixture. Rejected: closing the panel from a click handler on the list. Next 16.4.5's `Link` calls the consumer's `onClick`, then `preventDefault()` on every in-app click before routing, so a list handler couldn't tell that from a project's own `preventDefault()`. It would drop "a prevented click keeps the panel open" and the misuse warning.
 - **`NavBar` focus after a link click:** the panel closes, and focus moves to the menu button only if `checkVisibility()` says it's shown.
-- **Sticky `NavBar` with the menu open:** below `md`, the open panel is capped at the viewport height minus the bar, and scrolls, so links stay reachable at 320×256 (WCAG 1.4.10).
-- **`Tabs` marker handoff:** `TabsList` always renders Base UI's `Indicator` without `renderBeforeHydration`, because that option injects an inline script, which breaks strict CSP. One `:has()` rule turns off the CSS marker once the `Indicator` is shown.
-  - The list has `scroll-padding-inline`, so a tab scrolled into view keeps its focus ring. A test caught the clipping.
-- **`Prose` rules:** every descendant rule goes through `scoped()` in `Prose.css.ts`, so the `NotProse` exclusion can't be forgotten, and the `:not()` goes before pseudo-elements. Heading `scroll-margin` comes from `NavBar.css.ts`'s exported `stickyClearance`, which is computed from tokens.
-- **Spreading props onto Base UI parts:** where a Base UI part is typed for another element (`Field.Control` for an input; `Collapsible.Root`, `Tabs.*`), the element's own props go on the `render` element. Rejected for `Textarea` alone: Base UI's `Field.Control` reads `id`, `name`, `value`, `defaultValue`, and `autoFocus` from its own props, so those go to it directly. A controlled `Textarea` broke when they didn't.
-- **Client-module check:** `scripts/client-modules.mjs` derives which `dist` modules need `"use client"` from their imports: Base UI, a `use*` hook, or `createContext`. Barrels that only re-export are exempt. The hand-kept list is gone, and `serverModules` remains as the inverse check.
-- **Pre-bundling:** `vite.config.ts` pre-bundles `@base-ui/react/collapsible` and `/tabs`, as v0.2 did for the others.
-- **Visual baselines (carried from v0.2):** after the `update-baselines` workflow commits to a PR, GitHub holds CI on that commit for approval, because the commit is pushed with `GITHUB_TOKEN`. Approve it with **Approve workflows to run** in the PR's merge box. Rejected: a GitHub App or personal token, which needs a stored secret. Don't close and reopen the PR.
+- **Sticky `NavBar` with the menu open:** below `md`, the open panel is capped at the viewport height minus the bar, and scrolls (WCAG 1.4.10).
+- **`Tabs` marker handoff:** `TabsList` always renders Base UI's `Indicator` without `renderBeforeHydration`, which injects an inline script and breaks strict CSP. One `:has()` rule turns off the CSS marker once the `Indicator` shows. The list has `scroll-padding-inline` so a focused tab's ring isn't clipped.
+- **`Prose` rules:** every descendant rule goes through `scoped()` in `Prose.css.ts`, so the `NotProse` exclusion can't be forgotten.
+- **`Prose` content (Spec 11 amended):** `children` or MDX. `dangerouslySetInnerHTML` is a type error only; at runtime it still renders. Rejected: ignoring it at runtime, which silently renders an empty article in production; and a sanitizing `html` prop, which needs `jsdom` on the server (`isomorphic-dompurify`). Adding HTML later is additive. It isn't a security boundary: a child `div` can still take `dangerouslySetInnerHTML`.
+- **Heading scroll margin:** `var(--ds-prose-scroll-margin, <NavBar clearance + space.4>)`. The clearance is computed from tokens in `src/styles/sticky.ts`, which both `NavBar.css.ts` and `Prose.css.ts` import, so `Prose` doesn't depend on `NavBar`'s styles. Rejected: a theme token, which changes the theme contract.
+- **Theme validation (Spec 03 amended):** values throw for `{ } ; < \`, `/*`, an unclosed quote, an unclosed or misordered `(` or `[` outside quotes, a line break inside quotes, a control character other than a tab or line break, and `url()` or `image-set()` in any case. Each was checked in Chromium: an unclosed bracket, or a newline, CR, or form feed inside quotes, drops every later theme rule, including reduced motion. Line breaks and tabs outside quotes, and tabs inside them, are harmless, so multi-line template literals stay valid.
+- **CSP (Spec 03 and README):** `ColorModeScript` and `ThemeProvider` take the nonce. The policy must also allow `style-src-attr 'unsafe-inline'`: Base UI hides `Select`, `Checkbox`, `Switch`, and `RadioGroup`'s native inputs with `style` attributes in server HTML. Without it, a `Select`'s hidden input shows on the page (seen in Chromium, 174×27). The Next fixture serves `/csp` from its own root layout in `app/csp/`, with the other pages in an `app/(site)` route group so they stay static. Rejected: reading the nonce in the shared root layout, which makes every page dynamic.
+- **`RadioGroup` focus (Spec 09 amended):** its `ref` stays the group element (Spec 05), but that element's `focus()` is replaced to focus the checked radio, or the first enabled one. So React Hook Form's `field.ref` works. Rejected: `tabIndex={-1}` on the group, which lands focus on something people can't change.
+- **Spreading props onto Base UI parts:** where a part is typed for another element, the element's props go on the `render` element. `Textarea` is the exception: `Field.Control` reads `id`, `name`, `value`, `defaultValue`, and `autoFocus` itself.
+- **Client-module check:** `scripts/client-modules.mjs` derives which `dist` modules need `"use client"` from their imports. Index files that only re-export are exempt.
+- **Dependency audits in CI:** the `static` job runs `npm audit --omit=dev` (any runtime advisory fails) and `npm audit --audit-level=high`. Rejected: failing at moderate now, which would turn CI red with no fix available.
+- **Vite fixture bundle:** split into `react`, `design-system`, and `vendor` chunks (largest 276 kB). Rejected: raising `chunkSizeWarningLimit`, which hides the warning.
+- **Visual baselines (carried from v0.2):** the workflow runs when the `update-baselines` label is added, or by hand, not on every push. After it commits to a PR, GitHub holds CI on that commit until the owner selects **Approve workflows to run** in the merge box. Rejected: a stored token. Don't close and reopen the PR.
 
 ## Changes
 
-- Branch `feat/v0.3-navigation-and-prose`, 10 commits from `517068d` (the plan) to `67d7362` (the review fixes), plus this note. 58 files changed. Pushed, with draft PR #22 labeled `update-baselines`.
-- New: `src/components/{NavBar,Tabs,Prose}/`, `src/components/Navigation.stories.tsx`, `src/components/Prose/MarkdownAndMdx.mdx`, `src/components/Icon/internal/Menu.tsx`, `scripts/client-modules.mjs` and its test, `tests/fixtures/navigation.spec.ts`, `fixtures/next-app/app/{SiteNav.tsx,NextLink.tsx,blog/page.tsx}`.
-- Changed: `Select`, `Input`, `Textarea`, the `Switch` knob (`Checkbox/choice.css.ts`), `ReactHookForm.mdx`, `utils/withDefaultDisplay.ts` (adds `withDefault`), `scripts/verify-dist.mjs`, `vite.config.ts`, and both fixtures.
+- Branch `feat/v0.3-navigation-and-prose`: 16 commits from `517068d` (the plan) to `9d2e227`, including `5ac8396` (baselines) and this note. 167 files changed, including the baseline screenshots. Pushed; draft PR #22, labeled `update-baselines`, with an "Also in this PR" section for the older-code fixes.
+- Since the last note: `33f06ab` (theme validation, CSP fixture), `8a3aa6d` (`RadioGroup` focus), `938ef88` (fixture bundle split, CI audits), `9d2e227` (`NavBar` menu props, children-only `Prose`, scroll margin variable, anchor test, Spec 10 `next/link` amendment).
+- New files: `src/styles/sticky.ts`, `fixtures/next-app/proxy.ts`, `fixtures/next-app/app/csp/`, `tests/fixtures/csp.spec.ts`. Moved: the Next fixture's pages into `fixtures/next-app/app/(site)/`.
+- Specs amended: 03, 09, 10, 11. README gains "6. A strict Content Security Policy".
 
 ## Verification
 
-- `npm ci && npm run check` exits 0 at `67d7362`:
-  - unit 426 passed
+- `npm run check` exits 0 on the tree committed as `9d2e227`:
+  - unit 463 passed
   - script tests 20 passed
-  - browser and story tests 460 passed, with axe in both modes
+  - typecheck clean
+  - browser and story tests 466 passed, with axe in both modes
   - `verify-dist` ok
-  - fixtures 50 passed
-- Each new test was seen failing first, or the code was broken on purpose to confirm it fails (ledger).
-- A fresh Opus reviewer read the whole branch. Its three must-fix findings are fixed in `67d7362`, each with a test that failed first. Its five minors are open thread 3.
-- The Spec 10 and 11 acceptance audit is in PR #22's body: every automated item passes, and the manual ones are the owner's.
+  - fixtures 56 passed
+- Each new test failed first, or failed when the code was broken on purpose (ledger and this session):
+  - Removing the CSP nonce from `ColorModeScript`, then from `ThemeProvider`, fails the CSP tests. Removing `style-src-attr` fails them on the visible input.
+  - Removing `RadioGroup`'s `focus` override fails only the React Hook Form focus test.
+  - Setting `--ds-prose-scroll-margin: 0px` on `/blog` lands the heading at 0, under the bar.
+  - The first anchor test passed by coincidence: the page was too short to scroll the heading to the top. Fixed with more content below the heading and an assertion that the page didn't stop at its end.
+- CI passed on `5ac8396`, including `visual`.
 - **Not verified:**
-  - CI on PR #22 and the visual baselines. Trigger: the `update-baselines` run on PR #22, then the owner's approval of the held run.
-  - Screen reader, forced colors, and 200% text on `NavBar`, `Tabs`, and `Prose`. Trigger: the checklist in PR #22, before merging.
+  - CI on the branch head, and the `MenuAtStart` baseline. The baseline workflow runs only when the label is added or when started by hand, so it was started by hand on the branch after this note was pushed. CI's `visual` job fails until that run commits the new screenshot. Trigger: that run, then the owner's approval of the held run (next step 2).
+  - Screen reader, forced colors, and 200% text on `NavBar`, `Tabs`, and `Prose`. Trigger: PR #22's checklist, before merging (next step 3).
+  - The hidden-input bug for `Checkbox`, `Switch`, and `RadioGroup` under CSP. Only `Select` was seen; the others were inferred from their server HTML. Trigger: open thread 2.
   - Installing 0.2.0 from GitHub Packages. Trigger: none; the v0.1 install proved the pipeline, and Publish succeeded.
 
 ## Open threads
 
-1. **Departure from Spec 10 (owner decision): `next/link` in a server component.** In Next 16, a server component's `next/link` resolves to `next/dist/client/app-dir/link.react-server.js`, a plain function, so `as={NextLink}` can't cross into the client `NavBarLink`.
-   - **Now:** the fixture and docs use a one-line `'use client'` re-export (`fixtures/next-app/app/NextLink.tsx`).
-   - **Alternative:** `NavBar` closes the panel through a delegated click on its `ul`, which makes `NavBarLink` server-safe, so `as={NextLink}` works with no extra file. The cost is losing the "outside a NavBar" warning.
-   - Trigger: PR #22 can't merge until the owner picks one, and Spec 10 is amended in the same PR.
-2. **`RadioGroup` and React Hook Form focus (owner decision).** `RadioGroup`'s `ref` is its group `div` (Spec 05's default, since Spec 09 is silent), which can't take focus. So the docs say to leave `field.ref` off it, and RHF can't focus it after a failed submit. The alternative is having the group's `focus()` move to the checked radio. Trigger: PR #22's "Needs your decision" list.
-3. **Deferred minors from the v0.3 review.** Trigger: the v0.4 plan decides each as a task or a drop.
+1. **The README's CSP step is incomplete.** It reads the `x-nonce` header in the layout, but doesn't say the project's proxy must set it. Fix: add the proxy step, as in `fixtures/next-app/proxy.ts`. Trigger: next step 1, before merging, since the README ships with v0.3.0.
+2. **The `/csp` fixture page renders only `Select`** of the four controls with hidden inputs. Fix: add `Checkbox`, `Switch`, and `RadioGroup` to it; the CSP test's hidden-input check then covers them. Trigger: next step 1.
+3. **"Your own `style` props need `style-src-attr`"** is in the README, from the CSP spec, but untested. Fix: a `style` prop on the `/csp` page, covered by the zero-violation test. Trigger: next step 1.
+4. **The v0.3.0 release notes must say theme validation is stricter.** A theme that passed in v0.2.0 can throw. Trigger: next step 4.
+5. **Deferred minors from the v0.3 review.** Trigger: the v0.4 plan decides each as a task or a drop.
    - The Tabs `Indicator` uses `insetInlineStart` with a physical `translateX`, so it's misplaced under `dir="rtl"`. Fix: physical `left: 0`, plus an RTL test.
    - An uncontrolled `Tabs` whose `defaultValue` matches no tab falls back to the first enabled tab. With no enabled tab, `onValueChange(null)` reaches a callback typed `(value: string)`.
    - A `Prose` inside a `NotProse` gets no styles. It's undocumented.
    - `client-modules.mjs` misses `import * as React` and `import React, { useState }`. None exist today.
    - `Prose`'s `kbd` rule uses physical `borderBottomWidth`.
-4. **`ColorModeToggle` doesn't accept `ref`, `style`, or pass-through button props,** which Spec 05 requires and Spec 12's `Tooltip` needs. Trigger: the v0.4 plan must include a task that adds them, with a test that wraps the toggle in a `Tooltip`. (Carried forward.)
-5. **Inter comes from `inter-ui`,** because Fontsource's files drop `cv05` and `cv08`. Trigger: a test pins the 4.1.1 ranges. (Carried forward.)
-6. **`engines.node` is `>=22`.** Trigger: the release script refuses to release after April 30, 2027, until the floor and CI's Node matrix are raised. (Carried forward.)
-7. **The repo's `handoff` skill is shadowed by the owner's personal one.** Pass `docs/HANDOFF.md` as the argument, as this note was. Trigger: none; the owner decides. (Carried forward.)
-8. **PR preview deploys** of Storybook: Vercel, `gh-pages` subfolders, or a CI artifact. Trigger: none; the owner hasn't chosen. (Carried forward.)
-9. **The Vite fixture's bundle is over 500 kB,** which triggers Vite's chunk warning in `npm run check`. It was 320 kB early in v0.2 and 520 kB before v0.3's fixture changes; v0.3 adds about 20 kB. Trigger: none; the owner decides whether to raise `chunkSizeWarningLimit` in the fixture or split it.
-10. **`npm ci` reports 12 moderate audit advisories.** Not investigated. Trigger: none; the owner decides.
+6. **11 moderate `npm audit` advisories, dev tooling only:** `glob` and `minimatch` through `typescript-eslint`. 8.72.2 is the latest `typescript-eslint` and is affected; `--force` installs an incompatible version. Triggers: CI fails if one reaches runtime dependencies or rises to high; the v0.4 plan must include a step to rerun `npm audit` and upgrade once a fixed version exists.
+7. **`ColorModeToggle` doesn't accept `ref`, `style`, or pass-through button props,** which Spec 05 requires and Spec 12's `Tooltip` needs. Trigger: the v0.4 plan must include a task that adds them, with a test that wraps the toggle in a `Tooltip`. (Carried forward.)
+8. **Inter comes from `inter-ui`,** because Fontsource's files drop `cv05` and `cv08`. Trigger: a test pins the 4.1.1 ranges. (Carried forward.)
+9. **`engines.node` is `>=22`.** Trigger: the release script refuses to release after April 30, 2027, until the floor and CI's Node matrix are raised. (Carried forward.)
+10. **The repo's `handoff` skill is shadowed by the owner's personal one.** They differ only in the default output (`docs/HANDOFF.md` or chat). Recommendation: delete `.claude/skills/handoff/` and say in the project `CLAUDE.md` to pass `docs/HANDOFF.md`. Trigger: none; the owner decides. (Carried forward.)
+11. **PR preview deploys** of Storybook. Recommendation: `gh-pages` subfolders from the existing `storybook-pages` workflow, with cleanup on PR close, since it needs no stored secret. Trigger: none; the owner decides. (Carried forward.)
 
 Resolved:
-- Old open thread 3, the v0.2 minors: six are fixed in `ced69dd` and `bebcb87`. The seventh (`field.ref` on `RadioGroup`) is now open thread 2.
-- Old next step 1, the v0.3 plan: written and committed as `517068d`.
+- Old thread 1, the `next/link` departure: the re-export is accepted, and Spec 10 is amended (`9d2e227`).
+- Old thread 2, `RadioGroup` and React Hook Form focus: implemented in `8a3aa6d`, with a fixture test that failed without it.
+- Old thread 9, the Vite fixture's bundle over 500 kB: split in `938ef88`; `npm run check` shows no chunk warning.
+- Old thread 10, `npm audit`: now thread 6, with CI triggers. The count is 11, not 12; the runtime dependencies have none.
+- Old unverified item, CI on PR #22 and the baselines: CI passed on `5ac8396`.
+- Old next step 1 (threads 1 and 2): done as above.
 
 ## Next steps
 
-1. Decide open threads 1 and 2. If the departure is accepted, amend Spec 10 in PR #22. If the delegation route is chosen, implement it with a test that renders `NavBarLink as={NextLink}` from the Next fixture's server page with no re-export.
-2. Review the committed baseline screenshots on PR #22, then select **Approve workflows to run** in its merge box. Don't close and reopen the PR.
+1. Fix open threads 1–3 on the branch. Check that the CSP test fails without `style-src-attr` for each new control.
+2. Wait for the hand-started "Update visual baselines" run on the branch, review the `MenuAtStart` screenshot it commits, then select **Approve workflows to run** in PR #22's merge box. Don't close and reopen the PR. To re-run it later: `gh workflow run update-visual-baselines.yml --ref feat/v0.3-navigation-and-prose`.
 3. Do the manual checks in PR #22's checklist, mark the PR ready, and merge it.
-4. Release with `npm run release -- minor`, then write the v0.4 plan (Spec 12 Overlays), deciding open threads 3 and 4.
+4. Release with `npm run release -- minor`, and edit the release notes to cover open thread 4. Then write the v0.4 plan (Spec 12 Overlays), deciding threads 5, 6, and 7.
 
 ## Resume prompt
 
-> Read `docs/HANDOFF.md`. v0.3 (Navigation and Prose) is in draft PR #22, with all checks passing locally. Help me decide open threads 1 (the `next/link` departure from Spec 10) and 2 (`RadioGroup` focus with React Hook Form). Then apply the decision on the branch, approve the baselines, and get PR #22 ready to merge.
+> Read `docs/HANDOFF.md`. v0.3 (Navigation and Prose) is in draft PR #22, with all checks passing locally at `9d2e227`. Fix open threads 1–3 (the README's CSP proxy step, and the `/csp` fixture page's missing controls and `style` prop), then help me approve the baselines, finish the manual checks, merge, and release v0.3.0.
