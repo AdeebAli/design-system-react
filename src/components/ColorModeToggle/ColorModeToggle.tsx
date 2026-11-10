@@ -1,5 +1,7 @@
 'use client';
 
+import type { MouseEvent } from 'react';
+
 import { useColorMode } from '../../theme/ThemeProvider';
 import type { ButtonVariant } from '../Button';
 import { Box } from '../Box';
@@ -60,11 +62,13 @@ export function ColorModeToggle({
 
   return (
     <IconButton
+      {...props}
+      // The toggle owns these, even if a caller bypasses the types.
+      as={undefined}
       icon={icon}
       aria-label={name}
       variant={variant}
-      {...props}
-      onClick={(event) => {
+      onClick={(event: MouseEvent<HTMLButtonElement>) => {
         onClick?.(event);
         if (event.defaultPrevented) return;
         if (resolvedMode) setMode(resolvedMode === 'dark' ? 'light' : 'dark');

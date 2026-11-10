@@ -1,5 +1,5 @@
 import { createRef } from 'react';
-import { ColorModeToggle } from './index';
+import { ColorModeToggle, type ColorModeToggleProps } from './index';
 
 test('takes a button style other than solid, and a size', () => {
   <ColorModeToggle labels={{ toDark: 'Dark' }} />;
@@ -17,4 +17,6 @@ test('takes ref, style, and button props, but not icon', () => {
   <ColorModeToggle onClick={() => undefined} data-testid="x" />;
   // @ts-expect-error the toggle picks its own icon
   <ColorModeToggle icon={null} />;
+  expectTypeOf<ColorModeToggleProps>().not.toHaveProperty('aria-label');
+  expectTypeOf<ColorModeToggleProps>().not.toHaveProperty('icon');
 });

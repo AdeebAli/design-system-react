@@ -178,3 +178,16 @@ it('a forced ThemeProvider inside a Tooltip renders nothing and does not throw',
   errors.mockRestore();
   warns.mockRestore();
 });
+
+it('keeps its own name, icon, and element when a caller bypasses the types', () => {
+  render(
+    <ThemeProvider>
+      <ColorModeToggle
+        {...({ 'aria-label': 'x', as: 'a', icon: 'nope' } as object)}
+      />
+    </ThemeProvider>,
+  );
+  const button = screen.getByRole('button', { name: 'Switch to dark mode' });
+  expect(button.tagName).toBe('BUTTON');
+  expect(button.querySelector('svg')).not.toBeNull();
+});
