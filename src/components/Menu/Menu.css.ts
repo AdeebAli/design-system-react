@@ -27,7 +27,8 @@ export const menuItem = style(
     alignItems: 'center',
     gap: vars.space['2'],
     boxSizing: 'border-box',
-    // At least 2rem, and never taller than a medium control.
+    // At least 2rem (a comfortable target), but never taller than a medium control.
+    // `control.sm` only keeps the floor from shrinking below the theme's smallest control.
     minBlockSize: `min(${vars.size.control.md}, max(2rem, ${vars.size.control.sm}))`,
     paddingInline: vars.space['2'],
     borderRadius: vars.radius.md,

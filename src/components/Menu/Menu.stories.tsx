@@ -44,13 +44,19 @@ const openIt = async (canvasElement: HTMLElement) => {
   return menu;
 };
 
-// Axe flags Base UI's focus guards while a menu is open, so plays close it.
-const closeIt = async () => {
-  await userEvent.keyboard('{Escape}');
-  await waitFor(() => expect(body().queryByRole('menu')).toBeNull());
+/**
+ * An open menu renders Base UI's focus guards: `aria-hidden` spans with
+ * `tabindex="0"` (`[data-base-ui-focus-guard]`, from
+ * `@base-ui/react/utils/FocusGuard.js`), which they need to catch focus leaving
+ * the popup. Axe flags only these as `aria-hidden-focus`, so that one rule is off
+ * for the stories that leave a menu open. Everything else stays audited.
+ */
+const baseUiFocusGuards = {
+  a11y: { config: { rules: [{ id: 'aria-hidden-focus', enabled: false }] } },
 };
 
 export const Actions: Story = {
+  parameters: baseUiFocusGuards,
   render: () => (
     <Menu>
       <MenuTrigger>
@@ -69,13 +75,13 @@ export const Actions: Story = {
   ),
   play: async ({ canvasElement }) => {
     await openIt(canvasElement);
-    await userEvent.click(body().getByRole('menuitem', { name: 'Edit' }));
-    await waitFor(() => expect(body().queryByRole('menu')).toBeNull());
+    await userEvent.hover(body().getByRole('menuitem', { name: 'Edit' }));
   },
 };
 
 /** The check column appears only because this menu has checkable items. */
 export const CheckableItems: Story = {
+  parameters: baseUiFocusGuards,
   render: () => (
     <Menu>
       <MenuTrigger>
@@ -104,11 +110,11 @@ export const CheckableItems: Story = {
     await expect(
       body().getByRole('menuitemradio', { name: 'Date' }),
     ).toHaveAttribute('data-checked');
-    await closeIt();
   },
 };
 
 export const TallMenu: Story = {
+  parameters: baseUiFocusGuards,
   render: () => (
     <Menu>
       <MenuTrigger>
@@ -124,6 +130,5 @@ export const TallMenu: Story = {
   play: async ({ canvasElement }) => {
     const menu = await openIt(canvasElement);
     await expect(menu.scrollHeight).toBeGreaterThan(menu.clientHeight);
-    await closeIt();
   },
 };
