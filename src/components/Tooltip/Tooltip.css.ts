@@ -2,7 +2,7 @@ import { style } from '@vanilla-extract/css';
 import { vars } from '../../themes/contract.css';
 import { layered } from '../../utils/recipe';
 
-/** The inverse popup surface. Motion and the border width come from the shared overlay classes. */
+/** The inverse popup surface, with its own 1px border. Motion comes from the shared overlay class. */
 export const popup = style(
   layered({
     boxSizing: 'border-box',
@@ -25,6 +25,6 @@ export const popup = style(
 export const positioner = style(
   layered({
     zIndex: vars.zIndex.tooltip,
-    maxWidth: `calc(100vw - 2 * ${vars.space['4']})`,
+    maxInlineSize: `calc(100vw - 2 * ${vars.space['4']})`,
   }),
 );

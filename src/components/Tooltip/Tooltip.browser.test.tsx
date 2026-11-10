@@ -65,10 +65,11 @@ it('clicking the trigger closes it', async () => {
   await expect.poll(() => popup()).not.toBeInTheDocument();
 });
 
-it('a real touch tap (CDP touch input) does not open it', async () => {
+it('a real touch tap (CDP touch input) never opens it', async () => {
   const onClick = vi.fn();
+  const onOpenChange = vi.fn();
   render(
-    <Tooltip content="Hint" delay={0}>
+    <Tooltip content="Hint" onOpenChange={onOpenChange}>
       <Button onClick={onClick}>Go</Button>
     </Tooltip>,
   );
@@ -89,13 +90,25 @@ it('a real touch tap (CDP touch input) does not open it', async () => {
       type: 'touchEnd',
       touchPoints: [],
     });
-    await new Promise((r) => setTimeout(r, 500));
-    // The tap landed (it clicked the button), yet no tooltip.
+    await new Promise((r) => setTimeout(r, 1000));
+    // The tap landed (it clicked the button), and it never opened, not even briefly.
+    expect(onOpenChange).not.toHaveBeenCalled();
     expect(onClick).toHaveBeenCalledTimes(1);
-    expect(popup()).not.toBeInTheDocument();
   } finally {
     await cdp().send('Emulation.setTouchEmulationEnabled', { enabled: false });
   }
+});
+
+it('control for the touch test: the same setup opens on a mouse hover', async () => {
+  const onOpenChange = vi.fn();
+  render(
+    <Tooltip content="Hint" onOpenChange={onOpenChange}>
+      <Button>Go</Button>
+    </Tooltip>,
+  );
+  await userEvent.hover(trigger());
+  await expect.poll(() => popup(), { timeout: 2000 }).toBeInTheDocument();
+  expect(onOpenChange).toHaveBeenCalledWith(true);
 });
 
 it('inside TooltipProvider, a second tooltip opens with no delay after the first closes', async () => {
