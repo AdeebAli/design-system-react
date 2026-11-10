@@ -24,6 +24,20 @@ export const backdrop = style(
 );
 
 /**
+ * The title keeps clear of the close button, which sits `space.3` from the
+ * corner, less the padding the title already has. The popup marks itself.
+ */
+export const title = style(
+  layered({
+    selectors: {
+      '[data-close-shown] &': {
+        paddingInlineEnd: `max(0px, calc(${vars.space['3']} + ${vars.size.control.sm} + ${vars.space['2']} - ${vars.space['6']}))`,
+      },
+    },
+  }),
+);
+
+/**
  * Centered with auto margins rather than a transform, so the motion's
  * `transform` is free. Fills the width less `space.4` each side on small screens.
  */

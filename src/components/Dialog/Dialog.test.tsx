@@ -37,6 +37,8 @@ function Example({
 // `warnOnce` dedupes per key for the whole file, so assert on the call instead.
 vi.mock('../../utils/warn', () => ({ warnOnce: vi.fn() }));
 
+const lastMessage = () => String(vi.mocked(warnOnce).mock.calls[0]![1]);
+
 const warned = () => vi.mocked(warnOnce).mock.calls.map(([key]) => key);
 
 const open = () =>
@@ -158,9 +160,7 @@ describe('development warnings', () => {
     );
     await screen.findByRole('dialog');
     expect(warned()).toEqual(['dialog-name']);
-    expect(String(vi.mocked(warnOnce).mock.calls[0]![1])).toMatch(
-      /DialogTitle/,
-    );
+    expect(lastMessage()).toMatch(/DialogContent.*DialogTitle.*aria-label/);
   });
 
   it('does not warn with a title, description, and close button', async () => {
@@ -191,6 +191,9 @@ describe('development warnings', () => {
     );
     await screen.findByRole('alertdialog');
     expect(warned()).toEqual(['dialog-alert-description']);
+    expect(lastMessage()).toMatch(
+      /Dialog: .*`alert`.*should have a `DialogDescription`/,
+    );
   });
 
   it('warns when there is no close button and no DialogClose', async () => {
@@ -203,6 +206,9 @@ describe('development warnings', () => {
     );
     await screen.findByRole('dialog');
     expect(warned()).toEqual(['dialog-no-close']);
+    expect(lastMessage()).toMatch(
+      /DialogContent.*no close button.*add a `DialogClose`/,
+    );
   });
 
   it('warns for closeOnOutsideClick with alert', () => {
@@ -212,5 +218,8 @@ describe('development warnings', () => {
       </Dialog>,
     );
     expect(warned()).toEqual(['dialog-alert-outside-click']);
+    expect(lastMessage()).toMatch(
+      /Dialog: `closeOnOutsideClick` is ignored with `alert`.*Remove it/,
+    );
   });
 });

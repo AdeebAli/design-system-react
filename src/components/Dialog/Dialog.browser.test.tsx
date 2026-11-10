@@ -282,3 +282,52 @@ it('controlled open can be held open', async () => {
   await new Promise((resolve) => setTimeout(resolve, 300));
   expect(screen.getByRole('dialog')).toBeInTheDocument();
 });
+
+describe('a long title', () => {
+  // Short words, so every line fills to within a letter of its limit.
+  const longTitle = 'a '.repeat(150);
+  const titleRight = () => {
+    const heading = screen.getByRole('heading', { level: 2 });
+    // The text's own right edge, not the heading box's.
+    const range = document.createRange();
+    range.selectNodeContents(heading);
+    return Math.max(...Array.from(range.getClientRects(), (r) => r.right));
+  };
+
+  it('stays clear of the close button', async () => {
+    await page.viewport(414, 896);
+    render(
+      <Dialog defaultOpen>
+        <DialogContent size="sm">
+          <DialogTitle>{longTitle}</DialogTitle>
+        </DialogContent>
+      </Dialog>,
+    );
+    await settled();
+    expect(titleRight()).toBeLessThanOrEqual(
+      closeButton().getBoundingClientRect().left,
+    );
+  });
+
+  it('uses the full width without a close button', async () => {
+    await page.viewport(414, 896);
+    render(
+      <Dialog defaultOpen>
+        <DialogContent size="sm" showClose={false}>
+          <DialogTitle>{longTitle}</DialogTitle>
+          <DialogClose>
+            <Button>Done</Button>
+          </DialogClose>
+        </DialogContent>
+      </Dialog>,
+    );
+    const popup = await settled();
+    const heading = screen.getByRole('heading', { level: 2 });
+    expect(getComputedStyle(heading).paddingInlineEnd).toBe('0px');
+    expect(heading.getBoundingClientRect().right).toBe(
+      popup.getBoundingClientRect().right -
+        parseFloat(getComputedStyle(popup).paddingInlineEnd) -
+        1,
+    );
+  });
+});

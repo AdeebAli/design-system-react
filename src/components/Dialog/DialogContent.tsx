@@ -48,6 +48,7 @@ export function DialogContent({
       <BaseDialog.Backdrop className={styles.backdrop} />
       <BaseDialog.Popup
         {...props}
+        data-close-shown={closeButton ? '' : undefined}
         initialFocus={initialFocus}
         finalFocus={finalFocus}
         className={cx(styles.popup, styles.sizes[size], popupMotion, className)}
