@@ -42,6 +42,24 @@ it('the knob moves to the end when on', async () => {
   await expect.poll(() => thumb.getBoundingClientRect().left - before).toBe(16);
 });
 
+it('the knob moves to the inline end in RTL', async () => {
+  render(
+    <div dir="rtl">
+      <Switch label="Live" />
+    </div>,
+  );
+  const track = screen.getByRole('switch');
+  const thumb = track.firstElementChild as HTMLElement;
+  const before = thumb.getBoundingClientRect().left;
+  await userEvent.click(track);
+  await expect
+    .poll(() => thumb.getBoundingClientRect().left - before)
+    .toBe(-16);
+  expect(
+    inside(thumb.getBoundingClientRect(), track.getBoundingClientRect()),
+  ).toBe(true);
+});
+
 it.each([
   ['Checkbox', () => <Checkbox />, 'checkbox'],
   ['Switch', () => <Switch />, 'switch'],

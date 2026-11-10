@@ -93,6 +93,67 @@ export default defineConfig({
 
 Options such as `storageKey` must match `ThemeProvider`, so keep them in one shared object.
 
+### 6. A strict Content Security Policy
+
+Pass your nonce to `ColorModeScript` and `ThemeProvider`, which add inline `<script>` and `<style>` elements.
+
+The policy must also allow style attributes: `style-src-attr 'unsafe-inline'`. Form controls such as `Select`, `Checkbox`, `Switch`, and `RadioGroup` hide their native input with a `style` attribute in the server HTML. Without it, that input shows on the page, and your own `style` props are ignored. Style attributes can't run script, so scripts and style elements stay nonce-only.
+
+**Next.js App Router:** make a fresh nonce for each request in `proxy.ts`, set the policy on the response, and pass the nonce to the page in an `x-nonce` request header. Next.js applies the nonce to its own scripts.
+
+```ts
+// proxy.ts
+import { NextResponse, type NextRequest } from 'next/server';
+
+export function proxy(request: NextRequest) {
+  const nonce = Buffer.from(crypto.randomUUID()).toString('base64');
+  const policy = [
+    "default-src 'self'",
+    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'`,
+    `style-src 'self' 'nonce-${nonce}'`,
+    "style-src-attr 'unsafe-inline'",
+    "img-src 'self' blob: data:",
+    "font-src 'self'",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "frame-ancestors 'none'",
+  ].join('; ');
+
+  const headers = new Headers(request.headers);
+  headers.set('x-nonce', nonce);
+  headers.set('Content-Security-Policy', policy);
+  const response = NextResponse.next({ request: { headers } });
+  response.headers.set('Content-Security-Policy', policy);
+  return response;
+}
+```
+
+Then read it in the root layout. Reading request headers makes the page dynamic, as any nonce does:
+
+```tsx
+// app/layout.tsx
+import { headers } from 'next/headers';
+
+export default async function RootLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  const nonce = (await headers()).get('x-nonce') ?? undefined;
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <body>
+        <ColorModeScript nonce={nonce} />
+        <ThemeProvider nonce={nonce}>{children}</ThemeProvider>
+      </body>
+    </html>
+  );
+}
+```
+
+`fixtures/next-app` runs this setup on `/csp`, and its tests check there are no policy violations or console errors.
+
 ## Theming
 
 Override tokens with typed objects. Anything you leave out stays Soft.

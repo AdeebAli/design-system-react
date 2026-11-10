@@ -24,16 +24,33 @@ export function Textarea({
   invalid: invalidProp,
   disabled: disabledProp,
   className,
+  id,
+  name,
+  value,
+  defaultValue,
+  autoFocus,
   ...props
 }: TextareaProps) {
   const field = useFieldControl('native');
   const invalid = invalidProp ?? field.invalid;
-  const disabled = disabledProp ?? field.disabled;
+  // A disabled Field wins, so the control can't be enabled inside it.
+  const disabled = field.disabled || disabledProp === true;
   const [layout, rest] = splitLayoutProps(props);
 
   return (
     <BaseField.Control
-      render={<textarea />}
+      // Field.Control reads these itself: the id for the label, the value to
+      // know whether it's controlled, and the name for the form.
+      id={id}
+      name={name}
+      value={value}
+      defaultValue={defaultValue}
+      // Forwards the project's own prop; the component never sets it.
+      // eslint-disable-next-line jsx-a11y/no-autofocus
+      autoFocus={autoFocus}
+      // It's typed for an input, so the textarea's other props go on the
+      // rendered element, which Base UI merges, and keep their types.
+      render={<textarea {...rest} />}
       className={cx(
         box(layout),
         styles.control,
@@ -46,7 +63,6 @@ export function Textarea({
       data-disabled={disabled ? '' : undefined}
       aria-invalid={invalid || undefined}
       aria-required={field.required || undefined}
-      {...(rest as object)}
     />
   );
 }

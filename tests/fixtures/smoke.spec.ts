@@ -197,6 +197,20 @@ test('a React Hook Form form submits every control', async ({
   });
 });
 
+test('after a failed React Hook Form submit, focus moves to the invalid RadioGroup', async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== 'vite-app', 'Vite fixture only');
+  await page.goto('/');
+  const form = page.getByRole('form', { name: 'Filters' });
+  const quarterly = form.getByRole('radio', { name: 'Quarterly' });
+  await quarterly.click();
+  await form.getByRole('button', { name: 'Apply' }).click();
+  await expect(form.getByText('Quarterly billing is paused.')).toBeVisible();
+  await expect(quarterly).toBeFocused();
+  await expect(page.getByTestId('submitted')).toHaveCount(0);
+});
+
 test('a Select with server-built options shows its label in the server HTML', async ({
   page,
 }, testInfo) => {

@@ -38,6 +38,8 @@ The site's main navigation bar.
 | `actions` | ReactNode: right side, always visible | none |
 | `sticky` | boolean: stays at the top when scrolling | `false` |
 | `menuLabel` | string: the menu button's accessible name | `"Menu"` |
+| `menuVariant` | `'solid' \| 'soft' \| 'outline' \| 'ghost'`: the menu button's `IconButton` variant, with that variant's default tone | `'ghost'` |
+| `menuPosition` | `'start' \| 'end'`: below `md`, the menu button sits before the brand (`start`) or after the actions (`end`). No effect from `md` up, where it's hidden | `'end'` |
 
 **`NavBarLink`**
 
@@ -73,7 +75,16 @@ Below `md`, links collapse behind a menu button, and open as a panel in normal p
 ### Server and client
 
 - `NavBar` is a client component, for the panel's state.
-- `NavBarLink` has no state of its own, but reads context to close the panel, so it's a client component too. `as={NextLink}` works. A server-defined component as `as` doesn't, per Spec 05.
+- `NavBarLink` has no state of its own, but reads context to close the panel, so it's a client component too. A server-defined component as `as` doesn't work, per Spec 05.
+- **`next/link` from a server component goes through a client re-export.** In a server component, Next 16 resolves `next/link` to a server version that can't be passed to a client component, so `as={NextLink}` fails there. A one-line client module fixes it, and the docs show it:
+
+  ```tsx
+  // app/next-link.tsx
+  'use client';
+  export { default } from 'next/link';
+  ```
+
+  From a client component, `next/link` works directly. Rejected: closing the panel through a click handler on the list, which would make `NavBarLink` server-safe. Next's `Link` calls `preventDefault()` on every in-app click before routing, so a list handler couldn't tell that from a `preventDefault()` in the project's own `onClick`. It would have to close on every click, dropping the "a prevented click keeps the panel open" behavior and the warning for a `NavBarLink` outside a `NavBar`.
 - `brand`, `actions`, and links are all elements, so they can be built in a server component.
 
 ### Public state attributes
@@ -171,7 +182,7 @@ Spec 05's definition of done, plus:
 - The marker stays aligned when fonts load, the window resizes, and a long `TabsList` scrolls.
 - A long `TabsList` scrolls, the focused tab comes into view, and its focus ring isn't clipped.
 
-**`fixtures/next-app`:** `NavBar` with `next/link`, and `Tabs` with server-rendered panels, with no hydration warnings.
+**`fixtures/next-app`:** `NavBar` with `next/link` through the client re-export, from a server component, and `Tabs` with server-rendered panels, with no hydration warnings.
 
 **Manual:** a screen reader pass, and forced-colors mode, per Spec 05.
 

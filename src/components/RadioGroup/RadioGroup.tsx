@@ -82,9 +82,13 @@ export function RadioGroup({
   const setRef = useCallback(
     (node: HTMLDivElement | null) => {
       root.current = node;
+      // The ref stays the group element (Spec 05), but the group itself can't
+      // take focus, so focusing it focuses a radio. React Hook Form calls this
+      // after a failed submit.
+      if (node) node.focus = focus;
       assignRef(ref, node);
     },
-    [ref],
+    [ref, focus],
   );
   const invalid = invalidProp ?? field.invalid;
   const disabled = disabledProp ?? field.disabled;

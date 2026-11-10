@@ -198,6 +198,7 @@ const options = [
 
 - **`RadioGroup`:** `value`, `defaultValue`, `onValueChange`, `name`, `invalid`, `disabled`, and `required`. It lays out as a `Stack` with `gap` of `2`, and accepts `gap`.
 - **`Radio`:** `value` (required), `label`, `hint`, and `disabled`. It's only valid inside a `RadioGroup`.
+- **`RadioGroup`'s `ref` is the group element** (Spec 05's default). The group itself can't take focus, so focusing it focuses the checked radio, or the first enabled one, as Tab would. So React Hook Form's `field.ref` works: after a failed submit, focus lands on a radio people can change.
 - **Same styling and rules as `Checkbox`**, with a round box and a dot.
 - Public state attributes: `data-checked`, `data-unchecked`, `data-disabled`, `data-invalid`.
 
@@ -236,7 +237,7 @@ const options = [
 />
 ```
 
-The docs include this, and `fixtures/vite-app` uses React Hook Form to prove it works. It's a test dependency only.
+The docs include this, and `fixtures/vite-app` uses React Hook Form to prove it works, including that a failed submit focuses an invalid `RadioGroup`'s radio. It's a test dependency only.
 
 ## `Button`
 

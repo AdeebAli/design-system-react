@@ -1,6 +1,7 @@
 // Asserts the published shape from Spec 01. Exits non-zero on any failure.
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { clientModuleFailures } from './client-modules.mjs';
 
 const failures = [];
 const dist = 'dist';
@@ -55,39 +56,22 @@ for (const file of files.filter((name) => name.endsWith('.js'))) {
   }
 }
 
-const clientModules = [
-  'theme/ThemeProvider.js',
-  'components/Button/ButtonBase.js',
-  'components/Button/Button.js',
-  'components/IconButton/IconButton.js',
-  'components/Field/Field.js',
-  'components/Field/FieldContext.js',
-  'components/Input/Input.js',
-  'components/Textarea/Textarea.js',
-  'components/Checkbox/Checkbox.js',
-  'components/Checkbox/ChoiceLabel.js',
-  'components/RadioGroup/RadioGroup.js',
-  'components/Radio/Radio.js',
-  'components/Switch/Switch.js',
-  'components/Select/Select.js',
-  'components/ToggleChip/ToggleChip.js',
-  'components/ToggleChipGroup/ToggleChipGroup.js',
-  'components/ColorModeToggle/ColorModeToggle.js',
-];
-for (const module of clientModules) {
-  const path = join(dist, module);
-  if (!existsSync(path)) {
-    failures.push(`${path} is missing`);
-  } else if (!/^\s*['"]use client['"]/.test(readFileSync(path, 'utf8'))) {
-    failures.push(`${path} doesn't begin with "use client"`);
-  }
-}
+// Any module importing Base UI or a hook must be a client module (Spec 05).
+failures.push(
+  ...clientModuleFailures(
+    files
+      .filter((file) => file.endsWith('.js'))
+      .map((file) => [file, readFileSync(file, 'utf8')]),
+  ),
+);
 
 // Server-safe components must not become client modules (Spec 08).
 const serverModules = [
   'components/Card/Card.js',
   'components/Stat/Stat.js',
   'components/Badge/Badge.js',
+  'components/Prose/Prose.js',
+  'components/Prose/NotProse.js',
 ];
 for (const module of serverModules) {
   const path = join(dist, module);

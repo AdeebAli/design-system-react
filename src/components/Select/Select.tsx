@@ -68,7 +68,7 @@ export function Select({
   const [layout, rest] = splitLayoutProps(props);
   // Base UI treats an unknown value as selected; show the placeholder instead.
   const known = (v: string | null | undefined) =>
-    v == null || v in items ? v : null;
+    v == null || Object.hasOwn(items, v) ? v : null;
 
   return (
     <BaseSelect.Root
@@ -109,7 +109,7 @@ export function Select({
             <BaseSelect.List>
               {groups.map((group, index) => (
                 <BaseSelect.Group
-                  key={group.label ?? `loose-${index}`}
+                  key={`group-${index}`}
                   className={styles.group}
                 >
                   {group.label != null && (

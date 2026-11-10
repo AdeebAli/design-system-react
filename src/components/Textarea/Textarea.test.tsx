@@ -1,5 +1,7 @@
 import { render, screen } from '@testing-library/react';
-import { createRef } from 'react';
+import userEvent from '@testing-library/user-event';
+import { createRef, useState } from 'react';
+import { Field } from '../Field';
 import * as styles from '../Input/Input.css';
 import { Textarea } from './index';
 
@@ -32,4 +34,48 @@ it('sets data-invalid and data-disabled', () => {
   expect(t).toHaveAttribute('data-invalid');
   expect(t).toHaveAttribute('data-disabled');
   expect(t).toHaveAttribute('aria-invalid', 'true');
+});
+
+it('disabled={false} inside a disabled Field stays disabled, with disabled styling', () => {
+  render(
+    <Field label="Notes" disabled>
+      <Textarea disabled={false} />
+    </Field>,
+  );
+  const textarea = screen.getByRole('textbox');
+  expect(textarea).toBeDisabled();
+  expect(textarea).toHaveAttribute('data-disabled');
+});
+
+it('a Field label names a Textarea that has its own id', () => {
+  render(
+    <Field label="Notes">
+      <Textarea id="notes" />
+    </Field>,
+  );
+  const textarea = screen.getByLabelText('Notes');
+  expect(textarea.tagName).toBe('TEXTAREA');
+  expect(textarea).toHaveAttribute('id', 'notes');
+});
+
+it('a controlled Textarea reset by the parent clears data-filled', async () => {
+  function Controlled() {
+    const [value, setValue] = useState('');
+    return (
+      <Field label="Notes">
+        <Textarea value={value} onChange={(e) => setValue(e.target.value)} />
+        <button type="button" onClick={() => setValue('')}>
+          Reset
+        </button>
+      </Field>
+    );
+  }
+  render(<Controlled />);
+  const textarea = screen.getByRole('textbox', { name: 'Notes' });
+  await userEvent.type(textarea, 'hi');
+  expect(textarea).toHaveValue('hi');
+  expect(textarea).toHaveAttribute('data-filled');
+  await userEvent.click(screen.getByRole('button', { name: 'Reset' }));
+  expect(textarea).toHaveValue('');
+  expect(textarea).not.toHaveAttribute('data-filled');
 });

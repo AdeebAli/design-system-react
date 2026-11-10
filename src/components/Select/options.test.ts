@@ -25,3 +25,9 @@ it('keeps groups, and wraps runs of loose options in unlabeled groups, in order'
 it('handles an empty list', () => {
   expect(normalizeOptions([])).toEqual({ groups: [], items: {} });
 });
+
+it('items has no inherited keys, so "toString" is not a known value', () => {
+  const { items } = normalizeOptions([{ value: 'a', label: 'A' }]);
+  expect(Object.getPrototypeOf(items)).toBeNull();
+  expect(Object.hasOwn(items, 'toString')).toBe(false);
+});

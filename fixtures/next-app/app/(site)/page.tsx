@@ -4,9 +4,14 @@ import {
   Card,
   Icon,
   Link,
+  Prose,
   Stack,
   Select,
   Stat,
+  Tab,
+  Tabs,
+  TabsList,
+  TabsPanel,
   Text,
 } from '@adeebali/design-system-react';
 import { Search } from 'lucide-react';
@@ -48,6 +53,20 @@ export default function Page() {
         defaultValue="annual"
       />
       <PortalProbe />
+      {/* Tabs rendered from a server component, with server-rendered panels. */}
+      <Tabs defaultValue="overview">
+        <TabsList aria-label="Views">
+          <Tab value="overview">Overview</Tab>
+          <Tab value="activity">Activity</Tab>
+        </TabsList>
+        <TabsPanel value="overview">
+          Overview panel, rendered on the server
+        </TabsPanel>
+        <TabsPanel value="activity">Activity panel</TabsPanel>
+      </Tabs>
+      <Prose data-testid="prose">
+        <p>Prose in a server page.</p>
+      </Prose>
     </>
   );
 }
