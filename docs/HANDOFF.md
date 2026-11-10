@@ -11,7 +11,7 @@ Build `@adeebali/design-system-react`, a general-purpose React design system. Sp
 - **Done:** milestone v0.1 (specs 01–07) is merged to `main` as `9c49e84` (PR #17), and released as v0.1.0 (`f49377f`) to GitHub Packages, with Storybook at https://adeebali.github.io/design-system-react/.
 - **Done:** milestone v0.2 (Spec 08 Bento, Spec 09 Forms) is merged as `ffb1104` (PR #20) and released as v0.2.0 (`78202da`).
 - **In review:** milestone v0.3 (Spec 10 Navigation, Spec 11 Prose) is on `feat/v0.3-navigation-and-prose`, in draft PR #22. It adds `NavBar`, `NavBarLink`, `Tabs`, `TabsList`, `Tab`, `TabsPanel`, `Prose`, `NotProse`, the "Navigation and prose" overview page, and the "Markdown and MDX" docs. After review, the owner asked for more, which is in the same PR as separate commits:
-  - `NavBar` `menuVariant` and `menuPosition`; `Prose` children-only, with `--ds-prose-scroll-margin`; a real anchor-link test.
+  - `NavBar` `menuVariant` and `menuPosition`; `--ds-prose-scroll-margin`; a real anchor-link test. (`Prose` was briefly children-only, then reverted; see Decisions.)
   - Fixes to older code: stricter theme validation, a tested nonce-based CSP, `RadioGroup` focus through `field.ref`, the split Vite fixture bundle, and dependency audits in CI.
   - The plan is `docs/superpowers/plans/2026-11-09-v0-3-navigation-and-prose.md`.
 - **Blocked on the owner:** approving the held baseline run, the manual checks, merging, and releasing v0.3.0. Open threads 1–3 should be fixed before merging.
@@ -30,7 +30,9 @@ Architecture decisions are in `docs/adr/`. Build decisions, with what each costs
 - **Sticky `NavBar` with the menu open:** below `md`, the open panel is capped at the viewport height minus the bar, and scrolls (WCAG 1.4.10).
 - **`Tabs` marker handoff:** `TabsList` always renders Base UI's `Indicator` without `renderBeforeHydration`, which injects an inline script and breaks strict CSP. One `:has()` rule turns off the CSS marker once the `Indicator` shows. The list has `scroll-padding-inline` so a focused tab's ring isn't clipped.
 - **`Prose` rules:** every descendant rule goes through `scoped()` in `Prose.css.ts`, so the `NotProse` exclusion can't be forgotten.
-- **`Prose` content (Spec 11 amended):** `children` or MDX. `dangerouslySetInnerHTML` is a type error only; at runtime it still renders. Rejected: ignoring it at runtime, which silently renders an empty article in production; and a sanitizing `html` prop, which needs `jsdom` on the server (`isomorphic-dompurify`). Adding HTML later is additive. It isn't a security boundary: a child `div` can still take `dangerouslySetInnerHTML`.
+- **`Prose` is a styled element and doesn't process content (Spec 11, `2380ce3`):** its only own prop is `size`. `children` (including MDX) and `dangerouslySetInnerHTML` pass through as on any element, and `Prose` doesn't sanitize; the docs say to sanitize HTML you didn't write where it's produced. Rejected, in order tried:
+  - blocking `dangerouslySetInnerHTML` (in the type, or ignoring it at runtime): the same HTML then goes in a wrapper `div`, which adds no safety and leaves the outer margins untrimmed, 58px above the title and 23px below the last paragraph, measured in Chromium. Ignoring it at runtime also rendered an empty article in production;
+  - an `html` prop that sanitizes, which needs `jsdom` on the server (`isomorphic-dompurify`), and a `markdown` prop, which adds a Markdown parser. Each does work the project's content pipeline already does.
 - **Heading scroll margin:** `var(--ds-prose-scroll-margin, <NavBar clearance + space.4>)`. The clearance is computed from tokens in `src/styles/sticky.ts`, which both `NavBar.css.ts` and `Prose.css.ts` import, so `Prose` doesn't depend on `NavBar`'s styles. Rejected: a theme token, which changes the theme contract.
 - **Theme validation (Spec 03 amended):** values throw for `{ } ; < \`, `/*`, an unclosed quote, an unclosed or misordered `(` or `[` outside quotes, a line break inside quotes, a control character other than a tab or line break, and `url()` or `image-set()` in any case. Each was checked in Chromium: an unclosed bracket, or a newline, CR, or form feed inside quotes, drops every later theme rule, including reduced motion. Line breaks and tabs outside quotes, and tabs inside them, are harmless, so multi-line template literals stay valid.
 - **CSP (Spec 03 and README):** `ColorModeScript` and `ThemeProvider` take the nonce. The policy must also allow `style-src-attr 'unsafe-inline'`: Base UI hides `Select`, `Checkbox`, `Switch`, and `RadioGroup`'s native inputs with `style` attributes in server HTML. Without it, a `Select`'s hidden input shows on the page (seen in Chromium, 174×27). The Next fixture serves `/csp` from its own root layout in `app/csp/`, with the other pages in an `app/(site)` route group so they stay static. Rejected: reading the nonce in the shared root layout, which makes every page dynamic.
@@ -43,14 +45,14 @@ Architecture decisions are in `docs/adr/`. Build decisions, with what each costs
 
 ## Changes
 
-- Branch `feat/v0.3-navigation-and-prose`: 16 commits from `517068d` (the plan) to `9d2e227`, including `5ac8396` (baselines) and this note. 167 files changed, including the baseline screenshots. Pushed; draft PR #22, labeled `update-baselines`, with an "Also in this PR" section for the older-code fixes.
-- Since the last note: `33f06ab` (theme validation, CSP fixture), `8a3aa6d` (`RadioGroup` focus), `938ef88` (fixture bundle split, CI audits), `9d2e227` (`NavBar` menu props, children-only `Prose`, scroll margin variable, anchor test, Spec 10 `next/link` amendment).
+- Branch `feat/v0.3-navigation-and-prose`: 19 commits from `517068d` (the plan) to `2380ce3`, plus this note, including baseline commits `5ac8396` and `5700029`. 167 files changed, including the baseline screenshots. Pushed; draft PR #22, labeled `update-baselines`, with an "Also in this PR" section for the older-code fixes.
+- Since the v0.3 review: `33f06ab` (theme validation, CSP fixture), `8a3aa6d` (`RadioGroup` focus), `938ef88` (fixture bundle split, CI audits), `9d2e227` (`NavBar` menu props, scroll margin variable, anchor test, Spec 10 `next/link` amendment), `5700029` (baselines for `MenuAtStart` and the edited docs pages), `2380ce3` (`Prose` accepts `dangerouslySetInnerHTML` again).
 - New files: `src/styles/sticky.ts`, `fixtures/next-app/proxy.ts`, `fixtures/next-app/app/csp/`, `tests/fixtures/csp.spec.ts`. Moved: the Next fixture's pages into `fixtures/next-app/app/(site)/`.
 - Specs amended: 03, 09, 10, 11. README gains "6. A strict Content Security Policy".
 
 ## Verification
 
-- `npm run check` exits 0 on the tree committed as `9d2e227`:
+- `npm run check` exits 0 on the tree committed as `2380ce3` (the rebase onto `5700029` added only screenshots):
   - unit 463 passed
   - script tests 20 passed
   - typecheck clean
@@ -62,9 +64,10 @@ Architecture decisions are in `docs/adr/`. Build decisions, with what each costs
   - Removing `RadioGroup`'s `focus` override fails only the React Hook Form focus test.
   - Setting `--ds-prose-scroll-margin: 0px` on `/blog` lands the heading at 0, under the bar.
   - The first anchor test passed by coincidence: the page was too short to scroll the heading to the top. Fixed with more content below the heading and an assertion that the page didn't stop at its end.
-- CI passed on `5ac8396`, including `visual`.
+- CI passed on `5ac8396`, including `visual`. On `bc5429e`, every job passed except `visual`, which failed only on the then-missing `MenuAtStart` screenshots.
+- `5700029` also rewrote `components-tabs--keep-mounted-dark` (desktop) though nothing in `Tabs` changed: 21 pixels off by 1 of 255, rendering noise.
 - **Not verified:**
-  - CI on the branch head, and the `MenuAtStart` baseline. The baseline workflow runs only when the label is added or when started by hand, so it was started by hand on the branch after this note was pushed. CI's `visual` job fails until that run commits the new screenshot. Trigger: that run, then the owner's approval of the held run (next step 2).
+  - CI on the branch head. `2380ce3` changes the Markdown and MDX docs page again, so `visual` fails until a new baseline run commits it. The baseline workflow runs only when the label is added or when started by hand; it was started by hand after this note was pushed. Trigger: that run, then the owner's approval of the held run (next step 2).
   - Screen reader, forced colors, and 200% text on `NavBar`, `Tabs`, and `Prose`. Trigger: PR #22's checklist, before merging (next step 3).
   - The hidden-input bug for `Checkbox`, `Switch`, and `RadioGroup` under CSP. Only `Select` was seen; the others were inferred from their server HTML. Trigger: open thread 2.
   - Installing 0.2.0 from GitHub Packages. Trigger: none; the v0.1 install proved the pipeline, and Publish succeeded.
@@ -99,7 +102,7 @@ Resolved:
 ## Next steps
 
 1. Fix open threads 1–3 on the branch. Check that the CSP test fails without `style-src-attr` for each new control.
-2. Wait for the hand-started "Update visual baselines" run on the branch, review the `MenuAtStart` screenshot it commits, then select **Approve workflows to run** in PR #22's merge box. Don't close and reopen the PR. To re-run it later: `gh workflow run update-visual-baselines.yml --ref feat/v0.3-navigation-and-prose`.
+2. Wait for the hand-started "Update visual baselines" run on the branch, review the Markdown and MDX page screenshots it commits (and `MenuAtStart` from `5700029`), then select **Approve workflows to run** in PR #22's merge box. Don't close and reopen the PR. To re-run it later: `gh workflow run update-visual-baselines.yml --ref feat/v0.3-navigation-and-prose`.
 3. Do the manual checks in PR #22's checklist, mark the PR ready, and merge it.
 4. Release with `npm run release -- minor`, and edit the release notes to cover open thread 4. Then write the v0.4 plan (Spec 12 Overlays), deciding threads 5, 6, and 7.
 
