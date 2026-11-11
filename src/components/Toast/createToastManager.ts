@@ -51,10 +51,11 @@ export function baseManagerOf(manager: ToastManager): BaseManager | undefined {
  * then the manager queues its calls, and this replays them in order.
  */
 export function connectToastManager(manager: ToastManager): () => void {
-  return links.get(manager)?.connect() ?? (() => {});
+  return links.get(manager)?.connect() ?? noop;
 }
 
 let nextId = 0;
+const noop = () => undefined;
 
 const asOptions = (state: string | ToastOptions): ToastOptions =>
   typeof state === 'string' ? { title: state } : state;
@@ -178,7 +179,7 @@ export function createToastManager(): ToastManager {
   // Base UI drops a call nobody is subscribed to, and subscribes in the
   // provider's effect, after every descendant's mount effect has run. So hold
   // the calls until our provider says it's connected.
-  const queue: Array<() => void> = [];
+  const queue: (() => void)[] = [];
   let connections = 0;
   const run = (call: () => void) => {
     if (connections > 0) call();
