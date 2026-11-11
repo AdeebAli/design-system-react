@@ -30,12 +30,12 @@ export const wrapper = style(
 );
 
 // The reserved sizes come from tokens: the header is two paddings, one line of
-// `xs` text, and its rule, plus a gap for the focus ring. The first column has
-// no token-sized width, and browsers ignore `max-width` on table cells, so it
-// can't be capped. Its reserve is a token-derived estimate that covers row
-// headers up to about its width. A wider sticky first column can hide a focused
-// cell, partly or entirely, so row headers must stay short. This doesn't
-// guarantee WCAG 2.4.11 for wide first columns.
+// `xs` text, and its rule, plus a gap for the focus ring. A sticky first column
+// has a fixed width, `columnReserve`, and its text wraps inside it, so the
+// reserve always covers it and a focused cell lands clear of it (WCAG 2.4.11).
+// Browsers ignore `max-width` on table cells, so `width` and `min-width` set it.
+// `overflow-wrap: anywhere` keeps a long word's min-content width from pushing
+// the column wider, which `break-word` doesn't (it only breaks after layout).
 const headerReserve = (pad: string) =>
   `calc(${pad} * 2 + ${vars.font.size.xs} * ${vars.font.lineHeight.normal} + ${vars.borderWidth.thin} + ${vars.space['1']})`;
 const columnReserve = `calc(${vars.size.dialog.sm} / 2)`;
@@ -249,6 +249,10 @@ globalStyle(firstCells, {
       position: 'sticky',
       insetInlineStart: 0,
       zIndex: sticky,
+      boxSizing: 'border-box',
+      inlineSize: columnReserve,
+      minInlineSize: columnReserve,
+      overflowWrap: 'anywhere',
       borderInlineEnd: border,
       // A hovered or selected row's opaque color replaces the sticky one.
       background: fallbackVar(rowBg, stickyBg),

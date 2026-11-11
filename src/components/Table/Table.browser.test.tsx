@@ -435,44 +435,81 @@ function resolvedProbe(size: 'sm'): HTMLElement {
 const LONG =
   'A very long customer name that goes on and on and on and on and on';
 
-it('a long sticky row header can partly cover a focused cell', async () => {
-  render(
-    <div style={{ width: 700 }}>
-      <Table
-        aria-label="Long"
-        stickyFirstColumn
-        scrollable
-        style={{ minWidth: 1000 }}
-      >
-        <TableBody>
-          {Array.from({ length: 3 }, (_, r) => (
-            <TableRow key={r}>
-              <TableHeader scope="row">{`${LONG} ${r}`}</TableHeader>
+/** The sticky first column's fixed width in pixels: half of `size.dialog.sm`. */
+function stickyColumnWidth(): number {
+  const probe = document.createElement('div');
+  probe.style.width = `calc(${vars.size.dialog.sm} / 2)`;
+  document.body.append(probe);
+  const width = rect(probe).width;
+  probe.remove();
+  return width;
+}
+
+const UNBROKEN =
+  'Pneumonoultramicroscopicsilicovolcanoconiosis-Holdings-Limited';
+
+describe('a sticky first column has a fixed width, so focus lands clear of it', () => {
+  it.each([
+    ['a long row header', LONG, false],
+    ['an unbroken word', UNBROKEN, false],
+    ['a sort header in the corner', LONG, true],
+  ])('with %s', async (_label, text, sortable) => {
+    render(
+      <div style={{ width: 360 }}>
+        <Table
+          aria-label="Long"
+          stickyFirstColumn
+          stickyHeader
+          scrollable
+          style={{ minWidth: 1000 }}
+        >
+          <TableHead>
+            <TableRow>
+              {sortable ? (
+                <TableSortHeader direction="none" onSort={noop}>
+                  {text}
+                </TableSortHeader>
+              ) : (
+                <TableHeader>Name</TableHeader>
+              )}
               {Array.from({ length: 6 }, (_, c) => (
-                <TableCell key={c}>
-                  <Button size="sm" data-cell={`${r}-${c}`}>
-                    {`Column ${c} of ${r}`}
-                  </Button>
-                </TableCell>
+                <TableHeader key={c}>{`Col ${c}`}</TableHeader>
               ))}
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>,
-  );
-  const wrapper = wrapperOf();
-  const rowHeader = screen.getByRole('rowheader', { name: `${LONG} 1` });
-  const target = document.querySelector<HTMLElement>('[data-cell="1-1"]')!;
-  wrapper.scrollLeft += rect(target).left - rect(wrapper).left - 2;
-  expect(rect(target).left).toBeLessThan(rect(rowHeader).right);
-  target.focus({ preventScroll: true });
-  target.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-  await expect
-    .poll(() => rect(target).left)
-    .toBeGreaterThan(rect(wrapper).left + 2);
-  // In this setup the sticky column covers part of the target, not all of it.
-  expect(rect(target).right).toBeGreaterThan(rect(rowHeader).right);
+          </TableHead>
+          <TableBody>
+            {Array.from({ length: 3 }, (_, r) => (
+              <TableRow key={r}>
+                <TableHeader scope="row">{`${text} ${r}`}</TableHeader>
+                {Array.from({ length: 6 }, (_, c) => (
+                  <TableCell key={c}>
+                    <Button size="sm" data-cell={`${r}-${c}`}>
+                      {`Column ${c} of ${r}`}
+                    </Button>
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>,
+    );
+    const rowHeader = screen.getByRole('rowheader', { name: `${text} 1` });
+    expect(rect(rowHeader).width).toBeCloseTo(stickyColumnWidth(), 0);
+    // Content wraps inside the column instead of spilling past it.
+    const corner = document.querySelector('thead th')!;
+    for (const cell of [rowHeader, corner]) {
+      for (const child of cell.querySelectorAll('*')) {
+        expect(rect(child).right).toBeLessThanOrEqual(rect(cell).right + 0.5);
+      }
+    }
+    const target = document.querySelector<HTMLElement>('[data-cell="1-2"]')!;
+    target.focus();
+    await expect
+      .poll(() => rect(target).left)
+      .toBeGreaterThanOrEqual(rect(rowHeader).right);
+    expect(rect(target).right).toBeLessThanOrEqual(rect(wrapperOf()).right);
+  });
 });
 
 it('focus clears a sticky header made of sort buttons', async () => {
