@@ -48,6 +48,13 @@ interface SampleProps {
   onPageChange?: (page: number) => void;
   pageSize?: number;
   totalRows?: number;
+  selectionMode?: 'none' | 'single' | 'multiple';
+  selectedKeys?: string[];
+  defaultSelectedKeys?: string[];
+  onSelectionChange?: (keys: string[]) => void;
+  disabledKeys?: string[];
+  selectOnRowClick?: boolean;
+  labels?: Record<string, string>;
   loading?: boolean;
   empty?: ReactNode;
   locale?: string;
@@ -350,4 +357,257 @@ it('falls back to the default collator for an invalid locale and warns', () => {
   );
   expect(names()).toEqual(['Ada', 'Bo', 'Cara']);
   expect(warn.mock.calls[0]?.[0]).toMatch(/DataTable.*not a locale!/);
+});
+
+const rowButton = (name: string) =>
+  screen.getByRole('button', { name: `Select ${name}` });
+const selectPage = () => screen.getByRole('button', { name: 'Select page' });
+
+it('renders no selection button without selectionMode', () => {
+  render(<Sample />);
+  expect(screen.queryByRole('button', { name: /^Select/ })).toBeNull();
+  expect(screen.queryByRole('group')).toBeNull();
+  expect(names()).toEqual(['Cara', 'Ada', 'Bo']);
+});
+
+it('makes the rowHeader cell a toggle button named by the hidden label then the text', () => {
+  render(<Sample selectionMode="single" labels={{ selectRow: 'Pick' }} />);
+  const button = screen.getByRole('button', { name: 'Pick Cara' });
+  expect(button).toHaveAttribute('aria-pressed', 'false');
+  expect(button.closest('th')).toHaveAttribute('scope', 'row');
+  expect(screen.queryByRole('grid')).toBeNull();
+  expect(screen.queryByRole('group')).toBeNull();
+});
+
+it('single replaces the selection and clears it when the selected row toggles', () => {
+  const onSelectionChange = vi.fn();
+  render(
+    <Sample selectionMode="single" onSelectionChange={onSelectionChange} />,
+  );
+  fireEvent.click(rowButton('Cara'));
+  expect(rowButton('Cara')).toHaveAttribute('aria-pressed', 'true');
+  fireEvent.click(rowButton('Ada'));
+  expect(onSelectionChange).toHaveBeenLastCalledWith(['2']);
+  expect(rowButton('Cara')).toHaveAttribute('aria-pressed', 'false');
+  fireEvent.click(rowButton('Ada'));
+  expect(onSelectionChange).toHaveBeenLastCalledWith([]);
+  expect(rowButton('Ada')).toHaveAttribute('aria-pressed', 'false');
+});
+
+it('multiple adds and removes, and works controlled and uncontrolled', () => {
+  const onSelectionChange = vi.fn();
+  const { rerender } = render(
+    <Sample
+      selectionMode="multiple"
+      selectedKeys={['1']}
+      onSelectionChange={onSelectionChange}
+    />,
+  );
+  fireEvent.click(rowButton('Ada'));
+  expect(onSelectionChange).toHaveBeenLastCalledWith(['1', '2']);
+  // Controlled: nothing changes until the project passes new keys.
+  expect(rowButton('Ada')).toHaveAttribute('aria-pressed', 'false');
+  rerender(
+    <Sample
+      selectionMode="multiple"
+      selectedKeys={['1', '2']}
+      onSelectionChange={onSelectionChange}
+    />,
+  );
+  expect(rowButton('Ada')).toHaveAttribute('aria-pressed', 'true');
+  fireEvent.click(rowButton('Cara'));
+  expect(onSelectionChange).toHaveBeenLastCalledWith(['2']);
+});
+
+it('starts from defaultSelectedKeys', () => {
+  render(<Sample selectionMode="multiple" defaultSelectedKeys={['3']} />);
+  expect(rowButton('Bo')).toHaveAttribute('aria-pressed', 'true');
+  expect(screen.getByText('Bo').closest('tr')).toHaveAttribute('data-selected');
+});
+
+it('shows a check icon only on a selected row', () => {
+  render(<Sample selectionMode="multiple" defaultSelectedKeys={['3']} />);
+  expect(rowButton('Bo').querySelector('svg')).not.toBeNull();
+  expect(rowButton('Ada').querySelector('svg')).toBeNull();
+});
+
+it('disables the button for disabledKeys but keeps its text color class', () => {
+  render(<Sample selectionMode="multiple" disabledKeys={['2']} />);
+  expect(rowButton('Ada')).toBeDisabled();
+  expect(rowButton('Cara')).not.toBeDisabled();
+  expect(rowButton('Ada').className).toBe(rowButton('Cara').className);
+});
+
+it('multiple renders a named group with Select page, a count and Clear', () => {
+  render(<Sample selectionMode="multiple" />);
+  const group = screen.getByRole('group', { name: 'Selection' });
+  expect(
+    within(group).getByRole('button', { name: 'Select page' }),
+  ).toBeInTheDocument();
+  expect(
+    within(group).getByRole('button', { name: 'Clear' }),
+  ).toBeInTheDocument();
+  expect(group.nextElementSibling).toBe(
+    screen.getByRole('table').parentElement,
+  );
+});
+
+it('has no toolbar for single', () => {
+  render(<Sample selectionMode="single" />);
+  expect(screen.queryByRole('group')).toBeNull();
+});
+
+it('moves Select page through false, mixed and true, skipping disabled rows', () => {
+  const onSelectionChange = vi.fn();
+  render(
+    <Sample
+      selectionMode="multiple"
+      disabledKeys={['2']}
+      onSelectionChange={onSelectionChange}
+    />,
+  );
+  expect(selectPage()).toHaveAttribute('aria-pressed', 'false');
+  fireEvent.click(rowButton('Cara'));
+  expect(selectPage()).toHaveAttribute('aria-pressed', 'mixed');
+  fireEvent.click(selectPage());
+  expect(onSelectionChange).toHaveBeenLastCalledWith(['1', '3']);
+  expect(selectPage()).toHaveAttribute('aria-pressed', 'true');
+  expect(rowButton('Ada')).toHaveAttribute('aria-pressed', 'false');
+  fireEvent.click(selectPage());
+  expect(onSelectionChange).toHaveBeenLastCalledWith([]);
+  expect(selectPage()).toHaveAttribute('aria-pressed', 'false');
+});
+
+it('Select page does nothing when every row on the page is disabled', () => {
+  const onSelectionChange = vi.fn();
+  render(
+    <Sample
+      selectionMode="multiple"
+      disabledKeys={['1', '2', '3']}
+      onSelectionChange={onSelectionChange}
+    />,
+  );
+  expect(selectPage()).toHaveAttribute('aria-pressed', 'false');
+  fireEvent.click(selectPage());
+  expect(onSelectionChange).not.toHaveBeenCalled();
+  expect(selectPage()).toHaveAttribute('aria-pressed', 'false');
+});
+
+it('keeps off-page selections and reports every key', () => {
+  const onSelectionChange = vi.fn<(keys: string[]) => void>();
+  render(
+    <Sample
+      selectionMode="multiple"
+      pageSize={2}
+      defaultSelectedKeys={['3']}
+      onSelectionChange={onSelectionChange}
+    />,
+  );
+  fireEvent.click(selectPage());
+  expect([...onSelectionChange.mock.lastCall![0]].sort()).toEqual([
+    '1',
+    '2',
+    '3',
+  ]);
+  fireEvent.click(pageButton(2));
+  expect(rowButton('Bo')).toHaveAttribute('aria-pressed', 'true');
+  expect(selectPage()).toHaveAttribute('aria-pressed', 'true');
+  fireEvent.click(rowButton('Bo'));
+  expect([...onSelectionChange.mock.lastCall![0]].sort()).toEqual(['1', '2']);
+});
+
+it('Clear empties the selection, including off-page keys', () => {
+  const onSelectionChange = vi.fn();
+  render(
+    <Sample
+      selectionMode="multiple"
+      pageSize={2}
+      defaultSelectedKeys={['3']}
+      onSelectionChange={onSelectionChange}
+    />,
+  );
+  fireEvent.click(screen.getByRole('button', { name: 'Clear' }));
+  expect(onSelectionChange).toHaveBeenLastCalledWith([]);
+});
+
+it('renders the status empty at first and announces each change', () => {
+  render(<Sample selectionMode="multiple" defaultSelectedKeys={['3']} />);
+  const status = screen.getByRole('status');
+  expect(status).toBeEmptyDOMElement();
+  fireEvent.click(rowButton('Cara'));
+  expect(status).toHaveTextContent('2 selected');
+  fireEvent.click(selectPage());
+  expect(status).toHaveTextContent('3 selected');
+  fireEvent.click(screen.getByRole('button', { name: 'Clear' }));
+  expect(status).toHaveTextContent('0 selected');
+});
+
+it('translates the selection strings', () => {
+  render(
+    <Sample
+      selectionMode="multiple"
+      defaultSelectedKeys={['1']}
+      labels={{
+        selection: 'Auswahl',
+        selectPage: 'Seite wählen',
+        clearSelection: 'Leeren',
+        selectedCount: '{count} gewählt',
+        selectRow: 'Wähle',
+      }}
+    />,
+  );
+  expect(screen.getByRole('group', { name: 'Auswahl' })).toBeInTheDocument();
+  expect(
+    screen.getByRole('button', { name: 'Seite wählen' }),
+  ).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: 'Leeren' })).toBeInTheDocument();
+  expect(
+    screen.getByRole('button', { name: 'Wähle Cara' }),
+  ).toBeInTheDocument();
+  fireEvent.click(screen.getByRole('button', { name: 'Wähle Ada' }));
+  expect(screen.getByRole('status')).toHaveTextContent('2 gewählt');
+});
+
+it('gives skeleton rows no button', () => {
+  render(<Sample rows={[]} loading selectionMode="multiple" />);
+  expect(screen.queryByRole('button', { name: /^Select (?!page)/ })).toBeNull();
+});
+
+it('warns once per column about a link or button in the rowHeader cell', () => {
+  const warn = vi.spyOn(console, 'warn').mockImplementation(vi.fn());
+  vi.spyOn(console, 'error').mockImplementation(vi.fn());
+  render(
+    <Sample
+      selectionMode="single"
+      columns={[
+        {
+          id: 'linked',
+          header: 'Name',
+          cell: (p) => <a href="#x">{p.name}</a>,
+          rowHeader: true,
+        },
+      ]}
+    />,
+  );
+  const calls = warn.mock.calls.filter((c) =>
+    /DataTable.*rowHeader.*link or button/s.test(String(c[0])),
+  );
+  expect(calls).toHaveLength(1);
+});
+
+it('does not warn about interactive content without selectionMode', () => {
+  const warn = vi.spyOn(console, 'warn').mockImplementation(vi.fn());
+  render(
+    <Sample
+      columns={[
+        {
+          id: 'linked-free',
+          header: 'Name',
+          cell: (p) => <a href="#x">{p.name}</a>,
+          rowHeader: true,
+        },
+      ]}
+    />,
+  );
+  expect(warn).not.toHaveBeenCalled();
 });

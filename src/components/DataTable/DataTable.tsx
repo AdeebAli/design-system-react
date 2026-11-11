@@ -1,18 +1,25 @@
 'use client';
 
 import {
+  useEffect,
+  useId,
   useMemo,
+  useRef,
   useState,
   type ComponentPropsWithRef,
   type ReactNode,
 } from 'react';
+import { focusRing } from '../../styles/focus.css';
 import { cx } from '../../utils/cx';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import { warnOnce } from '../../utils/warn';
 import { box } from '../Box';
 import type { LayoutProps } from '../Box/types';
+import { Icon } from '../Icon';
+import { CheckIcon } from '../Icon/internal/Check';
 import { Pagination, type PaginationLabels } from '../Pagination';
 import { Skeleton } from '../Skeleton';
+import { VisuallyHidden } from '../VisuallyHidden';
 import {
   Table,
   TableBody,
@@ -25,6 +32,11 @@ import {
   type TableProps,
 } from '../Table';
 import * as styles from './DataTable.css';
+import {
+  INTERACTIVE_SELECTOR,
+  isInteractiveTarget,
+} from './isInteractiveTarget';
+import { SelectionToolbar } from './SelectionToolbar';
 import { sortRows } from './sortRows';
 
 /** The sorted column and its direction, or `null` for unsorted. */
@@ -34,7 +46,18 @@ export type DataTableSort = {
 } | null;
 
 /** `DataTable`'s strings, for translation. */
-export type DataTableLabels = PaginationLabels;
+export interface DataTableLabels extends PaginationLabels {
+  /** Hidden text before a row's name, in its selection button. @default 'Select' */
+  selectRow?: string;
+  /** The toolbar's button that selects every row on the page. @default 'Select page' */
+  selectPage?: string;
+  /** The toolbar's button that clears the selection. @default 'Clear' */
+  clearSelection?: string;
+  /** The count of selected rows, where `{count}` is the number. @default '{count} selected' */
+  selectedCount?: string;
+  /** The toolbar's name. @default 'Selection' */
+  selection?: string;
+}
 
 interface ColumnBase<Row> {
   /** Identifies the column in `sort`. */
@@ -99,6 +122,18 @@ interface DataTableOwnProps<Row> {
   defaultPage?: number;
   /** Called with the next page. */
   onPageChange?: (page: number) => void;
+  /** Lets rows be selected: one, or many with a toolbar. @default 'none' */
+  selectionMode?: 'none' | 'single' | 'multiple';
+  /** The selected row ids, when controlled. */
+  selectedKeys?: string[];
+  /** The initially selected row ids, when uncontrolled. @default [] */
+  defaultSelectedKeys?: string[];
+  /** Called with every selected row id, in any order. */
+  onSelectionChange?: (keys: string[]) => void;
+  /** Rows that can't be selected. @default [] */
+  disabledKeys?: string[];
+  /** Whether clicking anywhere on a row toggles it. @default true */
+  selectOnRowClick?: boolean;
   /** Shows `Skeleton` rows when there are no rows, and sets `aria-busy`. @default false */
   loading?: boolean;
   /** Shown when there are no rows, usually an `EmptyState`. */
@@ -136,6 +171,63 @@ export type DataTableProps<Row> = DataTableOwnProps<Row> &
 
 const SKELETON_ROWS = 5;
 
+const DEFAULT_LABELS = {
+  selectRow: 'Select',
+  selectPage: 'Select page',
+  clearSelection: 'Clear',
+  selectedCount: '{count} selected',
+  selection: 'Selection',
+};
+
+interface SelectButtonProps {
+  columnId: string;
+  selected: boolean;
+  disabled: boolean;
+  label: string;
+  onToggle: () => void;
+  children: ReactNode;
+}
+
+/** A row header's content as a toggle button. */
+function SelectButton({
+  columnId,
+  selected,
+  disabled,
+  label,
+  onToggle,
+  children,
+}: SelectButtonProps) {
+  const ref = useRef<HTMLButtonElement>(null);
+  const id = useId();
+  const hintId = `${id}-hint`;
+  const textId = `${id}-text`;
+  useEffect(() => {
+    if (ref.current?.querySelector(INTERACTIVE_SELECTOR)) {
+      warnOnce(
+        `DataTable-rowHeader-interactive-${columnId}`,
+        `DataTable: the \`rowHeader\` cell of column "${columnId}" holds a link or button, which would nest inside its selection button. Put it in another column.`,
+      );
+    }
+  }, [columnId]);
+  return (
+    <button
+      ref={ref}
+      type="button"
+      // Joins the hidden label and the text with a space, which collapsing
+      // whitespace between the two would lose.
+      aria-labelledby={`${hintId} ${textId}`}
+      aria-pressed={selected}
+      disabled={disabled}
+      className={cx(styles.selectButton, focusRing)}
+      onClick={onToggle}
+    >
+      <VisuallyHidden id={hintId}>{label}</VisuallyHidden>
+      <span id={textId}>{children}</span>
+      {selected && <Icon icon={CheckIcon} size="sm" />}
+    </button>
+  );
+}
+
 /**
  * A table that manages sorting, pagination, and the loading and empty
  * states. Use `Table` for display and server rendering.
@@ -152,6 +244,12 @@ export function DataTable<Row>({
   onPageChange,
   pageSize,
   totalRows,
+  selectionMode = 'none',
+  selectedKeys: selectedKeysProp,
+  defaultSelectedKeys,
+  onSelectionChange,
+  disabledKeys,
+  selectOnRowClick = true,
   loading = false,
   empty,
   labels,
@@ -251,6 +349,54 @@ export function DataTable<Row>({
     goToPage(1);
   };
 
+  const [selectionState, setSelectionState] = useState(
+    () => defaultSelectedKeys ?? [],
+  );
+  const selectedKeys = selectedKeysProp ?? selectionState;
+  const selectedSet = useMemo(() => new Set(selectedKeys), [selectedKeys]);
+  const disabledSet = useMemo(() => new Set(disabledKeys), [disabledKeys]);
+  const selecting = selectionMode !== 'none';
+  const text = { ...DEFAULT_LABELS, ...labels };
+
+  const commitSelection = (next: string[]) => {
+    if (selectedKeysProp === undefined) setSelectionState(next);
+    onSelectionChange?.(next);
+  };
+  const toggleRow = (key: string) => {
+    if (disabledSet.has(key)) return;
+    if (selectedSet.has(key)) {
+      commitSelection(selectedKeys.filter((k) => k !== key));
+    } else {
+      commitSelection(
+        selectionMode === 'single' ? [key] : [...selectedKeys, key],
+      );
+    }
+  };
+  // Select page works on the enabled rows shown, and leaves other pages alone.
+  const pageKeys = visible.map(getRowId).filter((key) => !disabledSet.has(key));
+  const selectedOnPage = pageKeys.filter((key) => selectedSet.has(key)).length;
+  const pageSelection =
+    pageKeys.length === 0 || selectedOnPage === 0
+      ? 'false'
+      : selectedOnPage === pageKeys.length
+        ? 'true'
+        : 'mixed';
+  const togglePage = () => {
+    if (pageKeys.length === 0) return;
+    if (pageSelection === 'true') {
+      const onPage = new Set(pageKeys);
+      commitSelection(selectedKeys.filter((key) => !onPage.has(key)));
+    } else {
+      commitSelection([
+        ...selectedKeys,
+        ...pageKeys.filter((key) => !selectedSet.has(key)),
+      ]);
+    }
+  };
+  const clearSelection = () => {
+    if (selectedKeys.length > 0) commitSelection([]);
+  };
+
   const showSkeleton = loading && rows.length === 0;
   const showEmpty = !loading && rows.length === 0 && empty != null;
 
@@ -259,6 +405,15 @@ export function DataTable<Row>({
       aria-busy={loading || undefined}
       className={cx(styles.root, box(outerLayout))}
     >
+      {selectionMode === 'multiple' && (
+        <SelectionToolbar
+          count={selectedKeys.length}
+          pageState={pageSelection}
+          onSelectPage={togglePage}
+          onClear={clearSelection}
+          labels={text}
+        />
+      )}
       <Table {...rest} height={height} maxHeight={maxHeight}>
         <TableHead>
           <TableRow>
@@ -298,25 +453,67 @@ export function DataTable<Row>({
               <TableCell colSpan={columns.length}>{empty}</TableCell>
             </TableRow>
           ) : (
-            visible.map((row) => (
-              <TableRow key={getRowId(row)}>
-                {columns.map((column) =>
-                  column.rowHeader ? (
-                    <TableHeader
-                      key={column.id}
-                      scope="row"
-                      align={column.align}
-                    >
-                      {column.cell(row)}
-                    </TableHeader>
-                  ) : (
-                    <TableCell key={column.id} align={column.align}>
-                      {column.cell(row)}
-                    </TableCell>
-                  ),
-                )}
-              </TableRow>
-            ))
+            visible.map((row) => {
+              const key = getRowId(row);
+              const disabled = disabledSet.has(key);
+              const selected = selecting && selectedSet.has(key);
+              return (
+                <TableRow
+                  key={key}
+                  selected={selected}
+                  className={
+                    selecting && selectOnRowClick && !disabled
+                      ? styles.clickableRow
+                      : undefined
+                  }
+                  onClick={
+                    selecting && selectOnRowClick && !disabled
+                      ? (event) => {
+                          if (
+                            !(event.target instanceof Element) ||
+                            isInteractiveTarget(
+                              event.target,
+                              event.currentTarget,
+                            ) ||
+                            window.getSelection()?.toString()
+                          ) {
+                            return;
+                          }
+                          toggleRow(key);
+                        }
+                      : undefined
+                  }
+                >
+                  {columns.map((column) =>
+                    column.rowHeader ? (
+                      <TableHeader
+                        key={column.id}
+                        scope="row"
+                        align={column.align}
+                      >
+                        {selecting ? (
+                          <SelectButton
+                            columnId={column.id}
+                            selected={selected}
+                            disabled={disabled}
+                            label={text.selectRow}
+                            onToggle={() => toggleRow(key)}
+                          >
+                            {column.cell(row)}
+                          </SelectButton>
+                        ) : (
+                          column.cell(row)
+                        )}
+                      </TableHeader>
+                    ) : (
+                      <TableCell key={column.id} align={column.align}>
+                        {column.cell(row)}
+                      </TableCell>
+                    ),
+                  )}
+                </TableRow>
+              );
+            })
           )}
         </TableBody>
       </Table>

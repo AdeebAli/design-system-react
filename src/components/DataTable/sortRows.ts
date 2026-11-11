@@ -1,6 +1,6 @@
 /**
  * Sorts rows by a value, keeping ties in their original order. `null` sorts
- * last in both directions, and numbers sort before strings in a mixed column,
+ * last in both directions, as does `NaN`, and numbers sort before strings in a mixed column,
  * also in both directions.
  */
 export function sortRows<Row>(
@@ -10,7 +10,14 @@ export function sortRows<Row>(
   collator: Intl.Collator,
 ): Row[] {
   const sign = direction === 'ascending' ? 1 : -1;
-  const keyed = rows.map((row) => ({ row, value: sortValue(row) }));
+  // NaN has no order, so it sorts with `null`.
+  const keyed = rows.map((row) => {
+    const value = sortValue(row);
+    return {
+      row,
+      value: typeof value === 'number' && Number.isNaN(value) ? null : value,
+    };
+  });
   // Array.prototype.sort is stable, and the sign only flips non-ties.
   keyed.sort((a, b) => {
     if (a.value === null || b.value === null) {

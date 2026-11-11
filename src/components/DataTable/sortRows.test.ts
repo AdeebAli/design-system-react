@@ -80,3 +80,14 @@ it('orders infinities consistently', () => {
     Infinity,
   ]);
 });
+
+it('treats NaN like null: last in both directions', () => {
+  const rows = [{ v: NaN }, { v: 2 }, { v: null }, { v: 1 }, { v: NaN }];
+  const sorted = (direction: 'ascending' | 'descending') =>
+    sortRows(rows, id, direction, en).map((r) => r.v);
+  expect(sorted('ascending').slice(0, 2)).toEqual([1, 2]);
+  expect(sorted('descending').slice(0, 2)).toEqual([2, 1]);
+  // Ties among the empty values keep their original order.
+  expect(sorted('ascending').slice(2)).toEqual([NaN, null, NaN]);
+  expect(sorted('descending').slice(2)).toEqual([NaN, null, NaN]);
+});
