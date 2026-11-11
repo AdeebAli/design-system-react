@@ -435,7 +435,7 @@ function resolvedProbe(size: 'sm'): HTMLElement {
 const LONG =
   'A very long customer name that goes on and on and on and on and on';
 
-it('a long sticky row header can partly cover a focused cell, but never all of it', async () => {
+it('a long sticky row header can partly cover a focused cell', async () => {
   render(
     <div style={{ width: 700 }}>
       <Table
@@ -471,7 +471,7 @@ it('a long sticky row header can partly cover a focused cell, but never all of i
   await expect
     .poll(() => rect(target).left)
     .toBeGreaterThan(rect(wrapper).left + 2);
-  // The sticky column may cover part of the target, never all of it.
+  // In this setup the sticky column covers part of the target, not all of it.
   expect(rect(target).right).toBeGreaterThan(rect(rowHeader).right);
 });
 

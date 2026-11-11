@@ -32,10 +32,10 @@ export const wrapper = style(
 // The reserved sizes come from tokens: the header is two paddings, one line of
 // `xs` text, and its rule, plus a gap for the focus ring. The first column has
 // no token-sized width, and browsers ignore `max-width` on table cells, so it
-// can't be capped. The reserve is a token-derived estimate of a short row
-// header. A sticky first column wider than it can partly cover a focused cell,
-// so keep row headers short. WCAG 2.4.11 (AA) only requires that focus isn't
-// entirely hidden.
+// can't be capped. Its reserve is a token-derived estimate that covers row
+// headers up to about its width. A wider sticky first column can hide a focused
+// cell, partly or entirely, so row headers must stay short. This doesn't
+// guarantee WCAG 2.4.11 for wide first columns.
 const headerReserve = (pad: string) =>
   `calc(${pad} * 2 + ${vars.font.size.xs} * ${vars.font.lineHeight.normal} + ${vars.borderWidth.thin} + ${vars.space['1']})`;
 const columnReserve = `calc(${vars.size.dialog.sm} / 2)`;
