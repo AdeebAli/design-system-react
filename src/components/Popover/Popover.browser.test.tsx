@@ -60,6 +60,8 @@ afterEach(async () => {
   await page.viewport(414, 896);
 });
 
+const arrow = () =>
+  document.querySelector<HTMLElement>(`.${styles.arrow}`)!;
 const center = (rect: DOMRect, axis: 'x' | 'y') =>
   axis === 'x' ? rect.left + rect.width / 2 : rect.top + rect.height / 2;
 
@@ -110,7 +112,6 @@ it('Escape and an outside click close it', async () => {
 });
 
 describe('the arrow', () => {
-  const arrow = () => document.querySelector<HTMLElement>(`.${styles.arrow}`)!;
   const sides: [OverlaySide, 'x' | 'y'][] = [
     ['top', 'x'],
     ['bottom', 'x'],
@@ -211,34 +212,85 @@ describe('flipping with side="end"', () => {
     expect(popup.getBoundingClientRect().left).toBeGreaterThanOrEqual(
       trigger().getBoundingClientRect().right,
     );
+    // Asked for the end side, which is the left in RTL and has no room, so it
+    // flipped to the start side. In LTR, with no flip, it would stay `inline-end`.
+    expect(popup.getAttribute('data-side')).toBe('inline-start');
   });
 
   it('stays on the end side with room: right in LTR, left in RTL', async () => {
+    await page.viewport(1000, 600);
+    const place = { insetBlockStart: 300, left: 500 };
     const { unmount } = render(
-      <Example
-        content={{ side: 'end' }}
-        place={{ insetBlockStart: 300, insetInlineStart: 20 }}
-      />,
+      <Example content={{ side: 'end' }} place={place} />,
     );
     await userEvent.click(trigger());
     let popup = await settled();
     expect(popup.getBoundingClientRect().left).toBeGreaterThanOrEqual(
       trigger().getBoundingClientRect().right,
     );
+    expect(popup.getAttribute('data-side')).toBe('inline-end');
     unmount();
     document.documentElement.dir = 'rtl';
-    render(
-      <Example
-        content={{ side: 'end' }}
-        place={{ insetBlockStart: 300, insetInlineStart: 20 }}
-      />,
-    );
+    render(<Example content={{ side: 'end' }} place={place} />);
     await userEvent.click(trigger());
     popup = await settled();
     expect(popup.getBoundingClientRect().right).toBeLessThanOrEqual(
       trigger().getBoundingClientRect().left,
     );
+    expect(popup.getAttribute('data-side')).toBe('inline-end');
   });
+});
+
+describe('side="start" and "end" follow text direction (centered trigger, room on both sides)', () => {
+  const place = { insetBlockStart: 300, left: 500 };
+  const open = async (
+    side: 'start' | 'end',
+    dir: 'ltr' | 'rtl',
+    arrow = false,
+  ) => {
+    await page.viewport(1000, 600);
+    document.documentElement.dir = dir;
+    render(<Example content={{ side, arrow }} place={place} />);
+    await userEvent.click(trigger());
+    return settled();
+  };
+
+  it.each([
+    ['start', 'ltr', 'left'],
+    ['end', 'ltr', 'right'],
+    ['start', 'rtl', 'right'],
+    ['end', 'rtl', 'left'],
+  ] as const)('side=%s in %s opens on the %s', async (side, dir, physical) => {
+    const popup = await open(side, dir);
+    const p = popup.getBoundingClientRect();
+    const t = trigger().getBoundingClientRect();
+    if (physical === 'left') expect(p.right).toBeLessThanOrEqual(t.left);
+    else expect(p.left).toBeGreaterThanOrEqual(t.right);
+  });
+
+  it.each(['ltr', 'rtl'] as const)(
+    'the arrow sits on the popup edge facing the trigger in %s',
+    async (dir) => {
+      const popup = await open('end', dir, true);
+      const p = popup.getBoundingClientRect();
+      const t = trigger().getBoundingClientRect();
+      // The popup is right of the trigger in LTR and left of it in RTL, so
+      // the edge facing the trigger is its left in LTR and its right in RTL.
+      if (dir === 'ltr') expect(p.left).toBeGreaterThanOrEqual(t.right);
+      else expect(p.right).toBeLessThanOrEqual(t.left);
+      const facing = dir === 'ltr' ? p.left : p.right;
+      await expect
+        .poll(() =>
+          Math.abs(center(arrow().getBoundingClientRect(), 'x') - facing),
+        )
+        .toBeLessThanOrEqual(1);
+      expect(
+        Math.abs(
+          center(arrow().getBoundingClientRect(), 'y') - center(t, 'y'),
+        ),
+      ).toBeLessThanOrEqual(1);
+    },
+  );
 });
 
 it('layout props size the popup', async () => {

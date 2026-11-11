@@ -70,3 +70,31 @@ it('reduced motion makes popup transitions 0s', async () => {
   await reduceMotion(true);
   expect(getComputedStyle(popup).transitionDuration).toBe('0s');
 });
+
+// A popup on the inline-end side sits left of its trigger in RTL, so it starts
+// shifted right (toward the trigger). `:dir(rtl)` in popup.css.ts flips the
+// translate that LTR uses.
+it.each([
+  ['inline-end', 'ltr', -1],
+  ['inline-end', 'rtl', 1],
+  ['inline-start', 'ltr', 1],
+  ['inline-start', 'rtl', -1],
+] as const)(
+  'motion toward the trigger: data-side=%s in %s shifts by sign %i',
+  (side, dir, sign) => {
+    render(
+      <div
+        dir={dir}
+        data-testid="popup"
+        data-side={side}
+        data-starting-style=""
+        className={styles.popupMotion}
+        style={{ transitionDuration: '0s' }}
+      />,
+    );
+    const { m41 } = new DOMMatrix(
+      getComputedStyle(screen.getByTestId('popup')).transform,
+    );
+    expect(Math.sign(m41)).toBe(sign);
+  },
+);

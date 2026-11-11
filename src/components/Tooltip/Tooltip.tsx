@@ -3,6 +3,7 @@
 import { Tooltip as BaseTooltip } from '@base-ui/react/tooltip';
 import { useContext, type ReactElement, type ReactNode } from 'react';
 import { cx } from '../../utils/cx';
+import { OverlayDirection } from '../overlays/direction';
 import { gapOffset, toBaseSide } from '../overlays/positioning';
 import type { OverlayAlign, OverlaySide } from '../overlays/positioning';
 import { popupMotion } from '../overlays/popup.css';
@@ -48,28 +49,30 @@ export function Tooltip({
 }: TooltipProps) {
   const providerDelay = useContext(TooltipDelayContext);
   return (
-    <BaseTooltip.Root
-      open={open}
-      defaultOpen={defaultOpen}
-      onOpenChange={(next) => onOpenChange?.(next)}
-      disabled={disabled}
-    >
-      <BaseTooltip.Trigger
-        delay={delay ?? providerDelay ?? 600}
-        render={children}
-      />
-      <BaseTooltip.Portal>
-        <BaseTooltip.Positioner
-          side={toBaseSide(side)}
-          align={align}
-          sideOffset={gapOffset}
-          className={styles.positioner}
-        >
-          <BaseTooltip.Popup className={cx(popupMotion, styles.popup)}>
-            {content}
-          </BaseTooltip.Popup>
-        </BaseTooltip.Positioner>
-      </BaseTooltip.Portal>
-    </BaseTooltip.Root>
+    <OverlayDirection>
+      <BaseTooltip.Root
+        open={open}
+        defaultOpen={defaultOpen}
+        onOpenChange={(next) => onOpenChange?.(next)}
+        disabled={disabled}
+      >
+        <BaseTooltip.Trigger
+          delay={delay ?? providerDelay ?? 600}
+          render={children}
+        />
+        <BaseTooltip.Portal>
+          <BaseTooltip.Positioner
+            side={toBaseSide(side)}
+            align={align}
+            sideOffset={gapOffset}
+            className={styles.positioner}
+          >
+            <BaseTooltip.Popup className={cx(popupMotion, styles.popup)}>
+              {content}
+            </BaseTooltip.Popup>
+          </BaseTooltip.Positioner>
+        </BaseTooltip.Portal>
+      </BaseTooltip.Root>
+    </OverlayDirection>
   );
 }

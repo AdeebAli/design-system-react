@@ -15,6 +15,7 @@ export default defineConfig({
       '@base-ui/react/checkbox',
       '@base-ui/react/collapsible',
       '@base-ui/react/dialog',
+      '@base-ui/react/direction-provider',
       '@base-ui/react/field',
       '@base-ui/react/menu',
       '@base-ui/react/popover',

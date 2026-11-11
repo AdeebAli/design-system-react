@@ -144,3 +144,35 @@ it('a tooltip with no delay prop uses the provider delay', async () => {
   expect(popup()).not.toBeInTheDocument();
   await expect.poll(() => popup(), { timeout: 2000 }).toBeInTheDocument();
 });
+
+describe('side="start" and "end" follow text direction', () => {
+  afterEach(() => {
+    document.documentElement.removeAttribute('dir');
+  });
+
+  it.each([
+    ['start', 'ltr', 'left'],
+    ['end', 'ltr', 'right'],
+    ['start', 'rtl', 'right'],
+    ['end', 'rtl', 'left'],
+  ] as const)(
+    'side=%s in %s opens on the %s of a centered trigger',
+    async (side, dir, physical) => {
+      document.documentElement.dir = dir;
+      render(
+        <Tooltip content="Hint" side={side} delay={0}>
+          <Button style={{ position: 'fixed', top: 300, left: '50%' }}>
+            Go
+          </Button>
+        </Tooltip>,
+      );
+      await userEvent.hover(trigger());
+      const hint = await screen.findByText('Hint');
+      await expect.poll(() => getComputedStyle(hint).opacity).toBe('1');
+      const p = hint.getBoundingClientRect();
+      const t = trigger().getBoundingClientRect();
+      if (physical === 'left') expect(p.right).toBeLessThanOrEqual(t.left);
+      else expect(p.left).toBeGreaterThanOrEqual(t.right);
+    },
+  );
+});

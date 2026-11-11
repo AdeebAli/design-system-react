@@ -50,8 +50,11 @@ export const arrow = style(
         insetBlockStart: `calc(${size} / -2)`,
         clipPath: `inset(${room} ${room} ${edge} ${room})`,
       },
-      // Physical sides, and the logical ones in each direction. The popup is
-      // on `side` of the trigger, so the arrow is on the popup's opposite edge.
+      // Physical `left`/`right` on purpose, not `inset-inline-*`: Base UI
+      // positions the arrow along the edge with physical inline styles, and
+      // `data-side` reports the logical `inline-start`/`inline-end`. So the
+      // direction is resolved here with `:dir()`, to a physical edge. The popup
+      // is on `side` of the trigger, so the arrow is on the popup's opposite edge.
       '&[data-side="left"], &:dir(ltr)[data-side="inline-start"], &:dir(rtl)[data-side="inline-end"]':
         {
           insetInlineEnd: 'auto',

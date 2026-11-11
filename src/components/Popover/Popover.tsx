@@ -2,6 +2,7 @@
 
 import { Popover as BasePopover } from '@base-ui/react/popover';
 import { useMemo, useRef, type ReactNode } from 'react';
+import { OverlayDirection } from '../overlays/direction';
 import { PopoverContext, type PopoverContextValue } from './PopoverContext';
 
 /** `Popover`'s props. */
@@ -37,13 +38,15 @@ export function Popover({
   );
   return (
     <PopoverContext.Provider value={context}>
-      <BasePopover.Root
-        open={open}
-        defaultOpen={defaultOpen}
-        onOpenChange={(next) => onOpenChange?.(next)}
-      >
-        {children}
-      </BasePopover.Root>
+      <OverlayDirection>
+        <BasePopover.Root
+          open={open}
+          defaultOpen={defaultOpen}
+          onOpenChange={(next) => onOpenChange?.(next)}
+        >
+          {children}
+        </BasePopover.Root>
+      </OverlayDirection>
     </PopoverContext.Provider>
   );
 }
