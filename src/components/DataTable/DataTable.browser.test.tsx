@@ -1,6 +1,16 @@
 import { render, screen } from '@testing-library/react';
 import { useState, type ReactNode } from 'react';
 import { page, userEvent } from 'vitest/browser';
+import { vars } from '../../themes/contract.css';
+import { Button } from '../Button';
+import { Menu, MenuContent, MenuItem, MenuTrigger } from '../Menu';
+import {
+  Popover,
+  PopoverContent,
+  PopoverDescription,
+  PopoverTitle,
+  PopoverTrigger,
+} from '../Popover';
 import {
   Table,
   TableBody,
@@ -49,6 +59,16 @@ const columns: DataTableColumn<Person>[] = [
 ];
 
 const noop = () => undefined;
+
+/** The computed color a token resolves to, via a probe element. */
+function resolvedBg(token: string): string {
+  const probe = document.createElement('div');
+  probe.style.background = token;
+  document.body.append(probe);
+  const color = getComputedStyle(probe).backgroundColor;
+  probe.remove();
+  return color;
+}
 const pressed = (name: string) =>
   screen.getByRole('button', { name: `Select ${name}` }).ariaPressed;
 const rowButton = (name: string) =>
@@ -144,6 +164,10 @@ it('a disabled row ignores clicks on the row and the button', async () => {
   await userEvent.click(rowButton('Bo Chen'), { force: true });
   expect(onChange).not.toHaveBeenCalled();
   expect(rowButton('Bo Chen')).toBeDisabled();
+  // The browser's disabled color (GrayText) would drop the row name's contrast.
+  expect(getComputedStyle(rowButton('Bo Chen')).color).toBe(
+    getComputedStyle(rowButton('Ada Park')).color,
+  );
 });
 
 it('a link or control in a cell does not toggle the row', async () => {
@@ -170,6 +194,45 @@ it('a link or control in a cell does not toggle the row', async () => {
   await userEvent.click(screen.getByTestId('link-1'));
   await userEvent.click(screen.getByTestId('btn-1'));
   await userEvent.click(screen.getByLabelText('Note 1'));
+  expect(onChange).not.toHaveBeenCalled();
+});
+
+it('a click inside a portaled Menu or Popover opened from a cell does not toggle the row', async () => {
+  const onChange = vi.fn();
+  const cols: DataTableColumn<Person>[] = [
+    ...columns,
+    {
+      id: 'actions',
+      header: 'Actions',
+      cell: (p) =>
+        p.id === '1' ? (
+          <>
+            <Menu>
+              <MenuTrigger>
+                <Button size="sm">Actions</Button>
+              </MenuTrigger>
+              <MenuContent>
+                <MenuItem>Edit</MenuItem>
+              </MenuContent>
+            </Menu>
+            <Popover>
+              <PopoverTrigger>
+                <Button size="sm">Info</Button>
+              </PopoverTrigger>
+              <PopoverContent>
+                <PopoverTitle>Details</PopoverTitle>
+                <PopoverDescription>Plain popover text</PopoverDescription>
+              </PopoverContent>
+            </Popover>
+          </>
+        ) : null,
+    },
+  ];
+  render(<Host onChange={onChange} columns={cols} />);
+  await userEvent.click(screen.getByRole('button', { name: 'Actions' }));
+  await userEvent.click(await screen.findByRole('menuitem', { name: 'Edit' }));
+  await userEvent.click(screen.getByRole('button', { name: 'Info' }));
+  await userEvent.click(await screen.findByText('Plain popover text'));
   expect(onChange).not.toHaveBeenCalled();
 });
 
@@ -347,10 +410,22 @@ it.each(configs)(
   },
 );
 
-function renderPair(size: 'md' | 'sm', selected: boolean) {
+interface PairOptions {
+  size?: 'md' | 'sm';
+  selected: boolean;
+  table?: TableProps;
+  box?: { width: number; height?: number };
+}
+
+function renderPair({
+  size = 'md',
+  selected,
+  table: tableProps = {},
+  box = { width: 600 },
+}: PairOptions) {
   const { container } = render(
-    <div style={{ width: 600 }}>
-      <div data-testid="data">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 40 }}>
+      <div data-testid="data" style={box}>
         <DataTable
           aria-label="People"
           rows={people}
@@ -359,10 +434,15 @@ function renderPair(size: 'md' | 'sm', selected: boolean) {
           selectionMode="single"
           defaultSelectedKeys={selected ? ['3'] : []}
           size={size}
+          {...(tableProps as object)}
         />
       </div>
-      <div data-testid="table">
-        <EquivalentTable size={size} selectedId={selected ? '3' : undefined} />
+      <div data-testid="table" style={box}>
+        <EquivalentTable
+          size={size}
+          selectedId={selected ? '3' : undefined}
+          {...tableProps}
+        />
       </div>
     </div>,
   );
@@ -375,7 +455,7 @@ function renderPair(size: 'md' | 'sm', selected: boolean) {
 it.each([['md' as const], ['sm' as const]])(
   'matches an equivalent Table with selection on and nothing selected, at size %s',
   (size) => {
-    const [data, table] = renderPair(size, false);
+    const [data, table] = renderPair({ size, selected: false });
     expect(data).toHaveLength(15);
     expect(data).toEqual(table);
   },
@@ -386,7 +466,7 @@ it.each([['md' as const], ['sm' as const]])(
 it.each([['md' as const], ['sm' as const]])(
   'matches an equivalent Table in colors and the selected bar with a selected row, at size %s',
   (size) => {
-    const [data, table] = renderPair(size, true);
+    const [data, table] = renderPair({ size, selected: true });
     expect(data).toHaveLength(15);
     expect(data.map((c) => [c.styles, c.bar])).toEqual(
       table.map((c) => [c.styles, c.bar]),
@@ -409,4 +489,91 @@ it("names each row button 'Select' then the text in the real accessibility tree,
       page.getByRole('button', { name: 'Select Cara Diaz', exact: true }),
     )
     .toBeVisible();
+});
+
+const stickyConfigs: [
+  string,
+  TableProps,
+  { width: number; height?: number },
+][] = [
+  [
+    'stickyHeader',
+    { stickyHeader: true, maxHeight: 'full' },
+    { width: 600, height: 120 },
+  ],
+  ['stickyFirstColumn', { stickyFirstColumn: true }, { width: 240 }],
+  [
+    'stickyBackground raised',
+    {
+      stickyBackground: 'raised',
+      stickyHeader: true,
+      stickyFirstColumn: true,
+      maxHeight: 'full',
+    },
+    { width: 240, height: 120 },
+  ],
+];
+
+it.each(stickyConfigs)(
+  'matches an equivalent Table with selection on and nothing selected, with %s',
+  (_name, table, box) => {
+    const [data, equivalent] = renderPair({ selected: false, table, box });
+    expect(data).toHaveLength(15);
+    expect(data).toEqual(equivalent);
+  },
+);
+
+// With a selected row, the check icon widens the row-header column, so rects
+// are compared outside that column's width: heights and tops, and colors.
+it.each(stickyConfigs)(
+  'matches an equivalent Table with a selected row, with %s',
+  (_name, table, box) => {
+    const [data, equivalent] = renderPair({ selected: true, table, box });
+    expect(data).toHaveLength(15);
+    expect(data.map((c) => [c.styles, c.bar])).toEqual(
+      equivalent.map((c) => [c.styles, c.bar]),
+    );
+    expect(data.map((c) => [c.rect[1], c.rect[3]])).toEqual(
+      equivalent.map((c) => [c.rect[1], c.rect[3]]),
+    );
+  },
+);
+
+it('keeps a selected row in the sticky column selected-colored on hover, like a Table', async () => {
+  const { container } = render(
+    <div
+      style={{ display: 'flex', flexDirection: 'column', gap: 40, width: 240 }}
+    >
+      <div data-testid="data">
+        <DataTable
+          aria-label="People"
+          rows={people}
+          columns={columns}
+          getRowId={(p) => p.id}
+          selectionMode="single"
+          defaultSelectedKeys={['3']}
+          stickyFirstColumn
+        />
+      </div>
+      <div data-testid="table">
+        <EquivalentTable stickyFirstColumn selectedId="3" />
+      </div>
+    </div>,
+  );
+  const row = (id: string) =>
+    container.querySelectorAll<HTMLElement>(`[data-testid=${id}] tbody tr`)[2]!;
+  const bg = (el: Element) => getComputedStyle(el).backgroundColor;
+  for (const id of ['data', 'table']) {
+    await userEvent.hover(row(id).children[1] as HTMLElement);
+    const first = row(id).children[0]!;
+    const accent = resolvedBg(vars.color.bg.accentSubtle);
+    expect(bg(row(id))).toBe(accent);
+    expect(bg(first)).toBe(accent);
+    expect(bg(first)).not.toBe('rgba(0, 0, 0, 0)');
+    // An unselected row's hover color is different, so selected stays selected.
+    const other = container.querySelectorAll<HTMLElement>(
+      `[data-testid=${id}] tbody tr`,
+    )[0]!;
+    expect(bg(first)).not.toBe(bg(other.children[0]!));
+  }
 });

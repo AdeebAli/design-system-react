@@ -205,7 +205,7 @@ function SelectButton({
     if (ref.current?.querySelector(INTERACTIVE_SELECTOR)) {
       warnOnce(
         `DataTable-rowHeader-interactive-${columnId}`,
-        `DataTable: the \`rowHeader\` cell of column "${columnId}" holds a link or button, which would nest inside its selection button. Put it in another column.`,
+        `DataTable: the \`rowHeader\` cell of column "${columnId}" holds links, buttons, or other interactive content, which would nest inside its selection button. Put it in another column.`,
       );
     }
   }, [columnId]);
@@ -471,6 +471,8 @@ export function DataTable<Row>({
                       ? (event) => {
                           if (
                             !(event.target instanceof Element) ||
+                            // Clicks in a portal bubble through React, not the DOM.
+                            !event.currentTarget.contains(event.target) ||
                             isInteractiveTarget(
                               event.target,
                               event.currentTarget,

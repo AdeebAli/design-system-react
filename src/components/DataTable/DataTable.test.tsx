@@ -577,7 +577,7 @@ it('gives skeleton rows no button', () => {
   expect(screen.queryByRole('button', { name: /^Select (?!page)/ })).toBeNull();
 });
 
-it('warns once per column about a link or button in the rowHeader cell', () => {
+it('warns once per column about interactive content in the rowHeader cell', () => {
   const warn = vi.spyOn(console, 'warn').mockImplementation(vi.fn());
   vi.spyOn(console, 'error').mockImplementation(vi.fn());
   render(
@@ -594,7 +594,7 @@ it('warns once per column about a link or button in the rowHeader cell', () => {
     />,
   );
   const calls = warn.mock.calls.filter((c) =>
-    /DataTable.*rowHeader.*link or button/s.test(String(c[0])),
+    /DataTable.*rowHeader.*interactive content/s.test(String(c[0])),
   );
   expect(calls).toHaveLength(1);
 });

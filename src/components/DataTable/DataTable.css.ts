@@ -45,6 +45,7 @@ export const selectButton = style(
     verticalAlign: 'top',
     // The target is taller than a line of text. The negative margin lets it
     // overlap the cell's padding, so rows keep the height a `Table` row has.
+    // Depends on Table.css.ts cell metrics: `font.size.sm` and `lineHeight.normal`.
     marginBlock: `min(0rem, calc((${vars.font.size.sm} * ${vars.font.lineHeight.normal} - ${MIN_TARGET}) / 2))`,
     marginInline: 0,
     padding: 0,
