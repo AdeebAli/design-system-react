@@ -52,3 +52,31 @@ it('does not change the input', () => {
   sortRows(rows, id, 'ascending', en);
   expect(rows.map((r) => r.v)).toEqual([2, 1]);
 });
+
+it('puts numbers before strings in both directions, flipping only within a type', () => {
+  const rows = [{ v: 'b' }, { v: 2 }, { v: 'a' }, { v: 1 }, { v: null }];
+  expect(sortRows(rows, id, 'ascending', en).map((r) => r.v)).toEqual([
+    1,
+    2,
+    'a',
+    'b',
+    null,
+  ]);
+  expect(sortRows(rows, id, 'descending', en).map((r) => r.v)).toEqual([
+    2,
+    1,
+    'b',
+    'a',
+    null,
+  ]);
+});
+
+it('orders infinities consistently', () => {
+  const rows = [{ v: Infinity }, { v: Infinity }, { v: -Infinity }, { v: 0 }];
+  expect(sortRows(rows, id, 'ascending', en).map((r) => r.v)).toEqual([
+    -Infinity,
+    0,
+    Infinity,
+    Infinity,
+  ]);
+});

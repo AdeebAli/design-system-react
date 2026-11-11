@@ -1,4 +1,5 @@
 import { fireEvent, render, screen, within } from '@testing-library/react';
+import { box } from '../Box';
 import { useState, type CSSProperties, type ReactNode, type Ref } from 'react';
 import { afterEach, expect, it, vi } from 'vitest';
 import {
@@ -280,14 +281,25 @@ it('routes layout props to the outer element, height to the wrapper, and classNa
     />,
   );
   const table = screen.getByRole('table');
+  const outer = container.firstElementChild!;
+  const wrapper = table.parentElement!;
+  const marginClasses = box({ marginTop: '4' }).split(' ');
+  const maxHeightClasses = box({ maxHeight: 'screen' }).split(' ');
+  const has = (el: Element, classes: string[]) =>
+    classes.every((c) => el.classList.contains(c));
   expect(ref.current).toBe(table);
+  expect(outer).not.toBe(wrapper);
+  expect(wrapper).toHaveAttribute('data-ds-table');
+  expect(has(outer, marginClasses)).toBe(true);
+  expect(has(wrapper, marginClasses)).toBe(false);
+  expect(has(table, marginClasses)).toBe(false);
+  expect(has(wrapper, maxHeightClasses)).toBe(true);
+  expect(has(outer, maxHeightClasses)).toBe(false);
   expect(table).toHaveClass('mine');
   expect(table.style.color).toBe('red');
-  expect(container.firstElementChild).not.toBe(table.parentElement);
-  expect(container.firstElementChild?.className).not.toBe(
-    table.parentElement?.className,
-  );
-  expect(table.parentElement).toHaveAttribute('data-ds-table');
+  expect(outer).not.toHaveClass('mine');
+  expect((outer as HTMLElement).style.color).toBe('');
+  expect(wrapper).not.toHaveClass('mine');
 });
 
 it('works with state held by the project', () => {

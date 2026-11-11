@@ -56,7 +56,7 @@ interface ColumnBase<Row> {
 export type DataTableColumn<Row> = ColumnBase<Row> &
   (
     | {
-        /** Makes the column sortable, sorted by `DataTable`. */
+        /** Makes the column sortable, sorted by `DataTable`. Return one type per column: in a mixed column, numbers sort before strings, and `null` last, in both directions. */
         sortValue: (row: Row) => string | number | null;
         sortable?: never;
       }

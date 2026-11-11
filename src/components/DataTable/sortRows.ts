@@ -1,6 +1,7 @@
 /**
  * Sorts rows by a value, keeping ties in their original order. `null` sorts
- * last in both directions, and numbers sort before strings in a mixed column.
+ * last in both directions, and numbers sort before strings in a mixed column,
+ * also in both directions.
  */
 export function sortRows<Row>(
   rows: readonly Row[],
@@ -17,10 +18,11 @@ export function sortRows<Row>(
       return a.value === null ? 1 : -1;
     }
     if (typeof a.value === 'number' && typeof b.value === 'number') {
-      return sign * (a.value - b.value);
+      return a.value === b.value ? 0 : sign * (a.value < b.value ? -1 : 1);
     }
+    // Mixed types: numbers first in both directions, like null last.
     if (typeof a.value !== typeof b.value) {
-      return sign * (typeof a.value === 'number' ? -1 : 1);
+      return typeof a.value === 'number' ? -1 : 1;
     }
     return sign * collator.compare(String(a.value), String(b.value));
   });
