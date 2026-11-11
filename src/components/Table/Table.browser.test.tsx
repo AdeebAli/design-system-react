@@ -432,6 +432,49 @@ function resolvedProbe(size: 'sm'): HTMLElement {
   return probe;
 }
 
+const LONG =
+  'A very long customer name that goes on and on and on and on and on';
+
+it('a long sticky row header can partly cover a focused cell, but never all of it', async () => {
+  render(
+    <div style={{ width: 700 }}>
+      <Table
+        aria-label="Long"
+        stickyFirstColumn
+        scrollable
+        style={{ minWidth: 1000 }}
+      >
+        <TableBody>
+          {Array.from({ length: 3 }, (_, r) => (
+            <TableRow key={r}>
+              <TableHeader scope="row">{`${LONG} ${r}`}</TableHeader>
+              {Array.from({ length: 6 }, (_, c) => (
+                <TableCell key={c}>
+                  <Button size="sm" data-cell={`${r}-${c}`}>
+                    {`Column ${c} of ${r}`}
+                  </Button>
+                </TableCell>
+              ))}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>,
+  );
+  const wrapper = wrapperOf();
+  const rowHeader = screen.getByRole('rowheader', { name: `${LONG} 1` });
+  const target = document.querySelector<HTMLElement>('[data-cell="1-1"]')!;
+  wrapper.scrollLeft += rect(target).left - rect(wrapper).left - 2;
+  expect(rect(target).left).toBeLessThan(rect(rowHeader).right);
+  target.focus({ preventScroll: true });
+  target.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  await expect
+    .poll(() => rect(target).left)
+    .toBeGreaterThan(rect(wrapper).left + 2);
+  // The sticky column may cover part of the target, never all of it.
+  expect(rect(target).right).toBeGreaterThan(rect(rowHeader).right);
+});
+
 it('focus clears a sticky header made of sort buttons', async () => {
   render(
     <div style={{ height: 240, width: 360 }}>

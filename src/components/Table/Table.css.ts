@@ -31,10 +31,14 @@ export const wrapper = style(
 
 // The reserved sizes come from tokens: the header is two paddings, one line of
 // `xs` text, and its rule, plus a gap for the focus ring. The first column has
-// no token-sized width, so its cell is capped (below) and the cap is reserved.
+// no token-sized width, and browsers ignore `max-width` on table cells, so it
+// can't be capped. The reserve is a token-derived estimate of a short row
+// header. A sticky first column wider than it can partly cover a focused cell,
+// so keep row headers short. WCAG 2.4.11 (AA) only requires that focus isn't
+// entirely hidden.
 const headerReserve = (pad: string) =>
   `calc(${pad} * 2 + ${vars.font.size.xs} * ${vars.font.lineHeight.normal} + ${vars.borderWidth.thin} + ${vars.space['1']})`;
-const columnCap = `calc(${vars.size.dialog.sm} / 2)`;
+const columnReserve = `calc(${vars.size.dialog.sm} / 2)`;
 
 /** `scroll-padding` that keeps focus clear of a sticky header, by `size`. */
 export const stickyHeaderPad = styleVariants({
@@ -45,7 +49,7 @@ export const stickyHeaderPad = styleVariants({
 /** `scroll-padding` that keeps focus clear of a sticky first column. */
 export const stickyColumnPad = style(
   layered({
-    scrollPaddingInlineStart: `calc(${columnCap} + ${vars.borderWidth.thin} + ${vars.space['1']})`,
+    scrollPaddingInlineStart: `calc(${columnReserve} + ${vars.borderWidth.thin} + ${vars.space['1']})`,
   }),
 );
 
@@ -245,7 +249,6 @@ globalStyle(firstCells, {
       position: 'sticky',
       insetInlineStart: 0,
       zIndex: sticky,
-      maxInlineSize: columnCap,
       borderInlineEnd: border,
       // A hovered or selected row's opaque color replaces the sticky one.
       background: fallbackVar(rowBg, stickyBg),
