@@ -3,6 +3,7 @@ import {
   ColorModeScript,
   ColorModeToggle,
   ThemeProvider,
+  ToastProvider,
 } from '@adeebali/design-system-react';
 import type { ReactNode } from 'react';
 import { SiteNav } from './SiteNav';
@@ -16,9 +17,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body>
         <ColorModeScript />
         <ThemeProvider theme={theme}>
-          <ColorModeToggle />
-          <SiteNav />
-          {children}
+          <ToastProvider>
+            <ColorModeToggle />
+            <SiteNav />
+            {children}
+          </ToastProvider>
         </ThemeProvider>
       </body>
     </html>

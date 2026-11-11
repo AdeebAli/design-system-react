@@ -154,6 +154,23 @@ export default async function RootLayout({
 
 `fixtures/next-app` runs this setup on `/csp`, and its tests check there are no policy violations or console errors.
 
+## Overlays and data
+
+Each is documented in [Storybook](https://adeebali.github.io/design-system-react/).
+
+| Component    | Use it for                                                                                    |
+| ------------ | --------------------------------------------------------------------------------------------- |
+| `Dialog`     | A modal task that needs full attention, including a confirmation (`alert`)                    |
+| `Popover`    | A small panel beside its trigger, with the page still usable                                  |
+| `Tooltip`    | A short, visual-only hint on hover or focus                                                   |
+| `Menu`       | A list of actions, with submenus and checkbox or radio items                                  |
+| `Toast`      | A brief message: mount `ToastProvider` once, then call `useToast()` or `createToastManager()` |
+| `Table`      | Styled semantic table parts, which work in server components                                  |
+| `DataTable`  | A table that manages sorting, pagination, selection, and loading and empty states             |
+| `Pagination` | Page links (`getHref`, server-friendly) or buttons (`onPageChange`)                           |
+| `Skeleton`   | A placeholder for content that's loading                                                      |
+| `EmptyState` | What to show when a list or table has nothing in it                                           |
+
 ## Theming
 
 Override tokens with typed objects. Anything you leave out stays Soft.
