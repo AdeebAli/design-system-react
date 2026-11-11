@@ -187,6 +187,7 @@ export const InsideCard: Story = {
   ),
 };
 
+const noop = () => undefined;
 const MONTHS = Array.from({ length: 12 }, (_, m) => `Month ${m + 1}`);
 
 function Wide(props: Partial<React.ComponentProps<typeof Table>>) {
@@ -240,4 +241,35 @@ export const StickyOnCanvas: Story = {
 
 export const StickySmall: Story = {
   render: () => <Wide size="sm" stickyHeader stickyFirstColumn />,
+};
+
+export const StickySortable: Story = {
+  render: () => (
+    <div style={{ height: 240, width: 480 }}>
+      <Table aria-label="Customers" maxHeight="full" scrollable stickyHeader>
+        <TableHead>
+          <TableRow>
+            <TableSortHeader direction="ascending" onSort={noop}>
+              Name
+            </TableSortHeader>
+            <TableSortHeader direction="none" onSort={noop}>
+              Plan
+            </TableSortHeader>
+            <TableSortHeader align="end" direction="none" onSort={noop}>
+              Spend
+            </TableSortHeader>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {Array.from({ length: 20 }, (_, r) => (
+            <TableRow key={r}>
+              <TableHeader scope="row">{`Customer ${r + 1}`}</TableHeader>
+              <TableCell>Pro</TableCell>
+              <TableCell align="end">{(r + 1) * 120}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  ),
 };

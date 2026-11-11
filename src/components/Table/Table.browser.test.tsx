@@ -12,9 +12,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
+  TableSortHeader,
   type TableProps,
 } from './index';
 
+const noop = () => undefined;
 const COLS = 10;
 const ROWS = 24;
 const css = (el: Element, pseudo?: string) => getComputedStyle(el, pseudo);
@@ -275,15 +277,19 @@ describe.each(['md', 'sm'] as const)(
       const t = rect(target);
       expect(t.top).toBeGreaterThanOrEqual(header.bottom);
       expect(t.left).toBeGreaterThanOrEqual(column.right);
-      // Also from the other side.
-      wrapper.scrollLeft = 0;
-      wrapper.scrollTop = 0;
-      const first = document.querySelector<HTMLElement>('[data-cell="20-9"]')!;
-      first.focus({ preventScroll: true });
-      first.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-      await expect.poll(() => wrapper.scrollTop).toBeGreaterThan(0);
-      expect(rect(first).top).toBeGreaterThanOrEqual(header.bottom);
-      expect(rect(first).left).toBeGreaterThanOrEqual(column.right);
+      // From behind the sticky parts: target partly under header and column.
+      const w = rect(wrapper);
+      const hidden = document.querySelector<HTMLElement>('[data-cell="10-5"]')!;
+      wrapper.scrollTop += rect(hidden).top - w.top - 2;
+      wrapper.scrollLeft += rect(hidden).left - w.left - 2;
+      expect(rect(hidden).top).toBeLessThan(header.bottom);
+      expect(rect(hidden).left).toBeLessThan(column.right);
+      hidden.focus({ preventScroll: true });
+      hidden.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+      await expect
+        .poll(() => rect(hidden).top)
+        .toBeGreaterThanOrEqual(header.bottom);
+      expect(rect(hidden).left).toBeGreaterThanOrEqual(column.right);
     });
   },
 );
@@ -425,3 +431,44 @@ function resolvedProbe(size: 'sm'): HTMLElement {
   document.body.append(probe);
   return probe;
 }
+
+it('focus clears a sticky header made of sort buttons', async () => {
+  render(
+    <div style={{ height: 240, width: 360 }}>
+      <Table aria-label="Sort" maxHeight="full" stickyHeader scrollable>
+        <TableHead>
+          <TableRow>
+            {Array.from({ length: 8 }, (_, c) => (
+              <TableSortHeader key={c} direction="none" onSort={noop}>
+                {`Col${c}`}
+              </TableSortHeader>
+            ))}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {Array.from({ length: 20 }, (_, r) => (
+            <TableRow key={r}>
+              {Array.from({ length: 8 }, (_, c) => (
+                <TableCell key={c}>
+                  <Button size="sm" data-cell={`${r}-${c}`}>
+                    {`R${r}C${c}`}
+                  </Button>
+                </TableCell>
+              ))}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>,
+  );
+  const wrapper = wrapperOf();
+  const header = rect(headerCell(0));
+  const target = document.querySelector<HTMLElement>('[data-cell="8-1"]')!;
+  wrapper.scrollTop += rect(target).top - rect(wrapper).top - 2;
+  expect(rect(target).top).toBeLessThan(header.bottom);
+  target.focus({ preventScroll: true });
+  target.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  await expect
+    .poll(() => rect(target).top)
+    .toBeGreaterThanOrEqual(header.bottom);
+});
