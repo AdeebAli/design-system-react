@@ -33,12 +33,9 @@ export type TableProps = TableOwnProps &
 /** A styled table inside a scroll wrapper. Compose it from the `Table*` parts. */
 export function Table({
   size = 'md',
-  // The sticky props are read by the sticky styles, not here.
-  /* eslint-disable @typescript-eslint/no-unused-vars */
-  stickyHeader: _stickyHeader = false,
-  stickyFirstColumn: _stickyFirstColumn = false,
-  stickyBackground: _stickyBackground = 'surface',
-  /* eslint-enable @typescript-eslint/no-unused-vars */
+  stickyHeader = false,
+  stickyFirstColumn = false,
+  stickyBackground = 'surface',
   hoverable = true,
   scrollable = false,
   className,
@@ -58,7 +55,13 @@ export function Table({
   return (
     <div
       data-ds-table=""
-      className={cx(styles.wrapper, box(layout), scrollable && focusRing)}
+      className={cx(
+        styles.wrapper,
+        stickyHeader && styles.stickyHeaderPad[size],
+        stickyFirstColumn && styles.stickyColumnPad,
+        box(layout),
+        scrollable && focusRing,
+      )}
       {...(scrollable && {
         role: 'region',
         tabIndex: 0,
@@ -68,7 +71,14 @@ export function Table({
     >
       <table
         data-size={size}
-        className={cx(styles.table, hoverable && styles.hoverable, className)}
+        data-sticky-header={stickyHeader ? '' : undefined}
+        data-sticky-column={stickyFirstColumn ? '' : undefined}
+        className={cx(
+          styles.table,
+          styles.stickyBackground[stickyBackground],
+          hoverable && styles.hoverable,
+          className,
+        )}
         {...rest}
       >
         {children}

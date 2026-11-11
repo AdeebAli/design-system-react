@@ -1,6 +1,8 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import type { ComponentProps } from 'react';
 import { afterEach, expect, it, vi } from 'vitest';
+import { box } from '../Box';
+import * as styles from './Table.css';
 import {
   Table,
   TableBody,
@@ -134,9 +136,14 @@ it('puts the layout props on the wrapper and the rest on the table', () => {
   expect(wrapper).toHaveAttribute('data-ds-table');
   expect(wrapper.tagName).toBe('DIV');
   expect(wrapper.className).not.toContain('mine');
-  expect(wrapper.className).not.toBe('');
   const table = screen.getByTestId('t');
   expect(table.parentElement).toBe(wrapper);
+  const layoutClass = box({ maxHeight: 'screen' });
+  expect(layoutClass).not.toBe('');
+  expect(wrapper).toHaveClass(...layoutClass.split(' '));
+  for (const name of layoutClass.split(' ')) {
+    expect(table).not.toHaveClass(name);
+  }
   expect(table).toHaveClass('mine');
   expect(table).toHaveAttribute('aria-label', 't');
   expect(table).not.toHaveAttribute('maxheight');
@@ -253,4 +260,30 @@ it('renders a router link for as', () => {
 it('aligns a sort header', () => {
   sortable({ direction: 'none', onSort: vi.fn(), align: 'end' });
   expect(screen.getByRole('columnheader')).toHaveAttribute('data-align', 'end');
+});
+
+it('hoverable={false} drops the hover class', () => {
+  const { rerender } = render(<Table aria-label="t" data-testid="t" />);
+  expect(screen.getByTestId('t')).toHaveClass(styles.hoverable);
+  rerender(<Table aria-label="t" data-testid="t" hoverable={false} />);
+  expect(screen.getByTestId('t')).not.toHaveClass(styles.hoverable);
+});
+
+it('size sets data-size, defaulting to md', () => {
+  const { rerender } = render(<Table aria-label="t" data-testid="t" />);
+  expect(screen.getByTestId('t')).toHaveAttribute('data-size', 'md');
+  rerender(<Table aria-label="t" data-testid="t" size="sm" />);
+  expect(screen.getByTestId('t')).toHaveAttribute('data-size', 'sm');
+});
+
+it('the sticky props set data attributes on the table only when on', () => {
+  const { rerender } = render(<Table aria-label="t" data-testid="t" />);
+  const table = () => screen.getByTestId('t');
+  expect(table()).not.toHaveAttribute('data-sticky-header');
+  expect(table()).not.toHaveAttribute('data-sticky-column');
+  rerender(
+    <Table aria-label="t" data-testid="t" stickyHeader stickyFirstColumn />,
+  );
+  expect(table()).toHaveAttribute('data-sticky-header');
+  expect(table()).toHaveAttribute('data-sticky-column');
 });

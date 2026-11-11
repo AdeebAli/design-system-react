@@ -1,0 +1,427 @@
+import { render, screen } from '@testing-library/react';
+import { page, userEvent } from 'vitest/browser';
+import { vars } from '../../themes/contract.css';
+import { Button } from '../Button';
+import { Menu, MenuContent, MenuItem, MenuTrigger } from '../Menu';
+import { Prose } from '../Prose';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableFoot,
+  TableHead,
+  TableHeader,
+  TableRow,
+  type TableProps,
+} from './index';
+
+const COLS = 10;
+const ROWS = 24;
+const css = (el: Element, pseudo?: string) => getComputedStyle(el, pseudo);
+const wrapperOf = () => document.querySelector<HTMLElement>('[data-ds-table]')!;
+const headerCell = (index = 0) =>
+  document.querySelectorAll<HTMLElement>('thead th')[index]!;
+const rect = (el: Element) => el.getBoundingClientRect();
+const transparent = 'rgba(0, 0, 0, 0)';
+
+/** The computed color a token resolves to, via a probe element. */
+function resolved(token: string): string {
+  const probe = document.createElement('div');
+  probe.style.background = token;
+  document.body.append(probe);
+  const color = css(probe).backgroundColor;
+  probe.remove();
+  return color;
+}
+
+interface GridProps extends TableProps {
+  selectedRow?: number;
+  boxHeight?: number;
+}
+
+/** A wide, tall table in a box of fixed height, so the wrapper scrolls both ways. */
+function Grid({ selectedRow, boxHeight = 240, ...props }: GridProps) {
+  return (
+    <div style={{ height: boxHeight, width: 360 }}>
+      <Table aria-label="Grid" maxHeight="full" scrollable {...props}>
+        <TableHead>
+          <TableRow>
+            {Array.from({ length: COLS }, (_, c) => (
+              <TableHeader key={c}>{`Col${c}`}</TableHeader>
+            ))}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {Array.from({ length: ROWS }, (_, r) => (
+            <TableRow key={r} selected={r === selectedRow}>
+              {Array.from({ length: COLS }, (_, c) =>
+                c === 0 ? (
+                  <TableHeader key={c} scope="row">{`Row ${r}`}</TableHeader>
+                ) : (
+                  <TableCell key={c}>
+                    <Button size="sm" data-cell={`${r}-${c}`}>
+                      {`R${r}C${c}`}
+                    </Button>
+                  </TableCell>
+                ),
+              )}
+            </TableRow>
+          ))}
+        </TableBody>
+        <TableFoot>
+          <TableRow>
+            <TableCell colSpan={COLS}>Total</TableCell>
+          </TableRow>
+        </TableFoot>
+      </Table>
+    </div>
+  );
+}
+
+beforeEach(async () => {
+  await page.viewport(800, 600);
+});
+
+it('accepts maxHeight="screen" and limits the wrapper to the viewport', async () => {
+  await page.viewport(800, 300);
+  render(
+    <Table aria-label="Tall" maxHeight="screen">
+      <TableBody>
+        {Array.from({ length: 40 }, (_, r) => (
+          <TableRow key={r}>
+            <TableCell>{r}</TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>,
+  );
+  expect(wrapperOf().clientHeight).toBeLessThanOrEqual(300);
+  expect(wrapperOf().scrollHeight).toBeGreaterThan(300);
+});
+
+it('a wide table scrolls in its wrapper at 320px without widening the page or breaking short words', async () => {
+  await page.viewport(320, 600);
+  render(
+    <Table aria-label="Wide">
+      <TableHead>
+        <TableRow>
+          {Array.from({ length: COLS }, (_, c) => (
+            <TableHeader key={c}>Enterprise</TableHeader>
+          ))}
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        <TableRow>
+          {Array.from({ length: COLS }, (_, c) => (
+            <TableCell key={c}>Quarterly</TableCell>
+          ))}
+        </TableRow>
+      </TableBody>
+    </Table>,
+  );
+  const wrapper = wrapperOf();
+  expect(wrapper.scrollWidth).toBeGreaterThan(wrapper.clientWidth);
+  expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(320);
+  for (const cell of document.querySelectorAll('th, td')) {
+    const range = document.createRange();
+    range.selectNodeContents(cell);
+    expect(range.getClientRects()).toHaveLength(1);
+  }
+});
+
+it('a long URL scrolls in the wrapper and does not widen the page', async () => {
+  await page.viewport(320, 600);
+  render(
+    <Table aria-label="Urls">
+      <TableBody>
+        <TableRow>
+          <TableCell>
+            https://example.com/a/very/long/path/that/keeps/going/without/spaces/at/all/so/it/must/wrap
+          </TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>,
+  );
+  // break-word doesn't shrink min-content, so the wrapper scrolls; the page doesn't widen.
+  expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(320);
+});
+
+it('scrollable scrolls by keyboard', async () => {
+  render(<Grid />);
+  const wrapper = screen.getByRole('region', { name: 'Grid' });
+  wrapper.focus();
+  expect(wrapper).toHaveFocus();
+  await userEvent.keyboard('{ArrowRight}');
+  await expect.poll(() => wrapper.scrollLeft).toBeGreaterThan(0);
+  await userEvent.keyboard('{ArrowDown}');
+  await expect.poll(() => wrapper.scrollTop).toBeGreaterThan(0);
+});
+
+it('stickyHeader stays visible with its bottom border; rows do not show through', async () => {
+  render(<Grid stickyHeader />);
+  const wrapper = wrapperOf();
+  wrapper.scrollTop = 200;
+  await expect.poll(() => wrapper.scrollTop).toBeGreaterThan(100);
+  const th = headerCell(2);
+  expect(rect(th).top).toBeCloseTo(rect(wrapper).top, 0);
+  expect(css(th).borderBottomWidth).toBe('1px');
+  expect(css(th).backgroundColor).toBe(resolved(vars.color.bg.surface));
+  const r = rect(th);
+  const top = document.elementFromPoint(
+    r.left + r.width / 2,
+    r.top + r.height / 2,
+  );
+  expect(top?.closest('th')).toBe(th);
+  // Just under the rule, a body cell shows, so the header isn't the whole column.
+  const below = document.elementFromPoint(r.left + r.width / 2, r.bottom + 4);
+  expect(below?.closest('td, tbody th')).not.toBeNull();
+});
+
+describe.each([
+  ['ltr', 1],
+  ['rtl', -1],
+] as const)('stickyFirstColumn in %s', (dir, sign) => {
+  it('stays in view with stickyHeader, and a colSpan cell does not stick', async () => {
+    render(
+      <div dir={dir}>
+        <Grid stickyHeader stickyFirstColumn />
+      </div>,
+    );
+    const wrapper = wrapperOf();
+    wrapper.scrollLeft = sign * 400;
+    wrapper.scrollTop = 120;
+    await expect.poll(() => Math.abs(wrapper.scrollLeft)).toBeGreaterThan(100);
+    const w = rect(wrapper);
+    const rowHeader = screen.getByRole('rowheader', { name: 'Row 5' });
+    const edge = dir === 'ltr' ? rect(rowHeader).left : rect(rowHeader).right;
+    expect(edge).toBeCloseTo(dir === 'ltr' ? w.left : w.right, 0);
+    expect(css(rowHeader).borderInlineEndWidth).toBe('1px');
+    // The corner stays in the corner of both.
+    const corner = headerCell(0);
+    expect(rect(corner).top).toBeCloseTo(w.top, 0);
+    expect(dir === 'ltr' ? rect(corner).left : rect(corner).right).toBeCloseTo(
+      dir === 'ltr' ? w.left : w.right,
+      0,
+    );
+    expect(Number(css(corner).zIndex)).toBeGreaterThan(
+      Number(css(rowHeader).zIndex),
+    );
+    // The colSpan cell scrolls away with the table.
+    expect(css(screen.getByText('Total')).position).not.toBe('sticky');
+  });
+});
+
+it('hovered and selected rows keep their background and bar in the sticky column', async () => {
+  render(<Grid stickyFirstColumn selectedRow={3} />);
+  const selected = screen.getByRole('rowheader', { name: 'Row 3' });
+  const row = selected.closest('tr') as HTMLElement;
+  expect(css(row).backgroundColor).toBe(resolved(vars.color.bg.accentSubtle));
+  expect(css(selected).backgroundColor).toBe(
+    resolved(vars.color.bg.accentSubtle),
+  );
+  const bar = css(selected, '::before');
+  expect(bar.width).toBe('2px');
+  expect(bar.backgroundColor).toBe(resolved(vars.color.bg.accent));
+
+  const other = screen.getByRole('rowheader', { name: 'Row 1' });
+  expect(css(other).backgroundColor).toBe(resolved(vars.color.bg.surface));
+  await userEvent.hover(other);
+  await expect
+    .poll(() => css(other).backgroundColor)
+    .toBe(resolved(vars.color.bg.muted));
+  expect(css(other.closest('tr') as Element).backgroundColor).toBe(
+    resolved(vars.color.bg.muted),
+  );
+});
+
+it('stickyBackground applies each value to sticky cells only', () => {
+  const values = ['canvas', 'surface', 'raised', 'sunken'] as const;
+  for (const value of values) {
+    const { unmount } = render(
+      <Grid stickyHeader stickyFirstColumn stickyBackground={value} />,
+    );
+    const expected = resolved(vars.color.bg[value]);
+    expect(css(headerCell(3)).backgroundColor).toBe(expected);
+    expect(
+      css(screen.getByRole('rowheader', { name: 'Row 2' })).backgroundColor,
+    ).toBe(expected);
+    expect(
+      css(screen.getByText('R2C3').closest('td') as Element).backgroundColor,
+    ).toBe(transparent);
+    unmount();
+  }
+});
+
+it('stickyBackground has no effect without a sticky prop', () => {
+  render(<Grid stickyBackground="sunken" />);
+  expect(css(headerCell(1)).backgroundColor).toBe(transparent);
+});
+
+describe.each(['md', 'sm'] as const)(
+  'a focused element scrolled into view is not under a sticky part (%s)',
+  (size) => {
+    it('clears the sticky header and first column', async () => {
+      render(<Grid size={size} stickyHeader stickyFirstColumn />);
+      const wrapper = wrapperOf();
+      const target = document.querySelector<HTMLElement>('[data-cell="14-2"]')!;
+      // Scroll away first, so focus has to scroll back toward the sticky parts.
+      wrapper.scrollLeft = 1000;
+      wrapper.scrollTop = 2000;
+      target.focus({ preventScroll: true });
+      target.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+      await expect.poll(() => wrapper.scrollTop).toBeLessThan(2000);
+      const header = rect(headerCell(0));
+      const column = rect(screen.getByRole('rowheader', { name: 'Row 14' }));
+      const t = rect(target);
+      expect(t.top).toBeGreaterThanOrEqual(header.bottom);
+      expect(t.left).toBeGreaterThanOrEqual(column.right);
+      // Also from the other side.
+      wrapper.scrollLeft = 0;
+      wrapper.scrollTop = 0;
+      const first = document.querySelector<HTMLElement>('[data-cell="20-9"]')!;
+      first.focus({ preventScroll: true });
+      first.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+      await expect.poll(() => wrapper.scrollTop).toBeGreaterThan(0);
+      expect(rect(first).top).toBeGreaterThanOrEqual(header.bottom);
+      expect(rect(first).left).toBeGreaterThanOrEqual(column.right);
+    });
+  },
+);
+
+it('focus rings and the selected bar are not clipped by the wrapper', async () => {
+  render(
+    <Table aria-label="Edge" stickyFirstColumn>
+      <TableBody>
+        <TableRow selected>
+          <TableCell>
+            <Button size="sm">Edge</Button>
+          </TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>,
+  );
+  const button = screen.getByRole('button', { name: 'Edge' });
+  await userEvent.tab();
+  expect(button).toHaveFocus();
+  const style = css(button);
+  const reach =
+    parseFloat(style.outlineWidth) + parseFloat(style.outlineOffset);
+  expect(parseFloat(style.outlineWidth)).toBeGreaterThan(0);
+  const b = rect(button);
+  const w = rect(wrapperOf());
+  expect(b.left - reach).toBeGreaterThanOrEqual(w.left);
+  expect(b.top - reach).toBeGreaterThanOrEqual(w.top);
+  expect(b.right + reach).toBeLessThanOrEqual(w.right);
+  expect(b.bottom + reach).toBeLessThanOrEqual(w.bottom);
+  const cell = button.closest('td') as HTMLElement;
+  expect(rect(cell).left).toBeGreaterThanOrEqual(w.left);
+  expect(css(cell, '::before').width).toBe('2px');
+});
+
+it('a Menu opened from a cell sits above the sticky header and column', async () => {
+  render(
+    <div style={{ height: 300, width: 520 }}>
+      <Table aria-label="Menus" maxHeight="full" stickyHeader stickyFirstColumn>
+        <TableHead>
+          <TableRow>
+            <TableHeader>Name</TableHeader>
+            <TableHeader>Plan</TableHeader>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {Array.from({ length: 8 }, (_, r) => (
+            <TableRow key={r}>
+              <TableHeader scope="row">
+                {r === 0 ? (
+                  <Menu>
+                    <MenuTrigger>
+                      <Button size="sm">Actions</Button>
+                    </MenuTrigger>
+                    <MenuContent>
+                      <MenuItem>Edit</MenuItem>
+                      <MenuItem>Delete</MenuItem>
+                      <MenuItem>Archive</MenuItem>
+                    </MenuContent>
+                  </Menu>
+                ) : (
+                  `Row ${r}`
+                )}
+              </TableHeader>
+              <TableCell>Pro</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>,
+  );
+  await userEvent.click(screen.getByRole('button', { name: 'Actions' }));
+  const popup = await screen.findByRole('menu');
+  await expect.poll(() => css(popup).opacity).toBe('1');
+  const p = rect(popup);
+  const x = p.left + p.width / 2;
+  const y = p.top + p.height / 2;
+  const stack = document.elementsFromPoint(x, y);
+  // The popup overlaps a sticky first-column cell, and is still on top.
+  expect(
+    stack.some(
+      (el) =>
+        el.closest('tbody th') &&
+        css(el.closest('th') as Element).position === 'sticky',
+    ),
+  ).toBe(true);
+  expect(popup.contains(document.elementFromPoint(x, y))).toBe(true);
+});
+
+it('keeps both borders of the header and the first body row, a 2px rule between them (Spec 13)', () => {
+  render(<Grid />);
+  const th = headerCell(1);
+  const td = screen.getByText('R0C1').closest('td') as HTMLElement;
+  expect(css(th).borderBottomWidth).toBe('1px');
+  expect(css(td).borderTopWidth).toBe('1px');
+  // Measured: the two borders touch, so they stack into one 2px rule.
+  expect(rect(td).top - rect(th).bottom).toBe(0);
+});
+
+it('inside Prose: keeps its own styles, the wrapper has Prose margins, and still scrolls', async () => {
+  await page.viewport(320, 600);
+  render(
+    <Prose>
+      <p>Before</p>
+      <Table aria-label="Prose table">
+        <TableHead>
+          <TableRow>
+            {Array.from({ length: COLS }, (_, c) => (
+              <TableHeader key={c}>Quarterly</TableHeader>
+            ))}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          <TableRow>
+            {Array.from({ length: COLS }, (_, c) => (
+              <TableCell key={c}>Enterprise</TableCell>
+            ))}
+          </TableRow>
+        </TableBody>
+      </Table>
+      <p>After</p>
+    </Prose>,
+  );
+  const wrapper = wrapperOf();
+  const fontSize = parseFloat(css(wrapper).fontSize);
+  expect(parseFloat(css(wrapper).marginTop)).toBeCloseTo(fontSize * 1.25, 0);
+  expect(parseFloat(css(wrapper).marginBottom)).toBeCloseTo(fontSize * 1.25, 0);
+  const table = screen.getByRole('table');
+  expect(css(table).marginTop).toBe('0px');
+  expect(css(table).borderCollapse).toBe('separate');
+  const cell = document.querySelector('tbody td')!;
+  expect(css(cell).overflowWrap).toBe('break-word');
+  expect(css(cell).fontSize).toBe(css(resolvedProbe('sm')).fontSize);
+  expect(wrapper.scrollWidth).toBeGreaterThan(wrapper.clientWidth);
+});
+
+function resolvedProbe(size: 'sm'): HTMLElement {
+  const probe = document.createElement('div');
+  probe.style.fontSize = vars.font.size[size];
+  document.body.append(probe);
+  return probe;
+}

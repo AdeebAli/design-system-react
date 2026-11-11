@@ -1,5 +1,6 @@
 import {
   createVar,
+  fallbackVar,
   globalStyle,
   style,
   styleVariants,
@@ -13,6 +14,10 @@ const hover = '(hover: hover)';
 
 const padBlock = createVar();
 const padInline = createVar();
+/** A row's opaque hover or selected color, which sticky cells paint over their own. */
+const rowBg = createVar();
+/** The background of sticky cells, set from `stickyBackground`. */
+const stickyBg = createVar();
 const border = `${vars.borderWidth.thin} solid ${vars.color.border.subtle}`;
 
 /** The scroll container. It also contains sticky stacking (Spec 13). */
@@ -21,6 +26,26 @@ export const wrapper = style(
     overflowX: 'auto',
     isolation: 'isolate',
     maxWidth: '100%',
+  }),
+);
+
+// The reserved sizes come from tokens: the header is two paddings, one line of
+// `xs` text, and its rule, plus a gap for the focus ring. The first column has
+// no token-sized width, so its cell is capped (below) and the cap is reserved.
+const headerReserve = (pad: string) =>
+  `calc(${pad} * 2 + ${vars.font.size.xs} * ${vars.font.lineHeight.normal} + ${vars.borderWidth.thin} + ${vars.space['1']})`;
+const columnCap = `calc(${vars.size.dialog.sm} / 2)`;
+
+/** `scroll-padding` that keeps focus clear of a sticky header, by `size`. */
+export const stickyHeaderPad = styleVariants({
+  md: layered({ scrollPaddingBlockStart: headerReserve(vars.space['2']) }),
+  sm: layered({ scrollPaddingBlockStart: headerReserve(vars.space['1']) }),
+});
+
+/** `scroll-padding` that keeps focus clear of a sticky first column. */
+export const stickyColumnPad = style(
+  layered({
+    scrollPaddingInlineStart: `calc(${columnCap} + ${vars.borderWidth.thin} + ${vars.space['1']})`,
   }),
 );
 
@@ -36,6 +61,13 @@ export const table = style(
 );
 
 export const hoverable = style({});
+
+export const stickyBackground = styleVariants({
+  canvas: layered({ vars: { [stickyBg]: vars.color.bg.canvas } }),
+  surface: layered({ vars: { [stickyBg]: vars.color.bg.surface } }),
+  raised: layered({ vars: { [stickyBg]: vars.color.bg.raised } }),
+  sunken: layered({ vars: { [stickyBg]: vars.color.bg.sunken } }),
+});
 
 export const caption = style(
   layered({
@@ -152,11 +184,11 @@ export const row = style({});
 
 /** The selected look, for `TableRow` and `DataTable`. */
 export const rowSelected = style(
-  layered({ background: vars.color.bg.accentSubtle }),
+  layered({
+    background: vars.color.bg.accentSubtle,
+    vars: { [rowBg]: vars.color.bg.accentSubtle },
+  }),
 );
-
-/** The sticky look, filled in by the sticky props. */
-export const stickyCell = style({});
 
 const marker = {
   content: '""',
@@ -177,8 +209,56 @@ globalStyle(
   {
     '@layer': {
       [componentsLayer]: {
-        '@media': { [hover]: { background: vars.color.bg.muted } },
+        '@media': {
+          [hover]: {
+            background: vars.color.bg.muted,
+            vars: { [rowBg]: vars.color.bg.muted },
+          },
+        },
       },
+    },
+  },
+);
+
+// Sticky parts. `Table` sets the data attributes, so the cells need no props
+// and stay server components. Sticky z-indexes stack inside the wrapper's
+// isolation, so page overlays still sit above them.
+const sticky = vars.zIndex.sticky;
+const notSpanning = ':not([colspan]:not([colspan="1"]))';
+const headerCells = `${table}[data-sticky-header] > thead > tr > *`;
+const firstCells = `${table}[data-sticky-column] > :is(thead, tbody, tfoot) > tr > :first-child${notSpanning}`;
+
+globalStyle(headerCells, {
+  '@layer': {
+    [componentsLayer]: {
+      position: 'sticky',
+      insetBlockStart: 0,
+      zIndex: sticky,
+      background: stickyBg,
+    },
+  },
+});
+
+globalStyle(firstCells, {
+  '@layer': {
+    [componentsLayer]: {
+      position: 'sticky',
+      insetInlineStart: 0,
+      zIndex: sticky,
+      maxInlineSize: columnCap,
+      borderInlineEnd: border,
+      // A hovered or selected row's opaque color replaces the sticky one.
+      background: fallbackVar(rowBg, stickyBg),
+    },
+  },
+});
+
+// The corner sits above both the header row and the first column.
+globalStyle(
+  `${table}[data-sticky-header][data-sticky-column] > thead > tr > :first-child${notSpanning}`,
+  {
+    '@layer': {
+      [componentsLayer]: { zIndex: `calc(${sticky} + 1)` },
     },
   },
 );

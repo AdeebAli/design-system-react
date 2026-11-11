@@ -186,3 +186,58 @@ export const InsideCard: Story = {
     </Card>
   ),
 };
+
+const MONTHS = Array.from({ length: 12 }, (_, m) => `Month ${m + 1}`);
+
+function Wide(props: Partial<React.ComponentProps<typeof Table>>) {
+  return (
+    <div style={{ height: 280, width: 480 }}>
+      <Table aria-label="Spend by month" maxHeight="full" scrollable {...props}>
+        <TableHead>
+          <TableRow>
+            <TableHeader>Name</TableHeader>
+            {MONTHS.map((month) => (
+              <TableHeader key={month} align="end">
+                {month}
+              </TableHeader>
+            ))}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {Array.from({ length: 20 }, (_, r) => (
+            <TableRow key={r} selected={r === 2}>
+              <TableHeader scope="row">{`Customer ${r + 1}`}</TableHeader>
+              {MONTHS.map((month, m) => (
+                <TableCell key={month} align="end">
+                  {(r + 1) * (m + 3) * 11}
+                </TableCell>
+              ))}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  );
+}
+
+export const StickyHeader: Story = {
+  render: () => <Wide stickyHeader />,
+};
+
+export const StickyFirstColumn: Story = {
+  render: () => <Wide stickyFirstColumn />,
+};
+
+export const StickyHeaderAndColumn: Story = {
+  render: () => <Wide stickyHeader stickyFirstColumn />,
+};
+
+export const StickyOnCanvas: Story = {
+  render: () => (
+    <Wide stickyHeader stickyFirstColumn stickyBackground="canvas" />
+  ),
+};
+
+export const StickySmall: Story = {
+  render: () => <Wide size="sm" stickyHeader stickyFirstColumn />,
+};
