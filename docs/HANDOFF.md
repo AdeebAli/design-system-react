@@ -1,6 +1,6 @@
 # Handoff: design-system-react
 
-- **Date:** 2026-11-10
+- **Date:** 2026-11-11
 
 ## Goal
 
@@ -8,82 +8,127 @@ Build `@adeebali/design-system-react`, a general-purpose React design system. Sp
 
 ## Status
 
-- **Done:** milestone v0.1 (specs 01–07) is merged to `main` as `9c49e84` (PR #17), and released as v0.1.0 (`f49377f`) to GitHub Packages, with Storybook at https://adeebali.github.io/design-system-react/.
-- **Done:** milestone v0.2 (Spec 08 Bento, Spec 09 Forms) is merged as `ffb1104` (PR #20) and released as v0.2.0 (`78202da`).
-- **Done:** milestone v0.3 (Spec 10 Navigation, Spec 11 Prose) is merged as `2a20a62` (PR #22) and released as v0.3.0 (`c0eb2a7`). It adds `NavBar`, `NavBarLink`, `Tabs`, `TabsList`, `Tab`, `TabsPanel`, `Prose`, `NotProse`, the "Navigation and prose" overview page, and the "Markdown and MDX" docs, plus fixes to older code: stricter theme validation, a tested nonce-based CSP, `RadioGroup` focus through `field.ref`, the split Vite fixture bundle, and dependency audits in CI. The plan was `docs/superpowers/plans/2026-11-09-v0-3-navigation-and-prose.md`.
-- **Next:** the v0.4 plan (Spec 12 Overlays). Not started.
+- **Done:** v0.1 (specs 01–07), v0.2 (Specs 08–09), v0.3 (Specs 10–11), each merged and released. v0.3.0 is `c0eb2a7`, with Storybook at https://adeebali.github.io/design-system-react/.
+- **Built, not pushed:** milestone v0.4, Spec 12 Overlays and Spec 13 Data, as Spec 00 sets it. The owner chose both specs over the old handoff's "Spec 12 only".
+  - Where: branch `feat/v0.4-overlays-and-data`, 45 commits on `main` (`822d742`), head `0d6e742`.
+  - Plan: `docs/superpowers/plans/2026-11-10-v0-4-overlays-and-data.md`.
+  - What it adds:
+    - Overlays: `Dialog` (with `alert`), `Popover`, `Tooltip`/`TooltipProvider`, `Menu` (with submenus), and `Toast` (`ToastProvider`, `useToast`, `createToastManager`, `toast.promise`).
+    - Data: `Table` and its parts, `DataTable`, `Pagination`, `Skeleton` and `EmptyState`.
+    - The "Overlays" and "Data" overview pages, and Next/Vite fixture pages.
+  - It ran with subagent-driven development. Every task had a spec and quality review, and a whole-branch review on Opus was followed by one fix wave and its re-review.
+- **Waiting on the owner:** pushing, the draft PR, visual baselines, the manual checks, and the decisions in open thread 1. The project `CLAUDE.md` says pushes need a request, so nothing has been pushed.
 
 ## Decisions
 
-Architecture decisions are in `docs/adr/`. Build decisions, with what each costs if wrong, are the `Ruling:` lines in `.superpowers/sdd/2026-11-09-v0-3-navigation-and-prose/progress.md` (local and gitignored), and the v0.1 and v0.2 ledgers beside it. The v0.3 ones worth knowing without opening the file:
+Architecture decisions are in `docs/adr/`. Every v0.4 build decision, with what it costs if wrong, is a `Ruling:` line in `.superpowers/sdd/2026-11-10-v0-4-overlays-and-data/progress.md` (local, gitignored). That ledger also holds the deferred minor findings. Earlier milestones' ledgers sit beside it. The v0.4 decisions worth knowing without opening the ledger:
 
-- **`NavBar` structure:**
-  - `Collapsible.Root` renders the `nav`, which is one CSS grid. Below `md`, the menu button sits after `actions` by default (`menuPosition="end"`), or before the brand (`"start"`), through a rule scoped to `not all and (min-width: md)` so it can't override the desktop layout.
-  - `menuVariant` takes any `IconButton` variant, with that variant's default tone (so `solid` is accent). Rejected: a `menuTone` prop, and a third position between brand and actions.
-  - From `md` up, CSS overrides the closed panel's `hidden`, so links show without JavaScript. The active bar is an `::after` border, so forced colors keeps it.
-- **`NavBar` `Escape` handling:** it acts only when the panel is open, the event isn't `defaultPrevented`, and `event.currentTarget` (the `nav`) contains the target. Rejected: a `ref` on the `nav`, because a consumer's `ref` overrode it.
-- **`next/link` from a server component (Spec 10 amended in `9d2e227`):** a one-line `'use client'` re-export, shown in the docs and used by the fixture. Rejected: closing the panel from a click handler on the list. Next 16.4.5's `Link` calls the consumer's `onClick`, then `preventDefault()` on every in-app click before routing, so a list handler couldn't tell that from a project's own `preventDefault()`. It would drop "a prevented click keeps the panel open" and the misuse warning.
-- **`NavBar` focus after a link click:** the panel closes, and focus moves to the menu button only if `checkVisibility()` says it's shown.
-- **Sticky `NavBar` with the menu open:** below `md`, the open panel is capped at the viewport height minus the bar, and scrolls (WCAG 1.4.10).
-- **`Tabs` marker handoff:** `TabsList` always renders Base UI's `Indicator` without `renderBeforeHydration`, which injects an inline script and breaks strict CSP. One `:has()` rule turns off the CSS marker once the `Indicator` shows. The list has `scroll-padding-inline` so a focused tab's ring isn't clipped.
-- **`Prose` rules:** every descendant rule goes through `scoped()` in `Prose.css.ts`, so the `NotProse` exclusion can't be forgotten.
-- **`Prose` is a styled element and doesn't process content (Spec 11, `2380ce3`):** its only own prop is `size`. `children` (including MDX) and `dangerouslySetInnerHTML` pass through as on any element, and `Prose` doesn't sanitize; the docs say to sanitize HTML you didn't write where it's produced. Rejected, in order tried:
-  - blocking `dangerouslySetInnerHTML` (in the type, or ignoring it at runtime): the same HTML then goes in a wrapper `div`, which adds no safety and leaves the outer margins untrimmed, 58px above the title and 23px below the last paragraph, measured in Chromium. Ignoring it at runtime also rendered an empty article in production;
-  - an `html` prop that sanitizes, which needs `jsdom` on the server (`isomorphic-dompurify`), and a `markdown` prop, which adds a Markdown parser. Each does work the project's content pipeline already does.
-- **Heading scroll margin:** `var(--ds-prose-scroll-margin, <NavBar clearance + space.4>)`. The clearance is computed from tokens in `src/styles/sticky.ts`, which both `NavBar.css.ts` and `Prose.css.ts` import, so `Prose` doesn't depend on `NavBar`'s styles. Rejected: a theme token, which changes the theme contract.
-- **Theme validation (Spec 03 amended):** values throw for `{ } ; < \`, `/*`, an unclosed quote, an unclosed or misordered `(` or `[` outside quotes, a line break inside quotes, a control character other than a tab or line break, and `url()` or `image-set()` in any case. Each was checked in Chromium: an unclosed bracket, or a newline, CR, or form feed inside quotes, drops every later theme rule, including reduced motion. Line breaks and tabs outside quotes, and tabs inside them, are harmless, so multi-line template literals stay valid.
-- **CSP (Spec 03 and README):** `ColorModeScript` and `ThemeProvider` take the nonce. The policy must also allow `style-src-attr 'unsafe-inline'`: Base UI hides `Select`, `Checkbox`, `Switch`, and `RadioGroup`'s native inputs with `style` attributes in server HTML. Without it, a `Select`'s hidden input shows on the page (seen in Chromium, 174×27). The Next fixture serves `/csp` from its own root layout in `app/csp/`, with the other pages in an `app/(site)` route group so they stay static. Rejected: reading the nonce in the shared root layout, which makes every page dynamic.
-- **`RadioGroup` focus (Spec 09 amended):** its `ref` stays the group element (Spec 05), but that element's `focus()` is replaced to focus the checked radio, or the first enabled one. So React Hook Form's `field.ref` works. Rejected: `tabIndex={-1}` on the group, which lands focus on something people can't change.
-- **Spreading props onto Base UI parts:** where a part is typed for another element, the element's props go on the `render` element. `Textarea` is the exception: `Field.Control` reads `id`, `name`, `value`, `defaultValue`, and `autoFocus` itself.
-- **Client-module check:** `scripts/client-modules.mjs` derives which `dist` modules need `"use client"` from their imports. Index files that only re-export are exempt.
-- **Dependency audits in CI:** the `static` job runs `npm audit --omit=dev` (any runtime advisory fails) and `npm audit --audit-level=high`. Rejected: failing at moderate now, which would turn CI red with no fix available.
-- **Vite fixture bundle:** split into `react`, `design-system`, and `vendor` chunks (largest 276 kB). Rejected: raising `chunkSizeWarningLimit`, which hides the warning.
-- **Visual baselines (carried from v0.2):** the workflow runs when the `update-baselines` label is added, or by hand, not on every push. It runs `--update-snapshots=changed` (`288c186`), which rewrites only screenshots that fail the comparison, and missing ones. Rejected: `all`, which rewrote any screenshot whose bytes differed, so rendering noise flipped the `Tabs` keep-mounted baselines on every run (Playwright 1.65, `matchers/expect.js`). After it commits to a PR, GitHub holds CI on that commit until the owner selects **Approve workflows to run** in the merge box. Rejected: a stored token. Don't close and reopen the PR.
+- **Text direction for Base UI comes from the document root.**
+  - Base UI reads direction from React's `DirectionContext` (default `ltr`), not the DOM `dir`, for arrow keys, `side` start and end, and submenus.
+  - `src/components/overlays/direction.tsx` provides it from `document.documentElement`, through a shared `MutationObserver`, and `Menu`, `Popover` and `Tooltip` use it.
+  - A `dir` on a subtree isn't followed. The popups are portaled to `body`, so the root governs them anyway.
+- **The popup gap is read at runtime.** `gapOffset` is `() => number` and reads the `space.1.5` variable from the root. Base UI 1.9.0's offset function gets only sizes, never the element. A theme override of `space.1.5` moves the gap.
+- **`createToastManager` queues calls until a `ToastProvider` connects.**
+  - Base UI subscribes in an effect that runs after children's effects. Without the queue, a toast added in a page's mount effect was lost.
+  - Toasts follow these rules:
+    - The provider's `duration` goes to Base UI's `timeout`.
+    - `update` derives the timeout from the toast's merged tone, action and duration.
+    - If `toast.promise`'s `success` function throws, the toast settles as the error state.
+- **The danger toast root keeps Base UI's `aria-hidden` until focused.** It's announced through Base UI's hidden `role="alert"`. Screen reader users reach it with `F6`, which the docs say. Rejected: `aria-hidden={false}` on the root, which risked a double announcement.
+- **Open-menu stories turn off only axe `aria-hidden-focus`.** Base UI's focus-guard spans trip it. Popover and Dialog pass only because axe treats any visible `role="dialog"` as modal.
+- **The `DataTable` selected count is one `role="status"` element** that shows the count from the first render. Rejected: a visible `aria-hidden` count plus an empty live region, which hid the count from screen reader users.
+- **`DataTable` paging survives bad input.**
+  - `NaN`/`Infinity` values for `totalRows`, `pageSize` and `page` are handled, after a security review found a set-state loop and a negative-slice bug.
+  - An invalid `locale` falls back to the default collator, with a warning.
+  - Mixed number and string columns put numbers first in both directions, and `NaN` sorts like `null`.
+  - Clicks inside popups portaled from a cell don't toggle the row.
+- **Skeleton rows aren't capped.** Spec 13 says loading shows `pageSize` rows.
+- **The TanStack recipe targets v8 (8.21.3).** npm's `latest` is 9.x, which has no `useReactTable`. It was checked against the real package, and no dependency was added.
+- **Visual baselines (carried from v0.2).** The workflow runs when the `update-baselines` label is added, with `--update-snapshots=changed`. After it commits to a PR, GitHub holds CI until the owner selects **Approve workflows to run**. Don't close and reopen the PR.
 
 ## Changes
 
-- PR #22 squash merged as `2a20a62`; branch `feat/v0.3-navigation-and-prose` deleted locally and on the remote.
-- `npm run release -- minor` made `c0eb2a7` (v0.3.0) and tag `v0.3.0` on `main`, and created the GitHub Release.
-- Release notes edited by hand: a "Breaking: stricter theme validation" section first (the four new rejections, which functions throw, the v0.2.0 rules still applying, and how to fix it), then new components, fixes, and the generated changelog. Written from `git diff v0.2.0 v0.3.0 -- src/theme/validateTheme.ts`.
-- This note, on its own branch and PR (as #21 did for v0.2.0).
-- v0.3 work, for reference: specs 03, 09, 10, 11 amended; README gains "6. A strict Content Security Policy"; new `src/styles/sticky.ts`, `fixtures/next-app/proxy.ts`, `fixtures/next-app/app/csp/`, `tests/fixtures/csp.spec.ts`.
+- Branch `feat/v0.4-overlays-and-data`: 45 commits, 156 files, +13,409/−24. The working tree is clean.
+- New component folders under `src/components/`:
+  - overlays: `Dialog`, `Popover`, `Tooltip`, `Menu`, `Toast`;
+  - data: `Table`, `DataTable`, `Pagination`, `Skeleton`, `EmptyState`;
+  - shared internals: `overlays/`.
+- New overview pages: `Overlays.stories.tsx`, `Data.stories.tsx`, and `Overlays.browser.test.tsx`.
+- New internal icons: `X`, `ChevronRight`, `ChevronLeft`, `ArrowUpDown`, `CircleCheck`, `CircleAlert`, `TriangleAlert`, `Info`.
+- Changed: `ColorModeToggle` now accepts `ref`, `style` and button props, and composes your `onClick`.
+- v0.3 minors fixed in `529457d`:
+  - the Tabs `Indicator` under RTL;
+  - `onValueChange(null)` no longer reaches the callback;
+  - `client-modules.mjs` now detects namespace and default-plus-named imports;
+  - `Prose` `kbd` uses a logical border;
+  - docs note: `Prose` inside `NotProse` is unstyled.
+- Config and scripts: `vite.config.ts` pre-bundles the new Base UI subpaths. `scripts/verify-dist.mjs` lists the server modules for Table, Pagination, Skeleton and EmptyState.
+- Fixtures: `fixtures/next-app/app/(site)/{overlays,data}/`, `CustomersTable.tsx`, and `tests/fixtures/{overlays,data}.spec.ts`. The README gains an "Overlays and data" section.
 
 ## Verification
 
-- The release script's checks passed before it tagged, including fixtures 57 passed, 15 skipped (the skips are tests scoped to one fixture app).
-- Publish run `42756392911` succeeded; its log shows `+ @adeebali/design-system-react@0.3.0` to `https://npm.pkg.github.com/` with tag `latest`.
-- The owner did PR #22's manual checks: screen reader, forced colors, and 200% text on `NavBar`, `Tabs`, and `Prose` (the PR's boxes were left unchecked).
-- CI passed on `2a20a62` and on `c0eb2a7`. The `storybook-pages` run on the release succeeded, and https://adeebali.github.io/design-system-react/ returns 200.
-- Before the merge, `npm run check` exited 0 on `0c38272` (unit 463, scripts 20, browser and stories 466 with axe in both modes, fixtures 57), and CI passed on `0c38272`, all six jobs. Each new v0.3 test failed first, or when the code was broken on purpose (details in the v0.3 ledger).
+- **Checks on `f54334a`:** `npm ci && npm run check` exited 0.
+  - Unit: 746 tests.
+  - Stories and browser: 730 tests, with axe in both modes.
+  - Fixtures: 64 passed, 22 skipped by design.
+- **Checks on `0d6e742`, after the fix wave:** typecheck, lint, format:check, `npm test` (752 + 22 script tests), `test:stories` (749), build with verify-dist, and `test:fixtures` (64 passed, 22 skipped) all exited 0, as the fix report states. The only warning is Node's existing DEP0205.
+- **Tests were seen failing.** Each new test failed before its fix, or failed when the code was broken on purpose. The evidence is in the per-task reports in the ledger folder.
 - **Not verified:**
-  - Installing 0.3.0 from GitHub Packages. `gh` lacks `read:packages`, so the registry wasn't queried directly. Trigger: none; the v0.1 install proved the pipeline, and Publish succeeded.
+  - CI and visual baselines on the v0.4 branch. Trigger: next step 1.
+  - The manual checks. Trigger: next step 2, and the PR checklist.
+  - Installing 0.3.0 from GitHub Packages, carried forward. `gh` lacks `read:packages`. Trigger: none; the v0.1 install proved the pipeline, and Publish succeeded.
 
 ## Open threads
 
-1. **Deferred minors from the v0.3 review.** Trigger: the v0.4 plan decides each as a task or a drop. (Carried forward.)
-   - The Tabs `Indicator` uses `insetInlineStart` with a physical `translateX`, so it's misplaced under `dir="rtl"`. Fix: physical `left: 0`, plus an RTL test.
-   - An uncontrolled `Tabs` whose `defaultValue` matches no tab falls back to the first enabled tab. With no enabled tab, `onValueChange(null)` reaches a callback typed `(value: string)`.
-   - A `Prose` inside a `NotProse` gets no styles. It's undocumented.
-   - `client-modules.mjs` misses `import * as React` and `import React, { useState }`. None exist today.
-   - `Prose`'s `kbd` rule uses physical `borderBottomWidth`.
-2. **11 moderate `npm audit` advisories, dev tooling only:** `glob` and `minimatch` through `typescript-eslint`. 8.72.2 is the latest `typescript-eslint` and is affected; `--force` installs an incompatible version. Triggers: CI fails if one reaches runtime dependencies or rises to high; the v0.4 plan must include a step to rerun `npm audit` and upgrade once a fixed version exists. (Carried forward.)
-3. **`ColorModeToggle` doesn't accept `ref`, `style`, or pass-through button props,** which Spec 05 requires and Spec 12's `Tooltip` needs. Trigger: the v0.4 plan must include a task that adds them, with a test that wraps the toggle in a `Tooltip`. (Carried forward.)
+1. **Owner decisions from v0.4.** Trigger: the PR's "Departures from the spec" section, which must list each one before merge.
+   - **Sticky first column versus focus (Spec 13 lines 63 and 301).**
+     - Chrome ignores `max-inline-size` on auto-layout table cells, so the `scroll-padding` reserve (about 12rem) can't bound the column. Measured: a 543px first column fully hid a focused cell of about 110px.
+     - The docs tell you to keep row headers short. The options:
+       - (a) a fixed-width token for the sticky column;
+       - (b) a small client measuring component inside the server `Table` (Spec 13 rejected measuring for `scrollable`);
+       - (c) accept the limit and amend Spec 13.
+   - **Toast queue semantics.** Calls made while no provider is connected also queue after an unmount, and replay on the next mount. A stale danger toast could reappear. The queue is also unbounded if no provider ever mounts. Spec 12's "Outside React" line (around line 243) doesn't describe the queue. The options:
+     - document it and amend Spec 12;
+     - drop the queue on disconnect once a provider has connected;
+     - cap the queue.
+   - **`Tooltip` with `delay={0}`:** a touch tap flashes it open for one frame. With the default delay, a tap never opens it. Spec 12 says tooltips don't appear on touch.
+   - **The README** lists only the ten v0.4 components. There was no component list before. Decide whether you want a full list.
+   - **A TanStack v9 recipe**, if you want one alongside the v8 recipe.
+2. **RTL arrow keys and positioning in v0.3 widgets.** Base UI's composite root and Select read direction from React context, so `Tabs`, `RadioGroup`, `ToggleChipGroup` and `Select` (keys, and probably `Select`'s `side` positioning) likely behave as LTR under `dir="rtl"`. This isn't fixed, because it's v0.3 code you didn't ask to change. The fix is the shared `overlays/direction.tsx` provider. Trigger: the v0.5 plan must add an RTL keyboard and positioning test for each and decide the fix.
+3. **11 moderate `npm audit` advisories, dev tooling only (`glob` and `minimatch` through `typescript-eslint`).** As of 2026-11-11, 8.72.2 is the latest and is still in the affected range, and 8.72.1 is installed. Triggers: CI fails if an advisory reaches runtime dependencies or rises to high; the v0.5 plan must rerun `npm audit` and upgrade once a fix exists. (Carried forward.)
 4. **Inter comes from `inter-ui`,** because Fontsource's files drop `cv05` and `cv08`. Trigger: a test pins the 4.1.1 ranges. (Carried forward.)
 5. **`engines.node` is `>=22`.** Trigger: the release script refuses to release after April 30, 2027, until the floor and CI's Node matrix are raised. (Carried forward.)
-6. **The repo's `handoff` skill is shadowed by the owner's personal one.** They differ only in the default output (`docs/HANDOFF.md` or chat). Recommendation: delete `.claude/skills/handoff/` and say in the project `CLAUDE.md` to pass `docs/HANDOFF.md`. Trigger: none; the owner decides. (Carried forward.)
-7. **PR preview deploys** of Storybook. Recommendation: `gh-pages` subfolders from the existing `storybook-pages` workflow, with cleanup on PR close, since it needs no stored secret. Trigger: none; the owner decides. (Carried forward.)
+6. **The repo's `handoff` skill is shadowed by the owner's personal one.** Recommendation: delete `.claude/skills/handoff/`, and have the project `CLAUDE.md` say to pass `docs/HANDOFF.md`. Trigger: none; the owner decides. (Carried forward.)
+7. **PR preview deploys of Storybook.** Recommendation: `gh-pages` subfolders from the existing `storybook-pages` workflow. Trigger: none; the owner decides. (Carried forward.)
+8. **Deferred minor findings from v0.4.** The final review found none blocking. They include:
+   - the Dialog close button scrolling out of view in tall content;
+   - 4-digit page numbers sitting flush in `Pagination`;
+   - `client-modules.mjs` not detecting a bare `import React from 'react'` used as `React.useState`;
+   - test-strength polish.
+
+   They're listed in the ledger as `minor (deferred)` lines. Trigger: none; pick from the ledger when convenient.
 
 Resolved since the last note:
-- Old thread 1, the release notes on stricter theme validation: the v0.3.0 notes open with a breaking-change section (see Changes).
-- Old next step 1, merge PR #22 after its manual checks: the owner did the checks, and the PR merged as `2a20a62`.
-- Old unverified item, screen reader, forced colors, and 200% text on `NavBar`, `Tabs`, and `Prose`: done by the owner.
-- Old next step 2, release v0.3.0: released as `c0eb2a7` and published (see Verification). Its second half, the v0.4 plan, is next step 2.
-- Old unverified item, installing 0.2.0 from GitHub Packages: superseded by the same item for 0.3.0.
+- Old thread 1, the deferred v0.3 minors: fixed in `529457d` with tests, except that a bare default React import is still undetected (now thread 8).
+- Old thread 3, `ColorModeToggle` props: fixed in `e36012e` and `6cc0515`, including a test that wraps it in a `Tooltip` and a test with a forced `ThemeProvider`.
+- Old next step 1, writing the v0.4 plan: written (`f9b3cfe`) and executed. Old thread 2's audit rerun ran (thread 3).
 
 ## Next steps
 
-1. Write the v0.4 plan (Spec 12 Overlays). It must decide each item in thread 1 as a task or a drop, include the `npm audit` rerun from thread 2, and include the `ColorModeToggle` task and `Tooltip` test from thread 3.
+1. **Push and open the draft PR** for `feat/v0.4-overlays-and-data`. The PR body needs:
+   - a "Departures from the spec" section (open thread 1);
+   - the manual-check checklist (next step 2).
+
+   Then add the `update-baselines` label, review the committed screenshots, and select **Approve workflows to run**. Expected: all CI jobs pass.
+2. **Manual checks** (the owner):
+   - a screen reader pass on each overlay, on tables, sorting and selection, and on danger toasts reached with `F6`;
+   - forced colors on all ten components, including the Popover arrow;
+   - Dialog scroll lock with classic scrollbars, checking for no layout shift;
+   - the sticky first-column reserve in Firefox and Safari;
+   - Tooltip touch with `delay={0}`.
+3. Decide each item in open thread 1. Amend Specs 12 and 13 in the same PR for any departure you accept.
+4. Squash-merge, then run `npm run release -- minor` for v0.4.0, and edit the release notes.
 
 ## Resume prompt
 
-> Read `docs/HANDOFF.md`. v0.3.0 (Navigation and Prose) is merged, released, and published. Write the v0.4 implementation plan for Spec 12 Overlays, deciding open threads 1, 2, and 3.
+> Read `docs/HANDOFF.md`. v0.4 (Spec 12 Overlays and Spec 13 Data) is built on `feat/v0.4-overlays-and-data` and reviewed, but not pushed. Wait for the owner's go-ahead to push and open the draft PR with the departures and the manual-check checklist, then handle the baselines, the owner's decisions in open thread 1, the merge, and the v0.4.0 release.
