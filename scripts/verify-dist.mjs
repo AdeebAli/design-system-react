@@ -81,6 +81,8 @@ const serverModules = [
   'components/Table/TableCell.js',
   'components/Pagination/Pagination.js',
   'components/Pagination/pageRange.js',
+  'components/Skeleton/Skeleton.js',
+  'components/EmptyState/EmptyState.js',
 ];
 for (const module of serverModules) {
   const path = join(dist, module);
