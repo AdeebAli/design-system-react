@@ -143,3 +143,51 @@ it('under reduced motion transitions are 0s and a toast still closes', async () 
     });
   }
 });
+
+describe('swipe to dismiss follows text direction', () => {
+  afterEach(() => {
+    document.documentElement.removeAttribute('dir');
+  });
+
+  // A real pointer drag through CDP, from the toast's text by `dx` pixels.
+  async function drag(title: string, dx: number) {
+    const rect = (await screen.findByText(title)).getBoundingClientRect();
+    const y = rect.top + rect.height / 2;
+    const x = rect.left + 20;
+    const send = (type: string, at: number, extra = {}) =>
+      cdp().send('Input.dispatchMouseEvent', {
+        type,
+        x: at,
+        y,
+        button: 'left',
+        buttons: type === 'mouseReleased' ? 0 : 1,
+        clickCount: 1,
+        ...extra,
+      });
+    await send('mouseMoved', x, { button: 'none', buttons: 0 });
+    await send('mousePressed', x);
+    for (let i = 1; i <= 10; i++) await send('mouseMoved', x + (dx * i) / 10);
+    await send('mouseReleased', x + dx);
+  }
+
+  it.each([
+    ['rtl', 'left', -120, 120],
+    ['ltr', 'right', 120, -120],
+  ] as const)(
+    'in %s a bottom-end toast is swiped away toward the %s edge only',
+    async (dir, _edge, toward, away) => {
+      document.documentElement.dir = dir;
+      const manager = setup({ duration: 0, position: 'bottom-end' });
+      act(() => {
+        manager.add({ title: 'Swipe me' });
+      });
+      await drag('Swipe me', away);
+      await pause(600);
+      expect(screen.queryByText('Swipe me')).toBeInTheDocument();
+      await drag('Swipe me', toward);
+      await expect
+        .poll(() => screen.queryByText('Swipe me'), { timeout: 3000 })
+        .not.toBeInTheDocument();
+    },
+  );
+});

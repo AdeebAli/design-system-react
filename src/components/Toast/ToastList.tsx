@@ -2,6 +2,7 @@
 
 import { Toast as BaseToast } from '@base-ui/react/toast';
 import { cx } from '../../utils/cx';
+import { useDirection, type Direction } from '../overlays/direction';
 import { popupSurface } from '../overlays/popup.css';
 import { Button } from '../Button';
 import { Icon, type IconProps } from '../Icon';
@@ -25,11 +26,16 @@ const toneIcons: Record<
   info: { icon: InfoIcon, tone: 'info' },
 };
 
-/** Swipe toward the nearest edge, so it leaves the way it came. */
-function swipeDirections(position: ToastPosition) {
+/**
+ * Swipe toward the nearest edge, so it leaves the way it came. Swipe
+ * directions are physical, and `-end` is the left edge in RTL.
+ */
+export function swipeDirections(position: ToastPosition, direction: Direction) {
   const vertical = position.startsWith('top') ? 'up' : 'down';
-  if (position.endsWith('-end')) return ['right', vertical] as const;
-  if (position.endsWith('-start')) return ['left', vertical] as const;
+  const end = direction === 'rtl' ? 'left' : 'right';
+  const start = direction === 'rtl' ? 'right' : 'left';
+  if (position.endsWith('-end')) return [end, vertical] as const;
+  if (position.endsWith('-start')) return [start, vertical] as const;
   return [vertical] as const;
 }
 
@@ -42,6 +48,7 @@ export function ToastList({
   closeLabel: string;
 }) {
   const { toasts, close } = BaseToast.useToastManager<ToastData>();
+  const direction = useDirection();
   return toasts.map((toast) => {
     const tone = toast.data?.tone ?? 'neutral';
     const shown = tone === 'neutral' ? undefined : toneIcons[tone];
@@ -51,7 +58,7 @@ export function ToastList({
         toast={toast}
         className={cx(popupSurface, styles.root)}
         data-tone={tone}
-        swipeDirection={[...swipeDirections(position)]}
+        swipeDirection={[...swipeDirections(position, direction)]}
       >
         <BaseToast.Content className={styles.content}>
           {toast.data?.loading ? (
