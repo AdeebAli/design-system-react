@@ -69,7 +69,10 @@ function updateToast(
         };
     const next = toBaseOptions({ ...given });
     const changes: Record<string, unknown> = {
-      data: { tone: next.data.tone, given },
+      // Base UI shallow-merges `data`, so keep what else it holds (`loading`).
+      data: replace
+        ? { tone: next.data.tone, given }
+        : { ...prev.data, tone: next.data.tone, given },
     };
     if (replace || options.title !== undefined) changes.title = options.title;
     if (replace || options.description !== undefined) {
@@ -114,22 +117,36 @@ export function wrapManager(base: BaseMethods): ToastManager {
       });
       const settle = (state: string | ToastOptions, tone: ToastTone) =>
         updateToast(base, id, { tone, ...asOptions(state) }, true);
-      promise.then(
-        (value) =>
-          settle(
-            typeof states.success === 'function'
-              ? states.success(value)
-              : states.success,
-            'success',
-          ),
-        (error: unknown) =>
+      // A throwing state function must not leave the loading toast stuck.
+      const fail = (error: unknown) => {
+        try {
           settle(
             typeof states.error === 'function'
               ? states.error(error)
               : states.error,
             'danger',
-          ),
-      );
+          );
+        } catch (thrown) {
+          settle(
+            { title: thrown instanceof Error ? thrown.message : 'Failed' },
+            'danger',
+          );
+        }
+      };
+      promise.then((value) => {
+        let state: string | ToastOptions;
+        try {
+          state =
+            typeof states.success === 'function'
+              ? states.success(value)
+              : states.success;
+        } catch (thrown) {
+          // The `error` state describes it best: something went wrong.
+          fail(thrown);
+          return;
+        }
+        settle(state, 'success');
+      }, fail);
       return promise;
     },
   };

@@ -194,6 +194,8 @@ describe("update keeps the toast's own action and duration", () => {
   });
 });
 
+const spinnerPath = 'svg path[d="M21 12a9 9 0 0 0-9-9"]';
+
 describe('promise', () => {
   it('loading is neutral with a spinner and never times out; success follows the provider', async () => {
     renderProvider({ duration: 100 });
@@ -208,17 +210,13 @@ describe('promise', () => {
     });
     const loading = (await screen.findByText('Saving')).closest('[data-tone]')!;
     expect(loading).toHaveAttribute('data-tone', 'neutral');
-    expect(
-      loading.querySelector('svg path[d="M21 12a9 9 0 0 0-9-9"]'),
-    ).not.toBeNull();
+    expect(loading.querySelector(spinnerPath)).not.toBeNull();
     await pause(300);
     expect(screen.getByText('Saving')).toBeInTheDocument();
     await act(() => Promise.resolve(resolve('ok')));
     const saved = (await screen.findByText('Saved')).closest('[data-tone]')!;
     expect(saved).toHaveAttribute('data-tone', 'success');
-    expect(
-      saved.querySelector('svg path[d="M21 12a9 9 0 0 0-9-9"]'),
-    ).toBeNull();
+    expect(saved.querySelector(spinnerPath)).toBeNull();
     await vi.waitFor(() => expect(screen.queryByText('Saved')).toBeNull());
   });
 
@@ -314,6 +312,51 @@ describe('promise', () => {
     await pause(100);
     expect(screen.queryByText('Saved')).toBeNull();
     expect(screen.queryByText('Saving')).toBeNull();
+  });
+
+  it('a title-only update keeps the spinner on a loading toast', async () => {
+    renderProvider({ duration: 100 });
+    const p = new Promise<string>(() => undefined);
+    act(() => {
+      void held.toast!.promise(p, {
+        loading: { title: 'Saving', id: 'loading-1' },
+        success: 'Saved',
+        error: 'Failed',
+      });
+    });
+    await screen.findByText('Saving');
+    act(() => held.toast!.update('loading-1', { title: 'Still saving' }));
+    const text = await screen.findByText('Still saving');
+    expect(
+      text.closest('[data-tone]')!.querySelector(spinnerPath),
+    ).not.toBeNull();
+    await pause(300);
+    expect(screen.getByText('Still saving')).toBeInTheDocument();
+  });
+
+  it('a throwing success function settles the toast as an error, with no unhandled rejection', async () => {
+    renderProvider({ duration: 0 });
+    const unhandled = vi.fn();
+    window.addEventListener('unhandledrejection', unhandled);
+    process.on('unhandledRejection', unhandled);
+    const result = held.toast!.promise(Promise.resolve('ok'), {
+      loading: 'Saving',
+      success: () => {
+        throw new Error('x');
+      },
+      error: (e) => `Failed: ${(e as Error).message}`,
+    });
+    await expect(result).resolves.toBe('ok');
+    const failed = (await screen.findAllByText('Failed: x'))[0]!;
+    expect(failed.closest('[data-tone]')).toHaveAttribute(
+      'data-tone',
+      'danger',
+    );
+    expect(screen.queryByText('Saving')).toBeNull();
+    await pause(50);
+    expect(unhandled).not.toHaveBeenCalled();
+    window.removeEventListener('unhandledrejection', unhandled);
+    process.off('unhandledRejection', unhandled);
   });
 
   it('works through createToastManager too', async () => {
