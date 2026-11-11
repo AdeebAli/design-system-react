@@ -13,6 +13,7 @@ import { IconButton } from './IconButton';
 import { Menu, MenuContent, MenuItem, MenuTrigger } from './Menu';
 import { Select } from './Select';
 import { Tooltip } from './Tooltip';
+import { ToastProvider, createToastManager } from './Toast';
 
 it('Select, Menu, and Tooltip open above a Dialog and work inside it', async () => {
   render(
@@ -173,4 +174,50 @@ it('Tooltip around MenuTrigger: hover shows the tooltip, click opens the menu', 
   await userEvent.click(trigger);
   await screen.findByRole('menu');
   expect(trigger).toHaveAttribute('aria-expanded', 'true');
+});
+
+describe('Toast with a Dialog open', () => {
+  function setup() {
+    const manager = createToastManager();
+    render(
+      <ToastProvider manager={manager}>
+        <Dialog defaultOpen>
+          <DialogContent>
+            <DialogTitle>Settings</DialogTitle>
+            <DialogClose>
+              <Button>Done</Button>
+            </DialogClose>
+          </DialogContent>
+        </Dialog>
+      </ToastProvider>,
+    );
+    return manager;
+  }
+
+  it("a toast's action button works without closing the dialog", async () => {
+    const manager = setup();
+    await screen.findByRole('dialog', { name: 'Settings' });
+    const onClick = vi.fn();
+    manager.add({ title: 'Failed', action: { label: 'Retry', onClick } });
+    const retry = await screen.findByRole('button', {
+      name: 'Retry',
+      hidden: true,
+    });
+    await userEvent.click(retry);
+    expect(onClick).toHaveBeenCalledTimes(1);
+    expect(
+      screen.getByRole('dialog', { name: 'Settings' }),
+    ).toBeInTheDocument();
+  });
+
+  it('a danger toast\'s text appears in the role="alert" element', async () => {
+    const manager = setup();
+    await screen.findByRole('dialog', { name: 'Settings' });
+    manager.add({ title: 'Disk full', tone: 'danger' });
+    const alert = await screen.findByRole('alert', { hidden: true });
+    await expect.poll(() => alert.textContent).toContain('Disk full');
+    expect(
+      screen.getByRole('dialog', { name: 'Settings' }),
+    ).toBeInTheDocument();
+  });
 });

@@ -164,3 +164,168 @@ describe.each([
     expect(screen.getAllByText('B').length).toBeGreaterThan(0);
   });
 });
+
+describe("update keeps the toast's own action and duration", () => {
+  it('a toast with an action stays when its tone changes', async () => {
+    renderProvider({ duration: 100 });
+    let id = '';
+    act(() => {
+      id = held.toast!.add({
+        title: 'Undo',
+        action: { label: 'Undo it', onClick: vi.fn() },
+      });
+    });
+    await screen.findByText('Undo');
+    act(() => held.toast!.update(id, { tone: 'neutral' }));
+    await pause(300);
+    expect(screen.getByText('Undo')).toBeInTheDocument();
+  });
+
+  it('a toast made with duration 0 stays when its tone changes', async () => {
+    renderProvider({ duration: 100 });
+    let id = '';
+    act(() => {
+      id = held.toast!.add({ title: 'Stays', duration: 0 });
+    });
+    await screen.findByText('Stays');
+    act(() => held.toast!.update(id, { tone: 'success' }));
+    await pause(300);
+    expect(screen.getByText('Stays')).toBeInTheDocument();
+  });
+});
+
+describe('promise', () => {
+  it('loading is neutral with a spinner and never times out; success follows the provider', async () => {
+    renderProvider({ duration: 100 });
+    let resolve!: (v: string) => void;
+    const p = new Promise<string>((r) => (resolve = r));
+    act(() => {
+      void held.toast!.promise(p, {
+        loading: 'Saving',
+        success: 'Saved',
+        error: 'Failed',
+      });
+    });
+    const loading = (await screen.findByText('Saving')).closest('[data-tone]')!;
+    expect(loading).toHaveAttribute('data-tone', 'neutral');
+    expect(
+      loading.querySelector('svg path[d="M21 12a9 9 0 0 0-9-9"]'),
+    ).not.toBeNull();
+    await pause(300);
+    expect(screen.getByText('Saving')).toBeInTheDocument();
+    await act(() => Promise.resolve(resolve('ok')));
+    const saved = (await screen.findByText('Saved')).closest('[data-tone]')!;
+    expect(saved).toHaveAttribute('data-tone', 'success');
+    expect(
+      saved.querySelector('svg path[d="M21 12a9 9 0 0 0-9-9"]'),
+    ).toBeNull();
+    await vi.waitFor(() => expect(screen.queryByText('Saved')).toBeNull());
+  });
+
+  it('an error result is danger and stays', async () => {
+    renderProvider({ duration: 100 });
+    const p = Promise.reject(new Error('boom'));
+    p.catch(() => undefined);
+    act(() => {
+      void held
+        .toast!.promise(p, {
+          loading: 'Saving',
+          success: 'Saved',
+          error: (e) => ({
+            title: 'Failed',
+            description: (e as Error).message,
+          }),
+        })
+        .catch(() => undefined);
+    });
+    const title = (await screen.findAllByText('Failed'))[0]!;
+    expect(title.closest('[data-tone]')).toHaveAttribute('data-tone', 'danger');
+    expect(screen.getAllByText('boom').length).toBeGreaterThan(0);
+    await pause(300);
+    expect(screen.getAllByText('Failed').length).toBeGreaterThan(0);
+  });
+
+  it('accepts strings, options, and functions of the result, error, or nothing', async () => {
+    renderProvider({ duration: 0 });
+    let resolve!: (v: number) => void;
+    const p = new Promise<number>((r) => (resolve = r));
+    act(() => {
+      void held.toast!.promise(p, {
+        loading: () => ({ title: 'Working', description: 'Hold on' }),
+        success: (n) => `Got ${n}`,
+        error: 'Nope',
+      });
+    });
+    await screen.findByText('Working');
+    expect(screen.getByText('Hold on')).toBeInTheDocument();
+    await act(() => Promise.resolve(resolve(7)));
+    await screen.findByText('Got 7');
+    expect(screen.queryByText('Hold on')).toBeNull();
+  });
+
+  it("a state's own tone and duration override the defaults", async () => {
+    renderProvider({ duration: 100 });
+    let resolve!: (v: string) => void;
+    const p = new Promise<string>((r) => (resolve = r));
+    act(() => {
+      void held.toast!.promise(p, {
+        loading: { title: 'Saving', tone: 'info' },
+        success: { title: 'Saved', tone: 'warning', duration: 0 },
+        error: 'Failed',
+      });
+    });
+    const loading = (await screen.findByText('Saving')).closest('[data-tone]')!;
+    expect(loading).toHaveAttribute('data-tone', 'info');
+    await act(() => Promise.resolve(resolve('x')));
+    const saved = (await screen.findByText('Saved')).closest('[data-tone]')!;
+    expect(saved).toHaveAttribute('data-tone', 'warning');
+    await pause(300);
+    expect(screen.getByText('Saved')).toBeInTheDocument();
+  });
+
+  it('returns the original promise: a rejection still rejects, a value still resolves', async () => {
+    renderProvider({ duration: 0 });
+    const states = { loading: 'L', success: 'S', error: 'E' };
+    await expect(
+      held.toast!.promise(Promise.reject(new Error('x')), states),
+    ).rejects.toThrow('x');
+    await expect(held.toast!.promise(Promise.resolve(5), states)).resolves.toBe(
+      5,
+    );
+  });
+
+  it('a dismissed loading toast does not reappear when the promise settles', async () => {
+    renderProvider({ duration: 0 });
+    let resolve!: (v: string) => void;
+    const p = new Promise<string>((r) => (resolve = r));
+    let result!: Promise<string>;
+    act(() => {
+      result = held.toast!.promise(p, {
+        loading: 'Saving',
+        success: 'Saved',
+        error: 'Failed',
+      });
+    });
+    await screen.findByText('Saving');
+    await userEvent.click(screen.getByRole('button', { name: 'Dismiss' }));
+    await vi.waitFor(() => expect(screen.queryByText('Saving')).toBeNull());
+    await act(() => Promise.resolve(resolve('ok')));
+    await expect(result).resolves.toBe('ok');
+    await pause(100);
+    expect(screen.queryByText('Saved')).toBeNull();
+    expect(screen.queryByText('Saving')).toBeNull();
+  });
+
+  it('works through createToastManager too', async () => {
+    const manager = createToastManager();
+    render(<ToastProvider manager={manager} duration={0} />);
+    let resolve!: (v: string) => void;
+    const p = new Promise<string>((r) => (resolve = r));
+    act(() => {
+      void manager.promise(p, { loading: 'L', success: 'S', error: 'E' });
+    });
+    await screen.findByText('L');
+    await act(() => Promise.resolve(resolve('x')));
+    await screen.findByText('S');
+  });
+});

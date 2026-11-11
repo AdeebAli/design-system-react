@@ -26,13 +26,21 @@ export interface ToastOptions {
 /** Kept on each toast for rendering. */
 export interface ToastData {
   tone: ToastTone;
+  /** A `promise` toast still waiting: shows a spinner. */
+  loading?: boolean;
+  /** The options as given, so `update` can work out the timeout from the merged state. */
+  given: Pick<ToastOptions, 'tone' | 'action' | 'duration'>;
 }
 
 /**
  * Maps this library's options to Base UI's. Without `providerDuration`, an
  * ordinary toast gets no `timeout`, so the provider's own `timeout` applies.
  */
-export function toBaseOptions(o: ToastOptions, providerDuration?: number) {
+export function toBaseOptions(
+  o: ToastOptions,
+  providerDuration?: number,
+  loading?: boolean,
+) {
   const tone = o.tone ?? 'neutral';
   const stays = tone === 'danger' || o.action !== undefined;
   const timeout = o.duration ?? (stays ? 0 : providerDuration);
@@ -46,6 +54,10 @@ export function toBaseOptions(o: ToastOptions, providerDuration?: number) {
     actionProps: o.action
       ? { children: o.action.label, onClick: o.action.onClick }
       : undefined,
-    data: { tone } satisfies ToastData,
+    data: {
+      tone,
+      ...(loading ? { loading } : {}),
+      given: { tone: o.tone, action: o.action, duration: o.duration },
+    } satisfies ToastData,
   };
 }

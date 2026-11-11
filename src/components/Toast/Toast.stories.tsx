@@ -11,7 +11,7 @@ const meta: Meta<typeof ToastProvider> = {
     docs: {
       description: {
         component:
-          'A brief message that goes away by itself. Mount `ToastProvider` once near the root, and call `useToast()` anywhere below it; `createToastManager()` is for code outside React, passed as `manager`. A toast with an `action`, or with `tone="danger"`, stays until dismissed unless it sets its own `duration`, and an `action` that times out must also be available somewhere else. `tone="danger"` is announced urgently. `F6` moves focus to the toasts. Never put the only copy of important information in a toast.',
+          'A brief message that goes away by itself. Mount `ToastProvider` once near the root, and call `useToast()` anywhere below it; `createToastManager()` is for code outside React, passed as `manager`. A toast with an `action`, or with `tone="danger"`, stays until dismissed unless it sets its own `duration`, and an `action` that times out must also be available somewhere else. `tone="danger"` is announced urgently. `F6` moves focus to the toasts. Never put the only copy of important information in a toast. Toasts added through a `createToastManager` manager before `<ToastProvider manager>` mounts are dropped, because Base UI only delivers them to a mounted provider, so mount the provider near the root first.',
       },
     },
   },
@@ -47,6 +47,20 @@ function Buttons() {
         onClick={() => toast.add({ title: 'Heads up' })}
       >
         Neutral
+      </Button>
+      <Button
+        variant="outline"
+        onClick={() =>
+          void toast
+            .promise(new Promise((resolve) => setTimeout(resolve, 600)), {
+              loading: 'Saving…',
+              success: 'Changes saved',
+              error: 'Could not save',
+            })
+            .catch(() => undefined)
+        }
+      >
+        Promise
       </Button>
     </Inline>
   );
@@ -95,6 +109,67 @@ export const WithAction: Story = {
 
 export const TopStart: Story = {
   render: () => withProvider({ position: 'top-start' }),
+  play: async ({ canvasElement }) => {
+    await userEvent.click(
+      within(canvasElement).getByRole('button', { name: 'Neutral' }),
+    );
+    await within(document.body).findByText('Heads up');
+  },
+};
+
+export const Tones: Story = {
+  render: () => (
+    <ToastProvider>
+      <ToneButtons />
+    </ToastProvider>
+  ),
+  play: async ({ canvasElement }) => {
+    await userEvent.click(
+      within(canvasElement).getByRole('button', { name: 'warning' }),
+    );
+    const title = await within(document.body).findByText('Warning toast');
+    await expect(title.closest('[data-tone]')).toHaveAttribute(
+      'data-tone',
+      'warning',
+    );
+  },
+};
+
+function ToneButtons() {
+  const toast = useToast();
+  return (
+    <Inline gap="2">
+      {(['neutral', 'success', 'warning', 'info'] as const).map((tone) => (
+        <Button
+          key={tone}
+          variant="outline"
+          onClick={() =>
+            toast.add({
+              title: `${tone[0]!.toUpperCase()}${tone.slice(1)} toast`,
+              tone,
+            })
+          }
+        >
+          {tone}
+        </Button>
+      ))}
+    </Inline>
+  );
+}
+
+export const PromiseToast: Story = {
+  render: () => withProvider(),
+  play: async ({ canvasElement }) => {
+    await userEvent.click(
+      within(canvasElement).getByRole('button', { name: 'Promise' }),
+    );
+    await within(document.body).findByText('Saving…');
+    await within(document.body).findByText('Changes saved');
+  },
+};
+
+export const BottomStart: Story = {
+  render: () => withProvider({ position: 'bottom-start' }),
   play: async ({ canvasElement }) => {
     await userEvent.click(
       within(canvasElement).getByRole('button', { name: 'Neutral' }),
