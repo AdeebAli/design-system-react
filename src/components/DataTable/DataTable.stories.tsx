@@ -185,7 +185,10 @@ export const FullPage: Story = {
   render: () => <FullPageDemo />,
 };
 
-const recipe = `import {
+const recipe = `// For @tanstack/react-table v8 (checked against 8.21.3). v9 has no
+// \`useReactTable\` (it uses \`useTable\`), so this doesn't apply to it as written.
+import { useState } from 'react';
+import {
   flexRender,
   getCoreRowModel,
   getSortedRowModel,
@@ -228,7 +231,7 @@ function CustomersTable({ data, columns }: { data: Customer[]; columns: ColumnDe
                 <TableSortHeader
                   key={header.id}
                   direction={direction === 'asc' ? 'ascending' : direction === 'desc' ? 'descending' : 'none'}
-                  onSort={header.column.getToggleSortingHandler()!}
+                  onSort={() => header.column.toggleSorting()}
                 >
                   {content}
                 </TableSortHeader>
@@ -304,14 +307,14 @@ function RecipeDemo() {
  * For filtering, virtualization, editing, or column resizing, use the `Table`
  * parts with a library such as TanStack Table. This story shows the same
  * result built by hand with the parts; the code below wires them to
- * TanStack Table. This package doesn't depend on it, so install it yourself.
+ * TanStack Table v8. This package doesn't depend on it, so install it yourself.
  */
 export const TanStackRecipe: Story = {
   parameters: {
     docs: {
       description: {
         story: [
-          "Use the `Table` parts when you need filtering, virtualization, editing, or column resizing. They carry the styles; the library carries the state. This package doesn't depend on TanStack Table, so install it yourself.",
+          "Use the `Table` parts when you need filtering, virtualization, editing, or column resizing. They carry the styles; the library carries the state. This package doesn't depend on TanStack Table, so install it yourself. The code below is for `@tanstack/react-table` v8 (`npm i @tanstack/react-table@8`), not v9.",
           '',
           '```tsx',
           recipe,
