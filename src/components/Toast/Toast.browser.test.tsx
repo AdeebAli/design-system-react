@@ -154,7 +154,11 @@ describe('swipe to dismiss follows text direction', () => {
     const rect = (await screen.findByText(title)).getBoundingClientRect();
     const y = rect.top + rect.height / 2;
     const x = rect.left + 20;
-    const send = (type: string, at: number, extra = {}) =>
+    const send = (
+      type: 'mouseMoved' | 'mousePressed' | 'mouseReleased',
+      at: number,
+      extra = {},
+    ) =>
       cdp().send('Input.dispatchMouseEvent', {
         type,
         x: at,
