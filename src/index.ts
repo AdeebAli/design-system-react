@@ -42,6 +42,7 @@ export * from './components/Toast';
 export * from './components/Table';
 export * from './components/Skeleton';
 export * from './components/EmptyState';
+export * from './components/DataTable';
 export * from './components/Prose';
 export { breakpoints } from './tokens/breakpoints';
 export { tokens } from './tokens/primitives';
