@@ -9,19 +9,19 @@ Build `@adeebali/design-system-react`, a general-purpose React design system. Sp
 ## Status
 
 - **Done:** v0.1 (specs 01–07), v0.2 (Specs 08–09), v0.3 (Specs 10–11), each merged and released. v0.3.0 is `c0eb2a7`, with Storybook at https://adeebali.github.io/design-system-react/.
-- **Built, not pushed:** milestone v0.4, Spec 12 Overlays and Spec 13 Data, as Spec 00 sets it. The owner chose both specs over the old handoff's "Spec 12 only".
-  - Where: branch `feat/v0.4-overlays-and-data`, 45 commits on `main` (`822d742`), head `0d6e742`.
+- **Built, in draft PR #24:** milestone v0.4, Spec 12 Overlays and Spec 13 Data, as Spec 00 sets it. The owner chose both specs over the old handoff's "Spec 12 only".
+  - Where: branch `feat/v0.4-overlays-and-data` on `main` (`822d742`), pushed; draft PR https://github.com/AdeebAli/design-system-react/pull/24. The baselines workflow committed `15d3003`.
   - Plan: `docs/superpowers/plans/2026-11-10-v0-4-overlays-and-data.md`.
   - What it adds:
     - Overlays: `Dialog` (with `alert`), `Popover`, `Tooltip`/`TooltipProvider`, `Menu` (with submenus), and `Toast` (`ToastProvider`, `useToast`, `createToastManager`, `toast.promise`).
     - Data: `Table` and its parts, `DataTable`, `Pagination`, `Skeleton` and `EmptyState`.
     - The "Overlays" and "Data" overview pages, and Next/Vite fixture pages.
   - It ran with subagent-driven development. Every task had a spec and quality review, and a whole-branch review on Opus was followed by one fix wave and its re-review.
-- **Waiting on the owner:** pushing, the draft PR, visual baselines, the manual checks, and the decisions in open thread 1. The project `CLAUDE.md` says pushes need a request, so nothing has been pushed.
+- **Waiting on the owner:** reviewing the 264 new baseline screenshots, selecting **Approve workflows to run** on PR #24, the manual checks, and the decisions in open thread 1.
 
 ## Decisions
 
-Architecture decisions are in `docs/adr/`. Every v0.4 build decision, with what it costs if wrong, is a `Ruling:` line in `.superpowers/sdd/2026-11-10-v0-4-overlays-and-data/progress.md` (local, gitignored). That ledger also holds the deferred minor findings. Earlier milestones' ledgers sit beside it. The v0.4 decisions worth knowing without opening the ledger:
+Architecture decisions are in `docs/adr/`. Every v0.4 build ruling is listed under "v0.4 rulings" below, and the deferred minor findings under open thread 6. The per-task reports stay in the local, gitignored `.superpowers/sdd/2026-11-10-v0-4-overlays-and-data/`. The v0.4 decisions worth knowing first:
 
 - **Text direction for Base UI comes from the document root.**
   - Base UI reads direction from React's `DirectionContext` (default `ltr`), not the DOM `dir`, for arrow keys, `side` start and end, and submenus.
@@ -46,6 +46,48 @@ Architecture decisions are in `docs/adr/`. Every v0.4 build decision, with what 
 - **The TanStack recipe targets v8 (8.21.3).** npm's `latest` is 9.x, which has no `useReactTable`. It was checked against the real package, and no dependency was added.
 - **Visual baselines (carried from v0.2).** The workflow runs when the `update-baselines` label is added, with `--update-snapshots=changed`. After it commits to a PR, GitHub holds CI until the owner selects **Approve workflows to run**. Don't close and reopen the PR.
 
+### v0.4 rulings
+
+Calls made during the build where the spec was silent, each with what it costs if wrong. Superseded ones are marked.
+
+1. Built on a branch in the main checkout, not a worktree, as in v0.1–v0.3. Cost: none.
+2. `toast.promise`'s `loading` also accepts a no-argument function. Cost: a slightly wider type.
+3. `gapOffset` reads `--ds-space-1_5` from the document root; Base UI 1.9.0's offset function gets only sizes. Cost: a theme scoped to a subtree doesn't move the gap.
+4. Dialog scroll lock is tested by a stand-in (no position change, wheel doesn't scroll); the headless runner hides scrollbars. The no-layout-shift check is manual. Cost: a regression could ship until that check.
+5. `DialogContext` is `{alert, register, has}`, not the plan's shape, as lint forced. Cost: none outside Dialog.
+6. A long `DialogTitle` running under the close button was fixed instead of deferred. Cost: one fix round.
+7. Dialog's warning-text assertions and type-test mutation checks were folded into that round. Cost: one round.
+8. Tooltip uses logical `maxInlineSize`; a stale border comment was fixed and a hover mutation check added. Cost: one round.
+9. `ColorModeToggle` sets its own icon, name and variant after the passed props, with a type assertion and a mutation-checked `preventDefault` test. Cost: one round.
+10. `Tooltip` `delay={0}` flashes for one frame on touch; accepted as Base UI behavior and sent to the owner (open thread 1). Cost: the flash, for anyone who sets `delay={0}`.
+11. The v0.3 RTL keyboard bug isn't fixed in v0.4 (open thread 2). Cost: those widgets keep it until v0.5.
+12. `Menu` takes direction from the document root, not a subtree. Cost: a subtree `dir` is ignored.
+13. The provider's toast duration goes to Base UI's `timeout`, since Base UI starts timers in `addToast`. Cost: none.
+14. The danger toast root keeps Base UI's `aria-hidden`; its stories disable only axe `aria-hidden-focus`. Cost: screen reader users reach it with `F6`; the manual check covers it.
+15. Toast browser tests moved to the `toast.promise` task. Cost: none.
+16. `update(id, {tone})` recomputes the timeout; moved forward a task. Cost: none.
+17. *Superseded by 35:* toasts added before the provider mounts are dropped.
+18. `update` derives the timeout from the toast's merged state. Cost: none.
+19. A loading toast keeps its spinner on a title-only update, and a throwing state function no longer leaves it stuck. Cost: one round.
+20. If `success` throws, the toast settles as the error state. Cost: the `error` function may receive a non-promise error.
+21. Table's vacuous wrapper test, missing `hoverable`/`size` tests, and the double-border check were carried into the sticky Table task. Cost: none.
+22. The plan's `stickyCell` class was superseded by data attributes on `table`. Cost: none.
+23. Implementers stopped running concurrently on shared files after Skeleton's export edits were lost. Cost: time.
+24. Skeleton's vacuous width test, a `lines` NaN guard, and removing unrequested `flexShrink`/`minWidth` were folded into a fix. Cost: one round.
+25. *Supersedes a first-column width cap that never worked:* keep a token-derived `scroll-padding-inline-start` reserve and document the limit. Cost: open thread 1.
+26. `DataTable` sets `aria-busy` on its outer element, not Table's wrapper. Cost: a Table wrapper-props hook if "wrapper" is read literally.
+27. Mixed number and string columns sort numbers first in both directions. Cost: the owner may prefer another order.
+28. Three of the four security-review findings were fixed (`NaN` totals, negative page slice, invalid locale). Skeleton rows aren't capped: Spec 13 says `pageSize` rows. Cost: a huge `pageSize` renders that many rows.
+29. `NaN` sorts like `null`, last in both directions. Cost: none.
+30. Rejected the split selection count; one `role="status"` shows the count from first render. Cost: one round.
+31. `NaN`-as-`null` counts as an extension where Spec 13 is silent, not a departure. Cost: none.
+32. Task 17 stopped before the push; the controller wrote the handoff. Cost: CI came later.
+33. *Superseded by the owner's README decision:* keep the partial "Overlays and data" README section.
+34. Popover and Tooltip use the shared direction provider (Spec 12 requires `start`/`end` to follow direction); v0.3 widgets stay out of scope. Cost: open thread 2.
+35. *Supersedes 17:* the toast manager queues calls until `ToastProvider` connects. Cost: open thread 1.
+36. The TanStack recipe targets v8, checked against the registry tarball, with no new devDependency. Cost: the recipe isn't typechecked in CI.
+37. The local workspace (task reports) is kept, not deleted. Cost: local disk.
+
 ## Changes
 
 - Branch `feat/v0.4-overlays-and-data`: 45 commits, 156 files, +13,409/−24. The working tree is clean.
@@ -63,7 +105,9 @@ Architecture decisions are in `docs/adr/`. Every v0.4 build decision, with what 
   - `Prose` `kbd` uses a logical border;
   - docs note: `Prose` inside `NotProse` is unstyled.
 - Config and scripts: `vite.config.ts` pre-bundles the new Base UI subpaths. `scripts/verify-dist.mjs` lists the server modules for Table, Pagination, Skeleton and EmptyState.
-- Fixtures: `fixtures/next-app/app/(site)/{overlays,data}/`, `CustomersTable.tsx`, and `tests/fixtures/{overlays,data}.spec.ts`. The README gains an "Overlays and data" section.
+- Fixtures: `fixtures/next-app/app/(site)/{overlays,data}/`, `CustomersTable.tsx`, and `tests/fixtures/{overlays,data}.spec.ts`.
+- Docs: new `docs/components.md` lists every exported component, grouped by spec, with a link to each spec. The README's "Components" section links to it (owner's call, replacing the partial "Overlays and data" table).
+- `15d3003`: 264 new visual baselines from the workflow. No existing baseline changed.
 
 ## Verification
 
@@ -72,9 +116,10 @@ Architecture decisions are in `docs/adr/`. Every v0.4 build decision, with what 
   - Stories and browser: 730 tests, with axe in both modes.
   - Fixtures: 64 passed, 22 skipped by design.
 - **Checks on `0d6e742`, after the fix wave:** typecheck, lint, format:check, `npm test` (752 + 22 script tests), `test:stories` (749), build with verify-dist, and `test:fixtures` (64 passed, 22 skipped) all exited 0, as the fix report states. The only warning is Node's existing DEP0205.
-- **Tests were seen failing.** Each new test failed before its fix, or failed when the code was broken on purpose. The evidence is in the per-task reports in the ledger folder.
+- **Baselines:** the workflow (run 43108613699) passed 882 screenshot tests and committed `15d3003`.
+- **Tests were seen failing.** Each new test failed before its fix, or failed when the code was broken on purpose. The evidence is in the per-task reports in the local `.superpowers/sdd/` folder.
 - **Not verified:**
-  - CI and visual baselines on the v0.4 branch. Trigger: next step 1.
+  - CI on the current head. The first run (`66711ee`, run 43108512040) passed static, unit and both package jobs; `stories` failed one test (open thread 9). CI on later commits waits for the owner to approve workflows. Trigger: next step 1.
   - The manual checks. Trigger: next step 2, and the PR checklist.
   - Installing 0.3.0 from GitHub Packages, carried forward. `gh` lacks `read:packages`. Trigger: none; the v0.1 install proved the pipeline, and Publish succeeded.
 
@@ -92,34 +137,36 @@ Architecture decisions are in `docs/adr/`. Every v0.4 build decision, with what 
      - drop the queue on disconnect once a provider has connected;
      - cap the queue.
    - **`Tooltip` with `delay={0}`:** a touch tap flashes it open for one frame. With the default delay, a tap never opens it. Spec 12 says tooltips don't appear on touch.
-   - **The README** lists only the ten v0.4 components. There was no component list before. Decide whether you want a full list.
    - **A TanStack v9 recipe**, if you want one alongside the v8 recipe.
 2. **RTL arrow keys and positioning in v0.3 widgets.** Base UI's composite root and Select read direction from React context, so `Tabs`, `RadioGroup`, `ToggleChipGroup` and `Select` (keys, and probably `Select`'s `side` positioning) likely behave as LTR under `dir="rtl"`. This isn't fixed, because it's v0.3 code you didn't ask to change. The fix is the shared `overlays/direction.tsx` provider. Trigger: the v0.5 plan must add an RTL keyboard and positioning test for each and decide the fix.
 3. **11 moderate `npm audit` advisories, dev tooling only (`glob` and `minimatch` through `typescript-eslint`).** As of 2026-11-11, 8.72.2 is the latest and is still in the affected range, and 8.72.1 is installed. Triggers: CI fails if an advisory reaches runtime dependencies or rises to high; the v0.5 plan must rerun `npm audit` and upgrade once a fix exists. (Carried forward.)
 4. **Inter comes from `inter-ui`,** because Fontsource's files drop `cv05` and `cv08`. Trigger: a test pins the 4.1.1 ranges. (Carried forward.)
 5. **`engines.node` is `>=22`.** Trigger: the release script refuses to release after April 30, 2027, until the floor and CI's Node matrix are raised. (Carried forward.)
-6. **The repo's `handoff` skill is shadowed by the owner's personal one.** Recommendation: delete `.claude/skills/handoff/`, and have the project `CLAUDE.md` say to pass `docs/HANDOFF.md`. Trigger: none; the owner decides. (Carried forward.)
-7. **PR preview deploys of Storybook.** Recommendation: `gh-pages` subfolders from the existing `storybook-pages` workflow. Trigger: none; the owner decides. (Carried forward.)
-8. **Deferred minor findings from v0.4.** The final review found none blocking. They include:
-   - the Dialog close button scrolling out of view in tall content;
-   - 4-digit page numbers sitting flush in `Pagination`;
-   - `client-modules.mjs` not detecting a bare `import React from 'react'` used as `React.useState`;
-   - test-strength polish.
-
-   They're listed in the ledger as `minor (deferred)` lines. Trigger: none; pick from the ledger when convenient.
+6. **Deferred minor findings from v0.4.** The final review found none blocking. Trigger: none; pick from this list when convenient.
+   - Dialog: the close button scrolls out of view in tall content (`Dialog.css.ts`); the `closeOnOutsideClick` + `alert` warning fires while closed; `React.*` types used without an import in `DialogTitle`/`DialogDescription`; an unexplained `- 1` in the full-width browser test.
+   - Popover: arrow offsets use physical `left`/`right`; the rotated arrow shadow's direction; the shadow clip uses `space.12`; weak tests (`lastMessage` reads `calls[0]`, layout props, no `aria-labelledby` test); a redundant `Omit<children>` in `PopoverTitle`.
+   - Overlay foundations: the `gapOffset` comment should say a subtree theme isn't followed; RTL and non-bottom popup motion is untested; non-null assertions on the `var()` regex.
+   - Tooltip: the provider test's 700ms timeout is close to the 600ms default.
+   - Menu: the `control.sm` term in `Menu.css.ts` is a no-op under Soft; `MenuLinkItem` `startIcon`/`disabled` untested; a value cast in `MenuRadioGroup`; the direction cache can miss a `dir` change between render and first subscribe.
+   - Toast: stories lacked tones and positions (since added); a weak action-close-order test; no browser test of an action toast timing out with a duration.
+   - Table: `TableSortHeader` `as` is typed only for `href`; caption padding uses the two-value form; the Menu-above-sticky test doesn't isolate `isolation`; the `stickyBackground` class is emitted on every table; the partial-cover test asserts only "not fully covered".
+   - Pagination: a local `page` class duplicates ButtonBase's `square`; overrides win by import order; 4-digit page numbers sit flush; weak `pageRange` tests.
+   - EmptyState and Skeleton: tests compare class names only; `gap="3"` isn't in the spec.
+   - DataTable: `pageSize <= 0` unguarded; an uncommented uncontrolled clamp; test gaps (`defaultPage`, skeleton count with `totalRows`); the routing test doesn't check inline `maxHeight`; a wrapped two-line row header is about 3px shorter than in `Table`; `aria-labelledby` ignores a title in cell content; the interactive-content warning checks only at mount.
+   - Earlier tasks: a vacuous null-assertion loop in `Tabs.test.tsx`; `client-modules.mjs` misses a bare `import React from 'react'` used as `React.useState`; a `ColorModeToggle` forced-theme test that does little.
+   - Fixtures: the Vite Table style check sits in `overlays.spec.ts`; no fixture test triggers a toast; the fixture sort link doesn't sort.
+7. **CI `stories` failure: Toast swipe in LTR** (`src/components/Toast/Toast.browser.test.tsx:177-196`). On run 43108512040, `in ltr a bottom-end toast is swiped away toward the right edge only` timed out: the toast was still there after 3s. It passed 5 of 5 times alone and in 2 full `npm run test:stories` runs locally, so it looks timing-dependent on the CI runner, after the RTL case and a 600ms pause. Not yet diagnosed. Trigger: the CI run after the owner approves workflows; if it fails again, find the cause before merge.
 
 Resolved since the last note:
-- Old thread 1, the deferred v0.3 minors: fixed in `529457d` with tests, except that a bare default React import is still undetected (now thread 8).
+- The README list: the owner chose a full list in a separate doc (`docs/components.md`).
+- Old next step 1, push and draft PR: done (PR #24), and the baselines are committed (`15d3003`).
+- Old thread 1, the deferred v0.3 minors: fixed in `529457d` with tests, except that a bare default React import is still undetected (now thread 6).
 - Old thread 3, `ColorModeToggle` props: fixed in `e36012e` and `6cc0515`, including a test that wraps it in a `Tooltip` and a test with a forced `ThemeProvider`.
 - Old next step 1, writing the v0.4 plan: written (`f9b3cfe`) and executed. Old thread 2's audit rerun ran (thread 3).
 
 ## Next steps
 
-1. **Push and open the draft PR** for `feat/v0.4-overlays-and-data`. The PR body needs:
-   - a "Departures from the spec" section (open thread 1);
-   - the manual-check checklist (next step 2).
-
-   Then add the `update-baselines` label, review the committed screenshots, and select **Approve workflows to run**. Expected: all CI jobs pass.
+1. **On PR #24:** review the 264 new screenshots, then select **Approve workflows to run**. Expected: all CI jobs pass; if the Toast swipe test fails again, fix it first (open thread 7).
 2. **Manual checks** (the owner):
    - a screen reader pass on each overlay, on tables, sorting and selection, and on danger toasts reached with `F6`;
    - forced colors on all ten components, including the Popover arrow;
@@ -131,4 +178,4 @@ Resolved since the last note:
 
 ## Resume prompt
 
-> Read `docs/HANDOFF.md`. v0.4 (Spec 12 Overlays and Spec 13 Data) is built on `feat/v0.4-overlays-and-data` and reviewed, but not pushed. Wait for the owner's go-ahead to push and open the draft PR with the departures and the manual-check checklist, then handle the baselines, the owner's decisions in open thread 1, the merge, and the v0.4.0 release.
+> Read `docs/HANDOFF.md`. v0.4 (Spec 12 Overlays and Spec 13 Data) is in draft PR #24 with baselines committed. Check CI once the owner approves workflows (open thread 7 if the Toast swipe test fails), then apply the owner's decisions in open thread 1 (amending Specs 12 and 13 for any accepted departure), the merge, and the v0.4.0 release.
