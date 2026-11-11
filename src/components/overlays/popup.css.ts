@@ -58,6 +58,6 @@ export const popupMotion = style(
 export const positioner = style(
   layered({
     zIndex: vars.zIndex.popover,
-    maxWidth: `calc(100vw - 2 * ${vars.space['4']})`,
+    maxInlineSize: `calc(100vw - 2 * ${vars.space['4']})`,
   }),
 );

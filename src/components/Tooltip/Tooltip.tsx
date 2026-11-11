@@ -6,7 +6,7 @@ import { cx } from '../../utils/cx';
 import { OverlayDirection } from '../overlays/direction';
 import { gapOffset, toBaseSide } from '../overlays/positioning';
 import type { OverlayAlign, OverlaySide } from '../overlays/positioning';
-import { popupMotion } from '../overlays/popup.css';
+import { popupMotion, positioner } from '../overlays/popup.css';
 import { TooltipDelayContext } from './TooltipContext';
 import * as styles from './Tooltip.css';
 
@@ -65,7 +65,7 @@ export function Tooltip({
             side={toBaseSide(side)}
             align={align}
             sideOffset={gapOffset}
-            className={styles.positioner}
+            className={cx(positioner, styles.positioner)}
           >
             <BaseTooltip.Popup className={cx(popupMotion, styles.popup)}>
               {content}

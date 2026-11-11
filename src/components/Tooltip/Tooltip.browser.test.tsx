@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { cdp, userEvent } from 'vitest/browser';
+import { vars } from '../../themes/contract.css';
 import { Button } from '../Button';
 import { Tooltip, TooltipProvider } from './index';
 
@@ -175,4 +176,22 @@ describe('side="start" and "end" follow text direction', () => {
       else expect(p.left).toBeGreaterThanOrEqual(t.right);
     },
   );
+});
+
+it('the positioner stacks at the tooltip level and is bound to the viewport width', async () => {
+  render(
+    <Tooltip content="Hint" delay={0}>
+      <Button>Go</Button>
+    </Tooltip>,
+  );
+  await userEvent.hover(trigger());
+  const positioner = (await screen.findByText('Hint')).parentElement!;
+  const probe = document.createElement('div');
+  probe.style.zIndex = vars.zIndex.tooltip;
+  document.body.append(probe);
+  const style = getComputedStyle(positioner);
+  expect(style.zIndex).toBe(getComputedStyle(probe).zIndex);
+  probe.remove();
+  // The shared positioner's `max-inline-size: calc(100vw - 2 * space.4)`.
+  expect(parseFloat(style.maxWidth)).toBe(window.innerWidth - 32);
 });

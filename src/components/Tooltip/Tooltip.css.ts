@@ -21,10 +21,5 @@ export const popup = style(
   }),
 );
 
-/** Stacks above toasts. */
-export const positioner = style(
-  layered({
-    zIndex: vars.zIndex.tooltip,
-    maxInlineSize: `calc(100vw - 2 * ${vars.space['4']})`,
-  }),
-);
+/** Stacks above toasts. Everything else comes from the shared positioner. */
+export const positioner = style(layered({ zIndex: vars.zIndex.tooltip }));
