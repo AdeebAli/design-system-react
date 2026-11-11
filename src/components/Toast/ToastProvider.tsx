@@ -1,8 +1,12 @@
 'use client';
 
 import { Toast as BaseToast } from '@base-ui/react/toast';
-import type { ReactNode } from 'react';
-import { baseManagerOf, type ToastManager } from './createToastManager';
+import { useEffect, type ReactNode } from 'react';
+import {
+  baseManagerOf,
+  connectToastManager,
+  type ToastManager,
+} from './createToastManager';
 import * as styles from './Toast.css';
 import { ToastList } from './ToastList';
 import type { ToastPosition } from './toastOptions';
@@ -35,6 +39,12 @@ export function ToastProvider({
   manager,
   children,
 }: ToastProviderProps) {
+  // After Base UI's own subscription effect, so the manager can replay what
+  // descendants queued from their mount effects.
+  useEffect(
+    () => (manager ? connectToastManager(manager) : undefined),
+    [manager],
+  );
   return (
     <BaseToast.Provider
       limit={limit}

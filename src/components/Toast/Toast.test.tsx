@@ -1,4 +1,4 @@
-import { act, render, screen } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import { useEffect } from 'react';
 import userEvent from '@testing-library/user-event';
 import { ToastProvider, createToastManager, useToast } from './index';
@@ -370,5 +370,71 @@ describe('promise', () => {
     await screen.findByText('L');
     await act(() => Promise.resolve(resolve('x')));
     await screen.findByText('S');
+  });
+});
+
+describe('a manager used before the provider has connected', () => {
+  it('shows a toast added from a descendant mount effect, and add still returns an id', async () => {
+    const manager = createToastManager();
+    let id: string | undefined;
+    function Adder() {
+      useEffect(() => {
+        id = manager.add({ title: 'From an effect', duration: 0 });
+      }, []);
+      return null;
+    }
+    render(
+      <ToastProvider manager={manager}>
+        <Adder />
+      </ToastProvider>,
+    );
+    expect(typeof id).toBe('string');
+    expect(await screen.findByText('From an effect')).toBeInTheDocument();
+    // The returned id is the toast's: closing it removes the toast.
+    act(() => manager.close(id));
+    await waitFor(() =>
+      expect(screen.queryByText('From an effect')).not.toBeInTheDocument(),
+    );
+  });
+
+  it('shows a promise started in a mount effect, and settles it', async () => {
+    const manager = createToastManager();
+    let resolve!: (v: string) => void;
+    const p = new Promise<string>((r) => (resolve = r));
+    function Starter() {
+      useEffect(() => {
+        void manager.promise(p, { loading: 'L', success: 'S', error: 'E' });
+      }, []);
+      return null;
+    }
+    render(
+      <ToastProvider manager={manager} duration={0}>
+        <Starter />
+      </ToastProvider>,
+    );
+    await screen.findByText('L');
+    await act(() => Promise.resolve(resolve('x')));
+    await screen.findByText('S');
+  });
+
+  it('replays add, update and close in order', async () => {
+    const manager = createToastManager();
+    const id = manager.add({ title: 'First', duration: 0 });
+    manager.update(id, { title: 'Renamed' });
+    manager.add({ title: 'Gone', duration: 0 });
+    manager.close(); // closes everything queued before it
+    manager.add({ title: 'Last', duration: 0 });
+    render(<ToastProvider manager={manager} />);
+    expect(await screen.findByText('Last')).toBeInTheDocument();
+    expect(screen.queryByText('Renamed')).not.toBeInTheDocument();
+    expect(screen.queryByText('Gone')).not.toBeInTheDocument();
+  });
+
+  it('keeps calls queued while no provider has mounted', async () => {
+    const manager = createToastManager();
+    manager.add({ title: 'Early', duration: 0 });
+    await pause(50);
+    render(<ToastProvider manager={manager} />);
+    expect(await screen.findByText('Early')).toBeInTheDocument();
   });
 });

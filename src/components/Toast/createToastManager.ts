@@ -32,12 +32,29 @@ export interface ToastPromiseStates<T> {
 type BaseManager = ReturnType<typeof BaseToast.createToastManager<ToastData>>;
 type BaseMethods = Pick<BaseManager, 'add' | 'update' | 'close'>;
 
-const bases = new WeakMap<ToastManager, BaseManager>();
+interface Link {
+  base: BaseManager;
+  /** Marks a provider as subscribed, replays what was queued, and returns the undo. */
+  connect(): () => void;
+}
+
+const links = new WeakMap<ToastManager, Link>();
 
 /** The Base UI manager behind one of ours, for `ToastProvider`. */
 export function baseManagerOf(manager: ToastManager): BaseManager | undefined {
-  return bases.get(manager);
+  return links.get(manager)?.base;
 }
+
+/**
+ * Called from `ToastProvider`'s own effect, which runs after Base UI's
+ * subscription effect (a parent's effects run after its children's). Until
+ * then the manager queues its calls, and this replays them in order.
+ */
+export function connectToastManager(manager: ToastManager): () => void {
+  return links.get(manager)?.connect() ?? (() => {});
+}
+
+let nextId = 0;
 
 const asOptions = (state: string | ToastOptions): ToastOptions =>
   typeof state === 'string' ? { title: state } : state;
@@ -158,7 +175,46 @@ export function wrapManager(base: BaseMethods): ToastManager {
  */
 export function createToastManager(): ToastManager {
   const base = BaseToast.createToastManager<ToastData>();
-  const manager = wrapManager(base);
-  bases.set(manager, base);
+  // Base UI drops a call nobody is subscribed to, and subscribes in the
+  // provider's effect, after every descendant's mount effect has run. So hold
+  // the calls until our provider says it's connected.
+  const queue: Array<() => void> = [];
+  let connections = 0;
+  const run = (call: () => void) => {
+    if (connections > 0) call();
+    else queue.push(call);
+  };
+  const manager = wrapManager({
+    // Base UI accepts a caller's id, so `add` can return it before it runs.
+    add: (options) => {
+      const id = options.id ?? `ds-toast-${nextId++}`;
+      run(() => base.add({ ...options, id }));
+      return id;
+    },
+    update: (id, updates) => run(() => base.update(id, updates)),
+    close: (id) => run(() => base.close(id)),
+  });
+  links.set(manager, {
+    base,
+    connect() {
+      connections += 1;
+      // Calls made while replaying run in line, after what was queued.
+      while (queue.length > 0 && connections > 0) {
+        try {
+          queue.shift()!();
+        } catch (error) {
+          queueMicrotask(() => {
+            throw error;
+          });
+        }
+      }
+      let connected = true;
+      return () => {
+        if (!connected) return;
+        connected = false;
+        connections -= 1;
+      };
+    },
+  });
   return manager;
 }
