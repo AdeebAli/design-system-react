@@ -1,5 +1,10 @@
 import { Button } from '../Button';
-import { PopoverContent, PopoverTrigger } from './index';
+import {
+  PopoverContent,
+  PopoverTrigger,
+  type OverlayAlign,
+  type OverlaySide,
+} from './index';
 
 test('PopoverTrigger takes exactly one element', () => {
   <PopoverTrigger>
@@ -22,4 +27,10 @@ test('PopoverContent side and align are logical, and it has no `as`', () => {
   <PopoverContent align="stretch" />;
   // @ts-expect-error overlays don't accept `as`
   <PopoverContent as="section" />;
+});
+
+test('the side and align types are exported from the barrel', () => {
+  const side: OverlaySide = 'start';
+  const align: OverlayAlign = 'end';
+  <PopoverContent side={side} align={align} />;
 });

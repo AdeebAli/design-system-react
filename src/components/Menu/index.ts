@@ -24,3 +24,4 @@ export { MenuSubmenuTrigger } from './MenuSubmenuTrigger';
 export type { MenuSubmenuTriggerProps } from './MenuSubmenuTrigger';
 export { MenuSubmenuContent } from './MenuSubmenuContent';
 export type { MenuSubmenuContentProps } from './MenuSubmenuContent';
+export type { OverlayAlign, OverlaySide } from '../overlays/positioning';

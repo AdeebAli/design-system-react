@@ -10,3 +10,4 @@ export { PopoverDescription } from './PopoverDescription';
 export type { PopoverDescriptionProps } from './PopoverDescription';
 export { PopoverClose } from './PopoverClose';
 export type { PopoverCloseProps } from './PopoverClose';
+export type { OverlayAlign, OverlaySide } from '../overlays/positioning';

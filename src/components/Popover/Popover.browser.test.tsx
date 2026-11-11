@@ -60,8 +60,7 @@ afterEach(async () => {
   await page.viewport(414, 896);
 });
 
-const arrow = () =>
-  document.querySelector<HTMLElement>(`.${styles.arrow}`)!;
+const arrow = () => document.querySelector<HTMLElement>(`.${styles.arrow}`)!;
 const center = (rect: DOMRect, axis: 'x' | 'y') =>
   axis === 'x' ? rect.left + rect.width / 2 : rect.top + rect.height / 2;
 
@@ -285,9 +284,7 @@ describe('side="start" and "end" follow text direction (centered trigger, room o
         )
         .toBeLessThanOrEqual(1);
       expect(
-        Math.abs(
-          center(arrow().getBoundingClientRect(), 'y') - center(t, 'y'),
-        ),
+        Math.abs(center(arrow().getBoundingClientRect(), 'y') - center(t, 'y')),
       ).toBeLessThanOrEqual(1);
     },
   );

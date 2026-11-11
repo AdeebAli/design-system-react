@@ -1,9 +1,15 @@
 import {
   Table,
+  TableBody,
   TableCell,
+  TableFoot,
+  TableHead,
   TableHeader,
   TableRow,
   TableSortHeader,
+  type TableBodyProps,
+  type TableFootProps,
+  type TableHeadProps,
 } from './index';
 
 const noop = () => undefined;
@@ -42,4 +48,15 @@ test('Table props', () => {
   <TableCell align="center" colSpan={2} />;
   // @ts-expect-error align is start, center, or end
   <TableCell align="left" />;
+});
+
+test('the section props types are exported', () => {
+  const head: TableHeadProps = { className: 'a' };
+  const body: TableBodyProps = { className: 'a' };
+  const foot: TableFootProps = { className: 'a' };
+  <>
+    <TableHead {...head} />
+    <TableBody {...body} />
+    <TableFoot {...foot} />
+  </>;
 });
