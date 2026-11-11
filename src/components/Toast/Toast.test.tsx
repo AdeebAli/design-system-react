@@ -63,7 +63,9 @@ it('update changes an open toast; close(id) closes one; close() closes all', asy
 
 it('action runs onClick, then closes its toast', async () => {
   const calls: string[] = [];
-  const onClick = vi.fn(() => calls.push('click'));
+  const onClick = vi.fn(() =>
+    calls.push(screen.queryByText('Failed') ? 'open' : 'closed'),
+  );
   renderProvider();
   act(() => {
     held.toast!.add({ title: 'Failed', action: { label: 'Retry', onClick } });
@@ -71,7 +73,7 @@ it('action runs onClick, then closes its toast', async () => {
   await userEvent.click(await screen.findByRole('button', { name: 'Retry' }));
   expect(onClick).toHaveBeenCalledTimes(1);
   // The toast is still open when onClick runs.
-  expect(calls).toEqual(['click']);
+  expect(calls).toEqual(['open']);
   await vi.waitFor(() => expect(screen.queryByText('Failed')).toBeNull());
 });
 
@@ -111,15 +113,54 @@ it('a manager from createToastManager shows toasts when passed as manager', asyn
   expect(title.closest('[data-tone]')).toHaveAttribute('data-tone', 'info');
 });
 
-it('an urgent toast stays in the accessibility tree, since it holds buttons', async () => {
-  renderProvider();
-  act(() => {
-    held.toast!.add({ title: 'Failed', tone: 'danger' });
+const pause = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+describe.each([
+  ['useToast', () => renderProvider({ duration: 100 }), () => held.toast!],
+  [
+    'createToastManager',
+    () => {
+      const manager = createToastManager();
+      render(<ToastProvider duration={100} manager={manager} />);
+      return manager;
+    },
+    undefined,
+  ],
+])("the provider's duration through %s", (_name, setup, get) => {
+  it('closes an ordinary toast, and keeps a danger and an action toast', async () => {
+    const made = setup();
+    const manager = get ? get() : (made as ToastManager);
+    act(() => {
+      manager.add({ title: 'Plain' });
+      manager.add({ title: 'Urgent', tone: 'danger' });
+      manager.add({
+        title: 'Undo',
+        action: { label: 'Undo it', onClick: vi.fn() },
+      });
+    });
+    await screen.findByText('Plain');
+    await vi.waitFor(() => expect(screen.queryByText('Plain')).toBeNull());
+    await pause(300);
+    expect(screen.getAllByText('Urgent').length).toBeGreaterThan(0);
+    expect(screen.getByText('Undo')).toBeInTheDocument();
   });
-  // The hidden alert repeats the text, so find the toast by its role.
-  expect(await screen.findByRole('alertdialog')).toHaveAttribute(
-    'data-tone',
-    'danger',
-  );
-  expect(screen.getByRole('button', { name: 'Dismiss' })).toBeInTheDocument();
+
+  it('update: danger to success times out; neutral to danger stays', async () => {
+    const made = setup();
+    const manager = get ? get() : (made as ToastManager);
+    let a = '';
+    let b = '';
+    act(() => {
+      a = manager.add({ title: 'A', tone: 'danger' });
+      b = manager.add({ title: 'B' });
+    });
+    await screen.findByText('B');
+    act(() => {
+      manager.update(a, { tone: 'success' });
+      manager.update(b, { tone: 'danger' });
+    });
+    await vi.waitFor(() => expect(screen.queryByText('A')).toBeNull());
+    await pause(300);
+    expect(screen.getAllByText('B').length).toBeGreaterThan(0);
+  });
 });

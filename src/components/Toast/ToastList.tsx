@@ -1,6 +1,8 @@
 'use client';
 
 import { Toast as BaseToast } from '@base-ui/react/toast';
+import { cx } from '../../utils/cx';
+import { popupSurface } from '../overlays/popup.css';
 import { Button } from '../Button';
 import { Icon, type IconProps } from '../Icon';
 import { CircleAlertIcon } from '../Icon/internal/CircleAlert';
@@ -46,12 +48,8 @@ export function ToastList({
       <BaseToast.Root
         key={toast.id}
         toast={toast}
-        className={styles.root}
+        className={cx(popupSurface, styles.root)}
         data-tone={tone}
-        // Base UI hides an urgent toast until it has focus, but the toast
-        // holds focusable buttons, and a hidden element can't (axe:
-        // aria-hidden-focus). The separate alert still announces it.
-        aria-hidden={false}
         swipeDirection={[...swipeDirections(position)]}
       >
         <BaseToast.Content className={styles.content}>

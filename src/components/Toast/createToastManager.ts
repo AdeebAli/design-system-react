@@ -53,9 +53,17 @@ export function wrapManager(base: BaseMethods): ToastManager {
         delete changes.type;
         delete changes.priority;
         delete changes.data;
-        if (options.duration === undefined && !options.action) {
-          delete changes.timeout;
-        }
+      }
+      const retimed =
+        options.duration !== undefined ||
+        options.tone !== undefined ||
+        options.action !== undefined;
+      if (retimed) {
+        // An own `timeout: undefined` makes Base UI fall back to the
+        // provider's duration, so an old 0 doesn't stick.
+        changes.timeout = next.timeout;
+      } else {
+        delete changes.timeout;
       }
       base.update(id, changes);
     },

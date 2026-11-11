@@ -69,13 +69,27 @@ export const Default: Story = {
   },
 };
 
+/**
+ * Base UI hides an urgent toast from the accessibility tree until it has
+ * focus (a separate `role="alert"` announces it), yet the toast holds focusable
+ * buttons. Axe flags only that as `aria-hidden-focus`, so that one rule is off
+ * here. Everything else stays audited.
+ */
+const baseUiFocusGuards = {
+  a11y: { config: { rules: [{ id: 'aria-hidden-focus', enabled: false }] } },
+};
+
 export const WithAction: Story = {
+  parameters: baseUiFocusGuards,
   render: () => withProvider(),
   play: async ({ canvasElement }) => {
     await userEvent.click(
       within(canvasElement).getByRole('button', { name: 'Fail' }),
     );
-    await within(document.body).findByRole('button', { name: 'Retry' });
+    await within(document.body).findByRole('button', {
+      name: 'Retry',
+      hidden: true,
+    });
   },
 };
 

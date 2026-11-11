@@ -44,7 +44,7 @@ export const viewport = styleVariants({
   ],
 });
 
-/** One toast: the shared popup surface, moved by Base UI's swipe variables. */
+/** One toast: its layout and motion, moved by Base UI's swipe variables. */
 export const root = style(
   layered({
     display: 'block',
