@@ -179,7 +179,17 @@ export function DataTable<Row>({
     );
   }
 
-  const collator = useMemo(() => new Intl.Collator(locale), [locale]);
+  const collator = useMemo(() => {
+    try {
+      return new Intl.Collator(locale);
+    } catch {
+      warnOnce(
+        `DataTable-locale-${locale}`,
+        `DataTable: \`locale\` "${locale}" isn't a valid BCP 47 tag, so sorting uses the default order. Pass a tag such as "en-US".`,
+      );
+      return new Intl.Collator();
+    }
+  }, [locale]);
   const sortColumn = sort
     ? columns.find((c) => c.id === sort.column)
     : undefined;
@@ -191,11 +201,30 @@ export function DataTable<Row>({
     [rows, sort, sortColumn, collator],
   );
 
-  const total = totalRows ?? sorted.length;
-  const totalPages =
-    pageSize !== undefined && pageSize > 0 ? Math.ceil(total / pageSize) : 1;
-  const lastPage = Math.max(1, totalPages);
-  const page = pageControlled ? pageProp : Math.min(pageState, lastPage);
+  // Only a positive whole number turns paging on, and only a finite count is a total.
+  const paging =
+    pageSize !== undefined && Number.isInteger(pageSize) && pageSize > 0
+      ? pageSize
+      : undefined;
+  if (pageSize !== undefined && paging === undefined) {
+    warnOnce(
+      'DataTable-pageSize',
+      `DataTable: \`pageSize\` is ${pageSize}, so paging is off. Pass a positive whole number.`,
+    );
+  }
+  const serverTotal =
+    totalRows !== undefined && Number.isFinite(totalRows)
+      ? totalRows
+      : undefined;
+  const total = serverTotal ?? sorted.length;
+  const lastPage =
+    paging === undefined ? 1 : Math.max(1, Math.ceil(total / paging));
+  const clampPage = (value: number) =>
+    Number.isFinite(value)
+      ? Math.min(Math.max(Math.trunc(value), 1), lastPage)
+      : 1;
+  // Pagination gets the consumer's controlled value, and warns if it's invalid.
+  const page = pageControlled ? pageProp : clampPage(pageState);
   // An uncontrolled page left past the end by shrinking rows moves to the last one.
   if (!pageControlled && pageState !== page) setPageState(page);
 
@@ -206,8 +235,8 @@ export function DataTable<Row>({
   };
 
   const visible =
-    pageSize !== undefined && totalRows === undefined
-      ? sorted.slice((page - 1) * pageSize, page * pageSize)
+    paging !== undefined && serverTotal === undefined
+      ? sorted.slice((clampPage(page) - 1) * paging, clampPage(page) * paging)
       : sorted;
 
   const changeSort = (column: string) => {
@@ -255,7 +284,7 @@ export function DataTable<Row>({
         </TableHead>
         <TableBody>
           {showSkeleton ? (
-            Array.from({ length: pageSize ?? SKELETON_ROWS }, (_, index) => (
+            Array.from({ length: paging ?? SKELETON_ROWS }, (_, index) => (
               <TableRow key={index} hoverable={false}>
                 {columns.map((column) => (
                   <TableCell key={column.id} align={column.align}>
@@ -291,10 +320,10 @@ export function DataTable<Row>({
           )}
         </TableBody>
       </Table>
-      {pageSize !== undefined && (
+      {paging !== undefined && (
         <Pagination
           page={page}
-          totalPages={totalPages}
+          totalPages={lastPage}
           onPageChange={goToPage}
           labels={labels}
         />

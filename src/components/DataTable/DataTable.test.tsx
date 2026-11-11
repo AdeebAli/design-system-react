@@ -311,3 +311,43 @@ it('works with state held by the project', () => {
   fireEvent.click(sortButton('Name'));
   expect(names()).toEqual(['Ada', 'Bo', 'Cara']);
 });
+
+it('renders with a NaN totalRows instead of looping', () => {
+  render(<Sample pageSize={2} totalRows={NaN} />);
+  expect(names()).toEqual(['Cara', 'Ada']);
+  expect(pageButton(2)).toBeInTheDocument();
+});
+
+it('shows the first page for a controlled page below 1', () => {
+  render(<Sample pageSize={2} page={-1} />);
+  expect(names()).toEqual(['Cara', 'Ada']);
+});
+
+it('clamps a controlled page past the end and truncates fractions', () => {
+  const { rerender } = render(<Sample pageSize={2} page={99} />);
+  expect(names()).toEqual(['Bo']);
+  rerender(<Sample pageSize={2} page={1.7} />);
+  expect(names()).toEqual(['Cara', 'Ada']);
+  rerender(<Sample pageSize={2} page={NaN} />);
+  expect(names()).toEqual(['Cara', 'Ada']);
+});
+
+it('ignores an invalid pageSize and warns', () => {
+  const warn = vi.spyOn(console, 'warn').mockImplementation(vi.fn());
+  render(<Sample pageSize={0} />);
+  expect(names()).toEqual(['Cara', 'Ada', 'Bo']);
+  expect(screen.queryByRole('navigation')).toBeNull();
+  expect(warn.mock.calls[0]?.[0]).toMatch(/DataTable.*pageSize/);
+});
+
+it('falls back to the default collator for an invalid locale and warns', () => {
+  const warn = vi.spyOn(console, 'warn').mockImplementation(vi.fn());
+  render(
+    <Sample
+      locale="not a locale!"
+      defaultSort={{ column: 'name', direction: 'ascending' }}
+    />,
+  );
+  expect(names()).toEqual(['Ada', 'Bo', 'Cara']);
+  expect(warn.mock.calls[0]?.[0]).toMatch(/DataTable.*not a locale!/);
+});
