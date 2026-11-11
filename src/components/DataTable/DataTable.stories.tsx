@@ -106,7 +106,7 @@ export const Selection: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const status = canvas.getByRole('status');
-    await expect(status).toBeEmptyDOMElement();
+    await expect(status).toHaveTextContent('0 selected');
     await userEvent.click(canvas.getByRole('button', { name: 'Select Ada 1' }));
     await expect(
       canvas.getByRole('button', { name: 'Select Ada 1' }),

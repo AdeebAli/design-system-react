@@ -530,12 +530,16 @@ it('Clear empties the selection, including off-page keys', () => {
   expect(onSelectionChange).toHaveBeenLastCalledWith([]);
 });
 
-it('renders the status empty at first and announces each change', () => {
+it('has one status element that is the visible count, from first render', () => {
+  render(<Sample selectionMode="multiple" defaultSelectedKeys={['3']} />);
+  expect(screen.getAllByRole('status')).toHaveLength(1);
+  expect(screen.getByRole('status')).toHaveTextContent('1 selected');
+  expect(screen.getByRole('status')).toBeVisible();
+});
+
+it('updates the status text once per change', () => {
   render(<Sample selectionMode="multiple" defaultSelectedKeys={['3']} />);
   const status = screen.getByRole('status');
-  expect(status).toBeEmptyDOMElement();
-  fireEvent.click(rowButton('Cara'));
-  expect(status).toHaveTextContent('2 selected');
   fireEvent.click(selectPage());
   expect(status).toHaveTextContent('3 selected');
   fireEvent.click(screen.getByRole('button', { name: 'Clear' }));

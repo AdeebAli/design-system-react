@@ -1,8 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
 import { Button } from '../Button';
-import { VisuallyHidden } from '../VisuallyHidden';
 import * as styles from './DataTable.css';
 
 interface SelectionToolbarProps {
@@ -29,17 +27,6 @@ export function SelectionToolbar({
   labels,
 }: SelectionToolbarProps) {
   const message = labels.selectedCount.replace('{count}', String(count));
-  // The live region starts empty and fills after the first change, so a screen
-  // reader announces changes and not the count it finds on first render.
-  const [changed, setChanged] = useState(false);
-  const previous = useRef(count);
-  useEffect(() => {
-    if (previous.current !== count) {
-      previous.current = count;
-      setChanged(true);
-    }
-  }, [count]);
-
   return (
     <div role="group" aria-label={labels.selection} className={styles.toolbar}>
       <Button
@@ -56,10 +43,10 @@ export function SelectionToolbar({
       >
         {labels.selectPage}
       </Button>
-      <span aria-hidden="true" className={styles.count}>
+      {/* A live region: assistive technology announces changes to it, not the text it mounts with. */}
+      <span role="status" className={styles.count}>
         {message}
       </span>
-      <VisuallyHidden role="status">{changed ? message : null}</VisuallyHidden>
       <Button size="sm" variant="ghost" onClick={onClear}>
         {labels.clearSelection}
       </Button>
