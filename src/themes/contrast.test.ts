@@ -35,6 +35,16 @@ it('covers Spec 02 pairs and thresholds', () => {
   });
 });
 
+it('covers text on the selected-row background', () => {
+  for (const fg of ['color.fg.default', 'color.fg.muted']) {
+    expect(CONTRAST_PAIRS).toContainEqual({
+      fg,
+      bg: 'color.bg.accentSubtle',
+      min: 4.5,
+    });
+  }
+});
+
 it('reports a failing pair', () => {
   const theme = {
     ...softLight,

@@ -72,6 +72,13 @@ const serverModules = [
   'components/Badge/Badge.js',
   'components/Prose/Prose.js',
   'components/Prose/NotProse.js',
+  'components/Table/Table.js',
+  'components/Table/TableCaption.js',
+  'components/Table/TableSections.js',
+  'components/Table/TableRow.js',
+  'components/Table/TableHeader.js',
+  'components/Table/TableSortHeader.js',
+  'components/Table/TableCell.js',
 ];
 for (const module of serverModules) {
   const path = join(dist, module);

@@ -38,6 +38,7 @@ export * from './components/Popover';
 export * from './components/Menu';
 export * from './components/Tooltip';
 export * from './components/Toast';
+export * from './components/Table';
 export * from './components/Prose';
 export { breakpoints } from './tokens/breakpoints';
 export { tokens } from './tokens/primitives';
