@@ -1,5 +1,5 @@
 import { act, render, screen, waitFor } from '@testing-library/react';
-import { useEffect } from 'react';
+import { StrictMode, useEffect } from 'react';
 import userEvent from '@testing-library/user-event';
 import { ToastProvider, createToastManager, useToast } from './index';
 import type { ToastManager } from './index';
@@ -436,5 +436,46 @@ describe('a manager used before the provider has connected', () => {
     await pause(50);
     render(<ToastProvider manager={manager} />);
     expect(await screen.findByText('Early')).toBeInTheDocument();
+  });
+});
+
+describe('a manager whose provider has unmounted', () => {
+  // First, before the drop test below uses up the one-time warning.
+  it("keeps a StrictMode remount's toasts: the provider is gone only briefly", async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(vi.fn());
+    const manager = createToastManager();
+    function Adder() {
+      useEffect(() => {
+        manager.add({ title: 'Strict', duration: 0 });
+      }, []);
+      return null;
+    }
+    render(
+      <StrictMode>
+        <ToastProvider manager={manager}>
+          <Adder />
+        </ToastProvider>
+      </StrictMode>,
+    );
+    // StrictMode runs the effect twice, and both toasts show, as with `useToast`.
+    await waitFor(() => expect(screen.getAllByText('Strict')).toHaveLength(2));
+    expect(warn).not.toHaveBeenCalled();
+    warn.mockRestore();
+  });
+
+  it('drops calls made after it unmounts, with a warning, and never replays them', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(vi.fn());
+    const manager = createToastManager();
+    const { unmount } = render(<ToastProvider manager={manager} />);
+    unmount();
+    await pause(10);
+    manager.add({ title: 'Stale', tone: 'danger' });
+    expect(warn).toHaveBeenCalledWith(
+      expect.stringContaining('createToastManager'),
+    );
+    render(<ToastProvider manager={manager} />);
+    await pause(50);
+    expect(screen.queryByText('Stale')).not.toBeInTheDocument();
+    warn.mockRestore();
   });
 });

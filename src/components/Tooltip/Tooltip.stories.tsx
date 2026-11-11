@@ -15,7 +15,7 @@ const meta: Meta<typeof Tooltip> = {
     docs: {
       description: {
         component:
-          "A short text hint on hover or keyboard focus. It is visual only: Base UI adds no ARIA, so `content` isn't announced and the trigger needs its own name, such as `aria-label` on an `IconButton`. It doesn't appear on touch screens, so never put needed information in one. `delay` applies to hover only; keyboard focus opens it immediately. `TooltipProvider` is optional: inside one, a second tooltip opens without delay soon after the first closes. A natively `disabled` button fires no hover or focus events, so its tooltip won't open: use `aria-disabled` instead of `disabled`, or wrap it in a focusable element.",
+          "A short text hint on hover or keyboard focus. It is visual only: Base UI adds no ARIA, so `content` isn't announced and the trigger needs its own name, such as `aria-label` on an `IconButton`. It doesn't appear on touch screens, so never put needed information in one. With `delay={0}`, a tap can flash it open for one frame. `delay` applies to hover only; keyboard focus opens it immediately. `TooltipProvider` is optional: inside one, a second tooltip opens without delay soon after the first closes. A natively `disabled` button fires no hover or focus events, so its tooltip won't open: use `aria-disabled` instead of `disabled`, or wrap it in a focusable element.",
       },
     },
   },

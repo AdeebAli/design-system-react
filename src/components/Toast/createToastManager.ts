@@ -1,6 +1,7 @@
 'use client';
 
 import { Toast as BaseToast } from '@base-ui/react/toast';
+import { warnOnce } from '../../utils/warn';
 import {
   toBaseOptions,
   type ToastData,
@@ -178,18 +179,29 @@ export function createToastManager(): ToastManager {
   const base = BaseToast.createToastManager<ToastData>();
   // Base UI drops a call nobody is subscribed to, and subscribes in the
   // provider's effect, after every descendant's mount effect has run. So hold
-  // the calls until our provider says it's connected.
+  // the calls until our provider says it's connected. Once a provider has
+  // connected and then stayed gone past the current task, calls are dropped,
+  // so a stale toast can't appear when a provider mounts again later. The
+  // grace covers a remount in one commit, such as StrictMode's.
   const queue: (() => void)[] = [];
   let connections = 0;
-  const run = (call: () => void) => {
+  let gone = false;
+  let goneTimer: ReturnType<typeof setTimeout> | undefined;
+  const run = (call: () => void, isAdd = false) => {
     if (connections > 0) call();
-    else queue.push(call);
+    else if (!gone) queue.push(call);
+    else if (isAdd) {
+      warnOnce(
+        'toast-manager-no-provider',
+        'createToastManager: a toast was added while its ToastProvider was unmounted, so it was dropped. Keep ToastProvider mounted, near the root of the app.',
+      );
+    }
   };
   const manager = wrapManager({
     // Base UI accepts a caller's id, so `add` can return it before it runs.
     add: (options) => {
       const id = options.id ?? `ds-toast-${nextId++}`;
-      run(() => base.add({ ...options, id }));
+      run(() => base.add({ ...options, id }), true);
       return id;
     },
     update: (id, updates) => run(() => base.update(id, updates)),
@@ -199,6 +211,8 @@ export function createToastManager(): ToastManager {
     base,
     connect() {
       connections += 1;
+      clearTimeout(goneTimer);
+      gone = false;
       // Calls made while replaying run in line, after what was queued.
       while (queue.length > 0 && connections > 0) {
         try {
@@ -214,6 +228,12 @@ export function createToastManager(): ToastManager {
         if (!connected) return;
         connected = false;
         connections -= 1;
+        if (connections === 0) {
+          goneTimer = setTimeout(() => {
+            gone = true;
+            queue.length = 0;
+          });
+        }
       };
     },
   });

@@ -148,7 +148,7 @@ A short text hint on hover or keyboard focus. One component, not parts:
 
 - **Inverse colors:** `bg.inverse`, `fg.inverse`, `font.size.xs`, `medium` weight, `radius.sm`, `zIndex.tooltip`. They contrast with both the page and `bg.raised` popups. The pair is already in Spec 02's contrast test. **Alternative:** `bg.raised`, which would blend into menus and dialogs.
 - **Visual only.** Base UI's trigger adds no ARIA, so `content` isn't announced. The trigger needs its own name, which Spec 05 already requires of `IconButton`. So a tooltip mustn't hold anything a screen reader user needs.
-- **It doesn't appear on touch screens,** so it can't be the only place for needed information.
+- **It doesn't appear on touch screens,** so it can't be the only place for needed information. With `delay={0}`, a tap can flash it open for one frame (Base UI behavior); with any other delay, a tap never opens it.
 - **A natively `disabled` button doesn't fire hover or focus,** so its tooltip won't open. The docs cover this.
 - **Hover can move onto the tooltip without closing it,** and `Escape` dismisses it (WCAG 1.4.13). Clicking the trigger also closes it.
 - **`delay` applies to hover only.** Keyboard focus opens it immediately.
@@ -240,7 +240,7 @@ toast.promise(saveChanges(), {
 
 **Options:** `title`, `description`, `tone` (`neutral`, `success`, `warning`, `danger`, `info`; default `neutral`), `action` (`{ label, onClick }`), `duration` (ms; `0` means it stays), `id`.
 
-- **Outside React:** `createToastManager()` returns the same methods, and is passed as `manager`, so API helpers can show toasts. It's created once, outside render.
+- **Outside React:** `createToastManager()` returns the same methods, and is passed as `manager`, so API helpers can show toasts. It's created once, outside render. Calls made before its `ToastProvider` first connects are queued and run in order when it does, so a toast added from a mount effect still shows; if no provider ever mounts, they stay queued. Once a provider has connected, calls made while it's unmounted are dropped, with a development warning on `add`, so a stale toast can't appear when a provider mounts again. An unmount and remount within the same task, such as StrictMode's, doesn't count.
 - **Appearance:** `bg.raised`, `shadow.raised`, `radius.lg`, `zIndex.toast`. A list with a `space.2` gap, not a collapsed stack. `tone` adds a colored icon (`fg.{tone}`), and the title carries the meaning, so color isn't the only signal.
 - **Duration:** a toast's own `duration` always wins, so any toast can time out or stay. Without one, **a toast with an `action`, or with `tone="danger"`, stays until dismissed,** since someone may need longer to read or act. Everything else uses the provider's `duration`. So `toast.add({ title: 'Could not save', tone: 'danger', duration: 5000 })` times out, and `duration: 0` keeps any toast open. Base UI pauses the timer on hover and focus. The docs say an `action` that times out must also be available somewhere else.
 - **`action` closes the toast after its `onClick` runs.** Base UI's action doesn't, so a Retry toast would otherwise never go away.
