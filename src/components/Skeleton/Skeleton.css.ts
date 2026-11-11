@@ -17,16 +17,12 @@ const block = {
   animationDuration: `calc(${vars.motion.duration.slow} * 5)`,
   animationTimingFunction: vars.motion.easing.standard,
   animationIterationCount: 'infinite',
-  // Lets a flex or grid cell shrink below its width.
-  minWidth: 0,
 } as const;
 
-export const rect = style(
-  layered({ ...block, borderRadius: vars.radius.md, flexShrink: 0 }),
-);
+export const rect = style(layered({ ...block, borderRadius: vars.radius.md }));
 
 export const circle = style(
-  layered({ ...block, borderRadius: vars.radius.full, flexShrink: 0 }),
+  layered({ ...block, borderRadius: vars.radius.full }),
 );
 
 /** One line of text: 1em tall, with a gap below it to the next line. */

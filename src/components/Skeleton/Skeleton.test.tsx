@@ -8,8 +8,30 @@ it('is always aria-hidden', () => {
 });
 
 it('cannot be un-hidden by a prop', () => {
-  render(<Skeleton data-testid="s" variant="text" />);
-  expect(screen.getByTestId('s')).toHaveAttribute('aria-hidden', 'true');
+  render(
+    <>
+      <Skeleton data-testid="a" aria-hidden="false" />
+      <Skeleton data-testid="b" aria-hidden={undefined} />
+      <Skeleton data-testid="c" variant="text" aria-hidden="false" />
+      <Skeleton data-testid="d" variant="text" aria-hidden={undefined} />
+    </>,
+  );
+  for (const id of ['a', 'b', 'c', 'd']) {
+    expect(screen.getByTestId(id)).toHaveAttribute('aria-hidden', 'true');
+  }
+});
+
+it('treats a non-finite lines as 1', () => {
+  render(
+    <>
+      <Skeleton data-testid="nan" variant="text" lines={NaN} />
+      <Skeleton data-testid="inf" variant="text" lines={Infinity} />
+      <Skeleton data-testid="zero" variant="text" lines={0} />
+    </>,
+  );
+  for (const id of ['nan', 'inf', 'zero']) {
+    expect(screen.getByTestId(id).children).toHaveLength(1);
+  }
 });
 
 it('renders one span line per line, the last one shorter', () => {
@@ -52,23 +74,4 @@ it('renders a div by default and a span with as="span"', () => {
   expect(screen.getByTestId('d').tagName).toBe('DIV');
   expect(screen.getByTestId('s').tagName).toBe('SPAN');
   expect(screen.getByTestId('t').tagName).toBe('SPAN');
-});
-
-it('defaults to full width for rect and text, not circle, and width overrides', () => {
-  render(
-    <>
-      <Skeleton data-testid="rect" />
-      <Skeleton data-testid="text" variant="text" />
-      <Skeleton data-testid="circle" variant="circle" />
-      <Skeleton data-testid="w" width="10" />
-    </>,
-  );
-  const cls = (id: string) => screen.getByTestId(id).className;
-  expect(cls('rect')).toBe(
-    render(<Skeleton data-testid="x" width="full" />).getByTestId('x')
-      .className,
-  );
-  expect(cls('rect')).not.toBe(cls('circle'));
-  expect(cls('w')).not.toBe(cls('rect'));
-  expect(cls('text')).not.toBe(cls('circle'));
 });

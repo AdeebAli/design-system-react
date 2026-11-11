@@ -34,19 +34,20 @@ export function Skeleton<E extends 'div' | 'span' = 'div'>({
 }: SkeletonProps<E>) {
   const element: ElementType = as ?? 'div';
   const display = element === 'span' ? 'inline-block' : 'block';
+  // `aria-hidden` goes after the spread so a prop can't un-hide it.
   // The rest depends on the generic `as`, which Box can't infer through.
   const rest: object = props;
 
   if (variant === 'text') {
-    const count = Math.max(1, Math.floor(lines));
+    const count = Number.isFinite(lines) ? Math.max(1, Math.floor(lines)) : 1;
     return (
       <Box
         as={element}
-        aria-hidden="true"
         display={display}
         width={width ?? 'full'}
         className={className}
         {...rest}
+        aria-hidden="true"
       >
         {Array.from({ length: count }, (_, index) => (
           <span
@@ -64,11 +65,11 @@ export function Skeleton<E extends 'div' | 'span' = 'div'>({
   return (
     <Box
       as={element}
-      aria-hidden="true"
       display={display}
       width={width ?? (variant === 'rect' ? 'full' : undefined)}
       className={cx(styles[variant], className)}
       {...rest}
+      aria-hidden="true"
     />
   );
 }

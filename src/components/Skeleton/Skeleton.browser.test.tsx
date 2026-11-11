@@ -78,3 +78,28 @@ it('is a display block, or inline-block as a span', () => {
     'inline-block',
   );
 });
+
+it('defaults to full width for rect and text, but not circle', () => {
+  render(
+    // flex-start so a block with no width of its own shrinks to its content.
+    <div
+      style={{
+        width: '300px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+      }}
+    >
+      <Skeleton data-testid="rect" />
+      <Skeleton data-testid="text" variant="text" />
+      <Skeleton data-testid="circle" variant="circle" height="10" />
+      <Skeleton data-testid="set" width="10" />
+    </div>,
+  );
+  const width = (id: string) =>
+    screen.getByTestId(id).getBoundingClientRect().width;
+  expect(width('rect')).toBe(300);
+  expect(width('text')).toBe(300);
+  expect(width('circle')).not.toBe(300);
+  expect(width('set')).toBe(40);
+});
