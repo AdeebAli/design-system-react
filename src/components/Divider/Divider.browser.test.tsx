@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
-import { cdp, page } from 'vitest/browser';
+import { page } from 'vitest/browser';
+import { axEntries } from '../../utils/browserTestUtils';
 import { Inline } from '../Inline';
 import { Text } from '../Text';
 import { Divider } from './index';
@@ -16,26 +17,7 @@ it('a screen reader reads the label: Chrome exposes it as text, not as a separat
       <button type="button">Continue with email</button>
     </div>,
   );
-  // The test renders in an iframe, so read that frame's tree, not the runner's.
-  const { frameTree } = (await cdp().send('Page.getFrameTree')) as {
-    frameTree: { childFrames?: { frame: { id: string; url: string } }[] };
-  };
-  const frame = frameTree.childFrames?.find(
-    ({ frame }) => frame.url === location.href,
-  )?.frame;
-  expect(frame).toBeDefined();
-  const { nodes } = (await cdp().send('Accessibility.getFullAXTree', {
-    frameId: frame!.id,
-  })) as {
-    nodes: {
-      ignored: boolean;
-      role?: { value: string };
-      name?: { value: string };
-    }[];
-  };
-  const read = nodes
-    .filter((node) => !node.ignored)
-    .map((node) => `${node.role?.value}:${node.name?.value ?? ''}`);
+  const read = await axEntries();
   const start = read.indexOf('button:Continue with a passkey');
   const end = read.indexOf('button:Continue with email');
   expect(start).toBeGreaterThan(-1);
