@@ -6,6 +6,11 @@ import { layered } from '../../utils/recipe';
 const md = `screen and (min-width: ${breakpoints.md})`;
 /** The tallest a bottom sheet gets before it scrolls inside. */
 const sheetHeight = '85dvh';
+/**
+ * Base UI's VirtualKeyboardProvider sets this to the on-screen keyboard's height.
+ * The fallback has a unit because a unitless 0 is invalid in `calc()` subtraction.
+ */
+const keyboardInset = 'var(--drawer-keyboard-inset, 0rem)';
 
 /** How far the panel extends past the screen edge, so overshooting a swipe shows no gap. */
 const bleed = vars.space['12'];
@@ -135,9 +140,10 @@ export const sides = styleVariants(
       flexDirection: 'column' as const,
       insetInline: 0,
       insetBlockStart: 'auto',
-      insetBlockEnd: 'var(--drawer-keyboard-inset, 0)',
+      insetBlockEnd: keyboardInset,
       blockSize: 'auto',
-      maxBlockSize: `calc(${sheetHeight} + ${bleed})`,
+      // Lifted over the keyboard, it shrinks by as much, so its top stays on screen.
+      maxBlockSize: `calc(${sheetHeight} - ${keyboardInset} + ${bleed})`,
       marginInline: 'auto',
       marginBlockEnd: `calc(-1 * ${bleed})`,
       paddingBlockEnd: bleed,

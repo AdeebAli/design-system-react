@@ -146,7 +146,7 @@ describe.each(['end', 'bottom'] as const)('a %s Drawer', (side) => {
     await expect.poll(() => screen.queryByRole('menu')).not.toBeInTheDocument();
   });
 
-  it('scrolls tall content inside the panel, not the page', async () => {
+  it('keeps its height and scrolls tall content inside the panel', async () => {
     const page = document.createElement('div');
     page.style.cssText = 'height: 4000px; width: 100%;';
     document.body.append(page);

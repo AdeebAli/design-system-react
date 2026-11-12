@@ -644,16 +644,32 @@ describe('bottom sheet', () => {
     }
   });
 
-  it('lifts over the on-screen keyboard by the inset Base UI measures', async () => {
-    await page.viewport(414, 800);
-    sheet();
-    const popup = await settled();
+  /** Sets the keyboard inset once Base UI's provider has set its own. */
+  const keyboardUp = async (inset: number) => {
     const viewport = document.querySelector<HTMLElement>(
       `.${styles.viewport}`,
     )!;
+    await expect
+      .poll(() => viewport.style.getPropertyValue('--drawer-keyboard-inset'))
+      .not.toBe('');
+    viewport.style.setProperty('--drawer-keyboard-inset', `${inset}px`);
+  };
+
+  it('uses --drawer-keyboard-inset for its bottom offset', async () => {
+    await page.viewport(414, 800);
+    sheet();
+    const popup = await settled();
     expect(popup.getBoundingClientRect().bottom).toBe(800 + bleed());
-    viewport.style.setProperty('--drawer-keyboard-inset', '120px');
+    await keyboardUp(120);
     expect(popup.getBoundingClientRect().bottom).toBe(800 + bleed() - 120);
+  });
+
+  it('a tall sheet shrinks above the keyboard, keeping its top on screen', async () => {
+    await page.viewport(414, 800);
+    render(tall());
+    const popup = await settled();
+    await keyboardUp(300);
+    expect(popup.getBoundingClientRect().top).toBeCloseTo(0.15 * 800, 1);
   });
 
   it('is wrapped in the virtual keyboard provider, a side panel is not', async () => {
@@ -689,7 +705,15 @@ describe('bottom sheet', () => {
     await expect.poll(() => document.activeElement).toBe(trigger());
   });
 
-  it('slides on transform, and reduced motion removes the transition', async () => {
+  it('slides on transform', async () => {
+    sheet();
+    const popup = await settled();
+    expect(getComputedStyle(popup).transitionProperty).toBe('transform');
+    await userEvent.click(closeButton());
+    await closed();
+  });
+
+  it('reduced motion removes the transition', async () => {
     await emulate([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
     sheet();
     const popup = await settled();
