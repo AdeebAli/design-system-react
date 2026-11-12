@@ -8,14 +8,14 @@ Build `@adeebali/design-system-react`, a general-purpose React design system. Sp
 
 ## Status
 
-- **Done:** v0.1 (specs 01–07), v0.2 (Specs 08–09), v0.3 (Specs 10–11), and v0.4 (Spec 12 Overlays, Spec 13 Data), each merged and released, with Storybook at https://adeebali.github.io/design-system-react/.
-- **v0.4.1 built, in review:** PR #26 (draft until this note's commit, then ready), branch `fix/v0.4.1-open-threads`, from `docs/superpowers/plans/2026-11-11-v0-4-1-open-threads.md`, run Native (`superpowers:executing-plans`). All four tasks are done. It acts on threads 1, 2, 3, 8, and 9 (see Open threads).
+- **Done:** v0.1 (specs 01–07), v0.2 (Specs 08–09), v0.3 (Specs 10–11), v0.4 (Spec 12 Overlays, Spec 13 Data), and v0.4.1 (open threads 1, 2, 3, 8, 9), each merged and released, with Storybook at https://adeebali.github.io/design-system-react/.
+- **v0.4.1 released:** PR #26 squash merged as `337db60`; `npm run release -- patch` made `a67ef89` and tag `v0.4.1`; release https://github.com/AdeebAli/design-system-react/releases/tag/v0.4.1.
 - **Planned, not started,** each its own branch, PR, and release, in this order, each started only after the previous one is released:
   1. `docs/superpowers/plans/2026-11-11-v0-5-feedback-and-display.md` (v0.5, minor; 9 tasks): Spec 16, plus every new theme token for v0.5–v0.7.
   2. `docs/superpowers/plans/2026-11-11-v0-6-advanced-inputs.md` (v0.6, minor; 6 tasks): Spec 14.
   3. `docs/superpowers/plans/2026-11-11-v0-7-app-navigation.md` (v0.7, minor; 5 tasks): Spec 15.
   - v0.5–v0.7 are recommended subagent-driven, but the owner hasn't chosen yet (thread 10).
-- **Next:** the owner's manual checks on PR #26, merge, `npm run release -- patch`.
+- **Next:** the owner chooses v0.5's execution method (thread 10), then the v0.5 build.
 
 ## Decisions
 
@@ -125,7 +125,13 @@ Calls made during the build where the spec was silent, each with what it costs i
 
 ## Changes
 
-**This session (2026-11-11), branch `fix/v0.4.1-open-threads`, PR #26:**
+**This session (2026-11-11), the v0.4.1 release:**
+- PR #26 squash merged by the owner as `337db60`.
+- `npm run release -- patch` on a clean, up-to-date `main`: all checks passed, then `a67ef89` (version 0.4.1 in `package.json` and `package-lock.json`), tag `v0.4.1`, push (the owner's ruleset bypass), and the GitHub release.
+- Release notes: the script's `--generate-notes` produced only the PR list, though the old next step 1 said to use the draft in PR #26's body. With the owner's approval they were replaced by that draft (Fixes, Docs, Changes) plus the Full Changelog link, through `gh release edit v0.4.1`.
+- This note, on branch `docs/handoff-v0.4.1`.
+
+**The v0.4.1 build, branch `fix/v0.4.1-open-threads`, PR #26 (for reference):**
 - `9874dac`: the four plans, the previous note, Spec 00's milestone table, and Specs 14–15's `Milestone` lines.
 - `88e94d1`: `Tabs`, `RadioGroup`, `ToggleChipGroup` follow the root `dir`; new RTL tests (including new `RadioGroup` and `ToggleChipGroup` browser test files) and a `Select` centering test.
 - `572367e`: `Table.css.ts` sticks only a one-row header; new tests and the `StickyTwoRowHeader` story; Spec 13 and the Table docs (one-row header, two `rowSpan` limits).
@@ -133,14 +139,25 @@ Calls made during the build where the spec was silent, each with what it costs i
 - `42c151f`: lockfile regenerated under `.nvmrc`'s Node (ruling 7).
 - `f9f79c2`: the recipe story's ascending-order check (ruling 8).
 - `72722d1`: visual baselines from the `update-visual-baselines` workflow (run 43160231650): the `TanStackRecipe` screenshots changed and `StickyTwoRowHeader` screenshots were added, 8 files, all reviewed. The first baselines run (43159502446) was rejected on push because `f9f79c2` had moved the branch, so it was dispatched again on the branch.
-- This note (`docs/HANDOFF.md`), in the acceptance commit `3c38bc2`, and updated in the next commit.
+- The handoff (`docs/HANDOFF.md`), in the acceptance commit `3c38bc2`, updated in `9d053c9` and `ba6f37d`.
+- `803580d`: `CLAUDE.md` prefixes Node commands with `nvm use` and asks for break-check ledger lines.
 - `b8ac114`: `tsconfig.build.json` excludes `*.example.tsx`; the redundant `vite/client` reference is removed (owner's request after the review).
 - `ce5a5f1`: the touch-emulation tests (`Input.touch.browser.test.tsx`, `Tooltip.touch.browser.test.tsx`) run in a new `browser-touch` Vitest project, which `test:stories` includes; `vitest.desktop-pointer.setup.ts` guards the `browser` project (owner's request to diagnose thread 7).
 - Public API unchanged: `git diff v0.4.0 -- src/index.ts` is empty.
 
-**Before this session (v0.4.0 release, for reference):** PR #24 squash merged as `e6b254b`; `npm run release -- minor` made `9bd299b` and tag `v0.4.0`, with hand-edited release notes.
+**v0.4.0 release (for reference):** PR #24 squash merged as `e6b254b`; `npm run release -- minor` made `9bd299b` and tag `v0.4.0`, with hand-edited release notes.
 
 ## Verification
+
+**The v0.4.1 release:**
+- `npm run release -- patch` on `337db60`: its `npm run check` passed (the script stops on any failure), ending with fixtures 64 passed and 22 skipped; then it pushed and created the release.
+- CI on PR #26's head `803580d` (run 43173957869): all six jobs passed, including `stories` and `visual`. CI on `main` at `337db60` (run 43174978579): passed.
+- `Publish release` (run 43176128833) and `Storybook release` (run 43176128836) on `a67ef89`: both succeeded.
+- The owner reports both manual checks from PR #26 passed: the RTL keyboard spot check with VoiceOver, and VoiceOver and NVDA on `Table` › `StickyWithSpans` (thread 9c).
+- The edited release notes, read back with `gh release view v0.4.1`, match the draft except for one trailing newline.
+- The review covered all code up to `ce5a5f1`. After it: `ba6f37d` (handoff), `803580d` (`CLAUDE.md`), and `a67ef89` (version bump); none changes `src` or tests.
+
+**The v0.4.1 build (for reference):**
 
 - `npm ci && npm run check` on `42c151f`, under `.nvmrc`'s Node: exit 0. Unit 756/756, stories and browser 769/769 (axe in both modes), build and `verify-dist`, fixtures 64 passed and 22 skipped (tests scoped to one fixture app, as for v0.4.0). The only warnings were tooling deprecations (`eslint@9.39.5`, Node `module.register()`) and npm's install-scripts notice for `esbuild` and `fsevents`, none from this branch.
 - After `f9f79c2`: typecheck, lint, format, and `test:stories` 769/769 again.
@@ -149,12 +166,13 @@ Calls made during the build where the spec was silent, each with what it costs i
 - Touch-test fix, in the CI image (Node 26, arm64; CI is x64): with only the guard added, the `browser` project failed 44 tests, every one with the guard's message. After the move, `browser` + `browser-touch` passed 4 of 4 runs (333/333) and `test:stories` passed 2 of 2 (769/769). Locally, `browser` + `browser-touch` passed 333/333.
 - CI on `f9f79c2` (run 43160072395): `static`, `unit`, `stories`, `package (node nvmrc)`, and `package (node 22)` passed. `visual` failed only on the eight screenshots that `72722d1` then committed.
 - Every new test was seen failing first, or was broken on purpose and seen failing: the RTL tests before the wrap; the two-row header test before the selector change; the corner tests with the corner selector broken; the `Select` centering test with `align="start"`; the recipe's sort checks with `sortedRowModel` removed; typecheck with `useReactTable`.
-- **Independent review:** a fresh Opus reviewer on `5eda67e..42c151f` found it ready to merge (0 Critical, 0 Important, 4 Minor), and the same reviewer reviewed `f9f79c2` (OK). The same reviewer also reviewed `b8ac114` (OK), so the review covered all code up to `b8ac114`. It then reviewed the touch-test fix as `54df8ed` (no Critical or Important issues). `ce5a5f1`, the pushed form of that commit, differs only in two comments (its Minor: the isolation comes from a separate browser context per project, not a separate browser), so the review covers all code up to `ce5a5f1`. Not independently reviewed: `72722d1` (screenshots from the workflow run 43160231650, reviewed by eye) and this note (`3c38bc2` and its update).
-- **Not verified:**
-  - CI on `ce5a5f1` and this note's update. Trigger: CI on PR #26 before merge. (CI on `9d053c9` failed in `stories` on Card's hover test, which led to the fix in `ce5a5f1`.) The held run on `72722d1` (43161001609, waiting for "Approve workflows to run") is superseded by later runs and can be ignored.
-  - The owner's manual checks (PR #26 body): an RTL keyboard spot check with VoiceOver, and VoiceOver and NVDA on `StickyWithSpans` (thread 9c). Trigger: before the merge.
-  - Installing 0.4.x from GitHub Packages. `gh` lacks `read:packages`. Trigger: none; the v0.1 install proved the pipeline. (Carried forward.)
-  - The v0.5–v0.7 plans haven't had an independent review. Trigger: none before their builds; each branch gets a fresh whole-branch review before merge. (Carried forward.)
+- **Independent review:** a fresh Opus reviewer on `5eda67e..42c151f` found it ready to merge (0 Critical, 0 Important, 4 Minor), and the same reviewer reviewed `f9f79c2` (OK). The same reviewer also reviewed `b8ac114` (OK), so the review covered all code up to `b8ac114`. It then reviewed the touch-test fix as `54df8ed` (no Critical or Important issues). `ce5a5f1`, the pushed form of that commit, differs only in two comments (its Minor: the isolation comes from a separate browser context per project, not a separate browser), so the review covers all code up to `ce5a5f1`. Not independently reviewed: `72722d1` (screenshots from the workflow run 43160231650, reviewed by eye) and the handoff commits.
+
+**Not verified:**
+
+- CI on the `a67ef89` push (run 43176126303) was still running when this note was written. Trigger: CI on this note's PR, which runs on top of `a67ef89`.
+- Installing 0.4.x from GitHub Packages, and that 0.4.1 appears there (only the publish job's success was seen). `gh` lacks `read:packages`. Trigger: none; the v0.1 install proved the pipeline. (Carried forward.)
+- The v0.5–v0.7 plans haven't had an independent review. Trigger: none before their builds; each branch gets a fresh whole-branch review before merge. (Carried forward.)
 
 ## Open threads
 
@@ -175,31 +193,28 @@ Calls made during the build where the spec was silent, each with what it costs i
    - Fixtures: the Vite Table style check sits in `overlays.spec.ts`; no fixture test triggers a toast; the fixture sort link doesn't sort.
 7. **One intermittent browser test, not diagnosed.**
    - `Table.browser.test.tsx` "scrollable scrolls by keyboard" (line 151) failed once in three local full runs (`scrollLeft` stayed 0) and passed otherwise. It predates the sticky change. In the CI image (`mcr.microsoft.com/playwright:v1.65.0-noble`) it passed 5 of 5 runs of `Table.browser.test.tsx` alone and 2 full `test:stories` runs, and it passed on CI run 43127830011. Its one failure was on macOS under full-suite load. It failed again locally on `d219774`, and an instrumented copy caught one failure in three full runs: `ArrowRight` scrolled 40px, then `ArrowDown` reached the focused wrapper, wasn't prevented, with the page focused and visible, yet `scrollTop` stayed 0 for 2.5s. Ruled out: `ArrowDown` arriving during the `ArrowRight` scroll animation (pressing both back to back scrolls both).
-   - It isn't explained by the touch-emulation cause below: that taint happens only on Linux, and this test's failures were on macOS. Trigger: CI on every PR and each release's `npm run check`. If it fails, find the cause in the CI image before rerunning. Nothing forces a diagnosis while it keeps passing.
-9. **Table first-column `rowSpan`, part c only.** A row header over several rows uses `scope="row"` with `rowSpan`; some screen readers may announce it for its first row only. Parts a and b are resolved (below). Trigger: the owner's VoiceOver and NVDA check on `Table` › `StickyWithSpans`, listed in PR #26's manual checks. If a reader announces the header for its first row only, the follow-up is documenting `headers` in the Table docs.
+   - It isn't explained by the v0.4.1 touch-emulation fix (`ce5a5f1`): that taint happens only on Linux, and this test's failures were on macOS. It passed in the v0.4.1 release's local `npm run check` and on CI for `803580d` and `337db60`. Trigger: CI on every PR and each release's `npm run check`. If it fails, find the cause in the CI image before rerunning. Nothing forces a diagnosis while it keeps passing.
 10. **v0.5–v0.7 execution method.** The owner hasn't chosen (subagent-driven is recommended: about 2 agents per task plus a final review). Trigger: the start of each plan's build session.
-11. **A deferred minor finding from v0.4.1's final review.** A two-row header still gets the sticky-header `scroll-padding-block-start` (`stickyHeaderPad`, `src/components/Table/Table.css.ts:44`), so a focused cell stops about one header row below the top while nothing sticks. Nothing is hidden. Trigger: none; pick it up when convenient. The other two minors are resolved (below).
+11. **A deferred minor finding from v0.4.1's final review.** A two-row header still gets the sticky-header `scroll-padding-block-start` (`stickyHeaderPad`, `src/components/Table/Table.css.ts:44`), so a focused cell stops about one header row below the top while nothing sticks. Nothing is hidden. Trigger: none; pick it up when convenient. (Carried forward; the other two minors were resolved in `b8ac114`.)
 
-Resolved in v0.4.1 (PR #26):
-- Thread 1, the TanStack v9 recipe: `src/components/DataTable/TanStackRecipe.example.tsx` on `@tanstack/react-table` 9.3.1 (devDependency), covered by `npm run typecheck` (renaming `useTable` fails it with TS2724) and by the story's sort check (`59e6ea6`, `f9f79c2`). `dist/index.js` doesn't mention TanStack.
-- Thread 2, RTL in v0.3 widgets: `Tabs`, `RadioGroup`, and `ToggleChipGroup` wrap their Base UI root in `OverlayDirection` (`88e94d1`). Each RTL test failed before, and "follows a root dir change after mount" covers a change without remounting (the reviewer broke the observer and saw only that test fail). `Select` had no bug (ruling 1).
-- Thread 3, `npm audit`, rerun 2026-11-11: still 11 moderate, 0 high, 0 runtime (`npm audit --omit=dev`: 0). `typescript-eslint` 8.72.1 installed, 8.72.2 latest and still affected, so nothing was upgraded. Carried into each later plan's acceptance task, which reruns it; CI fails if an advisory reaches runtime dependencies or rises to high.
-- Thread 8, multi-row sticky headers: reproduced (the second row's cells stuck at the wrapper top), then fixed: only a one-row `TableHead` sticks (`572367e`). Spec 13 is amended, and there's a new `StickyTwoRowHeader` story.
-- Thread 9 a and b: reproduced in Chromium (after a 300px sideways scroll, the selected covered row's bar sat at x=-94, under the sticky spanning cell at 0–192; the spanning cell stayed white when a covered row was selected or hovered, and turned muted only on its own row's hover). Documented in Spec 13 and the Table docs (`572367e`).
-- Old next step 1, build v0.4.1: done (PR #26).
-- The four plans and the milestone amendments: committed in `9874dac`. Spec 16's `Milestone` was already v0.5.
-- Old unverified item, threads 8 and 9 not seen in a browser: both reproduced (above).
-- Thread 7's hover failures (Button; also Card and Table hover tests, seen while diagnosing), at the owner's request (`ce5a5f1`). Cause, shown in the CI image: once a page has had CDP touch emulation, headless Chromium on Linux keeps `(hover: none)` and `(pointer: none)` after it's turned off, because the container has no mouse. On macOS the trackpad restores them, which is why the old note said it didn't carry over. Instrumented failures showed the element matching `:hover` while `(hover: hover)` was false, and per-test logging showed the taint starting at Tooltip's and Input's touch tests in every run. No CDP call or `--blink-settings` flag restores it. The two touch tests now run in their own `browser-touch` project, and a guard fails any `browser` test whose page has lost desktop pointer media. Before the fix, 4 of 11 unguarded full runs in the image failed; after it, none did. The old note's "ruled out" was wrong.
-- Thread 11's other two minors, at the owner's request (`b8ac114`): `tsconfig.build.json` excludes `src/**/*.example.tsx` (the build's type program went from the example plus 110 `@tanstack` files to 0), and the redundant `vite/client` reference in `DataTable.stories.tsx` is gone (`tsconfig.json` already provides it).
+12. **Release notes need a manual edit after every release.** `scripts/release.mjs` calls `gh release create --generate-notes`, which lists only PRs, so the drafted notes were applied by hand for v0.4.0 and again for v0.4.1 (`gh release edit`). Proposed fix: let the script take `--notes-file <path>` and pass it to `gh release create`. Trigger: the owner's decision before the v0.5 release; otherwise the v0.5 release needs the same manual edit.
 
-The resolved lists from earlier notes (v0.4.0 release, v0.4 build, planning session) are dropped here; they were already resolved, and they stay readable in `git show 5eda67e:docs/HANDOFF.md`.
+Resolved this session:
+- Thread 9c, `scope="row"` with `rowSpan`: the owner's VoiceOver and NVDA check on `Table` › `StickyWithSpans` passed, so the markup is kept and no `headers` docs are needed.
+- Old unverified item, CI on `ce5a5f1` and the note's update: CI on PR #26's head `803580d` passed all six jobs (run 43173957869). The held run 43161001609 on `72722d1` is superseded.
+- Old unverified item, the owner's manual checks: both passed (owner's report; thread 9c above and the RTL spot check).
+- Old next step 1, merge and release: PR #26 merged as `337db60`; v0.4.1 released as `a67ef89`, with the drafted notes (see Changes).
+- Old next step 2, the handoff update after the release: this note.
+
+The list of threads resolved in the v0.4.1 build (1, 2, 3, 8, 9a–b, 7's hover failures, 11's other minors) is dropped here; it stays readable in `git show 337db60:docs/HANDOFF.md`.
+
+Resolved lists from earlier notes (v0.4.0 release, v0.4 build, planning session) stay readable in `git show 5eda67e:docs/HANDOFF.md`.
 
 ## Next steps
 
-1. The owner: let CI finish on PR #26's head, do the manual checks in the PR body, merge, and run `npm run release -- patch` with the release notes drafted in the PR body.
-2. Then the handoff update after the release (as #23 and #25 did).
-3. Then v0.5 from `docs/superpowers/plans/2026-11-11-v0-5-feedback-and-display.md`, after the owner chooses its execution method (thread 10). Then v0.6 and v0.7, each started only after the previous one is released.
+1. The owner chooses v0.5's execution method (thread 10) and whether the release script should take the drafted notes (thread 12).
+2. Build v0.5 from `docs/superpowers/plans/2026-11-11-v0-5-feedback-and-display.md` on its own branch and PR. Then v0.6 and v0.7, each started only after the previous one is released.
 
 ## Resume prompt
 
-> Read `docs/HANDOFF.md`. v0.4.1 is built in PR #26 (branch `fix/v0.4.1-open-threads`), reviewed, and marked ready. If it's merged and released, update the handoff for the release, then ask me how to execute the v0.5 plan (`docs/superpowers/plans/2026-11-11-v0-5-feedback-and-display.md`). If it isn't merged yet, check CI on PR #26 and report what's left for me (manual checks, merge, `npm run release -- patch`).
+> Read `docs/HANDOFF.md`. v0.4.1 is merged and released (tag `v0.4.1`, `a67ef89`). Confirm CI passed on this handoff's PR, then ask me how to execute the v0.5 plan (`docs/superpowers/plans/2026-11-11-v0-5-feedback-and-display.md`, thread 10) and whether to let `npm run release` take a notes file (thread 12), and start the v0.5 build on its own branch.
