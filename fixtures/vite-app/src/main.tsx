@@ -1,5 +1,6 @@
 import '@adeebali/design-system-react/styles.css';
 import {
+  Alert,
   Badge,
   Box,
   Button,
@@ -11,6 +12,11 @@ import {
   DialogDescription,
   DialogTitle,
   DialogTrigger,
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerTitle,
+  DrawerTrigger,
   Icon,
   Link,
   NavBar,
@@ -86,6 +92,20 @@ createRoot(document.getElementById('root')!).render(
         </DialogClose>
       </DialogContent>
     </Dialog>
+    <Alert tone="info" title="Fixture alert" data-testid="alert">
+      Rendered from the packed tarball.
+    </Alert>
+    <Drawer>
+      <DrawerTrigger>
+        <Button>Open drawer</Button>
+      </DrawerTrigger>
+      <DrawerContent side="end">
+        <DrawerTitle>Fixture drawer</DrawerTitle>
+        <DrawerClose>
+          <Button variant="soft">Done</Button>
+        </DrawerClose>
+      </DrawerContent>
+    </Drawer>
     <Table aria-label="Plans" data-testid="table">
       <TableHead>
         <TableRow>

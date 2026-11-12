@@ -86,6 +86,7 @@ From [Spec 12](specs/12-overlays.md).
 | `Tooltip`  | A short, visual-only hint on hover or focus; `TooltipProvider` shares the delay               |
 | `Menu`     | A list of actions, with submenus and checkbox or radio items                                  |
 | `Toast`    | A brief message: mount `ToastProvider` once, then call `useToast()` or `createToastManager()` |
+| `Drawer`   | A modal panel from the start or end side, or a bottom sheet, for a longer task such as filters |
 
 ## Data
 
@@ -98,6 +99,18 @@ From [Spec 13](specs/13-data.md).
 | `Pagination` | Page links (`getHref`, server-friendly) or buttons (`onPageChange`)               |
 | `Skeleton`   | A placeholder for content that's loading                                          |
 | `EmptyState` | What to show when a list or table has nothing in it                               |
+
+## Feedback and display
+
+From [Spec 16](specs/16-feedback-and-display.md).
+
+| Component  | Use it for                                                                     |
+| ---------- | ------------------------------------------------------------------------------ |
+| `Alert`    | A message that stays in the page, such as a warning above a form              |
+| `Spinner`  | A short wait with no measure of progress                                       |
+| `Progress` | How far along something is; `value={null}` for indeterminate                   |
+| `Divider`  | A line between things, horizontal or vertical, optionally with a label         |
+| `Avatar`   | A person or organization, with initials until the image loads, and a status    |
 
 ## Theming
 
