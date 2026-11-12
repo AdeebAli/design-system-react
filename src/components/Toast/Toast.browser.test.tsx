@@ -168,6 +168,11 @@ describe('swipe to dismiss follows text direction', () => {
         clickCount: 1,
         ...extra,
       });
+    // A mouse drag selects text, unlike a touch swipe. Pressing on that
+    // selection next time starts a native text drag, which cancels the
+    // pointer, so each drag starts with nothing selected. Where the earlier
+    // selection ends depends on font widths, so this only failed on Linux.
+    window.getSelection()?.removeAllRanges();
     await send('mouseMoved', x, { button: 'none', buttons: 0 });
     await send('mousePressed', x);
     for (let i = 1; i <= 10; i++) await send('mouseMoved', x + (dx * i) / 10);
