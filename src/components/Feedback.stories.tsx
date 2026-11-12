@@ -42,7 +42,7 @@ export const ChoosingAMessage: Story = {
       <Stack gap="6">
         <Stack gap="2">
           <Heading level={2} size="md">
-            Alert: stays until it's resolved
+            Alert: stays until it&apos;s resolved
           </Heading>
           <Alert tone="warning" title="Your trial ends in 3 days">
             Add a payment method to keep your projects.
