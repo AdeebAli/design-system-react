@@ -206,7 +206,10 @@ export const TanStackRecipe: Story = {
     await expect(
       canvas.getByRole('columnheader', { name: /Name/ }),
     ).toHaveAttribute('aria-sort', 'ascending');
-    await expect(firstRowHeader()).toHaveTextContent('Ada Lovelace');
+    // Unsorted, the second row is Grace Hopper.
+    await expect(canvas.getAllByRole('rowheader')[1]).toHaveTextContent(
+      'Alan Turing',
+    );
     await userEvent.click(canvas.getByRole('button', { name: /Name/ }));
     await expect(
       canvas.getByRole('columnheader', { name: /Name/ }),
