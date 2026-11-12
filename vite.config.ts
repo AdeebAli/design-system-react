@@ -11,6 +11,7 @@ export default defineConfig({
       '@vanilla-extract/sprinkles/createRuntimeSprinkles',
       '@vanilla-extract/recipes/createRuntimeFn',
       '@base-ui/react/alert-dialog',
+      '@base-ui/react/avatar',
       '@base-ui/react/button',
       '@base-ui/react/checkbox',
       '@base-ui/react/collapsible',
