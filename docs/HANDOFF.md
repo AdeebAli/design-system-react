@@ -134,7 +134,8 @@ Calls made during the build where the spec was silent, each with what it costs i
 - **Checks on `d219774`:** typecheck, lint, format:check, `npm test` (755), build with verify-dist each exited 0; `test:stories` passed 757 of 758, failing only "scrollable scrolls by keyboard" (open thread 7). Not rerun: `test:fixtures`, since no fixture changed.
 - **Third review** (`/code-review` on `932828d..1a411fd`): 7 findings. Fixed in the next commit: the span tests now assert the scroll happened; `spanned` has unit and type tests and a `StickyWithSpans` story; its description says to set it only on covered rows. Recorded: multi-row sticky headers (open thread 8). Not acted on: a separate `rowSpan={0}` test, since `spanned` doesn't depend on the span's length; unmarked covered rows misbehaving, which the owner accepted with the `spanned` choice.
 - **Checks after the third review's fixes:** typecheck, lint, format:check, `npm test` (756), `test:stories` (760), build with verify-dist each exited 0. Each new assertion was seen failing: the scroll check with the wrapper's `overflow-x` set to `visible`, the unit test without `data-spanned`.
-- **Review coverage:** the last independent review covered `1a411fd`. The third review's fix commit and this handoff commit are unreviewed. Trigger: next step 1.
+- **Fourth review** (`/code-review` on `1a411fd..c326d01`): 8 findings, none needing a code change before merge. Recorded: three `rowSpan` table issues (open thread 9). Not acted on: no play function on `StickyWithSpans` (the browser tests cover the behavior); its missing baseline (the workflow was running); an exact `scrollLeft` of 400 (the pixel ratio is 1 locally and on CI); undetectable misuse of `spanned` (accepted with that choice); story data copied three times (cosmetic).
+- **Review coverage:** the last independent review covered `c326d01`. Only this handoff commit came after it.
 - **CI:** passed on `ab5c34a` (run 43141339086, including `visual`). CI on `932828d` and later hasn't been checked. Trigger: next step 1.
 - **Manual checks:** done by the owner on 2026-11-11 (screen reader, forced colors, Dialog scroll lock, the sticky column in Firefox and Safari, Tooltip touch with `delay={0}`). The PR checklist boxes aren't ticked.
 - **Not verified:**
@@ -165,6 +166,11 @@ Calls made during the build where the spec was silent, each with what it costs i
    - `Button.browser.test.tsx` "hover changes a solid button to the hover token" (line 50) failed once on CI run 43127830011: after the hover, the background stayed `rgb(79, 70, 229)` instead of `rgb(67, 56, 202)`. The rerun passed, the full `test:stories` passed 751 of 751 twice in the CI image, and it hadn't failed in the previous 15 failed CI runs. Ruled out: touch emulation from `Input` and `Tooltip` tests leaking into other files (files run in parallel, but the setting didn't carry over, and hover worked right after it was turned off).
    - Trigger: `npm run release -- minor` runs `npm run check`, and CI runs on `main` after the merge. If either test fails there, find the cause before releasing.
 8. **Multi-row sticky headers (reported by the third review, not yet checked in a browser).** With `stickyHeader`, every header row sticks at the top, so a second `TableHead` row sits over the first, and `scroll-padding-block-start` reserves one row, so focus can land under the second (WCAG 2.4.11). Spec 13 doesn't say whether multi-row headers are supported. It predates `spanned`. Trigger: the v0.5 plan must decide support or document the limit.
+9. **Tables with a first-column `rowSpan`** (from the fourth review, `/code-review` on `1a411fd..c326d01`; none checked in a browser yet):
+   - The selected-row bar on a `spanned` row is drawn on its first cell, which is in the second column, so with `stickyFirstColumn` it scrolls under the sticky spanning cell.
+   - Hover and selection repaint the spanning cell only from its own (first) row, not from the rows it covers.
+   - A row header over several rows uses `scope="row"` with `rowSpan`; the reviewer says some screen readers then announce it for its first row only, and `TableHeader` doesn't allow `scope="rowgroup"`.
+   - Triggers: the v0.5 plan must decide each; the screen reader point needs a check with VoiceOver and NVDA on the `StickyWithSpans` story.
 
 Resolved since the last note:
 - Old next step 1, baselines and approving workflows: done; CI passes on `44881b4`.
@@ -179,7 +185,7 @@ Resolved since the last note:
 
 ## Next steps
 
-1. Review the commits after `1a411fd` (`/code-review` on `1a411fd..HEAD`), rerun the baselines workflow for the new `StickyWithSpans` story, check CI on the head, then squash-merge PR #24 and run `npm run release -- minor` for v0.4.0 (it reruns every check; see open thread 7 if an intermittent test fails), and edit the release notes.
+1. Check the `StickyWithSpans` screenshots from the baselines workflow, approve workflows if CI waits, and check CI on the head. Then squash-merge PR #24 and run `npm run release -- minor` for v0.4.0 (it reruns every check; see open thread 7 if an intermittent test fails), and edit the release notes.
 2. Write the v0.5 plan, with the triggers in open threads 1–3.
 
 ## Resume prompt
