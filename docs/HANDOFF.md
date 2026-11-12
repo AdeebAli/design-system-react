@@ -47,6 +47,7 @@ Architecture decisions are in `docs/adr/`. Every v0.4 build ruling is listed und
 - **`Tooltip` `delay={0}` can flash for one frame on a touch tap** (owner accepted; Spec 12 and the Tooltip docs say so).
 - **Skeleton rows aren't capped.** Spec 13 says loading shows `pageSize` rows.
 - **The TanStack recipe targets v8 (8.21.3).** npm's `latest` is 9.x, which has no `useReactTable`. It was checked against the real package, and no dependency was added.
+- **A first-column `rowSpan` keeps the column sticky** (owner's choice of three, Spec 13 amended). The spanning cell sticks and the rows it covers don't. Pure CSS can't count, so spans of up to 10 rows and `rowSpan={0}` are covered; longer ones aren't. Rejected: turning the whole column off when any cell spans rows, and only documenting the limit.
 - **Toast text stays selectable** (owner's call). With a mouse, dragging from selected toast text drags the text instead of swiping; making it unselectable would stop people copying an error message. Spec 12 defines swipe for touch, which doesn't select text.
 - **Visual baselines (carried from v0.2).** The workflow runs when the `update-baselines` label is added, with `--update-snapshots=changed`. After it commits to a PR, GitHub holds CI until the owner selects **Approve workflows to run**. Don't close and reopen the PR.
 
@@ -114,6 +115,7 @@ Calls made during the build where the spec was silent, each with what it costs i
 - `15d3003`: 264 new visual baselines from the workflow. No existing baseline changed.
 - `191a32e`: 16 Table sticky-column baselines updated by the workflow (run 43112487648) for the fixed width.
 - `17a4508`: the Toast swipe test clears the text selection before each drag (open thread 7).
+- `721314a` and `e59510c`: fixes from a `/code-review` of everything after the final review (`0d6e742..HEAD`). A toast added in the unmount's own task now warns when dropped; the toast unmount tests assert on a mocked `warnOnce`, so they don't depend on order; rows covered by a first-column `rowSpan` don't stick; the sticky column's reserve counts its border once. Spec 13 and the Table docs are amended.
 
 ## Verification
 
@@ -127,6 +129,7 @@ Calls made during the build where the spec was silent, each with what it costs i
 - **Tests were seen failing.** Each new test failed before its fix, or failed when the code was broken on purpose. The evidence is in the per-task reports in the local `.superpowers/sdd/` folder.
 - **The Toast swipe fix (`17a4508`)** was checked in the CI image (`mcr.microsoft.com/playwright:v1.65.0-noble`): `Toast.browser.test.tsx` failed 2 of 2 runs before it and passed 3 of 3 after (10 tests). Locally, that file, Prettier, ESLint and typecheck exit 0.
 - **CI on `44881b4`** (run 43127830011): every job passed, including `visual` with the sticky-column baselines, after one rerun of `stories` (see open thread 7).
+- **Checks on `e59510c`, after the review fixes:** typecheck, lint, format:check, `npm test` (755), `test:stories` (756), and build with verify-dist each exited 0. Each new test failed first (no warning on a same-task drop; a 5px reserve gap against 4px; covered rows' first cells sticky), and the toast tests' warning checks failed with spurious warnings added on purpose. Not rerun: `test:fixtures`, since no fixture or export changed. CI on `e59510c` hasn't run yet. Trigger: the push; if `visual` fails, the scroll-padding or selector change moved a screenshot.
 - **Manual checks:** done by the owner on 2026-11-11 (screen reader, forced colors, Dialog scroll lock, the sticky column in Firefox and Safari, Tooltip touch with `delay={0}`). The PR checklist boxes aren't ticked.
 - **Not verified:**
   - Installing 0.3.0 from GitHub Packages, carried forward. `gh` lacks `read:packages`. Trigger: none; the v0.1 install proved the pipeline, and Publish succeeded.
