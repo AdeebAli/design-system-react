@@ -3,6 +3,10 @@ import { StrictMode, useEffect } from 'react';
 import userEvent from '@testing-library/user-event';
 import { ToastProvider, createToastManager, useToast } from './index';
 import type { ToastManager } from './index';
+import { warnOnce } from '../../utils/warn';
+
+// `warnOnce` dedupes per key for the whole file, so assert on the call instead.
+vi.mock('../../utils/warn', () => ({ warnOnce: vi.fn() }));
 
 const held: { toast?: ToastManager } = {};
 function Grab({ onToast }: { onToast?: (m: ToastManager) => void }) {
@@ -440,9 +444,9 @@ describe('a manager used before the provider has connected', () => {
 });
 
 describe('a manager whose provider has unmounted', () => {
-  // First, before the drop test below uses up the one-time warning.
+  beforeEach(() => vi.mocked(warnOnce).mockClear());
+
   it("keeps a StrictMode remount's toasts: the provider is gone only briefly", async () => {
-    const warn = vi.spyOn(console, 'warn').mockImplementation(vi.fn());
     const manager = createToastManager();
     function Adder() {
       useEffect(() => {
@@ -459,23 +463,36 @@ describe('a manager whose provider has unmounted', () => {
     );
     // StrictMode runs the effect twice, and both toasts show, as with `useToast`.
     await waitFor(() => expect(screen.getAllByText('Strict')).toHaveLength(2));
-    expect(warn).not.toHaveBeenCalled();
-    warn.mockRestore();
+    expect(warnOnce).not.toHaveBeenCalled();
   });
 
   it('drops calls made after it unmounts, with a warning, and never replays them', async () => {
-    const warn = vi.spyOn(console, 'warn').mockImplementation(vi.fn());
     const manager = createToastManager();
     const { unmount } = render(<ToastProvider manager={manager} />);
     unmount();
     await pause(10);
     manager.add({ title: 'Stale', tone: 'danger' });
-    expect(warn).toHaveBeenCalledWith(
+    expect(warnOnce).toHaveBeenCalledWith(
+      'toast-manager-no-provider',
       expect.stringContaining('createToastManager'),
     );
     render(<ToastProvider manager={manager} />);
     await pause(50);
     expect(screen.queryByText('Stale')).not.toBeInTheDocument();
-    warn.mockRestore();
+  });
+
+  it('warns when a toast added in the same task as the unmount is dropped', async () => {
+    const manager = createToastManager();
+    const { unmount } = render(<ToastProvider manager={manager} />);
+    unmount();
+    manager.add({ title: 'Late' });
+    await pause(10);
+    expect(warnOnce).toHaveBeenCalledWith(
+      'toast-manager-no-provider',
+      expect.stringContaining('createToastManager'),
+    );
+    render(<ToastProvider manager={manager} />);
+    await pause(50);
+    expect(screen.queryByText('Late')).not.toBeInTheDocument();
   });
 });

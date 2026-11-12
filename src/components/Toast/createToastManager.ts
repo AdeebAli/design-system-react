@@ -183,19 +183,19 @@ export function createToastManager(): ToastManager {
   // connected and then stayed gone past the current task, calls are dropped,
   // so a stale toast can't appear when a provider mounts again later. The
   // grace covers a remount in one commit, such as StrictMode's.
-  const queue: (() => void)[] = [];
+  const queue: { call: () => void; isAdd: boolean }[] = [];
   let connections = 0;
   let gone = false;
   let goneTimer: ReturnType<typeof setTimeout> | undefined;
+  const warnDropped = () =>
+    warnOnce(
+      'toast-manager-no-provider',
+      'createToastManager: a toast was added while its ToastProvider was unmounted, so it was dropped. Keep ToastProvider mounted, near the root of the app.',
+    );
   const run = (call: () => void, isAdd = false) => {
     if (connections > 0) call();
-    else if (!gone) queue.push(call);
-    else if (isAdd) {
-      warnOnce(
-        'toast-manager-no-provider',
-        'createToastManager: a toast was added while its ToastProvider was unmounted, so it was dropped. Keep ToastProvider mounted, near the root of the app.',
-      );
-    }
+    else if (!gone) queue.push({ call, isAdd });
+    else if (isAdd) warnDropped();
   };
   const manager = wrapManager({
     // Base UI accepts a caller's id, so `add` can return it before it runs.
@@ -216,7 +216,7 @@ export function createToastManager(): ToastManager {
       // Calls made while replaying run in line, after what was queued.
       while (queue.length > 0 && connections > 0) {
         try {
-          queue.shift()!();
+          queue.shift()!.call();
         } catch (error) {
           queueMicrotask(() => {
             throw error;
@@ -231,6 +231,8 @@ export function createToastManager(): ToastManager {
         if (connections === 0) {
           goneTimer = setTimeout(() => {
             gone = true;
+            // A toast added in the unmount's own task is dropped here.
+            if (queue.some((entry) => entry.isAdd)) warnDropped();
             queue.length = 0;
           });
         }
