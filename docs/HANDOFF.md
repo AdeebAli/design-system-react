@@ -98,12 +98,11 @@ Calls made during the build where the spec was silent, each with what it costs i
 ## Verification
 
 - The release script's checks (`npm run check`) passed before it tagged, including fixtures 64 passed, 22 skipped (tests scoped to one fixture app). So did both intermittent tests in open thread 7, this time.
-- CI passed on `e6b254b`, all six jobs (run 43145785349).
+- CI passed on `e6b254b` (run 43145785349) and on `9bd299b`, all six jobs. The `storybook-pages` run on `9bd299b` succeeded.
 - Publish run 43146843828 succeeded; its log shows `+ @adeebali/design-system-react@0.4.0`.
 - https://adeebali.github.io/design-system-react/ returns 200.
 - Before the merge: four `/code-review` rounds, the last covering `c326d01`; checks and CI on the PR's head passed (details in PR #24 and the v0.4 ledger in `.superpowers/sdd/`). The owner did the manual checks on 2026-11-11.
 - **Not verified:**
-  - CI on `9bd299b` was still running when this note was written (the `storybook-pages` run succeeded). `9bd299b` changes only the version in `package.json` and `package-lock.json`. Trigger: the PR for this note shows the `main` status; check it before merging.
   - Installing 0.4.0 from GitHub Packages. `gh` lacks `read:packages`. Trigger: none; the v0.1 install proved the pipeline, and Publish succeeded.
 
 ## Open threads
