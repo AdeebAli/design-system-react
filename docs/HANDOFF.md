@@ -158,7 +158,7 @@ The v0.4.1 release and build details are in `git show f902386:docs/HANDOFF.md`.
   - `Alert` renders no empty wrapper for `false` or `''`.
   - `Divider`'s `ref` is `Ref<HTMLElement>`, since it's an `hr` by default; ref forwarding is tested for each kind.
 - A fresh read-only Sonnet reviewer covered that fix commit, `79931e8`: ready, with three nits recorded under thread 6. The review covers all code up to `79931e8`. After it, the labeled-`Divider` change `8bf529a` (plain text, from the owner's VoiceOver check, which then passed) was reviewed by a fresh read-only Sonnet reviewer: ready, one nit under thread 6. The reviews cover all code up to `8bf529a`.
-- **The shared accessibility-tree helper** (owner's request, after that review's nit): `src/utils/browserTestUtils.ts` (`axTree`, `axNames`, `axEntries`) replaces the copies in the NavBar, Pagination, and Divider browser tests, and has its own tests. Building it showed Chrome returns the tree breadth-first, so the helper walks it depth-first into reading order. Every assertion was seen failing. Not independently reviewed. Trigger: a read-only review before merge, or the owner's call to skip it.
+- **The shared accessibility-tree helper** (owner's request, after that review's nit): `src/utils/browserTestUtils.ts` (`axTree`, `axNames`, `axEntries`) replaces the copies in the NavBar, Pagination, and Divider browser tests, and has its own tests. Building it showed Chrome returns the tree breadth-first, so the helper walks it depth-first into reading order. Every assertion was seen failing. Not independently reviewed: the owner skipped the review for now (2026-11-12), since it changes only tests. Trigger: the owner can ask for one before merge; otherwise none.
 
 **Not verified:**
 
