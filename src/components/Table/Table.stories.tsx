@@ -23,7 +23,7 @@ const meta: Meta<typeof Table> = {
     docs: {
       description: {
         component:
-          'Styled, semantic table parts. They hold no state, so sorting, paging, and selection stay in your own state. Pass header text in normal case, since CSS does the uppercase. `stickyHeader` sticks to the wrapper, so give the table a height limit such as `maxHeight="screen"`. A sticky first column has a fixed width (half of `size.dialog.sm`, 12rem in Soft), and its text wraps inside it, so a focused cell is never hidden under it. Do not set a width on its cells, since the scroll reserve assumes the fixed width. When a first-column cell spans rows (`rowSpan`), mark the rows it covers with `spanned` on `TableRow`. Only one `TableSortHeader` should be sorted at a time. `onSort` needs a client component, and `href` works from a server one.',
+          'Styled, semantic table parts. They hold no state, so sorting, paging, and selection stay in your own state. Pass header text in normal case, since CSS does the uppercase. `stickyHeader` sticks to the wrapper, so give the table a height limit such as `maxHeight="screen"`. A sticky first column has a fixed width (half of `size.dialog.sm`, 12rem in Soft), and its text wraps inside it, so a focused cell is never hidden under it. Do not set a width on its cells, since the scroll reserve assumes the fixed width. When a first-column cell spans rows (`rowSpan`), mark the rows it covers with `spanned` on `TableRow`. The selected bar of a covered row then scrolls under the sticky spanning cell when the table is scrolled sideways, and the spanning cell takes only the hover and selected color of its own row. Only a one-row header sticks; a header with two or more rows scrolls with the table. Only one `TableSortHeader` should be sorted at a time. `onSort` needs a client component, and `href` works from a server one.',
       },
     },
   },
@@ -241,6 +241,51 @@ export const StickyOnCanvas: Story = {
 
 export const StickySmall: Story = {
   render: () => <Wide size="sm" stickyHeader stickyFirstColumn />,
+};
+
+/** A grouped two-row header scrolls with the table: only a one-row header sticks. */
+export const StickyTwoRowHeader: Story = {
+  render: () => (
+    <div style={{ height: 280, width: 480 }}>
+      <Table
+        aria-label="Spend by half"
+        maxHeight="full"
+        scrollable
+        stickyHeader
+      >
+        <TableHead>
+          <TableRow>
+            <TableHeader rowSpan={2}>Name</TableHeader>
+            <TableHeader colSpan={6} align="center">
+              First half
+            </TableHeader>
+            <TableHeader colSpan={6} align="center">
+              Second half
+            </TableHeader>
+          </TableRow>
+          <TableRow>
+            {MONTHS.map((month) => (
+              <TableHeader key={month} align="end">
+                {month}
+              </TableHeader>
+            ))}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {Array.from({ length: 20 }, (_, r) => (
+            <TableRow key={r}>
+              <TableHeader scope="row">{`Customer ${r + 1}`}</TableHeader>
+              {MONTHS.map((month, m) => (
+                <TableCell key={month} align="end">
+                  {(r + 1) * (m + 3) * 11}
+                </TableCell>
+              ))}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  ),
 };
 
 const REGIONS = [
