@@ -157,7 +157,7 @@ The v0.4.1 release and build details are in `git show f902386:docs/HANDOFF.md`.
   - `initials` no longer depends on the host's locale.
   - `Alert` renders no empty wrapper for `false` or `''`.
   - `Divider`'s `ref` is `Ref<HTMLElement>`, since it's an `hr` by default; ref forwarding is tested for each kind.
-- A fresh read-only Sonnet reviewer covered that fix commit, `79931e8`: ready, with three nits recorded under thread 6. The review covers all code up to `79931e8`. After it, the labeled-`Divider` change (plain text, from the owner's VoiceOver check) is not independently reviewed. Trigger: a read-only review of that commit before merge, or the owner's call to skip it.
+- A fresh read-only Sonnet reviewer covered that fix commit, `79931e8`: ready, with three nits recorded under thread 6. The review covers all code up to `79931e8`. After it, the labeled-`Divider` change `8bf529a` (plain text, from the owner's VoiceOver check, which then passed) was reviewed by a fresh read-only Sonnet reviewer: ready, one nit under thread 6. The reviews cover all code up to `8bf529a`.
 
 **Not verified:**
 
@@ -174,6 +174,7 @@ The v0.4.1 release and build details are in `git show f902386:docs/HANDOFF.md`.
 6. **Deferred minor findings from v0.4, plus Drawer.** Trigger: none; pick from this list when convenient. (Carried forward, with Drawer added.)
    - Dialog and Drawer: the close button scrolls out of view in tall content (`Dialog.css.ts`, `Drawer.css.ts`); Drawer matches Dialog on purpose. Dialog: the `closeOnOutsideClick` + `alert` warning fires while closed; `React.*` types used without an import in `DialogTitle`/`DialogDescription`; an unexplained `- 1` in the full-width browser test.
    - From the review of `79931e8`: before hydration, an avatar image with transparent areas shows the initials through them (opaque photos are fine); `Alert`'s `hasContent` lets `true` and `[]` through, rendering an empty part; `Divider`'s `Ref<HTMLElement>` also accepts a `RefObject<HTMLDivElement>`, which then holds an `hr`.
+   - From the review of `8bf529a`: `Divider.browser.test.tsx` finds the test frame by URL, while `NavBar.browser.test.tsx` has its own `testFrameId()` that takes the deepest child; share one helper.
    - Drawer: the bottom sheet keeps its safe-area padding while the keyboard is up (up to about 34px extra on an iPhone); the provider test waits a fixed 300ms before asserting the variable is absent on a side panel.
    - Popover: arrow offsets use physical `left`/`right`; the rotated arrow shadow's direction; the shadow clip uses `space.12`; weak tests (`lastMessage` reads `calls[0]`, layout props, no `aria-labelledby` test); a redundant `Omit<children>` in `PopoverTitle`.
    - Overlay foundations: the `gapOffset` comment should say a subtree theme isn't followed; RTL and non-bottom popup motion is untested; non-null assertions on the `var()` regex.
