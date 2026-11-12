@@ -84,6 +84,7 @@ const serverModules = [
   'components/Skeleton/Skeleton.js',
   'components/Spinner/Spinner.js',
   'components/Alert/Alert.js',
+  'components/Divider/Divider.js',
   'components/EmptyState/EmptyState.js',
 ];
 for (const module of serverModules) {
