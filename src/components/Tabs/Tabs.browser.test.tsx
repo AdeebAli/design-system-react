@@ -276,3 +276,38 @@ describe.each(['underline', 'pill'] as const)('the %s marker', (variant) => {
     expect(color).toBe(highlight);
   });
 });
+
+describe('document direction', () => {
+  afterEach(() => {
+    document.documentElement.removeAttribute('dir');
+  });
+
+  it('ArrowLeft moves to the next tab in RTL', async () => {
+    const { unmount } = render(<Keyboard />);
+    tab('A').focus();
+    await userEvent.keyboard('{ArrowRight}');
+    expect(tab('B')).toHaveFocus();
+    unmount();
+
+    document.documentElement.dir = 'rtl';
+    render(<Keyboard />);
+    tab('A').focus();
+    await userEvent.keyboard('{ArrowLeft}');
+    expect(tab('B')).toHaveFocus();
+  });
+
+  it('follows a root dir change after mount', async () => {
+    render(<Keyboard />);
+    tab('A').focus();
+    await userEvent.keyboard('{ArrowRight}');
+    expect(tab('B')).toHaveFocus();
+    await act(async () => {
+      document.documentElement.dir = 'rtl';
+      // The observer's callback runs as a microtask after the mutation.
+      await Promise.resolve();
+    });
+    tab('A').focus();
+    await userEvent.keyboard('{ArrowLeft}');
+    expect(tab('B')).toHaveFocus();
+  });
+});

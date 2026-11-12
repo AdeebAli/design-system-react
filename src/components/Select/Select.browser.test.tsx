@@ -93,3 +93,49 @@ it.each(['sm', 'md', 'lg'] as const)(
     );
   },
 );
+
+describe('document direction', () => {
+  const long = [
+    { value: 'monthly', label: 'Monthly, billed on the first of the month' },
+    { value: 'annual', label: 'Annual, billed once a year' },
+  ];
+
+  afterEach(() => {
+    document.documentElement.removeAttribute('dir');
+  });
+
+  // The popup is wider than the trigger, so its edges show the alignment.
+  async function offsets() {
+    const { unmount } = render(
+      <div style={{ width: 120, marginInline: 'auto', paddingBlock: 40 }}>
+        <Select aria-label="Plan" options={long} />
+      </div>,
+    );
+    await userEvent.click(trigger());
+    const listbox = await screen.findByRole('listbox');
+    const popup = listbox.closest<HTMLElement>(`.${styles.popup}`)!;
+    await expect.poll(() => getComputedStyle(popup).opacity).toBe('1');
+    const p = popup.getBoundingClientRect();
+    const t = trigger().getBoundingClientRect();
+    expect(p.width).toBeGreaterThan(t.width + 20);
+    const result = {
+      start: p.left - t.left,
+      end: t.right - p.right,
+    };
+    await userEvent.keyboard('{Escape}');
+    unmount();
+    return result;
+  }
+
+  // Base UI centers the popup (`align` defaults to `center`), and the only
+  // direction-dependent placement in its Select is `alignItemWithTrigger`,
+  // which is off. So RTL places the popup exactly as LTR does.
+  it('the popup centers on the trigger in RTL as in LTR', async () => {
+    const ltr = await offsets();
+    expect(Math.abs(ltr.start - ltr.end)).toBeLessThanOrEqual(1);
+    document.documentElement.dir = 'rtl';
+    const rtl = await offsets();
+    expect(Math.abs(rtl.start - rtl.end)).toBeLessThanOrEqual(1);
+    expect(Math.abs(rtl.start - ltr.start)).toBeLessThanOrEqual(1);
+  });
+});
