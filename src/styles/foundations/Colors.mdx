@@ -1,5 +1,5 @@
 import { Meta } from '@storybook/addon-docs/blocks';
-import { ColorTable } from './Tokens';
+import { AvatarColorTable, ColorTable } from './Tokens';
 
 <Meta title="Foundations/Colors" />
 
@@ -24,3 +24,9 @@ Contrast is against `color.bg.surface`. `onAccent`, `onStatus`, and `inverse` si
 Contrast is against `color.bg.surface`. `subtle` is decorative. `surface` is transparent in Soft.
 
 <ColorTable group="border" against="color.bg.surface" />
+
+## Avatar pairs
+
+`Avatar` colors its initials with one of six pairs, picked from the name. Each text color needs 4.5:1 on its own background. Only `Avatar` uses them, so the `background` and `color` props of `Box` don't offer them.
+
+<AvatarColorTable />

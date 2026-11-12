@@ -93,7 +93,7 @@ Every key below is required in every theme. Values for Soft are in
 | `color.fg.onAccent` | Text/icons on `bg.accent` |
 | `color.fg.{success,warning,danger,info}` | Status text (on surface, canvas, or the matching subtle bg) |
 | `color.fg.onStatus` | Text/icons on solid status backgrounds |
-| `color.bg.avatar.{1-6}`, `color.fg.avatar.{1-6}` | `Avatar`'s `colorFromName` pairs (Spec 16). Values are set when `Avatar` is built, within the contrast rule below |
+| `color.bg.avatar.{1-6}`, `color.fg.avatar.{1-6}` | `Avatar`'s `colorFromName` pairs (Spec 16): blue, teal, green, amber, rose, violet. Only `Avatar` uses them, so `Box`'s color props leave them out (Spec 04) |
 | `color.fg.inverse` | Text/icons on `bg.inverse` |
 | `color.fg.disabled` | Disabled control text and icons |
 | `color.border.subtle` | Decorative dividers, table rules |
@@ -360,6 +360,7 @@ become `0ms`. No exceptions, so components need no per-animation rules.
 | `bg.disabled` | `#efece6` | | `fg.disabled` | `#8a857c` |
 | `bg.mutedHover` | `#e4e0d8` | | `border.disabled` | `#e4e0d8` |
 | `bg.dangerHover` | `#991b1b` | | | |
+| `bg.avatar.1`–`6` | `#dbeafe`, `#ccfbf1`, `#dcfce7`, `#fef3c7`, `#ffe4e6`, `#ede9fe` | | `fg.avatar.1`–`6` | `#1e40af`, `#115e59`, `#166534`, `#92400e`, `#9f1239`, `#5b21b6` |
 
 **Soft Dark**
 
@@ -383,6 +384,7 @@ become `0ms`. No exceptions, so components need no per-animation rules.
 | `bg.disabled` | `#262420` | | `fg.disabled` | `#8a857c` |
 | `bg.mutedHover` | `#423e38` | | `border.disabled` | `#34312c` |
 | `bg.dangerHover` | `#fca5a5` | | | |
+| `bg.avatar.1`–`6` | `#1e2a4a`, `#123532`, `#15301f`, `#3a2a10`, `#3f1a24`, `#2a1f4a` | | `fg.avatar.1`–`6` | `#93c5fd`, `#5eead4`, `#86efac`, `#fcd34d`, `#fda4af`, `#c4b5fd` |
 
 Soft Dark's `bg.muted` (`#36332e`) is deliberately distinct from `bg.raised`
 (`#2a2824`) so hover and selected states stay visible inside menus and

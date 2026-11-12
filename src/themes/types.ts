@@ -1,3 +1,6 @@
+/** `Avatar`'s `colorFromName` pairs (Spec 16). */
+type AvatarColors = Record<'1' | '2' | '3' | '4' | '5' | '6', string>;
+
 /** A complete theme: a value for every token in the contract (Spec 02). */
 export interface ThemeTokens {
   color: {
@@ -23,7 +26,7 @@ export interface ThemeTokens {
       | 'inverse'
       | 'disabled',
       string
-    >;
+    > & { avatar: AvatarColors };
     fg: Record<
       | 'default'
       | 'muted'
@@ -38,7 +41,7 @@ export interface ThemeTokens {
       | 'inverse'
       | 'disabled',
       string
-    >;
+    > & { avatar: AvatarColors };
     border: Record<
       'subtle' | 'control' | 'surface' | 'danger' | 'disabled',
       string

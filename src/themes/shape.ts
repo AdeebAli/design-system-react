@@ -26,6 +26,7 @@ export const contractShape = {
       dangerHover: n,
       inverse: n,
       disabled: n,
+      avatar: { '1': n, '2': n, '3': n, '4': n, '5': n, '6': n },
     },
     fg: {
       default: n,
@@ -40,6 +41,7 @@ export const contractShape = {
       onStatus: n,
       inverse: n,
       disabled: n,
+      avatar: { '1': n, '2': n, '3': n, '4': n, '5': n, '6': n },
     },
     border: { subtle: n, control: n, surface: n, danger: n, disabled: n },
     focus: n,

@@ -106,8 +106,8 @@ Exported as the `LayoutProps` type.
 
 | Props | Values |
 |---|---|
-| `background` | `transparent` and every `color.bg` token: `canvas`, `surface`, `accent`, `dangerSubtle`, … |
-| `color` | `inherit` and every `color.fg` token: `default`, `muted`, `accent`, `onAccent`, … |
+| `background` | `transparent` and every `color.bg` token except the `avatar` pairs, which only `Avatar` uses (Spec 16): `canvas`, `surface`, `accent`, `dangerSubtle`, … |
+| `color` | `inherit` and every `color.fg` token except the `avatar` pairs: `default`, `muted`, `accent`, `onAccent`, … |
 | `borderColor` | Every `color.border` token: `subtle`, `control`, `surface`, `danger`, `disabled` |
 | `borderWidth` | `none`, `thin`, `thick`; also sets `border-style: solid` |
 | `borderRadius` | Every `radius` token: `none`, `sm`, `md`, `lg`, `xl`, `full`, `card`, `control` |

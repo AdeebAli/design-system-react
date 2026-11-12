@@ -45,6 +45,16 @@ it('covers text on the selected-row background', () => {
   }
 });
 
+it('covers each avatar pair (Spec 16)', () => {
+  for (const n of [1, 2, 3, 4, 5, 6]) {
+    expect(CONTRAST_PAIRS).toContainEqual({
+      fg: `color.fg.avatar.${n}`,
+      bg: `color.bg.avatar.${n}`,
+      min: 4.5,
+    });
+  }
+});
+
 it('reports a failing pair', () => {
   const theme = {
     ...softLight,
