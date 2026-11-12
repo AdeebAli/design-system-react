@@ -83,6 +83,7 @@ const serverModules = [
   'components/Pagination/pageRange.js',
   'components/Skeleton/Skeleton.js',
   'components/Spinner/Spinner.js',
+  'components/Alert/Alert.js',
   'components/EmptyState/EmptyState.js',
 ];
 for (const module of serverModules) {
@@ -91,6 +92,17 @@ for (const module of serverModules) {
     failures.push(`${path} is missing`);
   } else if (/^\s*['"]use client['"]/.test(readFileSync(path, 'utf8'))) {
     failures.push(`${path} begins with "use client"`);
+  }
+}
+
+// Client parts of server-safe components, which take event handlers.
+const clientParts = ['components/Alert/AlertDismiss.js'];
+for (const module of clientParts) {
+  const path = join(dist, module);
+  if (!existsSync(path)) {
+    failures.push(`${path} is missing`);
+  } else if (!/^\s*['"]use client['"]/.test(readFileSync(path, 'utf8'))) {
+    failures.push(`${path} doesn't begin with "use client"`);
   }
 }
 
