@@ -44,6 +44,7 @@ export * from './components/Skeleton';
 export * from './components/Spinner';
 export * from './components/Alert';
 export * from './components/Divider';
+export * from './components/Progress';
 export * from './components/EmptyState';
 export * from './components/DataTable';
 export * from './components/Prose';
