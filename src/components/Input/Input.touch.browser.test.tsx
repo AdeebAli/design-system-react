@@ -3,6 +3,8 @@ import { cdp } from 'vitest/browser';
 import { Textarea } from '../Textarea';
 import { Input } from './index';
 
+// Runs in the `browser-touch` project: touch emulation can't be fully undone
+// in a page on Linux, so no other test may share this page afterwards.
 afterEach(async () => {
   await cdp().send('Emulation.setTouchEmulationEnabled', { enabled: false });
 });

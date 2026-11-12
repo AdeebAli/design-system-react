@@ -76,6 +76,7 @@ export default tseslint.config(
             '*.config.*',
             'vitest.setup.ts',
             'vitest.browser.setup.ts',
+            'vitest.desktop-pointer.setup.ts',
             '**/*.browser.*',
           ],
         },

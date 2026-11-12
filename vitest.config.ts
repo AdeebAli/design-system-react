@@ -54,6 +54,30 @@ export default defineConfig({
             name: 'browser',
             globals: true,
             include: ['src/**/*.browser.test.tsx'],
+            exclude: ['src/**/*.touch.browser.test.tsx'],
+            setupFiles: [
+              './vitest.browser.setup.ts',
+              './vitest.desktop-pointer.setup.ts',
+            ],
+            browser: {
+              enabled: true,
+              headless: true,
+              provider: playwright(),
+              instances: [{ browser: 'chromium' }],
+            },
+          },
+        }),
+      ),
+      mergeConfig(
+        shared,
+        defineConfig({
+          test: {
+            // Tests that turn on touch emulation. Chromium on Linux can't
+            // undo it in a page, so they run in this project, whose pages
+            // (each with its own browser context) no other project uses.
+            name: 'browser-touch',
+            globals: true,
+            include: ['src/**/*.touch.browser.test.tsx'],
             setupFiles: ['./vitest.browser.setup.ts'],
             browser: {
               enabled: true,

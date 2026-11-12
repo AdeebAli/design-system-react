@@ -42,7 +42,7 @@
     "test": "vitest run --project unit && node --test scripts/*.test.mjs",
     "dev": "storybook dev -p 6006",
     "build:storybook": "storybook build -o storybook-static --quiet",
-    "test:stories": "vitest run --project 'stories-*' --project browser",
+    "test:stories": "vitest run --project 'stories-*' --project browser --project browser-touch",
     "test:visual": "playwright test",
     "test:fixtures": "node scripts/test-fixtures.mjs",
     "check": "npm run typecheck && npm run lint && npm run format:check && npm test && npm run test:stories && npm run build && npm run test:fixtures",
