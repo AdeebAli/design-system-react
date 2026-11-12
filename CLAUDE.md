@@ -10,7 +10,7 @@ Update `docs/HANDOFF.md` through the `handoff` skill, never by hand, so every op
 
 ## Commands
 
-Node comes from `.nvmrc`, so run `nvm use` first.
+Node comes from `.nvmrc`, so run `nvm use` first. Claude's shell doesn't keep state between commands, and nvm's default may be another Node, so prefix every `node`, `npm`, and `npx` command with `source ~/.nvm/nvm.sh && nvm use >/dev/null &&`.
 
 - `npm run dev`: Storybook.
 - `npm run build`: library build into `dist/`, then `scripts/verify-dist.mjs`.
@@ -33,6 +33,7 @@ Read these first:
 - Record new architectural decisions as the next ADR (`docs/adr/0005-…`), using the existing ADR format (Status, Date, Context, Decision, Alternatives considered, Consequences).
 - Items marked **(proposed)** in specs are the assistant's calls and not owner-confirmed. Don't treat them as settled.
 - Implementation plans come only after the specs are approved.
+- Every plan's Global Constraints require each break-check to be ledgered as `<assertion file:line>: broke <what>, failed at <file:line>`. A break that fails at another line doesn't prove that assertion.
 - Brainstorm mockups live in `.superpowers/` (gitignored).
 - A subagent may act as a fresh reviewer of a finished branch or plan, such as the final whole-branch review in `superpowers:executing-plans`. This is an exception to the owner's general limits on subagents. Give it read-only work, and validate its findings before acting on them.
 
