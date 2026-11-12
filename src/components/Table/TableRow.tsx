@@ -11,7 +11,8 @@ export interface TableRowProps extends ComponentPropsWithRef<'tr'> {
   /**
    * Marks a row that a first-column `rowSpan` above covers, so with
    * `stickyFirstColumn` its first cell, which is in the second column,
-   * doesn't stick. @default false
+   * doesn't stick. Set it only on covered rows: on any other row, the row
+   * header stops sticking. @default false
    */
   spanned?: boolean;
 }

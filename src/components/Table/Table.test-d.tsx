@@ -42,6 +42,9 @@ test('Table props', () => {
   // @ts-expect-error stickyBackground is a surface
   <Table stickyBackground="accent" />;
   <TableRow selected hoverable={false} />;
+  <TableRow spanned />;
+  // @ts-expect-error spanned is a boolean
+  <TableRow spanned="yes" />;
   <TableHeader scope="row" align="end" />;
   // @ts-expect-error scope is col or row
   <TableHeader scope="colgroup" />;

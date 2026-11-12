@@ -565,6 +565,7 @@ describe('a first-column cell that spans rows', () => {
       const before = covered.map((cell) => rect(cell).left);
       const europeLeft = rect(europe).left;
       wrapperOf().scrollLeft = 400;
+      expect(wrapperOf().scrollLeft).toBe(400);
       // Past the column's width, so a sticky cell would have pinned. The
       // spanning cell and the next row header stay; covered cells scroll.
       expect(rect(europe).left).toBeCloseTo(europeLeft, 0);
@@ -607,6 +608,7 @@ describe('a first-column cell that spans rows', () => {
     const asia = screen.getByRole('rowheader', { name: 'Asia' });
     const left = rect(asia).left;
     wrapperOf().scrollLeft = 400;
+    expect(wrapperOf().scrollLeft).toBe(400);
     expect(rect(asia).left).toBeCloseTo(left, 0);
   });
 });

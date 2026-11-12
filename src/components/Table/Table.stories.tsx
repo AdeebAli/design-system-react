@@ -243,6 +243,51 @@ export const StickySmall: Story = {
   render: () => <Wide size="sm" stickyHeader stickyFirstColumn />,
 };
 
+const REGIONS = [
+  { region: 'Europe', countries: ['France', 'Germany', 'Spain'] },
+  { region: 'Asia', countries: ['Japan', 'India'] },
+];
+
+/** A first-column cell spans its rows; the rows it covers are marked `spanned`. */
+export const StickyWithSpans: Story = {
+  render: () => (
+    <div style={{ width: 480 }}>
+      <Table aria-label="Spend by country" scrollable stickyFirstColumn>
+        <TableHead>
+          <TableRow>
+            <TableHeader>Region</TableHeader>
+            <TableHeader>Country</TableHeader>
+            {MONTHS.map((month) => (
+              <TableHeader key={month} align="end">
+                {month}
+              </TableHeader>
+            ))}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {REGIONS.flatMap(({ region, countries }) =>
+            countries.map((country, c) => (
+              <TableRow key={country} spanned={c > 0}>
+                {c === 0 && (
+                  <TableHeader scope="row" rowSpan={countries.length}>
+                    {region}
+                  </TableHeader>
+                )}
+                <TableHeader scope="row">{country}</TableHeader>
+                {MONTHS.map((month, m) => (
+                  <TableCell key={month} align="end">
+                    {(c + 2) * (m + 3) * 7}
+                  </TableCell>
+                ))}
+              </TableRow>
+            )),
+          )}
+        </TableBody>
+      </Table>
+    </div>
+  ),
+};
+
 export const StickySortable: Story = {
   render: () => (
     <div style={{ height: 240, width: 480 }}>

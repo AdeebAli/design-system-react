@@ -123,6 +123,23 @@ it('marks a selected row and turns hover off for one row', () => {
   expect(screen.getByTestId('c')).not.toHaveAttribute('data-no-hover');
 });
 
+it('marks a row that a first-column span covers', () => {
+  render(
+    <Table aria-label="t">
+      <TableBody>
+        <TableRow spanned data-testid="a">
+          <TableCell>a</TableCell>
+        </TableRow>
+        <TableRow data-testid="b">
+          <TableCell>b</TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>,
+  );
+  expect(screen.getByTestId('a')).toHaveAttribute('data-spanned', '');
+  expect(screen.getByTestId('b')).not.toHaveAttribute('data-spanned');
+});
+
 it('puts the layout props on the wrapper and the rest on the table', () => {
   const { container } = render(
     <Table
