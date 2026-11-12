@@ -154,6 +154,10 @@ export default async function RootLayout({
 
 `fixtures/next-app` runs this setup on `/csp`, and its tests check there are no policy violations or console errors.
 
+## Components
+
+See [the component list](docs/components.md) for every component, grouped by spec, with what each is for. Each one is documented in [Storybook](https://adeebali.github.io/design-system-react/).
+
 ## Theming
 
 Override tokens with typed objects. Anything you leave out stays Soft.

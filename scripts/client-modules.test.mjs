@@ -49,3 +49,22 @@ test('a barrel that only re-exports a hook needs no directive', () => {
     'import "./styles/index.js";\nimport { ThemeProvider as B, useColorMode as V } from "./theme/ThemeProvider.js";\nexport { B as ThemeProvider, V as useColorMode };\n';
   assert.deepEqual(clientModuleFailures([['dist/index.js', source]]), []);
 });
+
+test('a namespace React import used for hooks is a client module', () => {
+  const source =
+    'import * as React from "react";\nfunction a() {\nreturn React.useState(0);\n}\nexport { a };\n';
+  assert.equal(clientModuleFailures([['dist/a.js', source]]).length, 1);
+  assert.deepEqual(
+    clientModuleFailures([['dist/a.js', directive + source]]),
+    [],
+  );
+});
+
+test('a default-plus-named React import of a hook is a client module', () => {
+  const source = 'import React, { useState as e } from "react";\n';
+  assert.equal(clientModuleFailures([['dist/a.js', source]]).length, 1);
+  assert.deepEqual(
+    clientModuleFailures([['dist/a.js', directive + source]]),
+    [],
+  );
+});

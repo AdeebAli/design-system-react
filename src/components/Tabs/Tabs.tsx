@@ -57,7 +57,11 @@ export function Tabs({
         value={value}
         defaultValue={defaultValue}
         onValueChange={
-          onValueChange && ((value: string) => onValueChange(value))
+          onValueChange &&
+          // Base UI reports null when no tab is enabled; consumers get strings only.
+          ((value: unknown) => {
+            if (typeof value === 'string') onValueChange(value);
+          })
         }
         className={cx(box(layout), className)}
       >

@@ -1,13 +1,14 @@
 'use client';
 
+import type { MouseEvent } from 'react';
+
 import { useColorMode } from '../../theme/ThemeProvider';
-import type { ButtonSize, ButtonVariant } from '../Button';
+import type { ButtonVariant } from '../Button';
 import { Box } from '../Box';
 import { Icon } from '../Icon';
 import { MoonIcon } from '../Icon/internal/Moon';
 import { SunIcon } from '../Icon/internal/Sun';
-import { IconButton } from '../IconButton';
-import type { LayoutProps } from '../Box/types';
+import { IconButton, type IconButtonProps } from '../IconButton';
 
 /** The toggle's names, for translation. */
 export interface ColorModeToggleLabels {
@@ -20,15 +21,15 @@ export interface ColorModeToggleLabels {
 }
 
 /** `ColorModeToggle`'s props. */
-export interface ColorModeToggleProps extends LayoutProps {
+export type ColorModeToggleProps = Omit<
+  IconButtonProps<'button'>,
+  'icon' | 'aria-label' | 'variant' | 'as' | 'children'
+> & {
   /** The names for each state. */
   labels?: ColorModeToggleLabels;
   /** The button style. @default 'ghost' */
   variant?: Exclude<ButtonVariant, 'solid'>;
-  /** The size. @default 'md' */
-  size?: ButtonSize;
-  className?: string;
-}
+};
 
 /**
  * Switches between light and dark, storing the opposite of what's on screen.
@@ -37,7 +38,7 @@ export interface ColorModeToggleProps extends LayoutProps {
 export function ColorModeToggle({
   labels,
   variant = 'ghost',
-  size = 'md',
+  onClick,
   ...props
 }: ColorModeToggleProps) {
   const { resolvedMode, setMode, isForced } = useColorMode();
@@ -61,14 +62,17 @@ export function ColorModeToggle({
 
   return (
     <IconButton
+      {...props}
+      // The toggle owns these, even if a caller bypasses the types.
+      as={undefined}
       icon={icon}
       aria-label={name}
       variant={variant}
-      size={size}
-      onClick={() =>
-        resolvedMode && setMode(resolvedMode === 'dark' ? 'light' : 'dark')
-      }
-      {...props}
+      onClick={(event: MouseEvent<HTMLButtonElement>) => {
+        onClick?.(event);
+        if (event.defaultPrevented) return;
+        if (resolvedMode) setMode(resolvedMode === 'dark' ? 'light' : 'dark');
+      }}
     />
   );
 }

@@ -2,8 +2,15 @@ import '@adeebali/design-system-react/styles.css';
 import {
   Badge,
   Box,
+  Button,
   Card,
   ColorModeToggle,
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
   Icon,
   Link,
   NavBar,
@@ -12,6 +19,12 @@ import {
   Stack,
   Stat,
   Tab,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
   Tabs,
   TabsList,
   TabsPanel,
@@ -61,6 +74,36 @@ createRoot(document.getElementById('root')!).render(
       <TabsPanel value="overview">Overview panel</TabsPanel>
       <TabsPanel value="activity">Activity panel</TabsPanel>
     </Tabs>
+    <Dialog>
+      <DialogTrigger>
+        <Button>Open dialog</Button>
+      </DialogTrigger>
+      <DialogContent size="sm">
+        <DialogTitle>Fixture dialog</DialogTitle>
+        <DialogDescription>Rendered from the packed tarball.</DialogDescription>
+        <DialogClose>
+          <Button variant="soft">Close</Button>
+        </DialogClose>
+      </DialogContent>
+    </Dialog>
+    <Table aria-label="Plans" data-testid="table">
+      <TableHead>
+        <TableRow>
+          <TableHeader>Name</TableHeader>
+          <TableHeader>Plan</TableHeader>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        <TableRow>
+          <TableHeader scope="row">Ada Park</TableHeader>
+          <TableCell>Pro</TableCell>
+        </TableRow>
+        <TableRow>
+          <TableHeader scope="row">Grace Lin</TableHeader>
+          <TableCell>Team</TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
     <Prose data-testid="prose">
       <p>Prose in the Vite app.</p>
     </Prose>
