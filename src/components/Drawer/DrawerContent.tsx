@@ -6,6 +6,7 @@ import {
   useLayoutEffect,
   useState,
   type ComponentPropsWithRef,
+  type ReactNode,
   type RefObject,
 } from 'react';
 import { cx } from '../../utils/cx';
@@ -94,34 +95,61 @@ function Panel({
     <>
       <BaseDrawer.Backdrop className={styles.backdrop} />
       <BaseDrawer.Viewport className={styles.viewport}>
-        <BaseDrawer.Popup
-          {...props}
-          dir={resolved}
-          data-side={side}
-          data-close-shown={showClose ? '' : undefined}
-          // Base UI focuses the popup itself unless told otherwise. A drawer
-          // follows Dialog: the first focusable element, or the popup on touch.
-          initialFocus={initialFocus ?? true}
-          finalFocus={finalFocus}
-          className={cx(
-            styles.popup,
-            styles.sides[side],
-            side !== 'bottom' && styles.sizes[size],
-            className,
-          )}
-        >
-          <BaseDrawer.Content className={styles.content}>
-            {children}
-            {showClose && <CloseButton label={closeLabel} />}
-          </BaseDrawer.Content>
-          <Checks
-            closeButton={showClose}
-            labelled={labelled}
-            hasFinalFocus={finalFocus !== undefined}
-          />
-        </BaseDrawer.Popup>
+        <KeyboardAware enabled={side === 'bottom'}>
+          <BaseDrawer.Popup
+            {...props}
+            dir={resolved}
+            data-side={side}
+            data-close-shown={showClose ? '' : undefined}
+            // Base UI focuses the popup itself unless told otherwise. A drawer
+            // follows Dialog: the first focusable element, or the popup on touch.
+            initialFocus={initialFocus ?? true}
+            finalFocus={finalFocus}
+            className={cx(
+              styles.popup,
+              styles.sides[side],
+              side !== 'bottom' && styles.sizes[size],
+              className,
+            )}
+          >
+            {side === 'bottom' && (
+              <span aria-hidden="true" className={styles.handle} />
+            )}
+            <BaseDrawer.Content
+              className={cx(
+                styles.content,
+                side === 'bottom' && styles.sheetContent,
+              )}
+            >
+              {children}
+              {showClose && <CloseButton label={closeLabel} />}
+            </BaseDrawer.Content>
+            <Checks
+              closeButton={showClose}
+              labelled={labelled}
+              hasFinalFocus={finalFocus !== undefined}
+            />
+          </BaseDrawer.Popup>
+        </KeyboardAware>
       </BaseDrawer.Viewport>
     </>
+  );
+}
+
+/** Keeps a focused input above the on-screen keyboard, for the bottom sheet. */
+function KeyboardAware({
+  enabled,
+  children,
+}: {
+  enabled: boolean;
+  children: ReactNode;
+}) {
+  return enabled ? (
+    <BaseDrawer.VirtualKeyboardProvider>
+      {children}
+    </BaseDrawer.VirtualKeyboardProvider>
+  ) : (
+    children
   );
 }
 

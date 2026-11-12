@@ -1,6 +1,11 @@
 import { createVar, style, styleVariants } from '@vanilla-extract/css';
 import { vars } from '../../themes/contract.css';
+import { breakpoints } from '../../tokens/breakpoints';
 import { layered } from '../../utils/recipe';
+
+const md = `screen and (min-width: ${breakpoints.md})`;
+/** The tallest a bottom sheet gets before it scrolls inside. */
+const sheetHeight = '85dvh';
 
 /** How far the panel extends past the screen edge, so overshooting a swipe shows no gap. */
 const bleed = vars.space['12'];
@@ -122,8 +127,34 @@ export const sides = styleVariants(
         },
       },
     },
-    // Placed by the bottom sheet's own styles.
-    bottom: {},
+    // A sheet as tall as its content, up to `sheetHeight` of visible height. The
+    // bleed sits below the screen edge, and `--drawer-keyboard-inset` (set by
+    // Base UI's VirtualKeyboardProvider) lifts it over the on-screen keyboard.
+    bottom: {
+      display: 'flex',
+      flexDirection: 'column' as const,
+      insetInline: 0,
+      insetBlockStart: 'auto',
+      insetBlockEnd: 'var(--drawer-keyboard-inset, 0)',
+      blockSize: 'auto',
+      maxBlockSize: `calc(${sheetHeight} + ${bleed})`,
+      marginInline: 'auto',
+      marginBlockEnd: `calc(-1 * ${bleed})`,
+      paddingBlockEnd: bleed,
+      borderBlockStartWidth: '1px',
+      borderStartStartRadius: vars.radius.card,
+      borderStartEndRadius: vars.radius.card,
+      transform: 'translateY(var(--drawer-swipe-movement-y, 0))',
+      selectors: {
+        '&[data-starting-style], &[data-ending-style]': {
+          transform: `translateY(calc(100% + ${clear}))`,
+        },
+      },
+      '@media': {
+        // Below md it fills the width. From md it's centered.
+        [md]: { maxInlineSize: vars.size.dialog.lg },
+      },
+    },
   },
   (rule) => layered(rule),
 );
@@ -153,6 +184,29 @@ export const content = style(
     padding: vars.space['6'],
     overflowY: 'auto',
     overscrollBehavior: 'contain',
+  }),
+);
+
+/** The bottom sheet's content: it takes the room left under the handle, and clears the safe area. */
+export const sheetContent = style(
+  layered({
+    blockSize: 'auto',
+    minBlockSize: 0,
+    paddingBlockEnd: `calc(${vars.space['6']} + env(safe-area-inset-bottom))`,
+  }),
+);
+
+/** The decorative grab handle above the bottom sheet's content. */
+export const handle = style(
+  layered({
+    flex: 'none',
+    alignSelf: 'center',
+    inlineSize: vars.space['10'],
+    blockSize: vars.space['1'],
+    marginBlockStart: vars.space['3'],
+    borderRadius: vars.radius.full,
+    background: vars.color.border.control,
+    '@media': { '(forced-colors: active)': { background: 'CanvasText' } },
   }),
 );
 

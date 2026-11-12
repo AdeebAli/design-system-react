@@ -10,6 +10,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from './Dialog';
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerTitle,
+  DrawerTrigger,
+} from './Drawer';
 import { Heading } from './Heading';
 import { Icon } from './Icon';
 import { IconButton } from './IconButton';
@@ -33,7 +41,7 @@ const meta: Meta = {
     docs: {
       description: {
         component:
-          'Choose by what the user must do next. `Dialog` is for a task that needs full attention: it is modal, traps focus, and locks scrolling. `Popover` is for a small panel beside its trigger while the page stays usable. `Menu` is for a list of actions. `Tooltip` is for a short, visual-only hint: it is never announced, so the trigger needs its own name, and it never holds needed information or controls. Close a `Popover` before opening a `Dialog` from it, since a dialog opened from an open popover sits underneath it. Built with no `style` or `className`.',
+          'Choose by what the user must do next. `Dialog` is for a task that needs full attention: it is modal, traps focus, and locks scrolling. `Popover` is for a small panel beside its trigger while the page stays usable. `Menu` is for a list of actions. `Tooltip` is for a short, visual-only hint: it is never announced, so the trigger needs its own name, and it never holds needed information or controls. `Drawer` is modal too, but it slides in from a side or the bottom and holds longer content, such as a filters form or an edit panel, while the page stays in view behind it. Choose `Dialog` for a short, focused decision, such as a confirmation or a rename, and `Drawer` for a longer task the user may want to see the page beside. On a phone, a `Drawer` with `side="bottom"` is a sheet. Close a `Popover` before opening a `Dialog` from it, since a dialog opened from an open popover sits underneath it. Built with no `style` or `className`.',
       },
     },
   },
@@ -70,6 +78,25 @@ export const ChoosingAnOverlay: Story = {
             </Inline>
           </DialogContent>
         </Dialog>
+      </Stack>
+      <Stack gap="2">
+        <Heading level={2} size="md">
+          Drawer: a panel or sheet for a longer form
+        </Heading>
+        <Drawer>
+          <DrawerTrigger>
+            <Button variant="soft">Edit filters</Button>
+          </DrawerTrigger>
+          <DrawerContent side="end">
+            <DrawerTitle>Edit filters</DrawerTitle>
+            <DrawerDescription>
+              Narrow the list. The page stays visible beside the panel.
+            </DrawerDescription>
+            <DrawerClose>
+              <Button variant="soft">Done</Button>
+            </DrawerClose>
+          </DrawerContent>
+        </Drawer>
       </Stack>
       <Stack gap="2">
         <Heading level={2} size="md">

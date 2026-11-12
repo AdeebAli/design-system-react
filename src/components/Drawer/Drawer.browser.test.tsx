@@ -54,6 +54,20 @@ const settled = async () => {
 const closed = () =>
   expect.poll(() => screen.queryByRole('dialog')).not.toBeInTheDocument();
 
+/** The widest reach of any shadow layer: its offset, blur, and spread. */
+const shadowReach = (element: HTMLElement) =>
+  Math.max(
+    ...getComputedStyle(element)
+      .boxShadow.split(/,(?![^(]*\))/)
+      .map((layer) => {
+        const [x, , blur, spread] = layer
+          .replace(/rgba?\([^)]*\)/g, '')
+          .match(/-?[\d.]+px/g)!
+          .map(parseFloat);
+        return Math.abs(x!) + blur! + spread!;
+      }),
+  );
+
 const px = (value: string) => {
   const probe = document.createElement('div');
   probe.style.width = value;
@@ -249,7 +263,7 @@ describe('modal behavior', () => {
   it('Tab goes through the controls in order and wraps inside the drawer', async () => {
     render(<Example />);
     await userEvent.click(trigger());
-    const popup = await settled();
+    await settled();
     const name = screen.getByRole('textbox', { name: 'Name' });
     // The first focusable element gets focus, not the close button.
     await expect.poll(() => document.activeElement).toBe(name);
@@ -258,18 +272,19 @@ describe('modal behavior', () => {
     await userEvent.tab();
     expect(closeButton()).toHaveFocus();
     await userEvent.tab();
-    expect(popup.contains(document.activeElement)).toBe(true);
+    // Wraps to the first control, not the popup or the page behind.
+    expect(name).toHaveFocus();
   });
 
-  it('Shift+Tab from the first control stays inside the drawer', async () => {
+  it('Shift+Tab from the first control wraps to the last, the close button', async () => {
     render(<Example />);
     await userEvent.click(trigger());
-    const popup = await settled();
+    await settled();
     await expect
       .poll(() => document.activeElement)
       .toBe(screen.getByRole('textbox', { name: 'Name' }));
     await userEvent.tab({ shift: true });
-    expect(popup.contains(document.activeElement)).toBe(true);
+    expect(closeButton()).toHaveFocus();
   });
 
   it('locks page scrolling', async () => {
@@ -358,21 +373,6 @@ describe('closing', () => {
     await new Promise((resolve) => setTimeout(resolve, 300));
     expect(screen.getByRole('dialog')).toBeInTheDocument();
   });
-
-  it('leaves nothing visible at the edge once closed', async () => {
-    await page.viewport(1200, 800);
-    render(<Example />);
-    await userEvent.click(trigger());
-    await settled();
-    expect(
-      document.elementFromPoint(1200 - 20, 400)?.closest('[role="dialog"]'),
-    ).not.toBeNull();
-    await userEvent.keyboard('{Escape}');
-    await closed();
-    expect(
-      document.elementFromPoint(1200 - 20, 400)?.closest('[role="dialog"]'),
-    ).toBeNull();
-  });
 });
 
 describe('motion', () => {
@@ -399,18 +399,7 @@ describe('motion', () => {
       document.body.append(stage);
       try {
         const rect = panel.getBoundingClientRect();
-        // The widest reach of any layer: its offset, blur, and spread.
-        const reach = Math.max(
-          ...getComputedStyle(panel)
-            .boxShadow.split(/,(?![^(]*\))/)
-            .map((layer) => {
-              const [x, , blur, spread] = layer
-                .replace(/rgba?\([^)]*\)/g, '')
-                .match(/-?[\d.]+px/g)!
-                .map(parseFloat);
-              return Math.abs(x!) + blur! + spread!;
-            }),
-        );
+        const reach = shadowReach(panel);
         expect(reach).toBe(64);
         // The edge nearest the screen starts further off-screen than the shadow reaches.
         if (side === 'end') {
@@ -423,6 +412,64 @@ describe('motion', () => {
       }
     },
   );
+
+  describe('a real exit', () => {
+    // Closes it, then pauses the exit transition at its end state, so the popup
+    // is still mounted and its final position can be measured.
+    async function exitEndState(popup: HTMLElement) {
+      await userEvent.keyboard('{Escape}');
+      let slide: CSSTransition | undefined;
+      await expect
+        .poll(() => {
+          slide = popup
+            .getAnimations()
+            .find(
+              (a): a is CSSTransition =>
+                a instanceof CSSTransition &&
+                a.transitionProperty === 'transform',
+            );
+          return slide;
+        })
+        .toBeDefined();
+      slide!.pause();
+      slide!.currentTime = slide!.effect!.getComputedTiming().endTime as number;
+      return slide!;
+    }
+
+    it.each(['end', 'start'] as const)(
+      'the %s panel ends fully off-screen, clear of its shadow',
+      async (side) => {
+        await page.viewport(1200, 800);
+        render(<Example defaultOpen content={{ side }} />);
+        const popup = await settled();
+        const slide = await exitEndState(popup);
+        const rect = popup.getBoundingClientRect();
+        const reach = shadowReach(popup);
+        expect(reach).toBe(64);
+        if (side === 'end') {
+          expect(rect.left - 1200).toBeGreaterThanOrEqual(reach);
+        } else {
+          expect(0 - rect.right).toBeGreaterThanOrEqual(reach);
+        }
+        slide.finish();
+        await closed();
+      },
+    );
+
+    it('the bottom sheet ends fully off-screen, clear of its shadow', async () => {
+      await page.viewport(414, 800);
+      render(<Example defaultOpen content={{ side: 'bottom' }} />);
+      const popup = await settled();
+      const slide = await exitEndState(popup);
+      const reach = shadowReach(popup);
+      expect(reach).toBe(64);
+      expect(popup.getBoundingClientRect().top - 800).toBeGreaterThanOrEqual(
+        reach,
+      );
+      slide.finish();
+      await closed();
+    });
+  });
 
   it('reduced motion removes the transition, and it still closes', async () => {
     await emulate([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
@@ -477,5 +524,177 @@ describe('a long title', () => {
     expect(heading().getBoundingClientRect().right).toBe(
       content.getBoundingClientRect().right - space('6'),
     );
+  });
+});
+
+describe('bottom sheet', () => {
+  const bleed = () => space('12');
+  const sheet = () =>
+    render(<Example defaultOpen content={{ side: 'bottom' }} />);
+  const handle = () =>
+    document.querySelector<HTMLElement>(`.${styles.handle}`)!;
+  const contentOf = (popup: HTMLElement) =>
+    popup.querySelector<HTMLElement>(`.${styles.content}`)!;
+  const tall = (count = 60) => (
+    <Drawer defaultOpen>
+      <DrawerContent side="bottom" aria-label="Tall">
+        {Array.from({ length: count }, (_, i) => (
+          <p key={i}>Paragraph {i}</p>
+        ))}
+      </DrawerContent>
+    </Drawer>
+  );
+
+  it('is as tall as its content, sitting on the bottom edge', async () => {
+    await page.viewport(414, 896);
+    sheet();
+    const popup = await settled();
+    const content = contentOf(popup);
+    const rect = popup.getBoundingClientRect();
+    expect(content.scrollHeight).toBe(content.clientHeight);
+    // Border, handle margin and height, content, then the bleed below the screen.
+    expect(rect.height).toBe(
+      1 + space('3') + space('1') + content.scrollHeight + bleed(),
+    );
+    expect(rect.bottom).toBe(896 + bleed());
+  });
+
+  it('is at most 85dvh tall, then scrolls inside', async () => {
+    await page.viewport(414, 896);
+    render(tall());
+    const popup = await settled();
+    const content = contentOf(popup);
+    expect(popup.getBoundingClientRect().height - bleed()).toBeCloseTo(
+      0.85 * 896,
+      1,
+    );
+    expect(content.scrollHeight).toBeGreaterThan(content.clientHeight);
+    expect(getComputedStyle(content).overflowY).toBe('auto');
+  });
+
+  it('fills the width below md', async () => {
+    const md = rem(48);
+    await page.viewport(md - 1, 800);
+    sheet();
+    const rect = (await settled()).getBoundingClientRect();
+    expect(rect.left).toBe(0);
+    expect(rect.width).toBe(md - 1);
+  });
+
+  it('is centered, at most size.dialog.lg wide, from md up', async () => {
+    const md = rem(48);
+    const lg = rem(44);
+    for (const width of [md, 1200]) {
+      await page.viewport(width, 800);
+      const { unmount } = sheet();
+      const rect = (await settled()).getBoundingClientRect();
+      expect(rect.width).toBe(lg);
+      expect(rect.left).toBe((width - lg) / 2);
+      unmount();
+      await closed();
+    }
+  });
+
+  it('has top corners of radius.card and a border on its top edge only', async () => {
+    sheet();
+    const style = getComputedStyle(await settled());
+    const radius = `${px('var(--ds-radius-card)')}px`;
+    expect(style.borderTopLeftRadius).toBe(radius);
+    expect(style.borderTopRightRadius).toBe(radius);
+    expect(style.borderBottomLeftRadius).toBe('0px');
+    expect(style.borderBottomRightRadius).toBe('0px');
+    expect(style.borderTopWidth).toBe('1px');
+    expect(style.borderLeftWidth).toBe('0px');
+    expect(style.borderRightWidth).toBe('0px');
+  });
+
+  it('has a decorative grab handle, centered above the content', async () => {
+    sheet();
+    const popup = await settled();
+    expect(handle()).toHaveAttribute('aria-hidden', 'true');
+    const box = handle().getBoundingClientRect();
+    const popupBox = popup.getBoundingClientRect();
+    expect(box.width).toBe(space('10'));
+    expect(box.height).toBe(space('1'));
+    expect(box.left + box.width / 2).toBe(popupBox.left + popupBox.width / 2);
+    expect(box.bottom).toBeLessThanOrEqual(
+      contentOf(popup).getBoundingClientRect().top,
+    );
+  });
+
+  it('has no handle on a side panel', async () => {
+    render(<Example defaultOpen />);
+    await settled();
+    expect(handle()).toBeNull();
+  });
+
+  it('adds the bottom safe-area inset to its bottom padding', async () => {
+    sheet();
+    const content = contentOf(await settled());
+    expect(getComputedStyle(content).paddingBottom).toBe(`${space('6')}px`);
+    await cdp().send('Emulation.setSafeAreaInsetsOverride', {
+      insets: { bottom: 20 },
+    });
+    try {
+      await expect
+        .poll(() => getComputedStyle(content).paddingBottom)
+        .toBe(`${space('6') + 20}px`);
+    } finally {
+      await cdp().send('Emulation.setSafeAreaInsetsOverride', { insets: {} });
+    }
+  });
+
+  it('lifts over the on-screen keyboard by the inset Base UI measures', async () => {
+    await page.viewport(414, 800);
+    sheet();
+    const popup = await settled();
+    const viewport = document.querySelector<HTMLElement>(
+      `.${styles.viewport}`,
+    )!;
+    expect(popup.getBoundingClientRect().bottom).toBe(800 + bleed());
+    viewport.style.setProperty('--drawer-keyboard-inset', '120px');
+    expect(popup.getBoundingClientRect().bottom).toBe(800 + bleed() - 120);
+  });
+
+  it('is wrapped in the virtual keyboard provider, a side panel is not', async () => {
+    const { unmount } = sheet();
+    await settled();
+    const viewport = () =>
+      document.querySelector<HTMLElement>(`.${styles.viewport}`)!;
+    await expect
+      .poll(() => viewport().style.getPropertyValue('--drawer-keyboard-inset'))
+      .not.toBe('');
+    unmount();
+    await closed();
+    render(<Example defaultOpen />);
+    await settled();
+    // The provider sets the variable a moment after focus lands in the drawer.
+    await expect
+      .poll(() => document.activeElement)
+      .toBe(screen.getByRole('textbox', { name: 'Name' }));
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    expect(viewport().style.getPropertyValue('--drawer-keyboard-inset')).toBe(
+      '',
+    );
+  });
+
+  it('swipes down, and closes with Escape, returning focus to the trigger', async () => {
+    render(<Example content={{ side: 'bottom' }} />);
+    await userEvent.click(trigger());
+    const popup = await settled();
+    expect(popup).toHaveAttribute('data-swipe-direction', 'down');
+    expect(popup).toHaveAttribute('data-side', 'bottom');
+    await userEvent.keyboard('{Escape}');
+    await closed();
+    await expect.poll(() => document.activeElement).toBe(trigger());
+  });
+
+  it('slides on transform, and reduced motion removes the transition', async () => {
+    await emulate([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
+    sheet();
+    const popup = await settled();
+    expect(getComputedStyle(popup).transitionDuration).toBe('0s');
+    await userEvent.click(closeButton());
+    await closed();
   });
 });
