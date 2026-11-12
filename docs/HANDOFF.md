@@ -8,16 +8,10 @@ Build `@adeebali/design-system-react`, a general-purpose React design system. Sp
 
 ## Status
 
-- **Done:** v0.1 (specs 01–07), v0.2 (Specs 08–09), v0.3 (Specs 10–11), each merged and released. v0.3.0 is `c0eb2a7`, with Storybook at https://adeebali.github.io/design-system-react/.
-- **Built, in PR #24 (ready for review):** milestone v0.4, Spec 12 Overlays and Spec 13 Data, as Spec 00 sets it. The owner chose both specs over the old handoff's "Spec 12 only".
-  - Where: branch `feat/v0.4-overlays-and-data` on `main` (`822d742`), pushed; PR https://github.com/AdeebAli/design-system-react/pull/24. The baselines workflow committed `15d3003`, and `191a32e` for the fixed-width sticky column.
-  - Plan: `docs/superpowers/plans/2026-11-10-v0-4-overlays-and-data.md`.
-  - What it adds:
-    - Overlays: `Dialog` (with `alert`), `Popover`, `Tooltip`/`TooltipProvider`, `Menu` (with submenus), and `Toast` (`ToastProvider`, `useToast`, `createToastManager`, `toast.promise`).
-    - Data: `Table` and its parts, `DataTable`, `Pagination`, `Skeleton` and `EmptyState`.
-    - The "Overlays" and "Data" overview pages, and Next/Vite fixture pages.
-  - It ran with subagent-driven development. Every task had a spec and quality review, and a whole-branch review on Opus was followed by one fix wave and its re-review.
-- **Waiting on the owner:** squash-merging PR #24 and releasing v0.4.0. The owner marked the PR ready and did the manual checks. CI passes on `44881b4`. The owner's decisions on the three departures are built (`b949c17`, `32b5818`).
+- **Done:** v0.1 (specs 01–07), v0.2 (Specs 08–09), v0.3 (Specs 10–11), and v0.4 (Spec 12 Overlays, Spec 13 Data), each merged and released, with Storybook at https://adeebali.github.io/design-system-react/.
+  - v0.4 is merged as `e6b254b` (PR #24) and released as v0.4.0 (`9bd299b`). It adds `Dialog`, `Popover`, `Tooltip`/`TooltipProvider`, `Menu`, the toast API (`ToastProvider`, `useToast`, `createToastManager`, `toast.promise`), `Table`, `DataTable`, `Pagination`, `Skeleton`, `EmptyState`, the "Overlays" and "Data" overview pages, and `docs/components.md`.
+  - The plan was `docs/superpowers/plans/2026-11-10-v0-4-overlays-and-data.md`.
+- **Next:** the v0.5 plan. Not started.
 
 ## Decisions
 
@@ -95,51 +89,22 @@ Calls made during the build where the spec was silent, each with what it costs i
 
 ## Changes
 
-- Branch `feat/v0.4-overlays-and-data`: 45 commits, 156 files, +13,409/−24. The working tree is clean.
-- New component folders under `src/components/`:
-  - overlays: `Dialog`, `Popover`, `Tooltip`, `Menu`, `Toast`;
-  - data: `Table`, `DataTable`, `Pagination`, `Skeleton`, `EmptyState`;
-  - shared internals: `overlays/`.
-- New overview pages: `Overlays.stories.tsx`, `Data.stories.tsx`, and `Overlays.browser.test.tsx`.
-- New internal icons: `X`, `ChevronRight`, `ChevronLeft`, `ArrowUpDown`, `CircleCheck`, `CircleAlert`, `TriangleAlert`, `Info`.
-- Changed: `ColorModeToggle` now accepts `ref`, `style` and button props, and composes your `onClick`.
-- v0.3 minors fixed in `529457d`:
-  - the Tabs `Indicator` under RTL;
-  - `onValueChange(null)` no longer reaches the callback;
-  - `client-modules.mjs` now detects namespace and default-plus-named imports;
-  - `Prose` `kbd` uses a logical border;
-  - docs note: `Prose` inside `NotProse` is unstyled.
-- Config and scripts: `vite.config.ts` pre-bundles the new Base UI subpaths. `scripts/verify-dist.mjs` lists the server modules for Table, Pagination, Skeleton and EmptyState.
-- Fixtures: `fixtures/next-app/app/(site)/{overlays,data}/`, `CustomersTable.tsx`, and `tests/fixtures/{overlays,data}.spec.ts`.
-- Docs: new `docs/components.md` lists every exported component, grouped by spec, with a link to each spec. The README's "Components" section links to it (owner's call, replacing the partial "Overlays and data" table).
-- `15d3003`: 264 new visual baselines from the workflow. No existing baseline changed.
-- `191a32e`: 16 Table sticky-column baselines updated by the workflow (run 43112487648) for the fixed width.
-- `17a4508`: the Toast swipe test clears the text selection before each drag (open thread 7).
-- `721314a` and `e59510c`: fixes from a `/code-review` of everything after the final review (`0d6e742..HEAD`). A toast added in the unmount's own task now warns when dropped; the toast unmount tests assert on a mocked `warnOnce`, so they don't depend on order; rows covered by a first-column `rowSpan` don't stick; the sticky column's reserve counts its border once. Spec 13 and the Table docs are amended.
+- PR #24 squash merged as `e6b254b`.
+- `npm run release -- minor` made `9bd299b` (v0.4.0) and tag `v0.4.0` on `main`, and created the GitHub Release. The push bypassed the `main` rules (PR required, status checks) as the release script's direct push always has.
+- Release notes edited by hand: "New components" (overlays, data, `docs/components.md`), "Changes" (`ColorModeToggle` props), "Fixes" (`Tabs` RTL indicator and `onValueChange(null)`, `Prose` `kbd` border), then the generated changelog. No breaking-changes section: `git diff v0.3.0 v0.4.0 -- src/index.ts` only adds exports, and the only pre-v0.4 source changed is `ColorModeToggle`, `Tabs`, and `Prose` (additive or fixes).
+- This note, on its own branch and PR (as #21 and #23 did).
+- v0.4 work, for reference: new component folders for the overlays and data components plus shared `src/components/overlays/`; eight new internal icons; Specs 12 and 13 amended; fixture pages `fixtures/next-app/app/(site)/{overlays,data}/` with `tests/fixtures/{overlays,data}.spec.ts`.
 
 ## Verification
 
-- **Checks on `f54334a`:** `npm ci && npm run check` exited 0.
-  - Unit: 746 tests.
-  - Stories and browser: 730 tests, with axe in both modes.
-  - Fixtures: 64 passed, 22 skipped by design.
-- **Checks on `0d6e742`, after the fix wave:** typecheck, lint, format:check, `npm test` (752 + 22 script tests), `test:stories` (749), build with verify-dist, and `test:fixtures` (64 passed, 22 skipped) all exited 0, as the fix report states. The only warning is Node's existing DEP0205.
-- **Checks on `32b5818`, after the owner's decisions:** typecheck, lint, format:check, `npm test` (754), `test:stories` (751), build with verify-dist, and `test:fixtures` (64 passed, 22 skipped) all exited 0. The new sticky-width tests failed first (column 274–323px instead of 192px), and the StrictMode toast test fails without the grace.
-- **Baselines:** the workflow (run 43108613699) passed 882 screenshot tests and committed `15d3003`.
-- **Tests were seen failing.** Each new test failed before its fix, or failed when the code was broken on purpose. The evidence is in the per-task reports in the local `.superpowers/sdd/` folder.
-- **The Toast swipe fix (`17a4508`)** was checked in the CI image (`mcr.microsoft.com/playwright:v1.65.0-noble`): `Toast.browser.test.tsx` failed 2 of 2 runs before it and passed 3 of 3 after (10 tests). Locally, that file, Prettier, ESLint and typecheck exit 0.
-- **CI on `44881b4`** (run 43127830011): every job passed, including `visual` with the sticky-column baselines, after one rerun of `stories` (see open thread 7).
-- **Checks on `e59510c`, after the review fixes:** typecheck, lint, format:check, `npm test` (755), `test:stories` (756), and build with verify-dist each exited 0. Each new test failed first (no warning on a same-task drop; a 5px reserve gap against 4px; covered rows' first cells sticky), and the toast tests' warning checks failed with spurious warnings added on purpose. Not rerun: `test:fixtures`, since no fixture or export changed. CI on `e59510c` hasn't run yet. Trigger: the push; if `visual` fails, the scroll-padding or selector change moved a screenshot.
-- **Second review** (`/code-review` on `44881b4..932828d`): 9 findings. Fixed in `d219774`: the `:has()` slowdown, the staggered-span misfire and the 10-row cap (by `spanned`), and a covered-row position check that couldn't fail (the tests now scroll past the column's width; each assertion was seen failing on its own mutation). Checked and not acted on: the `:has()` selector works the same in Chromium, Firefox and WebKit (Playwright 1.65 in the CI image), and is now gone anyway; a stale toast timer can't fire, because `connect` clears it and a second disconnect needs a connect first.
-- **Checks on `d219774`:** typecheck, lint, format:check, `npm test` (755), build with verify-dist each exited 0; `test:stories` passed 757 of 758, failing only "scrollable scrolls by keyboard" (open thread 7). Not rerun: `test:fixtures`, since no fixture changed.
-- **Third review** (`/code-review` on `932828d..1a411fd`): 7 findings. Fixed in the next commit: the span tests now assert the scroll happened; `spanned` has unit and type tests and a `StickyWithSpans` story; its description says to set it only on covered rows. Recorded: multi-row sticky headers (open thread 8). Not acted on: a separate `rowSpan={0}` test, since `spanned` doesn't depend on the span's length; unmarked covered rows misbehaving, which the owner accepted with the `spanned` choice.
-- **Checks after the third review's fixes:** typecheck, lint, format:check, `npm test` (756), `test:stories` (760), build with verify-dist each exited 0. Each new assertion was seen failing: the scroll check with the wrapper's `overflow-x` set to `visible`, the unit test without `data-spanned`.
-- **Fourth review** (`/code-review` on `1a411fd..c326d01`): 8 findings, none needing a code change before merge. Recorded: three `rowSpan` table issues (open thread 9). Not acted on: no play function on `StickyWithSpans` (the browser tests cover the behavior); its missing baseline (the workflow was running); an exact `scrollLeft` of 400 (the pixel ratio is 1 locally and on CI); undetectable misuse of `spanned` (accepted with that choice); story data copied three times (cosmetic).
-- **Review coverage:** the last independent review covered `c326d01`. Only this handoff commit came after it.
-- **CI:** passed on `ab5c34a` (run 43141339086, including `visual`). CI on `932828d` and later hasn't been checked. Trigger: next step 1.
-- **Manual checks:** done by the owner on 2026-11-11 (screen reader, forced colors, Dialog scroll lock, the sticky column in Firefox and Safari, Tooltip touch with `delay={0}`). The PR checklist boxes aren't ticked.
+- The release script's checks (`npm run check`) passed before it tagged, including fixtures 64 passed, 22 skipped (tests scoped to one fixture app). So did both intermittent tests in open thread 7, this time.
+- CI passed on `e6b254b`, all six jobs (run 43145785349).
+- Publish run 43146843828 succeeded; its log shows `+ @adeebali/design-system-react@0.4.0`.
+- https://adeebali.github.io/design-system-react/ returns 200.
+- Before the merge: four `/code-review` rounds, the last covering `c326d01`; checks and CI on the PR's head passed (details in PR #24 and the v0.4 ledger in `.superpowers/sdd/`). The owner did the manual checks on 2026-11-11.
 - **Not verified:**
-  - Installing 0.3.0 from GitHub Packages, carried forward. `gh` lacks `read:packages`. Trigger: none; the v0.1 install proved the pipeline, and Publish succeeded.
+  - CI on `9bd299b` was still running when this note was written (the `storybook-pages` run succeeded). `9bd299b` changes only the version in `package.json` and `package-lock.json`. Trigger: the PR for this note shows the `main` status; check it before merging.
+  - Installing 0.4.0 from GitHub Packages. `gh` lacks `read:packages`. Trigger: none; the v0.1 install proved the pipeline, and Publish succeeded.
 
 ## Open threads
 
@@ -164,7 +129,7 @@ Calls made during the build where the spec was silent, each with what it costs i
 7. **Intermittent browser tests, not diagnosed.**
    - `Table.browser.test.tsx` "scrollable scrolls by keyboard" (line 151) failed once in three local full runs (`scrollLeft` stayed 0) and passed otherwise. It predates the sticky change. In the CI image (`mcr.microsoft.com/playwright:v1.65.0-noble`) it passed 5 of 5 runs of `Table.browser.test.tsx` alone and 2 full `test:stories` runs, and it passed on CI run 43127830011. Its one failure was on macOS under full-suite load. It failed again locally on `d219774`, and an instrumented copy caught one failure in three full runs: `ArrowRight` scrolled 40px, then `ArrowDown` reached the focused wrapper, wasn't prevented, with the page focused and visible, yet `scrollTop` stayed 0 for 2.5s. Ruled out: `ArrowDown` arriving during the `ArrowRight` scroll animation (pressing both back to back scrolls both).
    - `Button.browser.test.tsx` "hover changes a solid button to the hover token" (line 50) failed once on CI run 43127830011: after the hover, the background stayed `rgb(79, 70, 229)` instead of `rgb(67, 56, 202)`. The rerun passed, the full `test:stories` passed 751 of 751 twice in the CI image, and it hadn't failed in the previous 15 failed CI runs. Ruled out: touch emulation from `Input` and `Tooltip` tests leaking into other files (files run in parallel, but the setting didn't carry over, and hover worked right after it was turned off).
-   - Trigger: `npm run release -- minor` runs `npm run check`, and CI runs on `main` after the merge. If either test fails there, find the cause before releasing.
+   - Both passed in the v0.4.0 release's `npm run check` and in CI on `e6b254b`. Trigger: CI on every PR and the v0.5 release's `npm run check`; if either fails, find the cause before rerunning. Nothing forces a diagnosis while they keep passing.
 8. **Multi-row sticky headers (reported by the third review, not yet checked in a browser).** With `stickyHeader`, every header row sticks at the top, so a second `TableHead` row sits over the first, and `scroll-padding-block-start` reserves one row, so focus can land under the second (WCAG 2.4.11). Spec 13 doesn't say whether multi-row headers are supported. It predates `spanned`. Trigger: the v0.5 plan must decide support or document the limit.
 9. **Tables with a first-column `rowSpan`** (from the fourth review, `/code-review` on `1a411fd..c326d01`; none checked in a browser yet):
    - The selected-row bar on a `spanned` row is drawn on its first cell, which is in the second column, so with `stickyFirstColumn` it scrolls under the sticky spanning cell.
@@ -173,6 +138,11 @@ Calls made during the build where the spec was silent, each with what it costs i
    - Triggers: the v0.5 plan must decide each; the screen reader point needs a check with VoiceOver and NVDA on the `StickyWithSpans` story.
 
 Resolved since the last note:
+- Old next step 1, merge PR #24 and release v0.4.0 with edited notes: merged as `e6b254b`, released as `9bd299b`, published, notes edited (see Changes and Verification). The intermittent tests passed in its check (thread 7).
+- Old unverified items, CI on `932828d` and later, and on `e59510c`: CI passed on the squash-merged `e6b254b`, including `visual`.
+- Old unverified item, installing 0.3.0: superseded by the same item for 0.4.0.
+
+Resolved during v0.4, before the merge:
 - Old next step 1, baselines and approving workflows: done; CI passes on `44881b4`.
 - Old next step 2, the manual checks: done by the owner.
 - Thread 7's Toast swipe failure: not timing. The wrong-way mouse drag selected part of the title, and on Linux the next press landed on that selection, which started a native text drag and cancelled the pointer (seen as `dragstart` then `pointercancel` in the CI image). The test now clears the selection before each drag (`17a4508`).
@@ -185,9 +155,8 @@ Resolved since the last note:
 
 ## Next steps
 
-1. Check the `StickyWithSpans` screenshots from the baselines workflow, approve workflows if CI waits, and check CI on the head. Then squash-merge PR #24 and run `npm run release -- minor` for v0.4.0 (it reruns every check; see open thread 7 if an intermittent test fails), and edit the release notes.
-2. Write the v0.5 plan, with the triggers in open threads 1–3.
+1. Write the v0.5 plan. It must act on the triggers in open threads 1 (TanStack v9), 2 (RTL in v0.3 widgets), 3 (`npm audit`), 8 (multi-row sticky headers), and 9 (`rowSpan` tables).
 
 ## Resume prompt
 
-> Read `docs/HANDOFF.md`. v0.4 (Spec 12 Overlays and Spec 13 Data) is in PR #24, ready for review, with CI passing on `44881b4` and the owner's manual checks done. Next: the owner squash-merges, then `npm run release -- minor` for v0.4.0 (open thread 7 if the Table keyboard-scroll or Button hover test fails), then the v0.5 plan.
+> Read `docs/HANDOFF.md`. v0.4.0 (Overlays and Data) is merged, released, and published. Write the v0.5 implementation plan, acting on the triggers in open threads 1, 2, 3, 8, and 9.
