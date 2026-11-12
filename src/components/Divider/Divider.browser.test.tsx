@@ -1,11 +1,48 @@
 import { render, screen } from '@testing-library/react';
-import { page } from 'vitest/browser';
+import { cdp, page } from 'vitest/browser';
 import { Inline } from '../Inline';
 import { Text } from '../Text';
 import { Divider } from './index';
 
 afterEach(async () => {
   await page.viewport(414, 896);
+});
+
+it('a screen reader reads the label: Chrome exposes it as text, not as a separator', async () => {
+  render(
+    <div data-testid="host">
+      <button type="button">Continue with a passkey</button>
+      <Divider label="or" />
+      <button type="button">Continue with email</button>
+    </div>,
+  );
+  // The test renders in an iframe, so read that frame's tree, not the runner's.
+  const { frameTree } = (await cdp().send('Page.getFrameTree')) as {
+    frameTree: { childFrames?: { frame: { id: string; url: string } }[] };
+  };
+  const frame = frameTree.childFrames?.find(
+    ({ frame }) => frame.url === location.href,
+  )?.frame;
+  expect(frame).toBeDefined();
+  const { nodes } = (await cdp().send('Accessibility.getFullAXTree', {
+    frameId: frame!.id,
+  })) as {
+    nodes: {
+      ignored: boolean;
+      role?: { value: string };
+      name?: { value: string };
+    }[];
+  };
+  const read = nodes
+    .filter((node) => !node.ignored)
+    .map((node) => `${node.role?.value}:${node.name?.value ?? ''}`);
+  const start = read.indexOf('button:Continue with a passkey');
+  const end = read.indexOf('button:Continue with email');
+  expect(start).toBeGreaterThan(-1);
+  expect(end).toBeGreaterThan(start);
+  const between = read.slice(start + 1, end);
+  expect(between).toContain('StaticText:or');
+  expect(between.filter((entry) => entry.startsWith('separator'))).toEqual([]);
 });
 
 it('is a 1px border.subtle line with no margins of its own', () => {

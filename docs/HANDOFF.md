@@ -72,7 +72,7 @@ The ledger, with every break-check line, is `.superpowers/sdd/2026-11-12-v0-5-fe
 - **Box's `background` and `color` don't take the avatar pairs** (owner; Spec 04 amended). Rejected: exposing them on every Box.
 - **Avatar status shapes** (owner, asked when found; Spec 16 amended): Spec 16 gave `away` and `offline` the same ring, against its own "own shape" rule. `away` is a ring with its lower half filled; `offline` is a hollow ring. Rejected: a crescent for `away`.
 - **The new theme tokens are only `color.{bg,fg}.avatar.{1-6}`.** The size tokens the plan listed already shipped in v0.1; the plan was corrected.
-- **The labeled `Divider` keeps Spec 16's markup,** though Chrome's accessibility tree gives the separator no name and treats "or" as a child. The owner's screen reader check decides whether it changes.
+- **A labeled `Divider` is plain text, not a separator** (owner, 2026-11-12; Spec 16 amended). The owner's VoiceOver check heard only "horizontal splitter" between the buttons in `Divider › WithLabel`, never "or": a separator's contents are treated as decoration. Rejected: naming the separator with `aria-labelledby` (needs `useId`, which may not work in a server component), and documenting the label as visual only. A browser test reads Chrome's accessibility tree for the test frame and checks "or" is there as text with no separator.
 - **A tall bottom sheet shrinks by the keyboard's height** (`maxBlockSize: calc(85dvh - var(--drawer-keyboard-inset, 0rem) + bleed)`), found by Task 8's review: lifted by a 300px keyboard, its top was at −180px. The fallback needs a unit, since a unitless `0` makes the `calc()` invalid.
 - **Rulings where the spec is silent** (cost if wrong):
   - `Avatar`: initials uppercased with `toUpperCase`, not the host's locale, so server and client agree (the final review found a Turkish-locale hydration mismatch); dot sizes 6/8/12/16px with rings a quarter of the dot; busy bar in `fg.onStatus`; forced colors draws dots in `CanvasText`. `initials` and the color hash are internal. Cost: a token or constant each.
@@ -157,11 +157,11 @@ The v0.4.1 release and build details are in `git show f902386:docs/HANDOFF.md`.
   - `initials` no longer depends on the host's locale.
   - `Alert` renders no empty wrapper for `false` or `''`.
   - `Divider`'s `ref` is `Ref<HTMLElement>`, since it's an `hr` by default; ref forwarding is tested for each kind.
-- A fresh read-only Sonnet reviewer covered that fix commit, `79931e8`: ready, with three nits recorded under thread 6. The review covers all code up to `79931e8`; later commits are docs only.
+- A fresh read-only Sonnet reviewer covered that fix commit, `79931e8`: ready, with three nits recorded under thread 6. The review covers all code up to `79931e8`. After it, the labeled-`Divider` change (plain text, from the owner's VoiceOver check) is not independently reviewed. Trigger: a read-only review of that commit before merge, or the owner's call to skip it.
 
 **Not verified:**
 
-- The owner's manual checks (screen reader on all six, including the labeled `Divider`; forced colors; swiping a `Drawer` closed on a real phone; a bottom `Drawer` with the on-screen keyboard). Trigger: the checklist in the v0.5 PR body, before merge.
+- The owner's manual checks (screen reader on all six, including a VoiceOver recheck of the labeled `Divider` after the plain-text change; forced colors; swiping a `Drawer` closed on a real phone; a bottom `Drawer` with the on-screen keyboard). Trigger: the checklist in the v0.5 PR body, before merge.
 - CI and visual baselines for the branch. Trigger: the draft PR with the `update-baselines` label; the owner selects **Approve workflows to run** after the baselines commit.
 - "A failed image shows initials after hydration" (Spec 16) is tested with a client render, not a hydrated page. Trigger: none; the owner can ask for a fixture test.
 - Installing 0.4.x from GitHub Packages. Trigger: none; the v0.1 install proved the pipeline. (Carried forward.)

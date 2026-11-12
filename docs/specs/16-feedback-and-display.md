@@ -151,7 +151,7 @@ A line between things.
 
 It accepts layout props.
 
-- **Markup:** a plain `hr`, whose native role already says separator. `vertical` and `label` use a `div` with `role="separator"`, with `aria-orientation` when `vertical`, since an `hr` can't hold content.
+- **Markup:** a plain `hr`, whose native role already says separator. `vertical` uses a `div` with `role="separator"` and `aria-orientation`. With `label`, it's a `div` of plain text between drawn lines, with no separator role: screen readers treat a separator's contents as decoration, so VoiceOver read only "horizontal splitter" and skipped the label (owner's decision, 2026-11-12, after a VoiceOver check).
 - **Most lines are `decorative`** when the layout already separates things, so a screen reader doesn't read each one. The docs cover this, and `false` is the default because it's the safe mistake.
 - **Appearance:** a `1px` `border.subtle` line, which stays visible in forced colors, with no margins of its own (Spec 05). `vertical` stretches to its parent's height with `align-self: stretch`. `label` text is `font.size.xs`, `fg.muted`.
 - **It has no state,** so it works in server components.
@@ -214,7 +214,7 @@ Spec 05's definition of done, plus:
 - `Spinner`: `aria-hidden` without `label`, and `role="status"` with it.
 - `Progress`: `value`, `max`, `null`, `label`, and `aria-label` set the right ARIA attributes. **Type tests** reject a missing name.
 - `Avatar`: initials for one word, several words, and non-Latin names, the fallback shows when an image fails, and `decorative` hides it. `status` adds to the accessible name, and `colorFromName` picks the same pair for the same name.
-- `Divider`: renders `hr` by default, `role="separator"` with `aria-orientation` when `vertical`, and `decorative` removes it. **Type tests** reject `label` with `vertical`.
+- `Divider`: renders `hr` by default, `role="separator"` with `aria-orientation` when `vertical`, plain text with no separator role with `label`, and `decorative` removes it. **Type tests** reject `label` with `vertical`.
 - `Drawer`: controlled and uncontrolled, parts render their elements, and a missing name warns.
 
 **Browser (story tests):**
@@ -223,7 +223,7 @@ Spec 05's definition of done, plus:
 - `Spinner` and an indeterminate `Progress` stop animating with reduced motion, and stay visible.
 - Each `status` has a distinct shape and a gap on every surface, and meets its contrast rule. Every `colorFromName` pair meets 4.5:1 in both modes.
 - An image is in server HTML, a failed image shows initials with no broken icon after hydration, and there's no layout shift when an image loads.
-- A vertical `Divider` fills its parent's height, and `label` stays centered at 320px.
+- A vertical `Divider` fills its parent's height, and `label` stays centered at 320px. Chrome's accessibility tree has the `label` text, and no separator, between the elements around it.
 - `Drawer` opens from each `side` in both text directions, with and without a trigger, traps focus, locks scrolling, closes on `Escape`, a backdrop click, and the close button, and returns focus to the trigger or `finalFocus`. Without a trigger or `finalFocus`, it warns. Reduced motion removes its animation, and a side panel never fills the whole screen width.
 - A bottom `Drawer` is as tall as its content up to its limit, scrolls inside beyond it, and is centered from `md` up.
 - A `Menu` or `Select` inside a `Drawer` works, and content scrolls inside it.

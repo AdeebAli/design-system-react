@@ -53,14 +53,11 @@ export function Divider({
       />
     );
   }
+  // No separator role: screen readers treat a separator's contents as
+  // decoration and skip the label, so it's plain text between drawn lines.
   if (label !== undefined && label !== null) {
     return (
-      <Box
-        ref={divRef}
-        className={cx(styles.labeled, className)}
-        {...props}
-        role="separator"
-      >
+      <Box ref={divRef} className={cx(styles.labeled, className)} {...props}>
         <span className={styles.labelText}>{label}</span>
       </Box>
     );

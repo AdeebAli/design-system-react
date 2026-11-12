@@ -18,12 +18,11 @@ it('vertical is a div separator with aria-orientation', () => {
   expect(divider).toHaveAttribute('aria-orientation', 'vertical');
 });
 
-it('label is a div separator containing the text', () => {
+it('label is a div of plain text, with no separator role', () => {
   render(<Divider data-testid="d" label="or" />);
   const divider = screen.getByTestId('d');
   expect(divider.tagName).toBe('DIV');
-  expect(divider).toHaveAttribute('role', 'separator');
-  expect(divider).not.toHaveAttribute('aria-orientation');
+  expect(divider).not.toHaveAttribute('role');
   expect(divider).toHaveTextContent('or');
 });
 
