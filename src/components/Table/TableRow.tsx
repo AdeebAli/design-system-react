@@ -8,12 +8,19 @@ export interface TableRowProps extends ComponentPropsWithRef<'tr'> {
   hoverable?: boolean;
   /** The selected style only. The project's own control carries the state for assistive technology. @default false */
   selected?: boolean;
+  /**
+   * Marks a row that a first-column `rowSpan` above covers, so with
+   * `stickyFirstColumn` its first cell, which is in the second column,
+   * doesn't stick. @default false
+   */
+  spanned?: boolean;
 }
 
 /** A table row. */
 export function TableRow({
   hoverable = true,
   selected = false,
+  spanned = false,
   className,
   ...props
 }: TableRowProps) {
@@ -21,6 +28,7 @@ export function TableRow({
     <tr
       data-selected={selected ? '' : undefined}
       data-no-hover={hoverable ? undefined : ''}
+      data-spanned={spanned ? '' : undefined}
       className={cx(styles.row, selected && styles.rowSelected, className)}
       {...props}
     />

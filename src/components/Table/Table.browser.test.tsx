@@ -525,17 +525,11 @@ describe('a sticky first column has a fixed width, so focus lands clear of it', 
 });
 
 describe('a first-column cell that spans rows', () => {
-  // `span` rows are covered, then one ordinary row follows (`0` spans to the
-  // end of the body, so it covers every row after it).
-  it.each([
-    [2, 1],
-    [3, 2],
-    [10, 9],
-    [0, 3],
-  ])(
-    'with rowSpan=%i sticks, and the %i rows it covers keep their first cell in place',
-    (span, covered) => {
-      const rows = covered + 1 + (span === 0 ? 0 : 1);
+  // Rows the span covers are marked `spanned`, so their first cell, which is
+  // really in the second column, doesn't stick. One ordinary row follows.
+  it.each([2, 3, 12])(
+    'with rowSpan=%i, the spanning cell sticks and the rows it covers scroll',
+    (span) => {
       render(
         <div style={{ width: 360 }}>
           <Table
@@ -545,14 +539,14 @@ describe('a first-column cell that spans rows', () => {
             style={{ minWidth: 1000 }}
           >
             <TableBody>
-              {Array.from({ length: rows }, (_, r) => (
-                <TableRow key={r}>
+              {Array.from({ length: span + 1 }, (_, r) => (
+                <TableRow key={r} spanned={r > 0 && r < span}>
                   {r === 0 ? (
                     <TableHeader scope="row" rowSpan={span}>
                       Europe
                     </TableHeader>
-                  ) : r > covered ? (
-                    <TableHeader scope="row">{`After ${r}`}</TableHeader>
+                  ) : r === span ? (
+                    <TableHeader scope="row">After</TableHeader>
                   ) : null}
                   <TableCell data-first={r}>{`Q${r}`}</TableCell>
                   <TableCell>Value</TableCell>
@@ -563,23 +557,58 @@ describe('a first-column cell that spans rows', () => {
         </div>,
       );
       const europe = screen.getByRole('rowheader', { name: 'Europe' });
-      expect(getComputedStyle(europe).position).toBe('sticky');
+      const after = screen.getByRole('rowheader', { name: 'After' });
       expect(rect(europe).width).toBeCloseTo(stickyColumnWidth(), 0);
-      for (let r = 1; r <= covered; r++) {
-        const cell = document.querySelector(`[data-first="${r}"]`)!;
-        expect(getComputedStyle(cell).position).not.toBe('sticky');
-        expect(rect(cell).left).toBeGreaterThanOrEqual(
-          rect(europe).right - 0.5,
-        );
-      }
-      if (span !== 0) {
-        const after = screen.getByRole('rowheader', {
-          name: `After ${covered + 1}`,
-        });
-        expect(getComputedStyle(after).position).toBe('sticky');
-      }
+      const covered = Array.from({ length: span - 1 }, (_, r) =>
+        document.querySelector(`[data-first="${r + 1}"]`)!,
+      );
+      const before = covered.map((cell) => rect(cell).left);
+      const europeLeft = rect(europe).left;
+      wrapperOf().scrollLeft = 400;
+      // Past the column's width, so a sticky cell would have pinned. The
+      // spanning cell and the next row header stay; covered cells scroll.
+      expect(rect(europe).left).toBeCloseTo(europeLeft, 0);
+      expect(rect(after).left).toBeCloseTo(europeLeft, 0);
+      covered.forEach((cell, n) => {
+        expect(rect(cell).left).toBeCloseTo(before[n]! - 400, 0);
+      });
     },
   );
+
+  it('a second-column span inside a covered row leaves later row headers sticky', () => {
+    render(
+      <div style={{ width: 360 }}>
+        <Table
+          aria-label="Staggered"
+          stickyFirstColumn
+          scrollable
+          style={{ minWidth: 1000 }}
+        >
+          <TableBody>
+            <TableRow>
+              <TableHeader scope="row" rowSpan={2}>
+                Europe
+              </TableHeader>
+              <TableCell>X</TableCell>
+              <TableCell>1</TableCell>
+            </TableRow>
+            <TableRow spanned>
+              <TableCell rowSpan={2}>Group</TableCell>
+              <TableCell>Y</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableHeader scope="row">Asia</TableHeader>
+              <TableCell>Z</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </div>,
+    );
+    const asia = screen.getByRole('rowheader', { name: 'Asia' });
+    const left = rect(asia).left;
+    wrapperOf().scrollLeft = 400;
+    expect(rect(asia).left).toBeCloseTo(left, 0);
+  });
 });
 
 it('the sticky column reserve is its fixed width plus `space.1`', async () => {

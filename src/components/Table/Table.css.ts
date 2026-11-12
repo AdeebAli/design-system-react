@@ -231,19 +231,9 @@ const sticky = vars.zIndex.sticky;
 const notSpanning = ':not([colspan]:not([colspan="1"]))';
 const headerCells = `${table}[data-sticky-header] > thead > tr > *`;
 // A first-column cell with `rowSpan` covers the rows below it, whose first
-// child is really in the second column, so those rows don't stick. CSS can't
-// count, so this lists spans of up to `maxRowSpan` rows, plus `rowSpan={0}`
-// (to the end of the group). Longer spans aren't covered.
-const maxRowSpan = 10;
-const coveredRows = [`tr:has(> :first-child[rowspan="0"]) ~ tr`];
-for (let span = 2; span <= maxRowSpan; span++) {
-  for (let below = 1; below < span; below++) {
-    coveredRows.push(
-      `tr:has(> :first-child[rowspan="${span}"])${' + tr'.repeat(below)}`,
-    );
-  }
-}
-const firstColumnRow = `tr:not(${coveredRows.join(', ')})`;
+// child is really in the second column. `TableRow`'s `spanned` marks them, so
+// they don't stick. Counting spans with `:has()` was slower on large tables.
+const firstColumnRow = 'tr:not([data-spanned])';
 const firstCells = `${table}[data-sticky-column] > :is(thead, tbody, tfoot) > ${firstColumnRow} > :first-child${notSpanning}`;
 
 globalStyle(headerCells, {

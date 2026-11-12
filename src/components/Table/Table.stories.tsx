@@ -23,7 +23,7 @@ const meta: Meta<typeof Table> = {
     docs: {
       description: {
         component:
-          'Styled, semantic table parts. They hold no state, so sorting, paging, and selection stay in your own state. Pass header text in normal case, since CSS does the uppercase. `stickyHeader` sticks to the wrapper, so give the table a height limit such as `maxHeight="screen"`. A sticky first column has a fixed width (half of `size.dialog.sm`, 12rem in Soft), and its text wraps inside it, so a focused cell is never hidden under it. Do not set a width on its cells, since the scroll reserve assumes the fixed width. A first-column cell can span up to 10 rows (`rowSpan`). Only one `TableSortHeader` should be sorted at a time. `onSort` needs a client component, and `href` works from a server one.',
+          'Styled, semantic table parts. They hold no state, so sorting, paging, and selection stay in your own state. Pass header text in normal case, since CSS does the uppercase. `stickyHeader` sticks to the wrapper, so give the table a height limit such as `maxHeight="screen"`. A sticky first column has a fixed width (half of `size.dialog.sm`, 12rem in Soft), and its text wraps inside it, so a focused cell is never hidden under it. Do not set a width on its cells, since the scroll reserve assumes the fixed width. When a first-column cell spans rows (`rowSpan`), mark the rows it covers with `spanned` on `TableRow`. Only one `TableSortHeader` should be sorted at a time. `onSort` needs a client component, and `href` works from a server one.',
       },
     },
   },
