@@ -1,22 +1,12 @@
+/// <reference types="vite/client" />
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { expect, userEvent, within } from 'storybook/test';
 import { Button } from '../Button';
 import { EmptyState } from '../EmptyState';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-  TableSortHeader,
-} from '../Table';
-import {
-  DataTable,
-  type DataTableColumn,
-  type DataTableSort,
-} from './DataTable';
+import { DataTable, type DataTableColumn } from './DataTable';
+import CustomersTable from './TanStackRecipe.example';
+import recipeSource from './TanStackRecipe.example.tsx?raw';
 
 interface Customer {
   id: string;
@@ -185,143 +175,42 @@ export const FullPage: Story = {
   render: () => <FullPageDemo />,
 };
 
-const recipe = `// For @tanstack/react-table v8 (checked against 8.21.3). v9 has no
-// \`useReactTable\` (it uses \`useTable\`), so this doesn't apply to it as written.
-import { useState } from 'react';
-import {
-  flexRender,
-  getCoreRowModel,
-  getSortedRowModel,
-  useReactTable,
-  type ColumnDef,
-  type SortingState,
-} from '@tanstack/react-table';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-  TableSortHeader,
-} from '@adeebali/design-system-react';
-
-function CustomersTable({ data, columns }: { data: Customer[]; columns: ColumnDef<Customer>[] }) {
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [rowSelection, setRowSelection] = useState({});
-  const table = useReactTable({
-    data,
-    columns,
-    state: { sorting, rowSelection },
-    onSortingChange: setSorting,
-    onRowSelectionChange: setRowSelection,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-  });
-
-  return (
-    <Table aria-label="Customers">
-      <TableHead>
-        {table.getHeaderGroups().map((group) => (
-          <TableRow key={group.id}>
-            {group.headers.map((header) => {
-              const content = flexRender(header.column.columnDef.header, header.getContext());
-              const direction = header.column.getIsSorted();
-              return header.column.getCanSort() ? (
-                <TableSortHeader
-                  key={header.id}
-                  direction={direction === 'asc' ? 'ascending' : direction === 'desc' ? 'descending' : 'none'}
-                  onSort={() => header.column.toggleSorting()}
-                >
-                  {content}
-                </TableSortHeader>
-              ) : (
-                <TableHeader key={header.id}>{content}</TableHeader>
-              );
-            })}
-          </TableRow>
-        ))}
-      </TableHead>
-      <TableBody>
-        {table.getRowModel().rows.map((row) => (
-          // \`selected\` is the style only: give the project's own control the state.
-          <TableRow key={row.id} selected={row.getIsSelected()}>
-            {row.getVisibleCells().map((cell, index) =>
-              index === 0 ? (
-                <TableHeader key={cell.id} scope="row">
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </TableHeader>
-              ) : (
-                <TableCell key={cell.id}>
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </TableCell>
-              ),
-            )}
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-  );
-}`;
-
-function RecipeDemo() {
-  const [sort, setSort] = useState<DataTableSort>(null);
-  const shown = customers.slice(0, 6);
-  const ordered = [...shown].sort((a, b) => {
-    if (!sort) return 0;
-    const d = sort.direction === 'ascending' ? 1 : -1;
-    return d * a.name.localeCompare(b.name);
-  });
-  const next = (): DataTableSort =>
-    sort === null
-      ? { column: 'name', direction: 'ascending' }
-      : sort.direction === 'ascending'
-        ? { column: 'name', direction: 'descending' }
-        : null;
-  return (
-    <Table aria-label="Customers, composed from the parts">
-      <TableHead>
-        <TableRow>
-          <TableSortHeader
-            direction={sort?.direction ?? 'none'}
-            onSort={() => setSort(next())}
-          >
-            Name
-          </TableSortHeader>
-          <TableHeader>Plan</TableHeader>
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {ordered.map((c) => (
-          <TableRow key={c.id}>
-            <TableHeader scope="row">{c.name}</TableHeader>
-            <TableCell>{c.plan}</TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-  );
-}
-
 /**
  * For filtering, virtualization, editing, or column resizing, use the `Table`
- * parts with a library such as TanStack Table. This story shows the same
- * result built by hand with the parts; the code below wires them to
- * TanStack Table v8. This package doesn't depend on it, so install it yourself.
+ * parts with a library such as TanStack Table. This story renders the recipe
+ * file itself, which `npm run typecheck` covers, so it can't drift from v9.
  */
 export const TanStackRecipe: Story = {
   parameters: {
     docs: {
       description: {
         story: [
-          "Use the `Table` parts when you need filtering, virtualization, editing, or column resizing. They carry the styles; the library carries the state. This package doesn't depend on TanStack Table, so install it yourself. The code below is for `@tanstack/react-table` v8 (`npm i @tanstack/react-table@8`), not v9.",
+          "Use the `Table` parts when you need filtering, virtualization, editing, or column resizing. They carry the styles; the library carries the state. This package doesn't depend on TanStack Table, so install it yourself: `npm i @tanstack/react-table`. The code below is for v9.",
           '',
           '```tsx',
-          recipe,
+          recipeSource
+            .replace("from '../Table'", "from '@adeebali/design-system-react'")
+            .trimEnd(),
           '```',
         ].join('\n'),
       },
     },
   },
-  render: () => <RecipeDemo />,
+  render: () => <CustomersTable />,
+  // The recipe really sorts: TanStack Table v9 drives the parts.
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const firstRowHeader = () => canvas.getAllByRole('rowheader')[0];
+    await expect(firstRowHeader()).toHaveTextContent('Ada Lovelace');
+    await userEvent.click(canvas.getByRole('button', { name: /Name/ }));
+    await expect(
+      canvas.getByRole('columnheader', { name: /Name/ }),
+    ).toHaveAttribute('aria-sort', 'ascending');
+    await expect(firstRowHeader()).toHaveTextContent('Ada Lovelace');
+    await userEvent.click(canvas.getByRole('button', { name: /Name/ }));
+    await expect(
+      canvas.getByRole('columnheader', { name: /Name/ }),
+    ).toHaveAttribute('aria-sort', 'descending');
+    await expect(firstRowHeader()).toHaveTextContent('Katherine Johnson');
+  },
 };

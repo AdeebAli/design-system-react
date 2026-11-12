@@ -67,6 +67,8 @@ export default tseslint.config(
             '**/*.test.*',
             '**/*.test-d.*',
             '**/*.stories.*',
+            // Typechecked docs examples, shown in stories and never built.
+            '**/*.example.*',
             '**/testUtils.*',
             'tests/**',
             'scripts/**',
