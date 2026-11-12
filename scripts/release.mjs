@@ -1,6 +1,6 @@
 // Implements ADR 0003: npm run release -- <patch|minor|major> [--notes-file <path>]
 import { execFileSync } from 'node:child_process';
-import { readFileSync, statSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 const BUMPS = ['patch', 'minor', 'major'];
@@ -88,12 +88,23 @@ function succeeds(command, args) {
   }
 }
 
-function hasContent(path) {
+export function hasContent(path) {
   try {
-    return statSync(path).size > 0;
+    // Reading a directory throws, so it counts as missing.
+    return readFileSync(path, 'utf8').trim() !== '';
   } catch {
     return false;
   }
+}
+
+// Quotes each argument that the shell would split or expand, so a printed
+// command can be pasted as is.
+export function shellCommand(args) {
+  return args
+    .map((arg) =>
+      /^[\w@%+=:,./-]+$/.test(arg) ? arg : `'${arg.replaceAll("'", "'\\''")}'`,
+    )
+    .join(' ');
 }
 
 function readState(notesFile) {
@@ -161,7 +172,7 @@ function main() {
     console.error(`
 The release didn't finish. ${tag} exists locally. To finish:
   git push --follow-tags
-  gh ${releaseCreateArgs(tag, notesFile).join(' ')}
+  ${shellCommand(['gh', ...releaseCreateArgs(tag, notesFile)])}
 To undo, if nothing was pushed:
   git tag -d ${tag}
   git reset --hard HEAD~1`);

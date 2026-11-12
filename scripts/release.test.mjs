@@ -1,7 +1,12 @@
 import assert from 'node:assert/strict';
+import { mkdtempSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { test } from 'node:test';
 import {
+  hasContent,
   parseArgs,
+  shellCommand,
   parseBump,
   preflightFailures,
   releaseCreateArgs,
@@ -140,4 +145,30 @@ test('the release uses the notes file instead of generated notes', () => {
     '/tmp/notes.md',
     '--verify-tag',
   ]);
+});
+
+test('a notes file needs non-blank text and must be a file, not a folder', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'release-notes-'));
+  const notes = join(dir, 'notes.md');
+  const blank = join(dir, 'blank.md');
+  writeFileSync(notes, '# Notes\n');
+  writeFileSync(blank, '  \n\t\n');
+  assert.equal(hasContent(notes), true);
+  assert.equal(hasContent(blank), false);
+  assert.equal(hasContent(dir), false);
+  assert.equal(hasContent(join(dir, 'missing.md')), false);
+});
+
+test('a printed command quotes arguments the shell would split', () => {
+  assert.equal(
+    shellCommand(['--notes-file', "/Users/me/My Notes/it's.md"]),
+    `--notes-file '/Users/me/My Notes/it'\\''s.md'`,
+  );
+});
+
+test('a printed command leaves plain arguments bare', () => {
+  assert.equal(
+    shellCommand(['gh', 'release', 'create', 'v1.0.0', '-F', '/tmp/n.md']),
+    'gh release create v1.0.0 -F /tmp/n.md',
+  );
 });
