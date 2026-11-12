@@ -49,7 +49,7 @@ export const stickyHeaderPad = styleVariants({
 /** `scroll-padding` that keeps focus clear of a sticky first column. */
 export const stickyColumnPad = style(
   layered({
-    scrollPaddingInlineStart: `calc(${columnReserve} + ${vars.borderWidth.thin} + ${vars.space['1']})`,
+    scrollPaddingInlineStart: `calc(${columnReserve} + ${vars.space['1']})`,
   }),
 );
 
@@ -230,7 +230,21 @@ globalStyle(
 const sticky = vars.zIndex.sticky;
 const notSpanning = ':not([colspan]:not([colspan="1"]))';
 const headerCells = `${table}[data-sticky-header] > thead > tr > *`;
-const firstCells = `${table}[data-sticky-column] > :is(thead, tbody, tfoot) > tr > :first-child${notSpanning}`;
+// A first-column cell with `rowSpan` covers the rows below it, whose first
+// child is really in the second column, so those rows don't stick. CSS can't
+// count, so this lists spans of up to `maxRowSpan` rows, plus `rowSpan={0}`
+// (to the end of the group). Longer spans aren't covered.
+const maxRowSpan = 10;
+const coveredRows = [`tr:has(> :first-child[rowspan="0"]) ~ tr`];
+for (let span = 2; span <= maxRowSpan; span++) {
+  for (let below = 1; below < span; below++) {
+    coveredRows.push(
+      `tr:has(> :first-child[rowspan="${span}"])${' + tr'.repeat(below)}`,
+    );
+  }
+}
+const firstColumnRow = `tr:not(${coveredRows.join(', ')})`;
+const firstCells = `${table}[data-sticky-column] > :is(thead, tbody, tfoot) > ${firstColumnRow} > :first-child${notSpanning}`;
 
 globalStyle(headerCells, {
   '@layer': {
@@ -262,7 +276,7 @@ globalStyle(firstCells, {
 
 // The corner sits above both the header row and the first column.
 globalStyle(
-  `${table}[data-sticky-header][data-sticky-column] > thead > tr > :first-child${notSpanning}`,
+  `${table}[data-sticky-header][data-sticky-column] > thead > ${firstColumnRow} > :first-child${notSpanning}`,
   {
     '@layer': {
       [componentsLayer]: { zIndex: `calc(${sticky} + 1)` },

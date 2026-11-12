@@ -512,6 +512,99 @@ describe('a sticky first column has a fixed width, so focus lands clear of it', 
   });
 });
 
+describe('a first-column cell that spans rows', () => {
+  // `span` rows are covered, then one ordinary row follows (`0` spans to the
+  // end of the body, so it covers every row after it).
+  it.each([
+    [2, 1],
+    [3, 2],
+    [10, 9],
+    [0, 3],
+  ])(
+    'with rowSpan=%i sticks, and the %i rows it covers keep their first cell in place',
+    (span, covered) => {
+      const rows = covered + 1 + (span === 0 ? 0 : 1);
+      render(
+        <div style={{ width: 360 }}>
+          <Table
+            aria-label="Spans"
+            stickyFirstColumn
+            scrollable
+            style={{ minWidth: 1000 }}
+          >
+            <TableBody>
+              {Array.from({ length: rows }, (_, r) => (
+                <TableRow key={r}>
+                  {r === 0 ? (
+                    <TableHeader scope="row" rowSpan={span}>
+                      Europe
+                    </TableHeader>
+                  ) : r > covered ? (
+                    <TableHeader scope="row">{`After ${r}`}</TableHeader>
+                  ) : null}
+                  <TableCell data-first={r}>{`Q${r}`}</TableCell>
+                  <TableCell>Value</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>,
+      );
+      const europe = screen.getByRole('rowheader', { name: 'Europe' });
+      expect(getComputedStyle(europe).position).toBe('sticky');
+      expect(rect(europe).width).toBeCloseTo(stickyColumnWidth(), 0);
+      for (let r = 1; r <= covered; r++) {
+        const cell = document.querySelector(`[data-first="${r}"]`)!;
+        expect(getComputedStyle(cell).position).not.toBe('sticky');
+        expect(rect(cell).left).toBeGreaterThanOrEqual(
+          rect(europe).right - 0.5,
+        );
+      }
+      if (span !== 0) {
+        const after = screen.getByRole('rowheader', {
+          name: `After ${covered + 1}`,
+        });
+        expect(getComputedStyle(after).position).toBe('sticky');
+      }
+    },
+  );
+});
+
+it('the sticky column reserve is its fixed width plus `space.1`', async () => {
+  render(
+    <div style={{ width: 360 }}>
+      <Table aria-label="Gap" stickyFirstColumn scrollable>
+        <TableBody>
+          <TableRow>
+            <TableHeader scope="row">Row</TableHeader>
+            {Array.from({ length: 6 }, (_, c) => (
+              <TableCell key={c}>
+                <Button size="sm" data-cell={c}>{`Column ${c}`}</Button>
+              </TableCell>
+            ))}
+          </TableRow>
+        </TableBody>
+      </Table>
+    </div>,
+  );
+  const wrapper = wrapperOf();
+  wrapper.scrollLeft = wrapper.scrollWidth;
+  // Aligning to the start lands exactly on the scroll padding.
+  const target = document.querySelector<HTMLElement>('[data-cell="0"]')!;
+  target.scrollIntoView({ inline: 'start', block: 'nearest' });
+  const probe = document.createElement('div');
+  probe.style.width = vars.space['1'];
+  document.body.append(probe);
+  const gap = rect(probe).width;
+  probe.remove();
+  const rowHeader = screen.getByRole('rowheader', { name: 'Row' });
+  // The column's end border is inside its fixed width, so the reserve is that
+  // width plus the gap.
+  await expect
+    .poll(() => rect(target).left - rect(rowHeader).right)
+    .toBeCloseTo(gap, 0);
+});
+
 it('focus clears a sticky header made of sort buttons', async () => {
   render(
     <div style={{ height: 240, width: 360 }}>
