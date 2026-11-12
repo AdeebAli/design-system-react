@@ -232,11 +232,11 @@ Chromium renders text differently across machines, so baselines are generated on
 ### Releasing
 
 1. Merge to `main`, and wait for CI to pass.
-2. On a clean, up-to-date `main`, run `npm run release -- <patch|minor|major>`.
+2. On a clean, up-to-date `main`, run `npm run release -- <patch|minor|major>`. To use drafted notes instead of the generated PR list, add `--notes-file <path>`, with the file outside the repository.
 3. The script runs all checks, bumps the version, pushes the commit and tag, and creates a GitHub Release.
 4. The release triggers workflows that publish the package and deploy Storybook. Nothing publishes from a local machine.
 
-PR titles become release notes, so write them as changelog entries.
+Without `--notes-file`, PR titles become the release notes, so write them as changelog entries.
 
 ### Repository settings
 

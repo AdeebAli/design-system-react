@@ -301,9 +301,11 @@ Runs on pull requests and on pushes to `main`. Parallel jobs, all required:
 ## Release (`scripts/release.mjs`)
 
 Implements [ADR 0003](../adr/0003-distribution-and-release.md). A plain Node
-script with no dependencies, invoked as `npm run release -- <patch|minor|major>`.
+script with no dependencies, invoked as
+`npm run release -- <patch|minor|major> [--notes-file <path>]`.
 
-1. Validate the argument is `patch`, `minor`, or `major`.
+1. Validate the argument is `patch`, `minor`, or `major`, optionally followed
+   by `--notes-file <path>` and nothing else.
 2. Preflight:
    - `gh` is installed and authenticated (`gh auth status`).
    - Current branch is `main`, working tree is clean, and `git fetch` shows
@@ -311,10 +313,14 @@ script with no dependencies, invoked as `npm run release -- <patch|minor|major>`
    - CI succeeded on `HEAD`
      (`gh run list --commit <sha> --workflow ci.yml`). This covers the visual
      job, which the script doesn't run locally.
+   - With `--notes-file`, the file exists and isn't empty. Keep it outside the
+     repository, or the clean-tree check fails.
 3. Run `npm run check`; abort on failure.
 4. `npm version <bump> -m "v%s"` (commit message `vX.Y.Z`, tag `vX.Y.Z`).
 5. `git push --follow-tags`.
-6. `gh release create vX.Y.Z --generate-notes --verify-tag`.
+6. `gh release create vX.Y.Z --generate-notes --verify-tag`, or with
+   `--notes-file <path>` in place of `--generate-notes` when one was given.
+   Generated notes list only the merged PRs.
 7. Print the release URL and the link to the publish workflow run.
 
 If any step after 4 fails, print the exact commands to finish or undo

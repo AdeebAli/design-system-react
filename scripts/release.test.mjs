@@ -1,6 +1,11 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { parseBump, preflightFailures } from './release.mjs';
+import {
+  parseArgs,
+  parseBump,
+  preflightFailures,
+  releaseCreateArgs,
+} from './release.mjs';
 
 const ready = {
   ghAuthed: true,
@@ -60,4 +65,79 @@ test('preflight accepts a Node floor before its end of life', () => {
     preflightFailures({ ...ready, enginesNode: '>=22', today: '2027-04-30' }),
     [],
   );
+});
+
+test('parseArgs reads the bump alone', () => {
+  assert.deepEqual(parseArgs(['minor']), {
+    bump: 'minor',
+    notesFile: undefined,
+  });
+});
+
+test('parseArgs reads --notes-file after the bump', () => {
+  assert.deepEqual(parseArgs(['minor', '--notes-file', '/tmp/notes.md']), {
+    bump: 'minor',
+    notesFile: '/tmp/notes.md',
+  });
+});
+
+test('parseArgs rejects --notes-file without a path', () => {
+  assert.throws(() => parseArgs(['minor', '--notes-file']), /Usage/);
+});
+
+test('parseArgs rejects --notes-file with an empty path', () => {
+  assert.throws(() => parseArgs(['minor', '--notes-file', '']), /Usage/);
+});
+
+test('parseArgs rejects an unknown option', () => {
+  assert.throws(() => parseArgs(['minor', '--draft', 'yes']), /Usage/);
+});
+
+test('parseArgs rejects extra arguments', () => {
+  assert.throws(
+    () => parseArgs(['minor', '--notes-file', 'notes.md', 'extra']),
+    /Usage/,
+  );
+});
+
+test('preflight refuses a notes file that is missing or empty', () => {
+  const failures = preflightFailures({
+    ...ready,
+    notesFile: 'notes.md',
+    notesFileFound: false,
+  });
+  assert.equal(failures.length, 1);
+  assert.match(failures[0], /notes\.md/);
+});
+
+test('preflight accepts a notes file that has content', () => {
+  assert.deepEqual(
+    preflightFailures({
+      ...ready,
+      notesFile: 'notes.md',
+      notesFileFound: true,
+    }),
+    [],
+  );
+});
+
+test('the release uses generated notes without a notes file', () => {
+  assert.deepEqual(releaseCreateArgs('v1.0.0', undefined), [
+    'release',
+    'create',
+    'v1.0.0',
+    '--generate-notes',
+    '--verify-tag',
+  ]);
+});
+
+test('the release uses the notes file instead of generated notes', () => {
+  assert.deepEqual(releaseCreateArgs('v1.0.0', '/tmp/notes.md'), [
+    'release',
+    'create',
+    'v1.0.0',
+    '--notes-file',
+    '/tmp/notes.md',
+    '--verify-tag',
+  ]);
 });
