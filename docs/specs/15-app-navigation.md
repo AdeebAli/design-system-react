@@ -2,7 +2,7 @@
 
 - **Status:** Accepted
 - **Date:** 2026-11-06
-- **Milestone:** v0.5
+- **Milestone:** v0.7
 - **Depends on:** [Spec 02](02-tokens-and-themes.md), [Spec 05](05-component-conventions.md), [Spec 06](06-layout-and-typography.md), [Spec 07](07-icon.md), [Spec 10](10-navigation.md), [Spec 12](12-overlays.md), [Spec 16](16-feedback-and-display.md) (`Drawer`)
 
 ## Purpose

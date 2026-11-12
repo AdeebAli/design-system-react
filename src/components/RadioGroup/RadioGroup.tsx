@@ -15,6 +15,7 @@ import type { ComponentProps } from '../../utils/types';
 import { box } from '../Box';
 import type { Responsive, SpaceToken } from '../Box/types';
 import { useFieldControl } from '../Field/FieldContext';
+import { OverlayDirection } from '../overlays/direction';
 
 const RadioGroupContext = createContext<{
   invalid: boolean;
@@ -99,22 +100,26 @@ export function RadioGroup({
     <RadioGroupContext.Provider
       value={{ invalid, disabled, inField: field.inField }}
     >
-      <BaseRadioGroup
-        ref={setRef}
-        className={cx(
-          box({ ...layout, display: 'flex', flexDirection: 'column', gap }),
-          className,
-        )}
-        disabled={disabled}
-        aria-invalid={invalid || undefined}
-        aria-required={required || undefined}
-        onValueChange={
-          onValueChange && ((value: unknown) => onValueChange(value as string))
-        }
-        {...rest}
-      >
-        {children}
-      </BaseRadioGroup>
+      {/* Base UI maps arrow keys from a React context, not the DOM `dir`. */}
+      <OverlayDirection>
+        <BaseRadioGroup
+          ref={setRef}
+          className={cx(
+            box({ ...layout, display: 'flex', flexDirection: 'column', gap }),
+            className,
+          )}
+          disabled={disabled}
+          aria-invalid={invalid || undefined}
+          aria-required={required || undefined}
+          onValueChange={
+            onValueChange &&
+            ((value: unknown) => onValueChange(value as string))
+          }
+          {...rest}
+        >
+          {children}
+        </BaseRadioGroup>
+      </OverlayDirection>
     </RadioGroupContext.Provider>
   );
 }

@@ -245,7 +245,9 @@ published release.
 | **v0.2** | 08–09: Bento, Forms | Cards, stats, and forms, the most-rebuilt pieces |
 | **v0.3** | 10–11: Navigation, Prose | Content sites and blogs can be built |
 | **v0.4** | 12–13: Overlays, Data | Data-heavy apps can be built |
-| **v0.5** | 14–16: Advanced inputs, App navigation, Feedback and display | App shells, richer forms, and status feedback |
+| **v0.5** | 16: Feedback and display | Status feedback, avatars, and drawers |
+| **v0.6** | 14: Advanced inputs | Richer forms |
+| **v0.7** | 15: App navigation | App shells |
 | **v1.0** | Stabilization: API review, docs, fixes from real use | Stability guarantee begins |
 
 **Versioning before 1.0:** following semver convention, minor releases in

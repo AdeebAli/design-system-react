@@ -7,6 +7,7 @@ import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
 import { box } from '../Box';
 import type { Responsive, SpaceToken } from '../Box/types';
+import { OverlayDirection } from '../overlays/direction';
 
 interface ToggleChipGroupOwnProps {
   /** The pressed chips' values, when controlled. */
@@ -45,19 +46,24 @@ export function ToggleChipGroup({
   const [layout, rest] = splitLayoutProps(props);
 
   return (
-    <ToggleGroup
-      className={cx(
-        box({
-          ...layout,
-          display: 'flex',
-          flexWrap: 'wrap',
-          alignItems: 'center',
-          gap,
-        }),
-        className,
-      )}
-      onValueChange={onValueChange && ((next: string[]) => onValueChange(next))}
-      {...rest}
-    />
+    // Base UI maps arrow keys from a React context, not the DOM `dir`.
+    <OverlayDirection>
+      <ToggleGroup
+        className={cx(
+          box({
+            ...layout,
+            display: 'flex',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            gap,
+          }),
+          className,
+        )}
+        onValueChange={
+          onValueChange && ((next: string[]) => onValueChange(next))
+        }
+        {...rest}
+      />
+    </OverlayDirection>
   );
 }

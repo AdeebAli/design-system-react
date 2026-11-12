@@ -9,9 +9,13 @@ Build `@adeebali/design-system-react`, a general-purpose React design system. Sp
 ## Status
 
 - **Done:** v0.1 (specs 01–07), v0.2 (Specs 08–09), v0.3 (Specs 10–11), and v0.4 (Spec 12 Overlays, Spec 13 Data), each merged and released, with Storybook at https://adeebali.github.io/design-system-react/.
-  - v0.4 is merged as `e6b254b` (PR #24) and released as v0.4.0 (`9bd299b`). It adds `Dialog`, `Popover`, `Tooltip`/`TooltipProvider`, `Menu`, the toast API (`ToastProvider`, `useToast`, `createToastManager`, `toast.promise`), `Table`, `DataTable`, `Pagination`, `Skeleton`, `EmptyState`, the "Overlays" and "Data" overview pages, and `docs/components.md`.
-  - The plan was `docs/superpowers/plans/2026-11-10-v0-4-overlays-and-data.md`.
-- **Next:** the v0.5 plan. Not started.
+- **v0.4.1 built, in review:** PR #26 (draft until this note's commit, then ready), branch `fix/v0.4.1-open-threads`, from `docs/superpowers/plans/2026-11-11-v0-4-1-open-threads.md`, run Native (`superpowers:executing-plans`). All four tasks are done. It acts on threads 1, 2, 3, 8, and 9 (see Open threads).
+- **Planned, not started,** each its own branch, PR, and release, in this order, each started only after the previous one is released:
+  1. `docs/superpowers/plans/2026-11-11-v0-5-feedback-and-display.md` (v0.5, minor; 9 tasks): Spec 16, plus every new theme token for v0.5–v0.7.
+  2. `docs/superpowers/plans/2026-11-11-v0-6-advanced-inputs.md` (v0.6, minor; 6 tasks): Spec 14.
+  3. `docs/superpowers/plans/2026-11-11-v0-7-app-navigation.md` (v0.7, minor; 5 tasks): Spec 15.
+  - v0.5–v0.7 are recommended subagent-driven, but the owner hasn't chosen yet (thread 10).
+- **Next:** the owner's manual checks on PR #26, merge, `npm run release -- patch`.
 
 ## Decisions
 
@@ -44,6 +48,38 @@ Architecture decisions are in `docs/adr/`. Every v0.4 build ruling is listed und
 - **Rows a first-column `rowSpan` covers are marked with `TableRow`'s `spanned`** (owner's choice, Spec 13 amended, `d219774`). The spanning cell sticks; marked rows' first cells don't. It replaced a CSS `:has()` version (`e59510c`, the owner's first choice) after a second review and measurement showed it made reordering a 2,000-row sticky table about ten times slower (146ms against 15ms), capped spans at 10 rows, and un-stuck later row headers when a covered row had its own second-column span. Rejected: going back to documenting the limit, and keeping the `:has()` version with its costs documented.
 - **Toast text stays selectable** (owner's call). With a mouse, dragging from selected toast text drags the text instead of swiping; making it unselectable would stop people copying an error message. Spec 12 defines swipe for touch, which doesn't select text.
 - **Visual baselines (carried from v0.2).** The workflow runs when the `update-baselines` label is added, with `--update-snapshots=changed`. After it commits to a PR, GitHub holds CI until the owner selects **Approve workflows to run**. Don't close and reopen the PR.
+
+### v0.5 planning decisions (owner, 2026-11-11)
+
+- **v0.5 is split into v0.4.1, v0.5, v0.6, and v0.7** (the owner's choice; 21 tasks were too many for one plan). Spec 16 goes first, because `FileUpload` needs `Progress` and `Sidebar` needs `Drawer`. Spec 00's milestone table and Specs 14–16's `Milestone` lines are amended in v0.4.1's first commit.
+  - Rejected: 4 PRs with one v0.5.0 release, and 3 releases with the threads folded into v0.5.
+- **Thread 1:** a TanStack v9 recipe (`useTable` + `tableFeatures`, read from the 9.3.1 package itself) as a typechecked `TanStackRecipe.example.tsx`, with `@tanstack/react-table@9.3.1` as a devDependency only.
+  - Rejected: a docs-only v9 recipe (it can drift again), and keeping v8 alongside v9.
+- **Thread 2:** add an RTL test for `Tabs`, `RadioGroup`, `ToggleChipGroup`, and `Select`, and wrap each one whose test fails in `OverlayDirection`.
+  - Rejected: tests and docs only.
+- **Thread 8:** only a one-row `TableHead` sticks (`thead > tr:only-child > *`), and a multi-row header scrolls normally. Spec 13 is amended.
+  - Rejected: making the whole `thead` sticky, which needs a new `headerRows` prop to keep focus clear (WCAG 2.4.11); documenting only.
+- **Thread 9:** document (a) the selected bar on a `spanned` row scrolling under the sticky spanning cell, and (b) the spanning cell following only its own row's hover and selection. Spec 13 is amended. (c) `scope="row"` with `rowSpan` is kept as correct HTML.
+  - Rejected: a new `selected` prop on cells.
+- **All new theme tokens ship in v0.5** (`size.sidebar`, `size.sidebarRail`, `size.avatar.*`, `size.drawer.*`, `color.{bg,fg}.avatar.{1-6}`), so custom full themes break once. v0.5.0's notes need a "Breaking changes" section. This was my call, listed in the v0.5 plan's departures, and the owner can still move the `Sidebar` tokens to v0.7.
+- **Facts checked while planning (2026-11-11):**
+  - `@base-ui/react` 1.9.0 is still the latest, and it has every part and prop Specs 14–16 name (including `Combobox` `filteredItems`/`createItems`, `Drawer` `swipeDirection`/`VirtualKeyboardProvider`, `Avatar.Image` `keepMounted`, `Accordion` `hiddenUntilFound`).
+  - `@tanstack/react-table` latest is 9.3.1.
+  - `npm audit`: still 11 moderate, all dev-only.
+
+### v0.4.1 decisions and rulings
+
+Made during the v0.4.1 build where the plan or spec was silent or wrong, each with what it costs if wrong. The ledger is `.superpowers/sdd/2026-11-11-v0-4-1-open-threads/progress.md` (local, gitignored).
+
+1. **`Select` has no RTL bug, so it wasn't changed.** Its popup is centered on the trigger (Base UI's default `align`, with `alignItemWithTrigger={false}`), and Base UI reads direction only in the align-with-trigger path. The plan's test ("aligns to the trigger inline-start edge") assumed start alignment and failed in LTR too. It became "the popup centers on the trigger in RTL as in LTR". Cost: if the owner wants `Select` start-aligned, that's a visible change Spec 09 doesn't ask for.
+2. `RadioGroup` and `ToggleChipGroup` got new `*.browser.test.tsx` files. Each RTL test also checks `ArrowRight` in LTR. Cost: none.
+3. The two-row header test measures the sticky cells, not the `tr`: a `tr`'s box scrolls even when its cells stick, so measuring it passed vacuously. Cost: none.
+4. The sticky corner selector drops the `spanned` exclusion, since an only row can't be covered by a span. Breaking the selector fails both corner tests. Cost: none.
+5. Group header cells use the default `scope="col"`. `TableHeader` doesn't allow `scope="colgroup"`, and adding it would be an API change nobody asked for. Cost: group headers are announced as columns, not column groups.
+6. The `TanStackRecipe` story renders the example file itself and checks that it really sorts (ascending second row, descending first row); this replaced the hand-built demo. The shown source swaps `'../Table'` for `'@adeebali/design-system-react'`. Cost: the file and the docs differ by one import path.
+7. `npm ci` failed on Task 3's lockfile because the install ran without `nvm use` (npm 11.6.2 instead of 11.20.0), which dropped the optional `@emnapi/core` and `@emnapi/runtime` entries. It was regenerated under `.nvmrc`'s Node (`42c151f`). Cost: none.
+8. The final review's Minor 2 (the ascending-sort assertion couldn't fail) was re-graded and fixed (`f9f79c2`), per the owner's rule that an assertion must be able to fail. Cost: one commit.
+9. Set aside from the review: a `thead` with a hidden extra `tr` won't stick (a safe fallback); a two-row header combined with `stickyFirstColumn` and a header `rowSpan` sticks the second row's first cell unless it's marked `spanned` (this predates the branch); a `dir` on a subtree isn't followed (by design). Cost: those cases behave as described.
 
 ### v0.4 rulings
 
@@ -89,27 +125,39 @@ Calls made during the build where the spec was silent, each with what it costs i
 
 ## Changes
 
-- PR #24 squash merged as `e6b254b`.
-- `npm run release -- minor` made `9bd299b` (v0.4.0) and tag `v0.4.0` on `main`, and created the GitHub Release. The push bypassed the `main` rules (PR required, status checks) as the release script's direct push always has.
-- Release notes edited by hand: "New components" (overlays, data, `docs/components.md`), "Changes" (`ColorModeToggle` props), "Fixes" (`Tabs` RTL indicator and `onValueChange(null)`, `Prose` `kbd` border), then the generated changelog. No breaking-changes section: `git diff v0.3.0 v0.4.0 -- src/index.ts` only adds exports, and the only pre-v0.4 source changed is `ColorModeToggle`, `Tabs`, and `Prose` (additive or fixes).
-- This note, on its own branch and PR (as #21 and #23 did).
-- v0.4 work, for reference: new component folders for the overlays and data components plus shared `src/components/overlays/`; eight new internal icons; Specs 12 and 13 amended; fixture pages `fixtures/next-app/app/(site)/{overlays,data}/` with `tests/fixtures/{overlays,data}.spec.ts`.
+**This session (2026-11-11), branch `fix/v0.4.1-open-threads`, PR #26:**
+- `9874dac`: the four plans, the previous note, Spec 00's milestone table, and Specs 14–15's `Milestone` lines.
+- `88e94d1`: `Tabs`, `RadioGroup`, `ToggleChipGroup` follow the root `dir`; new RTL tests (including new `RadioGroup` and `ToggleChipGroup` browser test files) and a `Select` centering test.
+- `572367e`: `Table.css.ts` sticks only a one-row header; new tests and the `StickyTwoRowHeader` story; Spec 13 and the Table docs (one-row header, two `rowSpan` limits).
+- `59e6ea6`: `TanStackRecipe.example.tsx`, the `TanStackRecipe` story, `@tanstack/react-table@9.3.1` devDependency, and `eslint.config.js` allowing devDependencies in `*.example.*`.
+- `42c151f`: lockfile regenerated under `.nvmrc`'s Node (ruling 7).
+- `f9f79c2`: the recipe story's ascending-order check (ruling 8).
+- `72722d1`: visual baselines from the `update-visual-baselines` workflow (run 43160231650): the `TanStackRecipe` screenshots changed and `StickyTwoRowHeader` screenshots were added, 8 files, all reviewed. The first baselines run (43159502446) was rejected on push because `f9f79c2` had moved the branch, so it was dispatched again on the branch.
+- This note (`docs/HANDOFF.md`), in the acceptance commit `3c38bc2`, and updated in the next commit.
+- `b8ac114`: `tsconfig.build.json` excludes `*.example.tsx`; the redundant `vite/client` reference is removed (owner's request after the review).
+- `ce5a5f1`: the touch-emulation tests (`Input.touch.browser.test.tsx`, `Tooltip.touch.browser.test.tsx`) run in a new `browser-touch` Vitest project, which `test:stories` includes; `vitest.desktop-pointer.setup.ts` guards the `browser` project (owner's request to diagnose thread 7).
+- Public API unchanged: `git diff v0.4.0 -- src/index.ts` is empty.
+
+**Before this session (v0.4.0 release, for reference):** PR #24 squash merged as `e6b254b`; `npm run release -- minor` made `9bd299b` and tag `v0.4.0`, with hand-edited release notes.
 
 ## Verification
 
-- The release script's checks (`npm run check`) passed before it tagged, including fixtures 64 passed, 22 skipped (tests scoped to one fixture app). So did both intermittent tests in open thread 7, this time.
-- CI passed on `e6b254b` (run 43145785349) and on `9bd299b`, all six jobs. The `storybook-pages` run on `9bd299b` succeeded.
-- Publish run 43146843828 succeeded; its log shows `+ @adeebali/design-system-react@0.4.0`.
-- https://adeebali.github.io/design-system-react/ returns 200.
-- Before the merge: four `/code-review` rounds, the last covering `c326d01`; checks and CI on the PR's head passed (details in PR #24 and the v0.4 ledger in `.superpowers/sdd/`). The owner did the manual checks on 2026-11-11.
+- `npm ci && npm run check` on `42c151f`, under `.nvmrc`'s Node: exit 0. Unit 756/756, stories and browser 769/769 (axe in both modes), build and `verify-dist`, fixtures 64 passed and 22 skipped (tests scoped to one fixture app, as for v0.4.0). The only warnings were tooling deprecations (`eslint@9.39.5`, Node `module.register()`) and npm's install-scripts notice for `esbuild` and `fsevents`, none from this branch.
+- After `f9f79c2`: typecheck, lint, format, and `test:stories` 769/769 again.
+- CI on `3c38bc2` (run 43161220975): all six jobs passed, including `visual` with the new baselines.
+- After `b8ac114`: typecheck, lint, format, the DataTable stories 20/20, and `npm run build` (`verify-dist: ok`, no TanStack in `dist`).
+- Touch-test fix, in the CI image (Node 26, arm64; CI is x64): with only the guard added, the `browser` project failed 44 tests, every one with the guard's message. After the move, `browser` + `browser-touch` passed 4 of 4 runs (333/333) and `test:stories` passed 2 of 2 (769/769). Locally, `browser` + `browser-touch` passed 333/333.
+- CI on `f9f79c2` (run 43160072395): `static`, `unit`, `stories`, `package (node nvmrc)`, and `package (node 22)` passed. `visual` failed only on the eight screenshots that `72722d1` then committed.
+- Every new test was seen failing first, or was broken on purpose and seen failing: the RTL tests before the wrap; the two-row header test before the selector change; the corner tests with the corner selector broken; the `Select` centering test with `align="start"`; the recipe's sort checks with `sortedRowModel` removed; typecheck with `useReactTable`.
+- **Independent review:** a fresh Opus reviewer on `5eda67e..42c151f` found it ready to merge (0 Critical, 0 Important, 4 Minor), and the same reviewer reviewed `f9f79c2` (OK). The same reviewer also reviewed `b8ac114` (OK), so the review covered all code up to `b8ac114`. It then reviewed the touch-test fix as `54df8ed` (no Critical or Important issues). `ce5a5f1`, the pushed form of that commit, differs only in two comments (its Minor: the isolation comes from a separate browser context per project, not a separate browser), so the review covers all code up to `ce5a5f1`. Not independently reviewed: `72722d1` (screenshots from the workflow run 43160231650, reviewed by eye) and this note (`3c38bc2` and its update).
 - **Not verified:**
-  - Installing 0.4.0 from GitHub Packages. `gh` lacks `read:packages`. Trigger: none; the v0.1 install proved the pipeline, and Publish succeeded.
+  - CI on `ce5a5f1` and this note's update. Trigger: CI on PR #26 before merge. (CI on `9d053c9` failed in `stories` on Card's hover test, which led to the fix in `ce5a5f1`.) The held run on `72722d1` (43161001609, waiting for "Approve workflows to run") is superseded by later runs and can be ignored.
+  - The owner's manual checks (PR #26 body): an RTL keyboard spot check with VoiceOver, and VoiceOver and NVDA on `StickyWithSpans` (thread 9c). Trigger: before the merge.
+  - Installing 0.4.x from GitHub Packages. `gh` lacks `read:packages`. Trigger: none; the v0.1 install proved the pipeline. (Carried forward.)
+  - The v0.5–v0.7 plans haven't had an independent review. Trigger: none before their builds; each branch gets a fresh whole-branch review before merge. (Carried forward.)
 
 ## Open threads
 
-1. **A TanStack v9 recipe.** The `DataTable` recipe targets TanStack Table v8 (8.21.3); npm's 9.x has no `useReactTable`. Trigger: the v0.5 plan must check v9's API against the registry and decide whether to switch or add a v9 recipe.
-2. **RTL arrow keys and positioning in v0.3 widgets.** Base UI's composite root and Select read direction from React context, so `Tabs`, `RadioGroup`, `ToggleChipGroup` and `Select` (keys, and probably `Select`'s `side` positioning) likely behave as LTR under `dir="rtl"`. This isn't fixed, because it's v0.3 code you didn't ask to change. The fix is the shared `overlays/direction.tsx` provider. Trigger: the v0.5 plan must add an RTL keyboard and positioning test for each and decide the fix.
-3. **11 moderate `npm audit` advisories, dev tooling only (`glob` and `minimatch` through `typescript-eslint`).** As of 2026-11-11, 8.72.2 is the latest and is still in the affected range, and 8.72.1 is installed. Triggers: CI fails if an advisory reaches runtime dependencies or rises to high; the v0.5 plan must rerun `npm audit` and upgrade once a fix exists. (Carried forward.)
 4. **Inter comes from `inter-ui`,** because Fontsource's files drop `cv05` and `cv08`. Trigger: a test pins the 4.1.1 ranges. (Carried forward.)
 5. **`engines.node` is `>=22`.** Trigger: the release script refuses to release after April 30, 2027, until the floor and CI's Node matrix are raised. (Carried forward.)
 6. **Deferred minor findings from v0.4.** The final review found none blocking. Trigger: none; pick from this list when convenient.
@@ -125,37 +173,33 @@ Calls made during the build where the spec was silent, each with what it costs i
    - DataTable: `pageSize <= 0` unguarded; an uncommented uncontrolled clamp; test gaps (`defaultPage`, skeleton count with `totalRows`); the routing test doesn't check inline `maxHeight`; a wrapped two-line row header is about 3px shorter than in `Table`; `aria-labelledby` ignores a title in cell content; the interactive-content warning checks only at mount.
    - Earlier tasks: a vacuous null-assertion loop in `Tabs.test.tsx`; `client-modules.mjs` misses a bare `import React from 'react'` used as `React.useState`; a `ColorModeToggle` forced-theme test that does little.
    - Fixtures: the Vite Table style check sits in `overlays.spec.ts`; no fixture test triggers a toast; the fixture sort link doesn't sort.
-7. **Intermittent browser tests, not diagnosed.**
+7. **One intermittent browser test, not diagnosed.**
    - `Table.browser.test.tsx` "scrollable scrolls by keyboard" (line 151) failed once in three local full runs (`scrollLeft` stayed 0) and passed otherwise. It predates the sticky change. In the CI image (`mcr.microsoft.com/playwright:v1.65.0-noble`) it passed 5 of 5 runs of `Table.browser.test.tsx` alone and 2 full `test:stories` runs, and it passed on CI run 43127830011. Its one failure was on macOS under full-suite load. It failed again locally on `d219774`, and an instrumented copy caught one failure in three full runs: `ArrowRight` scrolled 40px, then `ArrowDown` reached the focused wrapper, wasn't prevented, with the page focused and visible, yet `scrollTop` stayed 0 for 2.5s. Ruled out: `ArrowDown` arriving during the `ArrowRight` scroll animation (pressing both back to back scrolls both).
-   - `Button.browser.test.tsx` "hover changes a solid button to the hover token" (line 50) failed once on CI run 43127830011: after the hover, the background stayed `rgb(79, 70, 229)` instead of `rgb(67, 56, 202)`. The rerun passed, the full `test:stories` passed 751 of 751 twice in the CI image, and it hadn't failed in the previous 15 failed CI runs. Ruled out: touch emulation from `Input` and `Tooltip` tests leaking into other files (files run in parallel, but the setting didn't carry over, and hover worked right after it was turned off).
-   - Both passed in the v0.4.0 release's `npm run check` and in CI on `e6b254b`. Trigger: CI on every PR and the v0.5 release's `npm run check`; if either fails, find the cause before rerunning. Nothing forces a diagnosis while they keep passing.
-8. **Multi-row sticky headers (reported by the third review, not yet checked in a browser).** With `stickyHeader`, every header row sticks at the top, so a second `TableHead` row sits over the first, and `scroll-padding-block-start` reserves one row, so focus can land under the second (WCAG 2.4.11). Spec 13 doesn't say whether multi-row headers are supported. It predates `spanned`. Trigger: the v0.5 plan must decide support or document the limit.
-9. **Tables with a first-column `rowSpan`** (from the fourth review, `/code-review` on `1a411fd..c326d01`; none checked in a browser yet):
-   - The selected-row bar on a `spanned` row is drawn on its first cell, which is in the second column, so with `stickyFirstColumn` it scrolls under the sticky spanning cell.
-   - Hover and selection repaint the spanning cell only from its own (first) row, not from the rows it covers.
-   - A row header over several rows uses `scope="row"` with `rowSpan`; the reviewer says some screen readers then announce it for its first row only, and `TableHeader` doesn't allow `scope="rowgroup"`.
-   - Triggers: the v0.5 plan must decide each; the screen reader point needs a check with VoiceOver and NVDA on the `StickyWithSpans` story.
+   - It isn't explained by the touch-emulation cause below: that taint happens only on Linux, and this test's failures were on macOS. Trigger: CI on every PR and each release's `npm run check`. If it fails, find the cause in the CI image before rerunning. Nothing forces a diagnosis while it keeps passing.
+9. **Table first-column `rowSpan`, part c only.** A row header over several rows uses `scope="row"` with `rowSpan`; some screen readers may announce it for its first row only. Parts a and b are resolved (below). Trigger: the owner's VoiceOver and NVDA check on `Table` › `StickyWithSpans`, listed in PR #26's manual checks. If a reader announces the header for its first row only, the follow-up is documenting `headers` in the Table docs.
+10. **v0.5–v0.7 execution method.** The owner hasn't chosen (subagent-driven is recommended: about 2 agents per task plus a final review). Trigger: the start of each plan's build session.
+11. **A deferred minor finding from v0.4.1's final review.** A two-row header still gets the sticky-header `scroll-padding-block-start` (`stickyHeaderPad`, `src/components/Table/Table.css.ts:44`), so a focused cell stops about one header row below the top while nothing sticks. Nothing is hidden. Trigger: none; pick it up when convenient. The other two minors are resolved (below).
 
-Resolved since the last note:
-- Old next step 1, merge PR #24 and release v0.4.0 with edited notes: merged as `e6b254b`, released as `9bd299b`, published, notes edited (see Changes and Verification). The intermittent tests passed in its check (thread 7).
-- Old unverified items, CI on `932828d` and later, and on `e59510c`: CI passed on the squash-merged `e6b254b`, including `visual`.
-- Old unverified item, installing 0.3.0: superseded by the same item for 0.4.0.
+Resolved in v0.4.1 (PR #26):
+- Thread 1, the TanStack v9 recipe: `src/components/DataTable/TanStackRecipe.example.tsx` on `@tanstack/react-table` 9.3.1 (devDependency), covered by `npm run typecheck` (renaming `useTable` fails it with TS2724) and by the story's sort check (`59e6ea6`, `f9f79c2`). `dist/index.js` doesn't mention TanStack.
+- Thread 2, RTL in v0.3 widgets: `Tabs`, `RadioGroup`, and `ToggleChipGroup` wrap their Base UI root in `OverlayDirection` (`88e94d1`). Each RTL test failed before, and "follows a root dir change after mount" covers a change without remounting (the reviewer broke the observer and saw only that test fail). `Select` had no bug (ruling 1).
+- Thread 3, `npm audit`, rerun 2026-11-11: still 11 moderate, 0 high, 0 runtime (`npm audit --omit=dev`: 0). `typescript-eslint` 8.72.1 installed, 8.72.2 latest and still affected, so nothing was upgraded. Carried into each later plan's acceptance task, which reruns it; CI fails if an advisory reaches runtime dependencies or rises to high.
+- Thread 8, multi-row sticky headers: reproduced (the second row's cells stuck at the wrapper top), then fixed: only a one-row `TableHead` sticks (`572367e`). Spec 13 is amended, and there's a new `StickyTwoRowHeader` story.
+- Thread 9 a and b: reproduced in Chromium (after a 300px sideways scroll, the selected covered row's bar sat at x=-94, under the sticky spanning cell at 0–192; the spanning cell stayed white when a covered row was selected or hovered, and turned muted only on its own row's hover). Documented in Spec 13 and the Table docs (`572367e`).
+- Old next step 1, build v0.4.1: done (PR #26).
+- The four plans and the milestone amendments: committed in `9874dac`. Spec 16's `Milestone` was already v0.5.
+- Old unverified item, threads 8 and 9 not seen in a browser: both reproduced (above).
+- Thread 7's hover failures (Button; also Card and Table hover tests, seen while diagnosing), at the owner's request (`ce5a5f1`). Cause, shown in the CI image: once a page has had CDP touch emulation, headless Chromium on Linux keeps `(hover: none)` and `(pointer: none)` after it's turned off, because the container has no mouse. On macOS the trackpad restores them, which is why the old note said it didn't carry over. Instrumented failures showed the element matching `:hover` while `(hover: hover)` was false, and per-test logging showed the taint starting at Tooltip's and Input's touch tests in every run. No CDP call or `--blink-settings` flag restores it. The two touch tests now run in their own `browser-touch` project, and a guard fails any `browser` test whose page has lost desktop pointer media. Before the fix, 4 of 11 unguarded full runs in the image failed; after it, none did. The old note's "ruled out" was wrong.
+- Thread 11's other two minors, at the owner's request (`b8ac114`): `tsconfig.build.json` excludes `src/**/*.example.tsx` (the build's type program went from the example plus 110 `@tanstack` files to 0), and the redundant `vite/client` reference in `DataTable.stories.tsx` is gone (`tsconfig.json` already provides it).
 
-Resolved during v0.4, before the merge:
-- Old next step 1, baselines and approving workflows: done; CI passes on `44881b4`.
-- Old next step 2, the manual checks: done by the owner.
-- Thread 7's Toast swipe failure: not timing. The wrong-way mouse drag selected part of the title, and on Linux the next press landed on that selection, which started a native text drag and cancelled the pointer (seen as `dragstart` then `pointercancel` in the CI image). The test now clears the selection before each drag (`17a4508`).
-- Old thread 1, the owner's decisions: sticky column (a) built in `b949c17`; the toast queue drops after unmount and Tooltip `delay={0}` is documented in `32b5818`, with Specs 12 and 13 amended; README resolved below; the TanStack v9 recipe is now thread 1 with a v0.5 trigger.
-- The README list: the owner chose a full list in a separate doc (`docs/components.md`).
-- Old next step 1, push and draft PR: done (PR #24), and the baselines are committed (`15d3003`).
-- Old thread 1, the deferred v0.3 minors: fixed in `529457d` with tests, except that a bare default React import is still undetected (now thread 6).
-- Old thread 3, `ColorModeToggle` props: fixed in `e36012e` and `6cc0515`, including a test that wraps it in a `Tooltip` and a test with a forced `ThemeProvider`.
-- Old next step 1, writing the v0.4 plan: written (`f9b3cfe`) and executed. Old thread 2's audit rerun ran (thread 3).
+The resolved lists from earlier notes (v0.4.0 release, v0.4 build, planning session) are dropped here; they were already resolved, and they stay readable in `git show 5eda67e:docs/HANDOFF.md`.
 
 ## Next steps
 
-1. Write the v0.5 plan. It must act on the triggers in open threads 1 (TanStack v9), 2 (RTL in v0.3 widgets), 3 (`npm audit`), 8 (multi-row sticky headers), and 9 (`rowSpan` tables).
+1. The owner: let CI finish on PR #26's head, do the manual checks in the PR body, merge, and run `npm run release -- patch` with the release notes drafted in the PR body.
+2. Then the handoff update after the release (as #23 and #25 did).
+3. Then v0.5 from `docs/superpowers/plans/2026-11-11-v0-5-feedback-and-display.md`, after the owner chooses its execution method (thread 10). Then v0.6 and v0.7, each started only after the previous one is released.
 
 ## Resume prompt
 
-> Read `docs/HANDOFF.md`. v0.4.0 (Overlays and Data) is merged, released, and published. Write the v0.5 implementation plan, acting on the triggers in open threads 1, 2, 3, 8, and 9.
+> Read `docs/HANDOFF.md`. v0.4.1 is built in PR #26 (branch `fix/v0.4.1-open-threads`), reviewed, and marked ready. If it's merged and released, update the handoff for the release, then ask me how to execute the v0.5 plan (`docs/superpowers/plans/2026-11-11-v0-5-feedback-and-display.md`). If it isn't merged yet, check CI on PR #26 and report what's left for me (manual checks, merge, `npm run release -- patch`).

@@ -229,7 +229,10 @@ globalStyle(
 // isolation, so page overlays still sit above them.
 const sticky = vars.zIndex.sticky;
 const notSpanning = ':not([colspan]:not([colspan="1"]))';
-const headerCells = `${table}[data-sticky-header] > thead > tr > *`;
+// Only a one-row header sticks. Rows of a taller header would stack at the
+// same offset, and the scroll padding reserves one row (Spec 13).
+const headerRow = 'tr:only-child';
+const headerCells = `${table}[data-sticky-header] > thead > ${headerRow} > *`;
 // A first-column cell with `rowSpan` covers the rows below it, whose first
 // child is really in the second column. `TableRow`'s `spanned` marks them, so
 // they don't stick. Counting spans with `:has()` was slower on large tables.
@@ -264,9 +267,10 @@ globalStyle(firstCells, {
   },
 });
 
-// The corner sits above both the header row and the first column.
+// The corner sits above both the header row and the first column. An only
+// row can't be covered by a span, so `spanned` needn't be excluded here.
 globalStyle(
-  `${table}[data-sticky-header][data-sticky-column] > thead > ${firstColumnRow} > :first-child${notSpanning}`,
+  `${table}[data-sticky-header][data-sticky-column] > thead > ${headerRow} > :first-child${notSpanning}`,
   {
     '@layer': {
       [componentsLayer]: { zIndex: `calc(${sticky} + 1)` },

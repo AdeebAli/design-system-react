@@ -179,6 +179,66 @@ it('stickyHeader stays visible with its bottom border; rows do not show through'
   expect(below?.closest('td, tbody th')).not.toBeNull();
 });
 
+/** `Grid` with a grouped two-row header: a group row over the column row. */
+function TwoRowHeader(props: TableProps) {
+  return (
+    <div style={{ height: 240, width: 360 }}>
+      <Table aria-label="Grouped" maxHeight="full" scrollable {...props}>
+        <TableHead>
+          <TableRow data-row="group">
+            <TableHeader colSpan={COLS / 2}>First</TableHeader>
+            <TableHeader colSpan={COLS / 2}>Second</TableHeader>
+          </TableRow>
+          <TableRow data-row="columns">
+            {Array.from({ length: COLS }, (_, c) => (
+              <TableHeader key={c}>{`Col${c}`}</TableHeader>
+            ))}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {Array.from({ length: ROWS }, (_, r) => (
+            <TableRow key={r}>
+              {Array.from({ length: COLS }, (_, c) => (
+                <TableCell key={c}>{`R${r}C${c}`}</TableCell>
+              ))}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  );
+}
+
+describe('only a one-row header sticks', () => {
+  it('a two-row header does not stick; neither row covers the other', async () => {
+    render(<TwoRowHeader stickyHeader />);
+    const wrapper = wrapperOf();
+    wrapper.scrollTop = 200;
+    await expect.poll(() => wrapper.scrollTop).toBeGreaterThan(150);
+    const w = rect(wrapper);
+    // The cells are what stick, so measure them, not the rows.
+    const groupCell = document.querySelector('[data-row="group"] > th')!;
+    const columnCell = document.querySelector('[data-row="columns"] > th')!;
+    // The second row scrolled away with the table.
+    expect(rect(columnCell).top - w.top).toBeLessThan(0);
+    // Where row 1 would be if it stuck, row 2 isn't drawn over it.
+    const x = w.left + 40;
+    const y = w.top + rect(groupCell).height / 2;
+    const top = document.elementFromPoint(x, y);
+    expect(top?.closest('[data-row="columns"]')).toBeNull();
+    expect(top?.closest('thead')).toBeNull();
+  });
+
+  it('a one-row header still sticks', async () => {
+    render(<Grid stickyHeader />);
+    const wrapper = wrapperOf();
+    wrapper.scrollTop = 200;
+    await expect.poll(() => wrapper.scrollTop).toBeGreaterThan(150);
+    expect(rect(headerCell(3)).top).toBeCloseTo(rect(wrapper).top, 0);
+    expect(css(headerCell(3)).position).toBe('sticky');
+  });
+});
+
 describe.each([
   ['ltr', 1],
   ['rtl', -1],

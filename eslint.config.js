@@ -67,6 +67,8 @@ export default tseslint.config(
             '**/*.test.*',
             '**/*.test-d.*',
             '**/*.stories.*',
+            // Typechecked docs examples, shown in stories and never built.
+            '**/*.example.*',
             '**/testUtils.*',
             'tests/**',
             'scripts/**',
@@ -74,6 +76,7 @@ export default tseslint.config(
             '*.config.*',
             'vitest.setup.ts',
             'vitest.browser.setup.ts',
+            'vitest.desktop-pointer.setup.ts',
             '**/*.browser.*',
           ],
         },
