@@ -81,14 +81,8 @@ export function Avatar({
         aria-hidden="true"
         className={cx(styles.face, status && styles.masked)}
       >
-        {src !== undefined && (
-          <BaseAvatar.Image
-            keepMounted
-            src={src}
-            alt=""
-            className={styles.image}
-          />
-        )}
+        {/* The fallback comes first so the image paints over it, even before
+            hydration, when Base UI hasn't unmounted the fallback yet. */}
         <BaseAvatar.Fallback
           className={cx(
             styles.fallback,
@@ -97,6 +91,14 @@ export function Avatar({
         >
           {fallback ?? initials(name)}
         </BaseAvatar.Fallback>
+        {src !== undefined && (
+          <BaseAvatar.Image
+            keepMounted
+            src={src}
+            alt=""
+            className={styles.image}
+          />
+        )}
       </span>
       {status && (
         <span

@@ -67,7 +67,7 @@ it('the track is bg.muted and fully rounded', () => {
   render(<Progress aria-label="Uploading" value={40} />);
   const style = getComputedStyle(track());
   expect(style.backgroundColor).toBe(resolved('--ds-color-bg-muted'));
-  expect(parseFloat(style.borderTopLeftRadius)).toBeGreaterThanOrEqual(4);
+  expect(style.borderTopLeftRadius).toBe('9999px');
 });
 
 it.each([
@@ -85,6 +85,13 @@ it('indeterminate slides a segment across the track', () => {
   const style = getComputedStyle(fill());
   expect(style.animationName).not.toBe('none');
   expect(parseFloat(style.animationDuration)).toBeGreaterThan(0);
+});
+
+it('indeterminate slides the other way in RTL', () => {
+  render(<Progress data-testid="ltr" aria-label="Importing" value={null} />);
+  const ltr = getComputedStyle(fill()).animationName;
+  document.documentElement.dir = 'rtl';
+  expect(getComputedStyle(fill()).animationName).not.toBe(ltr);
 });
 
 it('reduced motion makes indeterminate a static, visible partial fill', async () => {

@@ -35,6 +35,28 @@ it('puts the image in the server HTML', () => {
   expect(html).toMatch(/<img[^>]*src="\/ada.jpg"/);
 });
 
+it('before hydration, the server-rendered image is on top of the initials', async () => {
+  const host = document.createElement('div');
+  host.innerHTML = renderToString(
+    <Avatar name="Ada Park" size="xl" src={PNG} colorFromName />,
+  );
+  document.body.append(host);
+  try {
+    const image = host.querySelector('img')!;
+    await expect
+      .poll(() => image.complete && image.naturalWidth > 0)
+      .toBe(true);
+    const box = image.getBoundingClientRect();
+    const hit = document.elementFromPoint(
+      box.left + box.width / 2,
+      box.top + box.height / 2,
+    );
+    expect(hit).toBe(image);
+  } finally {
+    host.remove();
+  }
+});
+
 it('a broken image shows the initials, with the image hidden', async () => {
   render(<Avatar data-testid="a" name="Ada Park" src="/no-such-avatar.png" />);
   const image = screen.getByTestId('a').querySelector('img')!;

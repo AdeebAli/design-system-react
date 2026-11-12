@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import { createRef } from 'react';
 import { Divider } from './index';
 
 it('is a plain hr by default', () => {
@@ -32,4 +33,14 @@ it.each([
 ])('decorative hides a %s divider', (_, props) => {
   render(<Divider data-testid="d" decorative {...props} />);
   expect(screen.getByTestId('d')).toHaveAttribute('aria-hidden', 'true');
+});
+
+it.each([
+  ['the default', {}, 'HR'],
+  ['vertical', { orientation: 'vertical' }, 'DIV'],
+  ['labeled', { label: 'or' }, 'DIV'],
+] as const)('forwards ref to the element, %s', (_, props, tag) => {
+  const ref = createRef<HTMLElement>();
+  render(<Divider ref={ref} {...props} />);
+  expect(ref.current?.tagName).toBe(tag);
 });

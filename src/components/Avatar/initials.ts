@@ -15,5 +15,7 @@ export function initials(name: string): string {
   const first = words[0];
   if (first === undefined) return '';
   const last = words.length > 1 ? words[words.length - 1]! : '';
-  return (firstGrapheme(first) + firstGrapheme(last)).toLocaleUpperCase();
+  // Not toLocaleUpperCase: the host's locale could differ between server and
+  // client (a Turkish i), which would be a hydration mismatch.
+  return (firstGrapheme(first) + firstGrapheme(last)).toUpperCase();
 }

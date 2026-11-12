@@ -75,7 +75,7 @@ The ledger, with every break-check line, is `.superpowers/sdd/2026-11-12-v0-5-fe
 - **The labeled `Divider` keeps Spec 16's markup,** though Chrome's accessibility tree gives the separator no name and treats "or" as a child. The owner's screen reader check decides whether it changes.
 - **A tall bottom sheet shrinks by the keyboard's height** (`maxBlockSize: calc(85dvh - var(--drawer-keyboard-inset, 0rem) + bleed)`), found by Task 8's review: lifted by a 300px keyboard, its top was at −180px. The fallback needs a unit, since a unitless `0` makes the `calc()` invalid.
 - **Rulings where the spec is silent** (cost if wrong):
-  - `Avatar`: initials uppercased with `toLocaleUpperCase`; dot sizes 6/8/12/16px with rings a quarter of the dot; busy bar in `fg.onStatus`; forced colors draws dots in `CanvasText`. `initials` and the color hash are internal. Cost: a token or constant each.
+  - `Avatar`: initials uppercased with `toUpperCase`, not the host's locale, so server and client agree (the final review found a Turkish-locale hydration mismatch); dot sizes 6/8/12/16px with rings a quarter of the dot; busy bar in `fg.onStatus`; forced colors draws dots in `CanvasText`. `initials` and the color hash are internal. Cost: a token or constant each.
   - `Drawer`: bleed `space.12` and exit offset width plus `space.8` (a theme with a larger shadow shows a sliver while closing); a `drawer-no-close` warning, as Dialog has; direction is read when the drawer opens, not tracked while open; `toSwipeDirection` isn't exported.
   - Bottom sheet: below `md` (48rem) it fills the width, so between 44rem (`size.dialog.lg`) and 48rem it's wider than 44rem. That's Spec 16 read literally; dropping one media query changes it. The handle is `space.10` by `space.1` in `border.control`. `--drawer-keyboard-inset` is applied as `inset-block-end` (Base UI supplies no styles).
   - The Next.js fixture test doesn't press Escape: a server page can't break that step alone, so it couldn't be seen failing. Escape is covered in `Drawer.browser.test.tsx`.
@@ -150,7 +150,14 @@ The v0.4.1 release and build details are in `git show f902386:docs/HANDOFF.md`.
 - `npm ci && npm run check` on `da3de1e` plus the lint fix in `329e66d`, under `.nvmrc`'s Node: exit 0. Unit 881/881 with type tests, script tests 22/22, stories and browser 949/949 (axe in both modes), `verify-dist: ok`, fixtures 67 passed and 25 skipped (tests scoped to one app). The only warnings are the known tooling deprecations (`eslint@9.39.5`, Node `module.register()`) and npm's install-scripts notice.
 - Every new assertion was seen failing on its own line, or deleted when it couldn't fail; the ledger lists each one. The fixture tests failed first without the pages; each HTML assertion was checked against the real `/feedback` HTML with its target removed.
 - `npm audit` (thread 3 rerun): 11 moderate, 0 high, 0 critical, all dev-only (minimatch via api-extractor and `typescript-eslint`, glob via Storybook). Same as v0.4.1. `typescript-eslint` 8.72.2, the latest, is still in the advisory range, so it wasn't upgraded.
-- **Independent review:** fresh read-only Sonnet reviewers covered `633b159` (Task 7) and `51e50f6` (Task 8): no blocking findings, each finding fixed or recorded. **Not yet independently reviewed:** Tasks 1–6 (`0f0d1c2`–`e1d4287`), `7fde5db`, `da3de1e`, `329e66d`. Trigger: the final Opus whole-branch review, before merge.
+- **Independent review:** fresh read-only Sonnet reviewers covered `633b159` (Task 7) and `51e50f6` (Task 8). The final Opus whole-branch review covered everything up to `706a127`: ready after fixes, 0 Critical, 2 Important, 5 Minor, all fixed in the next commit, each with a test seen failing:
+  - `Avatar`'s fallback painted over the server-rendered image before hydration; the fallback now comes first in the DOM, and a test checks the image is on top of server HTML that isn't hydrated.
+  - `debug-storybook.log` had been committed in `0f0d1c2`; removed and ignored.
+  - `Progress`: the radius test asserts `radius.full` (9999px), and a new test covers the RTL indeterminate animation.
+  - `initials` no longer depends on the host's locale.
+  - `Alert` renders no empty wrapper for `false` or `''`.
+  - `Divider`'s `ref` is `Ref<HTMLElement>`, since it's an `hr` by default; ref forwarding is tested for each kind.
+- **Not yet independently reviewed:** the fix commit after `706a127`. Trigger: a read-only review of that commit before the PR is marked ready.
 
 **Not verified:**
 
@@ -195,7 +202,7 @@ Resolved lists from earlier notes stay readable in `git show f902386:docs/HANDOF
 
 ## Next steps
 
-1. Run the final Opus whole-branch review of `feat/v0.5-feedback-and-display` (`main..HEAD`), and fix or record its findings; review any commits made after it.
+1. Review the final review's fix commit (the one after `706a127`), read-only.
 2. Watch the draft PR's CI and the visual baselines run; review the committed screenshots; the owner approves the held workflows.
 3. The owner does the manual checks in the PR body.
 4. Mark the PR ready, squash merge, then `npm run release -- minor` and apply the PR body's release notes with `gh release edit v0.5.0`.
@@ -203,4 +210,4 @@ Resolved lists from earlier notes stay readable in `git show f902386:docs/HANDOF
 
 ## Resume prompt
 
-> Read `docs/HANDOFF.md`. v0.5 is built on `feat/v0.5-feedback-and-display` with a draft PR open. Check its CI and baselines run, then run the final Opus whole-branch review (`main..HEAD`) and handle its findings. Then ask me about the manual checks before merge and the v0.5.0 release.
+> Read `docs/HANDOFF.md`. v0.5 is built on `feat/v0.5-feedback-and-display` with a draft PR open. Check its CI and baselines run, and that the final review's fix commit has been reviewed. Then ask me about the manual checks before merge and the v0.5.0 release.

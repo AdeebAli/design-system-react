@@ -1,3 +1,4 @@
+import { createRef } from 'react';
 import { Divider } from './index';
 
 test('label is horizontal only, and not decorative', () => {
@@ -16,6 +17,9 @@ test('label is horizontal only, and not decorative', () => {
   <Divider orientation="diagonal" />;
   // @ts-expect-error a Divider has no children
   <Divider>or</Divider>;
+  // The default is an hr, so its ref takes an hr, or any HTMLElement.
+  <Divider ref={createRef<HTMLHRElement>()} />;
+  <Divider orientation="vertical" ref={createRef<HTMLElement>()} />;
   // @ts-expect-error background isn't a Divider prop
   <Divider background="surface" />;
 });

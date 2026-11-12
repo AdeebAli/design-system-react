@@ -20,6 +20,10 @@ const toneIcons: Record<AlertTone, IconProps['icon']> = {
   danger: CircleAlertIcon,
 };
 
+/** Whether React would render anything, so no empty wrapper adds a gap. */
+const hasContent = (node: ReactNode) =>
+  node !== undefined && node !== null && node !== false && node !== '';
+
 const roles = { off: undefined, polite: 'status', assertive: 'alert' } as const;
 
 interface AlertOwnProps {
@@ -74,15 +78,9 @@ export function Alert({
         <span className={cx(styles.iconSlot, styles.icon[tone])}>{shown}</span>
       )}
       <div className={styles.content}>
-        {title !== undefined && title !== null && (
-          <div className={styles.title}>{title}</div>
-        )}
-        {children !== undefined && children !== null && (
-          <div className={styles.body}>{children}</div>
-        )}
-        {action !== undefined && action !== null && (
-          <div className={styles.action}>{action}</div>
-        )}
+        {hasContent(title) && <div className={styles.title}>{title}</div>}
+        {hasContent(children) && <div className={styles.body}>{children}</div>}
+        {hasContent(action) && <div className={styles.action}>{action}</div>}
       </div>
       {onDismiss && (
         <AlertDismiss

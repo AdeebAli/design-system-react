@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { ReactNode, Ref } from 'react';
 import { cx } from '../../utils/cx';
 import type { ComponentProps } from '../../utils/types';
 import { Box } from '../Box';
@@ -19,9 +19,12 @@ type DividerVariant =
 /** `Divider`'s props. */
 export type DividerProps = Omit<
   ComponentProps<'div'>,
-  'children' | 'role' | keyof DividerVariant
+  'children' | 'role' | 'ref' | keyof DividerVariant
 > &
-  DividerVariant;
+  DividerVariant & {
+    /** The element: an `hr` by default, a `div` when vertical or labeled. */
+    ref?: Ref<HTMLElement>;
+  };
 
 /**
  * A line between things. Set `decorative` when the layout already separates
@@ -32,12 +35,16 @@ export function Divider({
   label,
   decorative = false,
   className,
+  ref,
   ...props
 }: DividerProps) {
+  // Every element it renders is an HTMLElement; Box types its ref by tag.
+  const divRef = ref as Ref<HTMLDivElement> | undefined;
   const hidden = decorative ? { 'aria-hidden': true } : {};
   if (orientation === 'vertical') {
     return (
       <Box
+        ref={divRef}
         className={cx(styles.vertical, className)}
         {...props}
         role="separator"
@@ -49,6 +56,7 @@ export function Divider({
   if (label !== undefined && label !== null) {
     return (
       <Box
+        ref={divRef}
         className={cx(styles.labeled, className)}
         {...props}
         role="separator"
@@ -57,8 +65,8 @@ export function Divider({
       </Box>
     );
   }
-  // Div props fit an `hr`, but their ref type doesn't, which Box can't see past.
-  const rest: object = props;
+  // Div props fit an `hr`, but Box can't see that.
+  const rest: object = { ...props, ref };
   return (
     <Box
       as="hr"

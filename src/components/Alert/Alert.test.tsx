@@ -6,6 +6,7 @@ import { CircleCheckIcon } from '../Icon/internal/CircleCheck';
 import { InfoIcon } from '../Icon/internal/Info';
 import { TriangleAlertIcon } from '../Icon/internal/TriangleAlert';
 import { XIcon } from '../Icon/internal/X';
+import * as styles from './Alert.css';
 import { Alert } from './index';
 
 /** An icon's drawing, to tell the icons apart. */
@@ -39,6 +40,17 @@ it('defaults to the info tone', () => {
   expect(screen.getByTestId('a').querySelector('svg')!.innerHTML).toBe(
     drawing(InfoIcon),
   );
+});
+
+it('renders no empty parts for false or empty content', () => {
+  const { container } = render(
+    <Alert title="" action={false}>
+      {false}
+    </Alert>,
+  );
+  expect(container.querySelector(`.${styles.title}`)).toBeNull();
+  expect(container.querySelector(`.${styles.body}`)).toBeNull();
+  expect(container.querySelector(`.${styles.action}`)).toBeNull();
 });
 
 it('sets data-tone', () => {
