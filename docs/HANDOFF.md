@@ -151,8 +151,8 @@ Calls made during the build where the spec was silent, each with what it costs i
    - DataTable: `pageSize <= 0` unguarded; an uncommented uncontrolled clamp; test gaps (`defaultPage`, skeleton count with `totalRows`); the routing test doesn't check inline `maxHeight`; a wrapped two-line row header is about 3px shorter than in `Table`; `aria-labelledby` ignores a title in cell content; the interactive-content warning checks only at mount.
    - Earlier tasks: a vacuous null-assertion loop in `Tabs.test.tsx`; `client-modules.mjs` misses a bare `import React from 'react'` used as `React.useState`; a `ColorModeToggle` forced-theme test that does little.
    - Fixtures: the Vite Table style check sits in `overlays.spec.ts`; no fixture test triggers a toast; the fixture sort link doesn't sort.
-7. **Timing-sensitive browser tests, not diagnosed.**
-   - `Table.browser.test.tsx` "scrollable scrolls by keyboard" (line 151) failed once in three local full runs (`scrollLeft` stayed 0) and passed otherwise. It predates the sticky change. It passed on CI run 43127830011.
+7. **Intermittent browser tests, not diagnosed.**
+   - `Table.browser.test.tsx` "scrollable scrolls by keyboard" (line 151) failed once in three local full runs (`scrollLeft` stayed 0) and passed otherwise. It predates the sticky change. In the CI image (`mcr.microsoft.com/playwright:v1.65.0-noble`) it passed 5 of 5 runs of `Table.browser.test.tsx` alone and 2 full `test:stories` runs, and it passed on CI run 43127830011. Its one failure was on macOS under full-suite load.
    - `Button.browser.test.tsx` "hover changes a solid button to the hover token" (line 50) failed once on CI run 43127830011: after the hover, the background stayed `rgb(79, 70, 229)` instead of `rgb(67, 56, 202)`. The rerun passed, the full `test:stories` passed 751 of 751 twice in the CI image, and it hadn't failed in the previous 15 failed CI runs. Ruled out: touch emulation from `Input` and `Tooltip` tests leaking into other files (files run in parallel, but the setting didn't carry over, and hover worked right after it was turned off).
    - Trigger: `npm run release -- minor` runs `npm run check`, and CI runs on `main` after the merge. If either test fails there, find the cause before releasing.
 
@@ -169,7 +169,7 @@ Resolved since the last note:
 
 ## Next steps
 
-1. Squash-merge PR #24, then run `npm run release -- minor` for v0.4.0 (it reruns every check; see open thread 7 if a timing-sensitive test fails), and edit the release notes.
+1. Squash-merge PR #24, then run `npm run release -- minor` for v0.4.0 (it reruns every check; see open thread 7 if an intermittent test fails), and edit the release notes.
 2. Write the v0.5 plan, with the triggers in open threads 1–3.
 
 ## Resume prompt
