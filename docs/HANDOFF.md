@@ -157,7 +157,7 @@ The v0.4.1 release and build details are in `git show f902386:docs/HANDOFF.md`.
   - `initials` no longer depends on the host's locale.
   - `Alert` renders no empty wrapper for `false` or `''`.
   - `Divider`'s `ref` is `Ref<HTMLElement>`, since it's an `hr` by default; ref forwarding is tested for each kind.
-- **Not yet independently reviewed:** the fix commit after `706a127`. Trigger: a read-only review of that commit before the PR is marked ready.
+- A fresh read-only Sonnet reviewer covered that fix commit, `79931e8`: ready, with three nits recorded under thread 6. The review covers all code up to `79931e8`; later commits are docs only.
 
 **Not verified:**
 
@@ -173,6 +173,7 @@ The v0.4.1 release and build details are in `git show f902386:docs/HANDOFF.md`.
 5. **`engines.node` is `>=22`.** Trigger: the release script refuses to release after April 30, 2027, until the floor and CI's Node matrix are raised. (Carried forward.)
 6. **Deferred minor findings from v0.4, plus Drawer.** Trigger: none; pick from this list when convenient. (Carried forward, with Drawer added.)
    - Dialog and Drawer: the close button scrolls out of view in tall content (`Dialog.css.ts`, `Drawer.css.ts`); Drawer matches Dialog on purpose. Dialog: the `closeOnOutsideClick` + `alert` warning fires while closed; `React.*` types used without an import in `DialogTitle`/`DialogDescription`; an unexplained `- 1` in the full-width browser test.
+   - From the review of `79931e8`: before hydration, an avatar image with transparent areas shows the initials through them (opaque photos are fine); `Alert`'s `hasContent` lets `true` and `[]` through, rendering an empty part; `Divider`'s `Ref<HTMLElement>` also accepts a `RefObject<HTMLDivElement>`, which then holds an `hr`.
    - Drawer: the bottom sheet keeps its safe-area padding while the keyboard is up (up to about 34px extra on an iPhone); the provider test waits a fixed 300ms before asserting the variable is absent on a side panel.
    - Popover: arrow offsets use physical `left`/`right`; the rotated arrow shadow's direction; the shadow clip uses `space.12`; weak tests (`lastMessage` reads `calls[0]`, layout props, no `aria-labelledby` test); a redundant `Omit<children>` in `PopoverTitle`.
    - Overlay foundations: the `gapOffset` comment should say a subtree theme isn't followed; RTL and non-bottom popup motion is untested; non-null assertions on the `var()` regex.
@@ -202,12 +203,12 @@ Resolved lists from earlier notes stay readable in `git show f902386:docs/HANDOF
 
 ## Next steps
 
-1. Review the final review's fix commit (the one after `706a127`), read-only.
-2. Watch the draft PR's CI and the visual baselines run; review the committed screenshots; the owner approves the held workflows.
+1. Confirm CI passes on the PR head. The baselines (`89b1498`) are committed and reviewed by eye.
+2. If GitHub holds CI after a bot commit, the owner selects **Approve workflows to run**.
 3. The owner does the manual checks in the PR body.
 4. Mark the PR ready, squash merge, then `npm run release -- minor` and apply the PR body's release notes with `gh release edit v0.5.0`.
 5. Update this note after the release, then start v0.6.
 
 ## Resume prompt
 
-> Read `docs/HANDOFF.md`. v0.5 is built on `feat/v0.5-feedback-and-display` with a draft PR open. Check its CI and baselines run, and that the final review's fix commit has been reviewed. Then ask me about the manual checks before merge and the v0.5.0 release.
+> Read `docs/HANDOFF.md`. v0.5 is built on `feat/v0.5-feedback-and-display` with a draft PR open. The final review and its fixes are done and reviewed. Check CI on the PR head. Then ask me about the manual checks before merge and the v0.5.0 release.
