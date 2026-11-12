@@ -133,7 +133,8 @@ Calls made during the build where the spec was silent, each with what it costs i
 - `42c151f`: lockfile regenerated under `.nvmrc`'s Node (ruling 7).
 - `f9f79c2`: the recipe story's ascending-order check (ruling 8).
 - `72722d1`: visual baselines from the `update-visual-baselines` workflow (run 43160231650): the `TanStackRecipe` screenshots changed and `StickyTwoRowHeader` screenshots were added, 8 files, all reviewed. The first baselines run (43159502446) was rejected on push because `f9f79c2` had moved the branch, so it was dispatched again on the branch.
-- This note (`docs/HANDOFF.md`), in the acceptance commit.
+- This note (`docs/HANDOFF.md`), in the acceptance commit `3c38bc2`, and updated in the next commit.
+- `b8ac114`: `tsconfig.build.json` excludes `*.example.tsx`; the redundant `vite/client` reference is removed (owner's request after the review).
 - Public API unchanged: `git diff v0.4.0 -- src/index.ts` is empty.
 
 **Before this session (v0.4.0 release, for reference):** PR #24 squash merged as `e6b254b`; `npm run release -- minor` made `9bd299b` and tag `v0.4.0`, with hand-edited release notes.
@@ -142,11 +143,13 @@ Calls made during the build where the spec was silent, each with what it costs i
 
 - `npm ci && npm run check` on `42c151f`, under `.nvmrc`'s Node: exit 0. Unit 756/756, stories and browser 769/769 (axe in both modes), build and `verify-dist`, fixtures 64 passed and 22 skipped (tests scoped to one fixture app, as for v0.4.0). The only warnings were tooling deprecations (`eslint@9.39.5`, Node `module.register()`) and npm's install-scripts notice for `esbuild` and `fsevents`, none from this branch.
 - After `f9f79c2`: typecheck, lint, format, and `test:stories` 769/769 again.
+- CI on `3c38bc2` (run 43161220975): all six jobs passed, including `visual` with the new baselines.
+- After `b8ac114`: typecheck, lint, format, the DataTable stories 20/20, and `npm run build` (`verify-dist: ok`, no TanStack in `dist`).
 - CI on `f9f79c2` (run 43160072395): `static`, `unit`, `stories`, `package (node nvmrc)`, and `package (node 22)` passed. `visual` failed only on the eight screenshots that `72722d1` then committed.
 - Every new test was seen failing first, or was broken on purpose and seen failing: the RTL tests before the wrap; the two-row header test before the selector change; the corner tests with the corner selector broken; the `Select` centering test with `align="start"`; the recipe's sort checks with `sortedRowModel` removed; typecheck with `useReactTable`.
-- **Independent review:** a fresh Opus reviewer on `5eda67e..42c151f` found it ready to merge (0 Critical, 0 Important, 4 Minor), and the same reviewer reviewed `f9f79c2` (OK). The review covers code up to `f9f79c2`. Since then come `72722d1` (screenshots only, reviewed by eye) and this note.
+- **Independent review:** a fresh Opus reviewer on `5eda67e..42c151f` found it ready to merge (0 Critical, 0 Important, 4 Minor), and the same reviewer reviewed `f9f79c2` (OK). The same reviewer also reviewed `b8ac114` (OK), so the review covers all code up to `b8ac114`. Not independently reviewed: `72722d1` (screenshots from the workflow run 43160231650, reviewed by eye) and this note (`3c38bc2` and its update).
 - **Not verified:**
-  - CI on `72722d1` is held at "Approve workflows to run" (run 43161001609), because it was triggered by the bot's commit. The acceptance commit's push starts a fresh CI run on the full branch. Trigger: CI on PR #26 before merge.
+  - CI on `b8ac114` and this note's update. Trigger: CI on PR #26 before merge. The held run on `72722d1` (43161001609, waiting for "Approve workflows to run") is superseded by later runs and can be ignored.
   - The owner's manual checks (PR #26 body): an RTL keyboard spot check with VoiceOver, and VoiceOver and NVDA on `StickyWithSpans` (thread 9c). Trigger: before the merge.
   - Installing 0.4.x from GitHub Packages. `gh` lacks `read:packages`. Trigger: none; the v0.1 install proved the pipeline. (Carried forward.)
   - The v0.5–v0.7 plans haven't had an independent review. Trigger: none before their builds; each branch gets a fresh whole-branch review before merge. (Carried forward.)
@@ -174,10 +177,7 @@ Calls made during the build where the spec was silent, each with what it costs i
    - Both passed in the v0.4.0 release's `npm run check`, in CI on `e6b254b`, in v0.4.1's local `npm run check` on `42c151f`, and in CI's `stories` job on `f9f79c2`. Trigger: CI on every PR and each release's `npm run check` (v0.4.1 onward; every plan's Global Constraints repeat this). If either fails, find the cause in the CI image before rerunning. Nothing forces a diagnosis while they keep passing.
 9. **Table first-column `rowSpan`, part c only.** A row header over several rows uses `scope="row"` with `rowSpan`; some screen readers may announce it for its first row only. Parts a and b are resolved (below). Trigger: the owner's VoiceOver and NVDA check on `Table` › `StickyWithSpans`, listed in PR #26's manual checks. If a reader announces the header for its first row only, the follow-up is documenting `headers` in the Table docs.
 10. **v0.5–v0.7 execution method.** The owner hasn't chosen (subagent-driven is recommended: about 2 agents per task plus a final review). Trigger: the start of each plan's build session.
-11. **Deferred minor findings from v0.4.1's final review.** Trigger: none; pick from this list when convenient.
-   - A two-row header still gets the sticky-header `scroll-padding-block-start` (`stickyHeaderPad`, `src/components/Table/Table.css.ts:44`), so a focused cell stops about one header row below the top while nothing sticks. Nothing is hidden.
-   - `/// <reference types="vite/client" />` in `src/components/DataTable/DataTable.stories.tsx:1` is redundant: `tsconfig.json` already lists `vite/client`. Ruling 6's stated reason for it was wrong.
-   - `tsconfig.build.json` doesn't exclude `src/**/*.example.tsx`, so the declaration build compiles the recipe and needs devDependencies installed. Nothing reaches `dist`.
+11. **A deferred minor finding from v0.4.1's final review.** A two-row header still gets the sticky-header `scroll-padding-block-start` (`stickyHeaderPad`, `src/components/Table/Table.css.ts:44`), so a focused cell stops about one header row below the top while nothing sticks. Nothing is hidden. Trigger: none; pick it up when convenient. The other two minors are resolved (below).
 
 Resolved in v0.4.1 (PR #26):
 - Thread 1, the TanStack v9 recipe: `src/components/DataTable/TanStackRecipe.example.tsx` on `@tanstack/react-table` 9.3.1 (devDependency), covered by `npm run typecheck` (renaming `useTable` fails it with TS2724) and by the story's sort check (`59e6ea6`, `f9f79c2`). `dist/index.js` doesn't mention TanStack.
@@ -188,6 +188,7 @@ Resolved in v0.4.1 (PR #26):
 - Old next step 1, build v0.4.1: done (PR #26).
 - The four plans and the milestone amendments: committed in `9874dac`. Spec 16's `Milestone` was already v0.5.
 - Old unverified item, threads 8 and 9 not seen in a browser: both reproduced (above).
+- Thread 11's other two minors, at the owner's request (`b8ac114`): `tsconfig.build.json` excludes `src/**/*.example.tsx` (the build's type program went from the example plus 110 `@tanstack` files to 0), and the redundant `vite/client` reference in `DataTable.stories.tsx` is gone (`tsconfig.json` already provides it).
 
 The resolved lists from earlier notes (v0.4.0 release, v0.4 build, planning session) are dropped here; they were already resolved, and they stay readable in `git show 5eda67e:docs/HANDOFF.md`.
 
