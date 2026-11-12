@@ -291,6 +291,18 @@ describe.each(['md', 'sm'] as const)(
         .toBeGreaterThanOrEqual(header.bottom);
       expect(rect(hidden).left).toBeGreaterThanOrEqual(column.right);
     });
+
+    it('the header reserve is its height plus `space.1`', () => {
+      render(<Grid size={size} stickyHeader />);
+      const probe = document.createElement('div');
+      probe.style.height = vars.space['1'];
+      document.body.append(probe);
+      const gap = rect(probe).height;
+      probe.remove();
+      // Scroll positions snap to whole pixels, so compare the padding itself.
+      const reserve = parseFloat(css(wrapperOf()).scrollPaddingTop);
+      expect(reserve).toBeCloseTo(rect(headerCell(0)).height + gap, 1);
+    });
   },
 );
 
