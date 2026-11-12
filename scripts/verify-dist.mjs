@@ -82,6 +82,7 @@ const serverModules = [
   'components/Pagination/Pagination.js',
   'components/Pagination/pageRange.js',
   'components/Skeleton/Skeleton.js',
+  'components/Spinner/Spinner.js',
   'components/EmptyState/EmptyState.js',
 ];
 for (const module of serverModules) {
