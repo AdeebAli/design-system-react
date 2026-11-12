@@ -97,12 +97,13 @@ export function hasContent(path) {
   }
 }
 
-// Quotes each argument that the shell would split or expand, so a printed
+// Quotes each argument that sh or zsh would split or expand (zsh expands a
+// leading `=`), so a printed
 // command can be pasted as is.
 export function shellCommand(args) {
   return args
     .map((arg) =>
-      /^[\w@%+=:,./-]+$/.test(arg) ? arg : `'${arg.replaceAll("'", "'\\''")}'`,
+      /^[\w@%+:,./-]+$/.test(arg) ? arg : `'${arg.replaceAll("'", "'\\''")}'`,
     )
     .join(' ');
 }

@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdtempSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
@@ -147,8 +147,9 @@ test('the release uses the notes file instead of generated notes', () => {
   ]);
 });
 
-test('a notes file needs non-blank text and must be a file, not a folder', () => {
+test('a notes file needs non-blank text and must be a file, not a folder', (t) => {
   const dir = mkdtempSync(join(tmpdir(), 'release-notes-'));
+  t.after(() => rmSync(dir, { recursive: true }));
   const notes = join(dir, 'notes.md');
   const blank = join(dir, 'blank.md');
   writeFileSync(notes, '# Notes\n');
@@ -164,6 +165,7 @@ test('a printed command quotes arguments the shell would split', () => {
     shellCommand(['--notes-file', "/Users/me/My Notes/it's.md"]),
     `--notes-file '/Users/me/My Notes/it'\\''s.md'`,
   );
+  assert.equal(shellCommand(['=notes.md']), `'=notes.md'`);
 });
 
 test('a printed command leaves plain arguments bare', () => {
