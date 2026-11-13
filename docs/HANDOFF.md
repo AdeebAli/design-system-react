@@ -8,10 +8,10 @@ Build `@adeebali/design-system-react`, a general-purpose React design system. Sp
 
 ## Status
 
-- **Done and released:** v0.1 (specs 01–07), v0.2 (Specs 08–09), v0.3 (Specs 10–11), v0.4 (Specs 12–13), and v0.4.1 (tag `v0.4.1`, `a67ef89`). Storybook is at https://adeebali.github.io/design-system-react/.
-- **v0.5 built, not merged:** all 9 tasks of `docs/superpowers/plans/2026-11-11-v0-5-feedback-and-display.md` (Spec 16: `Alert`, `Spinner`, `Progress`, `Avatar`, `Divider`, `Drawer`) are committed on `feat/v0.5-feedback-and-display`, opened as a draft PR. `npm ci && npm run check` passes.
-- **Waiting on:** the final Opus whole-branch review, the visual baselines run, the owner's manual checks, then merge and `npm run release -- minor`.
+- **Done and released:** v0.1 (specs 01–07), v0.2 (Specs 08–09), v0.3 (Specs 10–11), v0.4 (Specs 12–13), v0.4.1, and v0.5 (Spec 16: `Alert`, `Spinner`, `Progress`, `Avatar`, `Divider`, `Drawer`). Storybook is at https://adeebali.github.io/design-system-react/.
+- **v0.5.0 released:** PR #29 squash merged as `885b951`; `npm run release -- minor` made `bbd81d9` and tag `v0.5.0`; release https://github.com/AdeebAli/design-system-react/releases/tag/v0.5.0, with the PR body's notes applied by hand.
 - **Planned, not started,** each after the previous release: v0.6 (`docs/superpowers/plans/2026-11-11-v0-6-advanced-inputs.md`, Spec 14) and v0.7 (`docs/superpowers/plans/2026-11-11-v0-7-app-navigation.md`, Spec 15).
+- **Next:** the owner chooses v0.6's execution method (thread 10), then the v0.6 build.
 
 ## Decisions
 
@@ -138,14 +138,30 @@ Calls made during the build where the spec was silent, each with what it costs i
 
 ## Changes
 
-**v0.5, branch `feat/v0.5-feedback-and-display`** (11 commits on `main` at `f902386`):
+**This session (2026-11-12), the v0.5.0 release:**
+- PR #29 squash merged by the owner as `885b951`.
+- `npm run release -- minor` on a clean, up-to-date `main`: all checks passed, then `bbd81d9` (version 0.5.0 in `package.json` and `package-lock.json`), tag `v0.5.0`, push (the owner's ruleset bypass), and the GitHub release.
+- Release notes: with the owner's approval, the "Release notes draft" section of PR #29's body (Breaking changes with the avatar token table, New components, Changes) plus the Full Changelog link replaced the generated notes, through `gh release edit v0.5.0`.
+- This note, on branch `docs/handoff-v0.5.0`.
+
+**The v0.5 build, branch `feat/v0.5-feedback-and-display`, PR #29 (for reference)** (on `main` at `f902386`):
 - `0f0d1c2` avatar color tokens (themes, contrast, Box types, Colors docs, Specs 02 and 04); `b1a6dbb` `Spinner`, used by `Button`; `0a12eb1` `Alert` (server component, client `AlertDismiss`); `7b28ae4` `Divider`; `9d47a9f` `Progress`, plus `src/baseUiDeps.test.ts` (every Base UI entry in `vite.config.ts` `optimizeDeps`); `e1d4287` `Avatar` (Spec 16 amended); `633b159` `Drawer`; `51e50f6` the bottom sheet; `7fde5db` its keyboard fix and test renames from the Task 8 review; `da3de1e` the `Overview/Feedback` page, the Next.js `/feedback` page, Vite fixture additions, `tests/fixtures/feedback.spec.ts`, and `docs/components.md`; `329e66d` a lint fix.
+- Then the review fixes (`79931e8`), the plain-text labeled `Divider` (`8bf529a`), the shared accessibility-tree helper (`0a0323b`), and handoff updates (`a353ef9`, `a4deff5`, `d9fc0df`, the PR head).
 - `scripts/verify-dist.mjs` checks `Spinner`, `Alert`, and `Divider` have no `"use client"`, and `AlertDismiss` has it.
-- This note, in the same PR.
 
 The v0.4.1 release and build details are in `git show f902386:docs/HANDOFF.md`.
 
 ## Verification
+
+**The v0.5.0 release:**
+- `npm run release -- minor` on `885b951`: its `npm run check` passed (the script stops on any failure), ending with fixtures 67 passed and 25 skipped; then it pushed and created the release.
+- CI on PR #29's head `d9fc0df` (run 43325575374) and on `main` at `885b951` (run 43342919002): both passed.
+- `Publish` (run 43346896244) and `Storybook` (run 43346896152) on `bbd81d9`: both succeeded.
+- The edited release notes, read back with `gh release view v0.5.0`, match the draft except for one blank line (`diff -B` is clean).
+- The owner reports these manual checks from PR #29 passed: a screen reader pass on all six components (including the VoiceOver recheck of the labeled `Divider`), swiping a `Drawer` closed from each side on a real phone, and a bottom `Drawer` with an input and the on-screen keyboard on a real phone.
+- The reviews cover all code up to `8bf529a`. After it: `0a0323b` (test-only helper, review skipped by the owner), the handoff commits, and `bbd81d9` (version bump); none of the unreviewed commits changes shipped `src` code.
+
+**The v0.5 build (for reference):**
 
 - `npm ci && npm run check` on `da3de1e` plus the lint fix in `329e66d`, under `.nvmrc`'s Node: exit 0. Unit 881/881 with type tests, script tests 22/22, stories and browser 949/949 (axe in both modes), `verify-dist: ok`, fixtures 67 passed and 25 skipped (tests scoped to one app). The only warnings are the known tooling deprecations (`eslint@9.39.5`, Node `module.register()`) and npm's install-scripts notice.
 - Every new assertion was seen failing on its own line, or deleted when it couldn't fail; the ledger lists each one. The fixture tests failed first without the pages; each HTML assertion was checked against the real `/feedback` HTML with its target removed.
@@ -158,14 +174,14 @@ The v0.4.1 release and build details are in `git show f902386:docs/HANDOFF.md`.
   - `Alert` renders no empty wrapper for `false` or `''`.
   - `Divider`'s `ref` is `Ref<HTMLElement>`, since it's an `hr` by default; ref forwarding is tested for each kind.
 - A fresh read-only Sonnet reviewer covered that fix commit, `79931e8`: ready, with three nits recorded under thread 6. The review covers all code up to `79931e8`. After it, the labeled-`Divider` change `8bf529a` (plain text, from the owner's VoiceOver check, which then passed) was reviewed by a fresh read-only Sonnet reviewer: ready, one nit under thread 6. The reviews cover all code up to `8bf529a`.
-- **The shared accessibility-tree helper** (owner's request, after that review's nit): `src/utils/browserTestUtils.ts` (`axTree`, `axNames`, `axEntries`) replaces the copies in the NavBar, Pagination, and Divider browser tests, and has its own tests. Building it showed Chrome returns the tree breadth-first, so the helper walks it depth-first into reading order. Every assertion was seen failing. Not independently reviewed: the owner skipped the review for now (2026-11-12), since it changes only tests. Trigger: the owner can ask for one before merge; otherwise none.
+- **The shared accessibility-tree helper** (owner's request, after that review's nit): `src/utils/browserTestUtils.ts` (`axTree`, `axNames`, `axEntries`) replaces the copies in the NavBar, Pagination, and Divider browser tests, and has its own tests. Building it showed Chrome returns the tree breadth-first, so the helper walks it depth-first into reading order. Every assertion was seen failing. Not independently reviewed: the owner skipped the review (2026-11-12), since it changes only tests. It shipped in `885b951` unreviewed. Trigger: none; the owner can ask for one.
 
 **Not verified:**
 
-- The owner's manual checks (screen reader on all six, including a VoiceOver recheck of the labeled `Divider` after the plain-text change; forced colors; swiping a `Drawer` closed on a real phone; a bottom `Drawer` with the on-screen keyboard). Trigger: the checklist in the v0.5 PR body, before merge.
-- CI and visual baselines for the branch. Trigger: the draft PR with the `update-baselines` label; the owner selects **Approve workflows to run** after the baselines commit.
-- "A failed image shows initials after hydration" (Spec 16) is tested with a client render, not a hydrated page. Trigger: none; the owner can ask for a fixture test.
-- Installing 0.4.x from GitHub Packages. Trigger: none; the v0.1 install proved the pipeline. (Carried forward.)
+- Forced colors on the six v0.5 components (the one PR #29 manual check the owner didn't do). Trigger: next step 2 adds it to the v0.6 PR's manual checklist.
+- CI on the `bbd81d9` push (run 43346894123) was still running when this note was written. Trigger: CI on this note's PR, which runs on top of `bbd81d9`.
+- "A failed image shows initials after hydration" (Spec 16) is tested with a client render, not a hydrated page. Trigger: none; the owner can ask for a fixture test. (Carried forward.)
+- Installing 0.5.x from GitHub Packages, and that 0.5.0 appears there (only the publish job's success was seen). Trigger: none; the v0.1 install proved the pipeline. (Carried forward.)
 - The v0.6 and v0.7 plans haven't had an independent review. Trigger: none before their builds; each branch gets a whole-branch review before merge. (Carried forward.)
 
 ## Open threads
@@ -189,27 +205,24 @@ The v0.4.1 release and build details are in `git show f902386:docs/HANDOFF.md`.
    - Fixtures: the Vite Table style check sits in `overlays.spec.ts`; no fixture test triggers a toast; the fixture sort link doesn't sort.
 7. **One intermittent browser test, not diagnosed.**
    - `Table.browser.test.tsx` "scrollable scrolls by keyboard" (line 151) failed once in three local full runs (`scrollLeft` stayed 0) and passed otherwise. It predates the sticky change. In the CI image (`mcr.microsoft.com/playwright:v1.65.0-noble`) it passed 5 of 5 runs of `Table.browser.test.tsx` alone and 2 full `test:stories` runs, and it passed on CI run 43127830011. Its one failure was on macOS under full-suite load. It failed again locally on `d219774`, and an instrumented copy caught one failure in three full runs: `ArrowRight` scrolled 40px, then `ArrowDown` reached the focused wrapper, wasn't prevented, with the page focused and visible, yet `scrollTop` stayed 0 for 2.5s. Ruled out: `ArrowDown` arriving during the `ArrowRight` scroll animation (pressing both back to back scrolls both).
-   - It isn't explained by the v0.4.1 touch-emulation fix (`ce5a5f1`): that taint happens only on Linux, and this test's failures were on macOS. It passed in the v0.4.1 release's local `npm run check` and on CI for `803580d` and `337db60`. Trigger: CI on every PR and each release's `npm run check`. If it fails, find the cause in the CI image before rerunning. Nothing forces a diagnosis while it keeps passing.
-10. **v0.6 and v0.7 execution method.** v0.5 was hybrid. Trigger: the start of each plan's build session. (Carried forward, narrowed.)
+   - It isn't explained by the v0.4.1 touch-emulation fix (`ce5a5f1`): that taint happens only on Linux, and this test's failures were on macOS. It passed in the v0.4.1 and v0.5.0 releases' local `npm run check` and on CI for `803580d`, `337db60`, `d9fc0df`, and `885b951`. Trigger: CI on every PR and each release's `npm run check`. If it fails, find the cause in the CI image before rerunning. Nothing forces a diagnosis while it keeps passing.
+10. **v0.6 and v0.7 execution method.** v0.5 was hybrid. Trigger: the start of each plan's build session. (Carried forward.)
 11. **A deferred minor finding from v0.4.1's final review.** A two-row header still gets the sticky-header `scroll-padding-block-start` (`stickyHeaderPad`, `src/components/Table/Table.css.ts:44`), so a focused cell stops about one header row below the top while nothing sticks. Nothing is hidden. Trigger: none; pick it up when convenient. (Carried forward; the other two minors were resolved in `b8ac114`.)
 
-Resolved this session:
-- Thread 12, release notes: the owner keeps editing them by hand; PR #28 closed unmerged.
-- Thread 10 for v0.5: hybrid (see v0.5 decisions).
-- Thread 3 rerun: audit unchanged (see Verification).
-- Old unverified item, CI on the `a67ef89` push: CI on PR #27 (run 43176892793), which ran on top of it, passed.
-- Old next steps 1 and 2: the owner chose (thread 10, thread 12), and v0.5 is built.
+Resolved this session (the v0.5.0 release):
+- Old unverified item, the owner's manual checks: screen reader, Drawer swipe, and bottom sheet with keyboard passed (owner's report); forced colors wasn't done and is carried forward above.
+- Old unverified item, CI and visual baselines for the branch: CI on the PR head `d9fc0df` (run 43325575374) passed, including `visual`.
+- Old next steps 1–4: CI passed, the owner merged PR #29, `npm run release -- minor` made v0.5.0, and the release notes were applied (see Changes).
+- Old next step 5: this note is updated; v0.6 is next.
+- `0a0323b`'s skipped review: the trigger was "before merge"; it merged unreviewed, so it's recorded under Verification with no trigger.
 
-Resolved lists from earlier notes stay readable in `git show f902386:docs/HANDOFF.md` and `git show 5eda67e:docs/HANDOFF.md`.
+Resolved lists from earlier notes stay readable in `git show d9fc0df:docs/HANDOFF.md`, `git show f902386:docs/HANDOFF.md`, and `git show 5eda67e:docs/HANDOFF.md`.
 
 ## Next steps
 
-1. Confirm CI passes on the PR head. The baselines (`89b1498`) are committed and reviewed by eye.
-2. If GitHub holds CI after a bot commit, the owner selects **Approve workflows to run**.
-3. The owner does the manual checks in the PR body.
-4. Mark the PR ready, squash merge, then `npm run release -- minor` and apply the PR body's release notes with `gh release edit v0.5.0`.
-5. Update this note after the release, then start v0.6.
+1. Confirm CI passes on this note's PR (it also covers the `bbd81d9` push), then merge it.
+2. Start v0.6 from `docs/superpowers/plans/2026-11-11-v0-6-advanced-inputs.md`: the owner chooses the execution method (thread 10), and the v0.6 PR's manual checklist includes forced colors on the six v0.5 components.
 
 ## Resume prompt
 
-> Read `docs/HANDOFF.md`. v0.5 is built on `feat/v0.5-feedback-and-display` with a draft PR open. The final review and its fixes are done and reviewed. Check CI on the PR head. Then ask me about the manual checks before merge and the v0.5.0 release.
+> Read `docs/HANDOFF.md`. v0.5.0 is released and its handoff is merged. Ask me which execution method to use for v0.6 (`docs/superpowers/plans/2026-11-11-v0-6-advanced-inputs.md`), then start the build. Remember to add the v0.5 forced-colors check to the v0.6 PR's manual checklist.
