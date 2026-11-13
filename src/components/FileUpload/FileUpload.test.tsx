@@ -644,3 +644,24 @@ it('labels.announce orders the file name and status', () => {
   );
   expect(screen.getByRole('status')).toHaveTextContent('Envoyé – a.txt');
 });
+
+it('a file name containing {status} stays intact in the announcement', () => {
+  const odd = file('{status}.txt');
+  const { rerender } = render(
+    <FileUpload
+      aria-label="Files"
+      defaultValue={[odd]}
+      getFileStatus={() => ({ status: 'uploading' })}
+    />,
+  );
+  rerender(
+    <FileUpload
+      aria-label="Files"
+      defaultValue={[odd]}
+      getFileStatus={() => ({ status: 'done' })}
+    />,
+  );
+  expect(screen.getByRole('status')).toHaveTextContent(
+    '{status}.txt: Uploaded',
+  );
+});

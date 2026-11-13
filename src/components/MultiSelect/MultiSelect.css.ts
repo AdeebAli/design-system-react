@@ -29,13 +29,28 @@ export const count = style(
   }),
 );
 
-/** The searchable control: chips and the input, wrapping onto new lines. */
+const ring = {
+  outline: `${vars.borderWidth.thick} solid ${vars.color.focus}`,
+  outlineOffset: vars.space['0.5'],
+} as const;
+
+/**
+ * The searchable control: chips and the input, wrapping onto new lines. A
+ * complete style, not an override of Input's wrapper, since two classes in one
+ * layer resolve by stylesheet order, which differs between builds.
+ */
 export const chips = style(
   layered({
+    display: 'flex',
     flexWrap: 'wrap',
+    alignItems: 'center',
     gap: vars.space['1'],
-    paddingBlock: vars.space['0.5'],
-    paddingInlineStart: vars.space['1'],
+    // A row of space.6 chips fills the small control height exactly.
+    paddingBlock: `calc((${vars.size.control.sm} - ${vars.space['6']}) / 2 - ${vars.borderWidth.thin})`,
+    paddingInline: vars.space['1'],
+    minWidth: 0,
+    cursor: 'text',
+    selectors: { '&:focus-within:has(:focus-visible)': ring },
   }),
 );
 
@@ -121,9 +136,27 @@ export const chipRemoveIcon = style(
   }),
 );
 
+/**
+ * The search input among the chips: like Input's, padded so its text starts
+ * where Input's does when there are no chips. A complete style, for the same
+ * reason as `chips`.
+ */
 export const chipsInput = style(
   layered({
+    flex: 1,
     minWidth: '4rem',
     height: vars.space['6'],
+    paddingBlock: 0,
+    paddingInlineStart: vars.space['2'],
+    paddingInlineEnd: 0,
+    border: 'none',
+    background: 'transparent',
+    color: 'inherit',
+    font: 'inherit',
+    outline: 'none',
+    selectors: {
+      '&::placeholder': { color: vars.color.fg.muted, opacity: 1 },
+      '&:disabled': { cursor: 'not-allowed' },
+    },
   }),
 );

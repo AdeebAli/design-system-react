@@ -300,3 +300,32 @@ it('a chip uses bg.muted, radius.sm, and font.size.sm', () => {
   expect(c.fontSize).toBe(p.fontSize);
   probe.remove();
 });
+
+it('with no chips, the searchable placeholder starts where Combobox text does', () => {
+  render(
+    <MultiSelect
+      searchable
+      aria-label="Topics"
+      options={topics}
+      placeholder="Add topics"
+      className="wrap"
+    />,
+  );
+  const input = screen.getByRole('combobox');
+  const wrapper = input.closest<HTMLElement>('.wrap')!;
+  const probe = document.createElement('div');
+  probe.style.paddingInlineStart = 'var(--ds-space-3)';
+  document.body.append(probe);
+  const inset =
+    input.getBoundingClientRect().left -
+    wrapper.getBoundingClientRect().left -
+    wrapper.clientLeft +
+    parseFloat(getComputedStyle(input).paddingInlineStart);
+  expect(inset).toBe(parseFloat(getComputedStyle(probe).paddingInlineStart));
+  // Chips start close to the edge: the wrapper pads only space.1.
+  probe.style.paddingInlineStart = 'var(--ds-space-1)';
+  expect(getComputedStyle(wrapper).paddingInlineStart).toBe(
+    getComputedStyle(probe).paddingInlineStart,
+  );
+  probe.remove();
+});

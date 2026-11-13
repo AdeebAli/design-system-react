@@ -85,7 +85,6 @@ export function MultiSelectSearch({
           className={cx(
             box(layout),
             inputStyles.control,
-            inputStyles.wrapper,
             styles.chips,
             styles.minHeight[size],
             className,
@@ -120,7 +119,7 @@ export function MultiSelectSearch({
             }
           </BaseCombobox.Value>
           <BaseCombobox.Input
-            className={cx(inputStyles.input, styles.chipsInput)}
+            className={styles.chipsInput}
             placeholder={current.length === 0 ? placeholder : undefined}
             aria-invalid={invalid || undefined}
             aria-required={required || undefined}

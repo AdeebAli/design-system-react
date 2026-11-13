@@ -212,3 +212,16 @@ it("the popup uses Select's surface tokens", async () => {
   expect(getComputedStyle(popup.parentElement!).zIndex).toBe(p.zIndex);
   probe.remove();
 });
+
+it('the wrapper pads space.3 at the start and space.1 at the end, around the buttons', () => {
+  render(<Combobox aria-label="Country" options={countries} clearable />);
+  const wrapper = getComputedStyle(input().parentElement!);
+  const probe = document.createElement('div');
+  probe.style.paddingInlineStart = 'var(--ds-space-3)';
+  probe.style.paddingInlineEnd = 'var(--ds-space-1)';
+  document.body.append(probe);
+  const p = getComputedStyle(probe);
+  expect(wrapper.paddingInlineStart).toBe(p.paddingInlineStart);
+  expect(wrapper.paddingInlineEnd).toBe(p.paddingInlineEnd);
+  probe.remove();
+});

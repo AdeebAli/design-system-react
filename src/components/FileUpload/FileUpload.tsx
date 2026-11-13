@@ -162,9 +162,11 @@ export function FileUpload({
   const dropzone = variant === 'dropzone';
   const listRef = useRef<HTMLUListElement>(null);
   // A removal in progress, so focus can move once the list updates.
-  const removing = useRef<{ index: number; from: readonly File[] } | null>(
-    null,
-  );
+  const removing = useRef<{
+    index: number;
+    file: File;
+    from: readonly File[];
+  } | null>(null);
 
   // Announcements, derived from what changed since the last render.
   const statuses = files.map((file) => getFileStatus?.(file));
@@ -184,13 +186,14 @@ export function FileUpload({
         status.status !== previous.kinds[i] &&
         (status.status === 'done' || status.status === 'error')
           ? [
-              labels.announce
-                .replace('{name}', () => files[i]!.name)
-                .replace('{status}', () =>
-                  status.status === 'done'
+              // One pass, so a name containing "{status}" stays as it is.
+              labels.announce.replace(/\{(name|status)\}/g, (_, key) =>
+                key === 'name'
+                  ? files[i]!.name
+                  : status.status === 'done'
                     ? labels.done
                     : (status.error ?? labels.error),
-                ),
+              ),
             ]
           : [],
       );
@@ -245,7 +248,15 @@ export function FileUpload({
     // then the input, so focus is never lost.
     const pending = removing.current;
     removing.current = null;
-    if (!pending || files.length !== pending.from.length - 1) return;
+    // Only when the removed file is the one that's gone: a parent that
+    // declined the removal may change the list later for its own reasons.
+    if (
+      !pending ||
+      files.length !== pending.from.length - 1 ||
+      files.includes(pending.file)
+    ) {
+      return;
+    }
     const buttons = listRef.current?.querySelectorAll('button') ?? [];
     const target =
       buttons[pending.index] ?? buttons[pending.index - 1] ?? inputRef.current;
@@ -348,7 +359,7 @@ export function FileUpload({
           disabled={disabled}
           listRef={listRef}
           onRemove={(index) => {
-            removing.current = { index, from: files };
+            removing.current = { index, file: files[index]!, from: files };
             commit(files.filter((_, i) => i !== index));
           }}
         />

@@ -406,3 +406,51 @@ describe('review fixes', () => {
     expect(document.activeElement).toBe(elsewhere);
   });
 });
+
+it('a declined removal does not move focus when the parent later removes another file', async () => {
+  const [one, two, three] = [
+    file('one.txt'),
+    file('two.txt'),
+    file('three.txt'),
+  ];
+  function Parent() {
+    const [files, setFiles] = useState<File[]>([one, two, three]);
+    return (
+      <>
+        {/* Declines every change from the component. */}
+        <FileUpload aria-label="Files" multiple value={files} />
+        <button type="button" onClick={() => setFiles([one, two])}>
+          Drop the failed upload
+        </button>
+      </>
+    );
+  }
+  render(<Parent />);
+  await userEvent.click(screen.getByRole('button', { name: 'Remove one.txt' }));
+  const other = screen.getByRole('button', { name: 'Drop the failed upload' });
+  await userEvent.click(other);
+  await expect.poll(inputNames).toEqual(['one.txt', 'two.txt']);
+  expect(document.activeElement).toBe(other);
+});
+
+it('a declined removal does not move focus when the parent replaces the list', async () => {
+  const [one, two] = [file('one.txt'), file('two.txt')];
+  const fresh = [file('a.txt'), file('b.txt'), file('c.txt')];
+  function Parent() {
+    const [files, setFiles] = useState<File[]>([one, two]);
+    return (
+      <>
+        <FileUpload aria-label="Files" multiple value={files} />
+        <button type="button" onClick={() => setFiles(fresh)}>
+          Load another set
+        </button>
+      </>
+    );
+  }
+  render(<Parent />);
+  await userEvent.click(screen.getByRole('button', { name: 'Remove one.txt' }));
+  const other = screen.getByRole('button', { name: 'Load another set' });
+  await userEvent.click(other);
+  await expect.poll(inputNames).toEqual(['a.txt', 'b.txt', 'c.txt']);
+  expect(document.activeElement).toBe(other);
+});

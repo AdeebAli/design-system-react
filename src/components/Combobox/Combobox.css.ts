@@ -4,11 +4,26 @@ import { layered } from '../../utils/recipe';
 
 const { fg } = vars.color;
 
-/** The input group: Input's wrapper, with room for the buttons at the end. */
+const ring = {
+  outline: `${vars.borderWidth.thick} solid ${vars.color.focus}`,
+  outlineOffset: vars.space['0.5'],
+} as const;
+
+/**
+ * The input group: like Input's wrapper, with room for the buttons at the
+ * end. A complete style, not an override of Input's wrapper, since two classes
+ * in one layer resolve by stylesheet order, which differs between builds.
+ */
 export const group = style(
   layered({
+    display: 'flex',
+    alignItems: 'center',
     gap: vars.space['1'],
+    paddingInlineStart: vars.space['3'],
     paddingInlineEnd: vars.space['1'],
+    minWidth: 0,
+    cursor: 'text',
+    selectors: { '&:focus-within:has(:focus-visible)': ring },
   }),
 );
 

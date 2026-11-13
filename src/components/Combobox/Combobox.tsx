@@ -117,7 +117,6 @@ export function Combobox({
           className={cx(
             box(layout),
             inputStyles.control,
-            inputStyles.wrapper,
             inputStyles.size[size],
             styles.group,
             className,
