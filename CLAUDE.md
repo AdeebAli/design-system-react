@@ -34,6 +34,8 @@ Read these first:
 - Items marked **(proposed)** in specs are the assistant's calls and not owner-confirmed. Don't treat them as settled.
 - Implementation plans come only after the specs are approved.
 - Every plan's Global Constraints require each break-check to be ledgered as `<assertion file:line>: broke <what>, failed at <file:line>`. A break that fails at another line doesn't prove that assertion.
+- Every plan's Global Constraints require each ruling to be ledgered as `Ruling: <decision> — Spec: "<the line it touches>" | Spec silent (searched: <terms>) — <cost if wrong>`. If a quoted line says something the decision changes, it's a departure, not a ruling: ask the owner before building on it.
+- Fixture assertions are break-checked too: each server-HTML assertion against the saved real HTML with its target removed from its own element, and each browser fixture test against a deliberately broken tarball, one break per run.
 - Brainstorm mockups live in `.superpowers/` (gitignored).
 - A subagent may act as a fresh reviewer of a finished branch or plan, such as the final whole-branch review in `superpowers:executing-plans`. This is an exception to the owner's general limits on subagents. Give it read-only work, and validate its findings before acting on them.
 

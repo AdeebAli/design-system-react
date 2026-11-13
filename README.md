@@ -30,6 +30,15 @@ npm install @adeebali/design-system-react
 
 React 19 is a peer dependency, and Node 22 or later is required.
 
+#### Dependencies
+
+| Package                                                  | Range              | Kind                       | Why                                                                                                                                                                   |
+| -------------------------------------------------------- | ------------------ | -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `react`, `react-dom`                                     | `^19`              | peer                       | You install these. Versions below 19 aren't supported.                                                                                                                |
+| `@base-ui/react`                                         | `^1.9.0`           | dependency                 | The behavior of interactive components (ADR 0002). It's wrapped: import components from this package, never from Base UI.                                             |
+| `@vanilla-extract/recipes`, `@vanilla-extract/sprinkles` | `^0.5.7`, `^1.7.1` | dependency                 | Small runtime helpers the compiled styles call. You don't need a vanilla-extract bundler plugin; the CSS ships prebuilt in `styles.css`.                              |
+| `lucide-react`                                           | none required      | optional, not a dependency | The recommended icon set for `Icon`, which accepts any SVG component. The repo's own stories use `^1.70.0`. Install it yourself if you want it (see [Icons](#icons)). |
+
 ### 3. Import the stylesheet
 
 Import it once, at your app's root:

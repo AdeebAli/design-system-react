@@ -18,3 +18,11 @@ export function warnOnce(key: string, message: string): void {
   seen.add(key);
   console.warn(`[design-system-react] ${message}`);
 }
+
+/**
+ * Test-only: forgets the warnings already shown. The test setups call it after
+ * each test, so a warning test doesn't depend on which tests ran before it.
+ */
+export function resetWarnings(): void {
+  seen.clear();
+}
