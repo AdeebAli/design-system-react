@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import type { ComponentProps } from 'react';
 import { renderToString } from 'react-dom/server';
 import { box } from '../Box';
@@ -59,6 +59,14 @@ describe('props', () => {
       />,
     );
     expect(node).toBe(img());
+  });
+
+  it("the project's ref isn't called again when Image re-renders", () => {
+    const ref = vi.fn();
+    render(<Image src={SRC} alt="x" ratio="1/1" ref={ref} />);
+    fireEvent.load(img());
+    fireEvent.error(img());
+    expect(ref.mock.calls).toEqual([[img()]]);
   });
 
   it('layout props and className reach the frame, not the img', () => {
@@ -157,6 +165,18 @@ describe('loading and failure', () => {
       ).mockReturnValue(naturalWidth);
     }
 
+    /** jsdom's img has no decode(), so it's defined for one test. */
+    function stubDecode(result: Promise<void>) {
+      result.catch(() => undefined);
+      Object.defineProperty(HTMLImageElement.prototype, 'decode', {
+        configurable: true,
+        value: () => result,
+      });
+      onTestFinished(() => {
+        delete (HTMLImageElement.prototype as Partial<HTMLImageElement>).decode;
+      });
+    }
+
     it('is loaded when it has a width', () => {
       stub(10);
       render(<Image src={SRC} alt="x" />);
@@ -164,11 +184,21 @@ describe('loading and failure', () => {
       expect(frame()).not.toHaveAttribute('data-error');
     });
 
-    it('failed when its naturalWidth is 0', () => {
+    it('failed when its naturalWidth is 0 and it fails to decode', async () => {
       stub(0);
+      stubDecode(Promise.reject(new Error('broken')));
       render(<Image src={SRC} alt="x" ratio="1/1" />);
+      await waitFor(() => expect(frame()).toHaveAttribute('data-error'));
       expect(frame()).not.toHaveAttribute('data-loading');
-      expect(frame()).toHaveAttribute('data-error');
+    });
+
+    // Some browsers report 0 for an SVG with no intrinsic size.
+    it('loaded when its naturalWidth is 0 but it decodes', async () => {
+      stub(0);
+      stubDecode(Promise.resolve());
+      render(<Image src={SRC} alt="x" ratio="1/1" />);
+      await waitFor(() => expect(frame()).not.toHaveAttribute('data-loading'));
+      expect(frame()).not.toHaveAttribute('data-error');
     });
 
     it('is loaded when a new src is already complete', () => {
@@ -289,6 +319,15 @@ describe('the size warning', () => {
       expect(sizeWarnings()).toHaveLength(0);
     },
   );
+});
+
+it("warns when the as component doesn't forward its ref", () => {
+  function NoRef(props: { alt?: string }) {
+    return <img alt={props.alt} />;
+  }
+  render(<Image as={NoRef} alt="x" ratio="1/1" />);
+  expect(warn).toHaveBeenCalledTimes(1);
+  expect(String(warn.mock.calls[0]![0])).toMatch(/Image.*ref/);
 });
 
 it('warns when the as component forwards its ref to something other than an img', () => {

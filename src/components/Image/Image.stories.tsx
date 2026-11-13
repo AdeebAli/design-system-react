@@ -48,6 +48,8 @@ import hero from './hero.png';
 
 Use \`fill\` and \`sizes\` with a \`ratio\`, or give Next the intrinsic size through \`htmlWidth\` and \`htmlHeight\`. Layout \`width\` and \`height\` are tokens on the frame. \`placeholder="blur"\` paints a blurred preview on the image itself, so use it without \`skeleton\`.
 
+**The fallback is decorative.** It's hidden from screen readers, since the \`alt\` already names the image, so don't put a link or a button in it. Put a retry action beside the image instead.
+
 **Image or Avatar.** Use \`Avatar\` for a person or an organization: it shows initials while it loads or if it fails, and its name is the person's. Use \`Image\` for everything else: photos, screenshots, illustrations, and maps.
 
 **In a \`Card\` with \`clip\`,** use \`radius="none"\`, since the card rounds the corners.`,

@@ -109,28 +109,36 @@ export function Image<E extends ElementType = 'img'>({
   const ratioValue = aspectRatio(ratio, htmlWidth, htmlHeight);
 
   const node = useRef<HTMLElement | null>(null);
-  const imageRef = (element: HTMLElement | null) => {
-    node.current = element;
-    return setRef(ref, element);
-  };
+  // The project's ref gets the img once, and again only when it or `as`
+  // changes, not on every render.
+  useLayoutEffect(() => setRef(ref, node.current), [ref, as]);
 
   // The browser may have finished before React attached onLoad and onError,
   // before hydration or when a new src is already cached.
   useLayoutEffect(() => {
     const element = node.current;
-    if (element instanceof HTMLImageElement) {
-      if (element.complete) {
-        setSettled({
-          src,
-          status: element.naturalWidth > 0 ? 'loaded' : 'error',
-        });
-      }
-    } else if (element) {
+    if (!(element instanceof HTMLImageElement)) {
       warnOnce(
         'Image-ref',
         'Image: the `as` component must forward `ref` to an `img` element.',
       );
+      return;
     }
+    if (!element.complete) return;
+    if (element.naturalWidth > 0) {
+      setSettled({ src, status: 'loaded' });
+      return;
+    }
+    // Some browsers report 0 for an SVG with no intrinsic size, so a 0 is a
+    // failure only if the image can't be decoded.
+    let current = true;
+    element.decode().then(
+      () => current && setSettled({ src, status: 'loaded' }),
+      () => current && setSettled({ src, status: 'error' }),
+    );
+    return () => {
+      current = false;
+    };
   }, [src]);
 
   const sized = ratioValue !== undefined || layout.height != null;
@@ -171,7 +179,7 @@ export function Image<E extends ElementType = 'img'>({
       )}
       <Element
         {...rest}
-        ref={imageRef}
+        ref={node}
         src={src}
         alt={alt}
         width={htmlWidth}
