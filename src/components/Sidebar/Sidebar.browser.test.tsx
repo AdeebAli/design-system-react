@@ -3,24 +3,36 @@ import type { ComponentProps } from 'react';
 import { renderToString } from 'react-dom/server';
 import { cdp, page, userEvent } from 'vitest/browser';
 import { axNames } from '../../utils/browserTestUtils';
+import { Flex } from '../Flex';
 import { App } from './fixtures';
 
 const nav = () => screen.getByRole('navigation', { name: 'Main' });
 const link = (name: string) => within(nav()).getByRole('link', { name });
+// From the document, since the side nav is hidden below md.
 const collapseButton = () =>
-  nav().querySelector<HTMLButtonElement>('button[aria-label$="sidebar"]')!;
+  document.querySelector<HTMLButtonElement>('button[aria-label$="sidebar"]')!;
 // The scrolling area holds the groups, which hold the lists.
 const scroller = () =>
   link('Dashboard').closest('ul')!.parentElement!.parentElement!;
 
-/** The app layout: the sidebar beside a tall main column. */
+/** The app layout: the sidebar beside a tall main column, or below its bar under md. */
 function Layout(props: ComponentProps<typeof App>) {
   return (
-    <div style={{ display: 'flex', alignItems: 'flex-start' }}>
+    <Flex direction={{ base: 'column', md: 'row' }}>
       <App {...props} />
-      <main style={{ flex: 1, height: 3000 }}>Content</main>
-    </div>
+      <main style={{ flexGrow: 1, minHeight: 3000 }}>Content</main>
+    </Flex>
   );
+}
+
+/**
+ * Stops link navigation after React has handled the click, so the code under
+ * test still sees an uncancelled click. A listener on the link would run first.
+ */
+function stopNavigation() {
+  const stop = (event: MouseEvent) => event.preventDefault();
+  window.addEventListener('click', stop);
+  return () => window.removeEventListener('click', stop);
 }
 
 const durations = (element: Element) =>
@@ -253,4 +265,246 @@ it('links work before hydration', async () => {
     container.remove();
     history.replaceState(null, '', location.pathname + location.search);
   }
+});
+
+describe('below md', () => {
+  const menu = () =>
+    document.querySelector<HTMLButtonElement>('button[aria-label="Menu"]')!;
+  const dialog = () => screen.getByRole('dialog', { name: 'Menu' });
+  const drawerNav = () =>
+    within(dialog()).getByRole('navigation', { name: 'Main' });
+  const drawerLink = (name: string) =>
+    within(drawerNav()).getByRole('link', { name });
+  const open = async () => {
+    await userEvent.click(menu());
+    await expect.poll(() => screen.queryByRole('dialog')).not.toBeNull();
+    // Settled once the slide-in transform is the identity.
+    await expect
+      .poll(() =>
+        ['none', 'matrix(1, 0, 0, 1, 0, 0)'].includes(
+          getComputedStyle(dialog()).transform,
+        ),
+      )
+      .toBe(true);
+  };
+  const closed = () =>
+    expect.poll(() => screen.queryByRole('dialog')).toBeNull();
+
+  beforeEach(async () => {
+    await page.viewport(375, 700);
+  });
+
+  it('shows a bar with brand and a Menu button, with no landmark, and hides the side nav', () => {
+    render(<Layout />);
+    expect(menu().checkVisibility()).toBe(true);
+    const bar = menu().parentElement!;
+    expect(
+      within(bar).getByRole('link', { name: 'Acme' }).checkVisibility(),
+    ).toBe(true);
+    expect(bar.closest('nav, header, aside, [role]')).toBeNull();
+    expect(
+      screen.getByRole('navigation', { hidden: true }).checkVisibility(),
+    ).toBe(false);
+  });
+
+  it('each link is in the accessibility tree once, closed and open', async () => {
+    render(<Layout />);
+    expect(await axNames('link')).toEqual(['Acme']);
+    await open();
+    expect(await axNames('link')).toEqual([
+      'Acme',
+      'Dashboard',
+      'Customers 12',
+      'Settings',
+    ]);
+  });
+
+  it('the drawer has brand, a close button, the links in a nav named by aria-label, and footer', async () => {
+    render(<Layout />);
+    await open();
+    expect(within(dialog()).getByRole('link', { name: 'Acme' })).toBeVisible();
+    expect(
+      within(dialog()).getByRole('button', { name: 'Close' }),
+    ).toBeVisible();
+    expect(drawerLink('Settings')).toBeVisible();
+    expect(
+      within(dialog()).getByRole('button', { name: 'Sign out' }),
+    ).toBeVisible();
+  });
+
+  it('labels.close names the close button', async () => {
+    render(<Layout labels={{ close: 'Dismiss' }} />);
+    await open();
+    expect(
+      within(dialog()).getByRole('button', { name: 'Dismiss' }),
+    ).toBeVisible();
+  });
+
+  it('menuLabel names the menu button and the drawer', async () => {
+    render(<Layout menuLabel="Navigation" />);
+    const button = screen.getByRole('button', { name: 'Navigation' });
+    await userEvent.click(button);
+    expect(
+      await screen.findByRole('dialog', { name: 'Navigation' }),
+    ).toBeInTheDocument();
+  });
+
+  it('opening traps focus and locks page scrolling', async () => {
+    render(<Layout />);
+    await open();
+    expect(dialog().contains(document.activeElement)).toBe(true);
+    for (let i = 0; i < 8; i += 1) {
+      await userEvent.tab();
+      expect(dialog().contains(document.activeElement)).toBe(true);
+    }
+    const root = getComputedStyle(document.documentElement);
+    expect(
+      [root.overflowY, getComputedStyle(document.body).overflowY].includes(
+        'hidden',
+      ),
+    ).toBe(true);
+  });
+
+  it('the menu button has data-open while the drawer is open', async () => {
+    render(<Layout />);
+    expect(menu()).not.toHaveAttribute('data-open');
+    await open();
+    expect(menu()).toHaveAttribute('data-open');
+  });
+
+  const closers = {
+    'a plain link click': () => userEvent.click(drawerLink('Settings')),
+    Escape: () => userEvent.keyboard('{Escape}'),
+    'the close button': () =>
+      userEvent.click(within(dialog()).getByRole('button', { name: 'Close' })),
+    'a backdrop click': () =>
+      userEvent.click(document.body, { position: { x: 370, y: 350 } }),
+  };
+
+  it.each(Object.entries(closers))(
+    '%s closes it and returns focus to the menu button',
+    async (_name, close) => {
+      render(<Layout />);
+      await open();
+      await close();
+      await closed();
+      await expect.poll(() => document.activeElement).toBe(menu());
+      expect(menu()).not.toHaveAttribute('data-open');
+    },
+  );
+
+  // Review Focus 1.
+  // Dispatched, since a real Control click on macOS opens the context menu
+  // and sends no click at all.
+  it.each(['ctrlKey', 'metaKey', 'shiftKey', 'altKey'])(
+    'a click with %s on a link leaves it open',
+    async (key) => {
+      render(<Layout />);
+      await open();
+      const restore = stopNavigation();
+      try {
+        drawerLink('Settings').dispatchEvent(
+          new MouseEvent('click', {
+            bubbles: true,
+            cancelable: true,
+            button: 0,
+            [key]: true,
+          }),
+        );
+        await new Promise((resolve) => setTimeout(resolve, 300));
+        expect(screen.queryByRole('dialog')).not.toBeNull();
+      } finally {
+        restore();
+      }
+    },
+  );
+
+  it('a link with target="_blank" leaves it open', async () => {
+    render(<Layout />);
+    await open();
+    // The fixture's links don't set target, so it's added here.
+    const link = drawerLink('Settings');
+    link.setAttribute('target', '_blank');
+    const restore = stopNavigation();
+    try {
+      await userEvent.click(link);
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      expect(screen.queryByRole('dialog')).not.toBeNull();
+    } finally {
+      restore();
+    }
+  });
+
+  it('a link click the project cancels leaves it open', async () => {
+    render(<Layout />);
+    await open();
+    const link = drawerLink('Settings');
+    link.addEventListener('click', (event) => event.preventDefault());
+    await userEvent.click(link);
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    expect(screen.queryByRole('dialog')).not.toBeNull();
+  });
+
+  it('link targets are at least 44px tall', async () => {
+    render(<Layout />);
+    await open();
+    expect(drawerLink('Settings').getBoundingClientRect().height).toBe(44);
+  });
+
+  // Review Focus 2.
+  it('a controlled collapsed sidebar shows link text in the drawer, with tooltips off', async () => {
+    render(<Layout collapsible collapsed />);
+    await open();
+    const text = within(drawerLink('Settings')).getByText('Settings');
+    expect(text.getBoundingClientRect().width).toBeGreaterThan(1);
+    expect(
+      within(dialog()).getByText('Workspace').getBoundingClientRect().width,
+    ).toBeGreaterThan(1);
+    drawerLink('Settings').focus();
+    await userEvent.hover(drawerLink('Settings'));
+    await new Promise((resolve) => setTimeout(resolve, 800));
+    // Tooltips mark their popup with data-side; the drawer's own popup does too.
+    const tooltips = [...document.querySelectorAll('[data-side]')].filter(
+      (element) => !element.closest('[role="dialog"]'),
+    );
+    expect(tooltips).toEqual([]);
+  });
+
+  it('the drawer is size.sidebar wide and opens from the start edge, in LTR and RTL', async () => {
+    const { unmount } = render(<Layout />);
+    await open();
+    let panel = drawerNav().getBoundingClientRect();
+    expect(panel.left).toBeLessThan(40);
+    // The panel's visible edge; its bleed runs off-screen past the start.
+    expect(dialog().getBoundingClientRect().right).toBe(240);
+    await userEvent.keyboard('{Escape}');
+    await closed();
+    unmount();
+    document.documentElement.dir = 'rtl';
+    render(<Layout />);
+    await open();
+    panel = drawerNav().getBoundingClientRect();
+    expect(panel.right).toBeGreaterThan(335);
+    expect(dialog().getBoundingClientRect().left).toBe(375 - 240);
+  });
+
+  it('growing the window past md closes it', async () => {
+    render(<Layout />);
+    await open();
+    await page.viewport(1024, 700);
+    await closed();
+  });
+
+  it('sticky keeps the bar at the top; sticky={false} scrolls it away', async () => {
+    const { unmount } = render(<Layout />);
+    window.scrollTo(0, 1000);
+    await expect.poll(() => window.scrollY).toBe(1000);
+    expect(menu().parentElement!.getBoundingClientRect().top).toBe(0);
+    unmount();
+    window.scrollTo(0, 0);
+    render(<Layout sticky={false} />);
+    window.scrollTo(0, 1000);
+    await expect.poll(() => window.scrollY).toBe(1000);
+    expect(menu().parentElement!.getBoundingClientRect().top).toBeLessThan(0);
+  });
 });

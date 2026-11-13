@@ -2,6 +2,7 @@ import { createVar, style, styleVariants } from '@vanilla-extract/css';
 import { vars } from '../../themes/contract.css';
 import { breakpoints } from '../../tokens/breakpoints';
 import { layered } from '../../utils/recipe';
+import { bleed, drawerWidth } from './drawerWidth';
 
 const md = `screen and (min-width: ${breakpoints.md})`;
 /** The tallest a bottom sheet gets before it scrolls inside. */
@@ -12,10 +13,6 @@ const sheetHeight = '85dvh';
  */
 const keyboardInset = 'var(--drawer-keyboard-inset, 0rem)';
 
-/** How far the panel extends past the screen edge, so overshooting a swipe shows no gap. */
-const bleed = vars.space['12'];
-/** Clear space left beside a side panel, so there is always backdrop to tap. */
-const gutter = vars.space['8'];
 /**
  * The exit offset moves the panel its own width (bleed included) plus this, so
  * its border and the reach of `shadow.dialog` are off-screen once it's closed.
@@ -165,15 +162,11 @@ export const sides = styleVariants(
   (rule) => layered(rule),
 );
 
-/** The visible width, never more than the viewport less the gutter, plus the bleed. */
-const width = (token: string) =>
-  `calc(min(${token}, 100% - ${gutter}) + ${bleed})`;
-
 export const sizes = styleVariants(
   {
-    sm: { inlineSize: width(vars.size.drawer.sm) },
-    md: { inlineSize: width(vars.size.drawer.md) },
-    lg: { inlineSize: width(vars.size.drawer.lg) },
+    sm: { inlineSize: drawerWidth(vars.size.drawer.sm) },
+    md: { inlineSize: drawerWidth(vars.size.drawer.md) },
+    lg: { inlineSize: drawerWidth(vars.size.drawer.lg) },
   },
   (rule) => layered(rule),
 );

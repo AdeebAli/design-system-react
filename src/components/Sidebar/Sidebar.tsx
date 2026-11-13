@@ -1,15 +1,25 @@
 'use client';
 
-import { useMemo, useState, type ReactNode } from 'react';
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type MouseEvent,
+  type ReactNode,
+} from 'react';
+import { breakpoints } from '../../tokens/breakpoints';
 import { cx } from '../../utils/cx';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
 import { box } from '../Box';
+import { Drawer, DrawerContent } from '../Drawer';
 import { Icon } from '../Icon';
 import { ChevronLeftIcon } from '../Icon/internal/ChevronLeft';
 import { ChevronRightIcon } from '../Icon/internal/ChevronRight';
 import { IconButton } from '../IconButton';
 import * as styles from './Sidebar.css';
+import { SidebarBar } from './SidebarBar';
 import { SidebarContext, type SidebarContextValue } from './SidebarContext';
 
 /** `Sidebar`'s strings, for translation. */
@@ -53,11 +63,26 @@ interface SidebarOwnProps {
 /** `Sidebar`'s props. */
 export type SidebarProps = ComponentProps<'nav', SidebarOwnProps>;
 
+const md = `(min-width: ${breakpoints.md})`;
+
 /**
- * An app's main navigation, down one side of the page. Persisting
- * `collapsed`, such as in a cookie, is the project's.
+ * A click that opens a new tab or window, rather than navigating here. A
+ * middle click needs no check: browsers send it as `auxclick`, not `click`.
+ */
+const opensElsewhere = (event: MouseEvent<HTMLAnchorElement>) =>
+  event.metaKey ||
+  event.ctrlKey ||
+  event.shiftKey ||
+  event.altKey ||
+  event.currentTarget.target === '_blank';
+
+/**
+ * An app's main navigation, down one side of the page. Below `md`, a bar
+ * with `brand` and a menu button replaces it, and the button opens the links
+ * in a `Drawer`. Persisting `collapsed`, such as in a cookie, is the project's.
  */
 export function Sidebar({
+  'aria-label': ariaLabel,
   brand,
   footer,
   collapsible = false,
@@ -72,8 +97,6 @@ export function Sidebar({
   ...props
 }: SidebarProps) {
   const [layout, rest] = splitLayoutProps(props);
-  // The small-screen bar (Task 4) names its menu button with this.
-  void menuLabel;
   const [uncontrolled, setUncontrolled] = useState(defaultCollapsed);
   const collapsed = controlledCollapsed ?? uncontrolled;
   const text = {
@@ -92,43 +115,104 @@ export function Sidebar({
     [collapsed, collapsible],
   );
 
+  const [open, setOpen] = useState(false);
+  const menuRef = useRef<HTMLButtonElement>(null);
+  // The drawer's copy has no rail, and a link click closes it.
+  const drawerContext = useMemo<SidebarContextValue>(
+    () => ({
+      collapsed: false,
+      collapsible,
+      inDrawer: true,
+      onNavigate: (event) => {
+        if (!opensElsewhere(event)) setOpen(false);
+      },
+    }),
+    [collapsible, setOpen],
+  );
+
+  // The menu button is hidden from md up, so the drawer can't stay open there.
+  useEffect(() => {
+    if (!open) return;
+    const query = window.matchMedia(md);
+    const close = () => {
+      if (query.matches) setOpen(false);
+    };
+    query.addEventListener('change', close);
+    return () => query.removeEventListener('change', close);
+  }, [open]);
+
   return (
-    <SidebarContext.Provider value={context}>
-      <nav
-        {...rest}
-        data-collapsed={collapsed ? '' : undefined}
-        className={cx(
-          box(layout),
-          styles.root,
-          sticky && styles.sticky,
-          className,
-        )}
-      >
-        {(brand != null || collapsible) && (
-          <div className={styles.top}>
-            {brand != null && <div className={styles.brand}>{brand}</div>}
-            {collapsible && (
-              <IconButton
-                variant="ghost"
-                size="sm"
-                aria-label={collapsed ? text.expand : text.collapse}
-                icon={
-                  <Icon
-                    icon={collapsed ? ChevronRightIcon : ChevronLeftIcon}
-                    className={styles.chevron}
-                  />
-                }
-                onClick={toggle}
-                className={styles.collapse}
-              />
-            )}
+    <>
+      <SidebarBar
+        brand={brand}
+        menuLabel={menuLabel}
+        open={open}
+        onOpen={() => setOpen(true)}
+        menuRef={menuRef}
+        sticky={sticky}
+      />
+      <SidebarContext.Provider value={context}>
+        <nav
+          {...rest}
+          aria-label={ariaLabel}
+          data-collapsed={collapsed ? '' : undefined}
+          className={cx(
+            box(layout),
+            styles.root,
+            sticky && styles.sticky,
+            className,
+          )}
+        >
+          {(brand != null || collapsible) && (
+            <div className={styles.top}>
+              {brand != null && <div className={styles.brand}>{brand}</div>}
+              {collapsible && (
+                <IconButton
+                  variant="ghost"
+                  size="sm"
+                  aria-label={collapsed ? text.expand : text.collapse}
+                  icon={
+                    <Icon
+                      icon={collapsed ? ChevronRightIcon : ChevronLeftIcon}
+                      className={styles.chevron}
+                    />
+                  }
+                  onClick={toggle}
+                  className={styles.collapse}
+                />
+              )}
+            </div>
+          )}
+          <div className={cx(styles.links, sticky && styles.scrolling)}>
+            {children}
           </div>
-        )}
-        <div className={cx(styles.links, sticky && styles.scrolling)}>
-          {children}
-        </div>
-        {footer != null && <div className={styles.footer}>{footer}</div>}
-      </nav>
-    </SidebarContext.Provider>
+          {footer != null && <div className={styles.footer}>{footer}</div>}
+        </nav>
+      </SidebarContext.Provider>
+      {/* Its content mounts only while open, which only happens below md. */}
+      <Drawer open={open} onOpenChange={setOpen}>
+        <DrawerContent
+          side="start"
+          aria-label={menuLabel}
+          finalFocus={menuRef}
+          closeLabel={labels?.close ?? 'Close'}
+          className={styles.drawer}
+        >
+          <SidebarContext.Provider value={drawerContext}>
+            {brand != null && <div className={styles.drawerBrand}>{brand}</div>}
+            <nav
+              aria-label={ariaLabel}
+              data-sidebar-drawer=""
+              className={styles.drawerNav}
+            >
+              {children}
+            </nav>
+            {footer != null && (
+              <div className={styles.drawerFooter}>{footer}</div>
+            )}
+          </SidebarContext.Provider>
+        </DrawerContent>
+      </Drawer>
+    </>
   );
 }

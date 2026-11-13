@@ -1,9 +1,12 @@
 import { style } from '@vanilla-extract/css';
 import { vars } from '../../themes/contract.css';
+import { drawerWidth } from '../Drawer/drawerWidth';
 import { breakpoints } from '../../tokens/breakpoints';
 import { layered } from '../../utils/recipe';
 
 const md = `screen and (min-width: ${breakpoints.md})`;
+// Everything md doesn't match, so a below-md rule can't override md's.
+const belowMd = `not all and (min-width: ${breakpoints.md})`;
 const hover = '(hover: hover)';
 const forced = '(forced-colors: active)';
 
@@ -29,6 +32,8 @@ export const root = style(
     display: 'flex',
     flexDirection: 'column',
     flexShrink: 0,
+    // Its content's height, not the row's, without sticky.
+    alignSelf: 'flex-start',
     inlineSize: vars.size.sidebar,
     background: vars.color.bg.surface,
     borderInlineEndWidth: vars.borderWidth.thin,
@@ -38,6 +43,8 @@ export const root = style(
     transitionDuration: vars.motion.duration.base,
     transitionTimingFunction: vars.motion.easing.standard,
     '@media': {
+      // Below md, the bar and drawer replace it.
+      [belowMd]: { display: 'none' },
       [md]: {
         selectors: {
           '&[data-collapsed]': { inlineSize: vars.size.sidebarRail },
@@ -53,7 +60,6 @@ export const sticky = style(
     position: 'sticky',
     insetBlockStart: 0,
     blockSize: '100dvh',
-    alignSelf: 'flex-start',
   }),
 );
 
@@ -69,12 +75,10 @@ export const top = style(
 
 export const brand = style(layered({ flex: 1, minInlineSize: 0 }));
 
-/** Only from `md` up, through CSS. */
+/** Only from `md` up, since the whole side nav is hidden below it. */
 export const collapse = style(
   layered({
     flexShrink: 0,
-    display: 'none',
-    '@media': { [md]: { display: 'inline-flex' } },
   }),
 );
 
@@ -158,6 +162,8 @@ export const link = style(
       '&:focus-visible:focus-visible': {
         outlineOffset: `calc(-1 * ${vars.borderWidth.thick})`,
       },
+      // In the drawer, links are touch targets of at least `size.control.lg`.
+      '[data-sidebar-drawer] &': { minBlockSize: vars.size.control.lg },
       '&[data-active]': {
         background: vars.color.bg.accentSubtle,
         color: vars.color.fg.default,
@@ -246,3 +252,56 @@ export const badge = style(
 export const badgeCount = style(
   layered({ display: 'inline-flex', ...onRail(hiddenRule) }),
 );
+
+/** The bar below `md`: `brand` and the menu button. Hidden from `md` up. */
+export const bar = style(
+  layered({
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: vars.space['2'],
+    paddingInline: vars.space['3'],
+    paddingBlock: vars.space['2'],
+    background: vars.color.bg.surface,
+    borderBlockEndWidth: vars.borderWidth.thin,
+    borderBlockEndStyle: 'solid',
+    borderBlockEndColor: vars.color.border.surface,
+    '@media': { [md]: { display: 'none' } },
+  }),
+);
+
+export const barSticky = style(
+  layered({
+    position: 'sticky',
+    insetBlockStart: 0,
+    zIndex: vars.zIndex.sticky,
+  }),
+);
+
+/**
+ * `size.sidebar` wide. The attribute selector outranks the drawer's own size
+ * class, so stylesheet order can't decide between them.
+ */
+export const drawer = style(
+  layered({
+    selectors: {
+      '&[data-side]': { inlineSize: drawerWidth(vars.size.sidebar) },
+    },
+  }),
+);
+
+/** Clear of the drawer's close button, which sits at the top end. */
+export const drawerBrand = style(
+  layered({
+    display: 'flex',
+    alignItems: 'center',
+    minBlockSize: vars.size.control.sm,
+    paddingInlineEnd: `calc(${vars.space['3']} + ${vars.size.control.sm} + ${vars.space['2']} - ${vars.space['6']})`,
+  }),
+);
+
+export const drawerNav = style(
+  layered({ display: 'flex', flexDirection: 'column', gap: vars.space['4'] }),
+);
+
+export const drawerFooter = style(layered({ marginBlockStart: 'auto' }));
