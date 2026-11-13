@@ -23,6 +23,9 @@ import {
   NavBar,
   NavBarLink,
   Prose,
+  Sidebar,
+  SidebarGroup,
+  SidebarLink,
   Stack,
   Stat,
   Tab,
@@ -133,6 +136,18 @@ createRoot(document.getElementById('root')!).render(
         </TableRow>
       </TableBody>
     </Table>
+    <Sidebar
+      aria-label="Fixture sidebar"
+      menuLabel="Fixture menu"
+      sticky={false}
+    >
+      <SidebarGroup label="Fixture pages">
+        <SidebarLink href="#overview" active>
+          Overview
+        </SidebarLink>
+        <SidebarLink href="#reports">Reports</SidebarLink>
+      </SidebarGroup>
+    </Sidebar>
     <Prose data-testid="prose">
       <p>Prose in the Vite app.</p>
     </Prose>

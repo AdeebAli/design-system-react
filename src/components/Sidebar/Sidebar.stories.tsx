@@ -3,7 +3,7 @@ import { Home, Settings, Users, FileText } from 'lucide-react';
 import { useState } from 'react';
 import { BreadcrumbItem, Breadcrumbs } from '../Breadcrumbs';
 import { Heading } from '../Heading';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { ThemeProvider } from '../../theme/ThemeProvider';
 import { Badge } from '../Badge';
 import { Box } from '../Box';
@@ -156,6 +156,10 @@ export const PhoneWidth: Story = {
       within(drawer).getByRole('link', { name: 'Settings' }),
     ).toBeVisible();
     await userEvent.keyboard('{Escape}');
+    // Axe runs after play, so wait for the drawer and its focus guards to go.
+    await waitFor(() =>
+      expect(within(document.body).queryByRole('dialog')).toBeNull(),
+    );
   },
 };
 
