@@ -338,3 +338,71 @@ describe('appearance', () => {
     p.remove();
   });
 });
+
+describe('review fixes', () => {
+  it('a file picked before hydration is kept, and listed', async () => {
+    const { renderToString } = await import('react-dom/server');
+    const { hydrateRoot } = await import('react-dom/client');
+    const { act } = await import('react');
+    const onValueChange = vi.fn();
+    const element = (
+      <FileUpload
+        aria-label="Files"
+        multiple
+        name="attachments"
+        onValueChange={onValueChange}
+      />
+    );
+    const container = document.createElement('div');
+    container.innerHTML = renderToString(element);
+    document.body.append(container);
+    const early = file('early.pdf');
+    const transfer = new DataTransfer();
+    transfer.items.add(early);
+    container.querySelector<HTMLInputElement>('input[type="file"]')!.files =
+      transfer.files;
+    let root: ReturnType<typeof hydrateRoot>;
+    act(() => {
+      root = hydrateRoot(container, element);
+    });
+    expect(onValueChange.mock.calls).toEqual([[[early]]]);
+    await expect.poll(inputNames).toEqual(['early.pdf']);
+    expect(
+      screen.getByRole('button', { name: 'Remove early.pdf' }),
+    ).toBeTruthy();
+    act(() => root.unmount());
+    container.remove();
+  });
+
+  it('a removal a controlled parent rejects does not move focus later', async () => {
+    function Stubborn() {
+      const [files, setFiles] = useState<File[]>([
+        file('one.txt'),
+        file('two.txt'),
+      ]);
+      return (
+        <>
+          <FileUpload
+            aria-label="Files"
+            multiple
+            value={files}
+            // Accepts additions, ignores removals.
+            onValueChange={(next) => {
+              if (next.length > files.length) setFiles(next);
+            }}
+          />
+          <button type="button">Elsewhere</button>
+        </>
+      );
+    }
+    render(<Stubborn />);
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Remove one.txt' }),
+    );
+    const elsewhere = screen.getByRole('button', { name: 'Elsewhere' });
+    elsewhere.focus();
+    drop([file('three.txt')]);
+    await expect.poll(inputNames).toEqual(['one.txt', 'two.txt', 'three.txt']);
+    expect(document.activeElement).toBe(elsewhere);
+  });
+});

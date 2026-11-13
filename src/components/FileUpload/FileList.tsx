@@ -53,7 +53,10 @@ export function FileList({
               </span>
               {status?.status === 'uploading' && (
                 <Progress
-                  aria-label={labels.uploading.replace('{name}', file.name)}
+                  aria-label={labels.uploading.replace(
+                    '{name}',
+                    () => file.name,
+                  )}
                   value={status.progress ?? null}
                   size="sm"
                 />
@@ -82,7 +85,7 @@ export function FileList({
               tone="neutral"
               size="sm"
               icon={<Icon icon={XIcon} />}
-              aria-label={labels.remove.replace('{name}', file.name)}
+              aria-label={labels.remove.replace('{name}', () => file.name)}
               disabled={disabled}
               onClick={() => onRemove(index)}
             />

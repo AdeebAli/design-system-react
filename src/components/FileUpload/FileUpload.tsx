@@ -1,7 +1,14 @@
 'use client';
 
 import { Field as BaseField } from '@base-ui/react/field';
-import { useEffect, useRef, useState, type DragEvent, type Ref } from 'react';
+import {
+  useEffect,
+  useEffectEvent,
+  useRef,
+  useState,
+  type DragEvent,
+  type Ref,
+} from 'react';
 import { cx } from '../../utils/cx';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
@@ -136,6 +143,7 @@ export function FileUpload({
   className,
   style,
   ref,
+  onChange,
   ...props
 }: FileUploadProps) {
   const field = useFieldControl('native');
@@ -150,49 +158,42 @@ export function FileUpload({
   const [layout, rest] = splitLayoutProps(props);
   const dropzone = variant === 'dropzone';
   const listRef = useRef<HTMLUListElement>(null);
-  // The index of a removed file, so focus can move once the list updates.
-  const removedAt = useRef<number | null>(null);
+  // A removal in progress, so focus can move once the list updates.
+  const removing = useRef<{ index: number; from: readonly File[] } | null>(
+    null,
+  );
 
   // Announcements, derived from what changed since the last render.
   const statuses = files.map((file) => getFileStatus?.(file));
   const kinds = statuses.map((status) => status?.status);
   const [previous, setPrevious] = useState({ files, kinds });
-  const [message, setMessage] = useState('');
+  // The id keys the announced text, so the same text, such as after
+  // replacing the only file, is a new node and is announced again.
+  const [message, setMessage] = useState({ text: '', id: 0 });
   const filesChanged = !sameList(previous.files, files);
   if (filesChanged || !sameList(previous.kinds, kinds)) {
-    let next = message;
+    let next: string | undefined;
     if (filesChanged) {
       next = labels.selected.replace('{count}', String(files.length));
     } else {
-      const index = kinds.findIndex(
-        (kind, i) =>
-          kind !== previous.kinds[i] && (kind === 'done' || kind === 'error'),
+      const finished = statuses.flatMap((status, i) =>
+        status &&
+        status.status !== previous.kinds[i] &&
+        (status.status === 'done' || status.status === 'error')
+          ? [
+              `${files[i]!.name}: ${
+                status.status === 'done'
+                  ? labels.done
+                  : (status.error ?? labels.error)
+              }`,
+            ]
+          : [],
       );
-      const status = statuses[index];
-      if (status) {
-        const text =
-          status.status === 'done'
-            ? labels.done
-            : (status.error ?? labels.error);
-        next = `${files[index]!.name}: ${text}`;
-      }
+      if (finished.length > 0) next = finished.join('. ');
     }
     setPrevious({ files, kinds });
-    if (next !== message) setMessage(next);
+    if (next != null) setMessage({ text: next, id: message.id + 1 });
   }
-
-  // The input follows `value`, including a change from a controlled parent.
-  useEffect(() => {
-    writeFiles(inputRef.current, files);
-    // After a removal, focus the next remove button, then the previous one,
-    // then the input, so focus is never lost.
-    const index = removedAt.current;
-    if (index == null) return;
-    removedAt.current = null;
-    const buttons = listRef.current?.querySelectorAll('button') ?? [];
-    const target = buttons[index] ?? buttons[index - 1] ?? inputRef.current;
-    target?.focus();
-  }, [files]);
 
   const commit = (next: File[]) => {
     setUncontrolled(next);
@@ -200,6 +201,8 @@ export function FileUpload({
   };
 
   const add = (incoming: readonly File[]) => {
+    // A pick or drop isn't the removal a parent may have declined.
+    removing.current = null;
     const result = mergeFiles(files, incoming, {
       multiple,
       accept,
@@ -220,27 +223,57 @@ export function FileUpload({
     commit(result.files);
   };
 
-  const dragProps = dropzone &&
-    !disabled && {
-      onDragEnter: (event: DragEvent) => {
-        event.preventDefault();
-        setDragging(true);
-      },
-      onDragOver: (event: DragEvent) => {
-        event.preventDefault();
-        setDragging(true);
-      },
-      onDragLeave: (event: DragEvent) => {
-        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+  // Files picked before hydration are in the server-rendered input, which
+  // the first sync would otherwise clear: add them to the list instead.
+  const adoptEarlyPick = useEffectEvent(() => {
+    const picked = [...(inputRef.current?.files ?? [])];
+    if (picked.length > 0) add(picked);
+  });
+  useEffect(() => {
+    adoptEarlyPick();
+  }, []);
+
+  // The input follows `value`, including a change from a controlled parent.
+  useEffect(() => {
+    writeFiles(inputRef.current, files);
+    // After a removal, focus the next remove button, then the previous one,
+    // then the input, so focus is never lost.
+    const pending = removing.current;
+    removing.current = null;
+    if (!pending || files.length !== pending.from.length - 1) return;
+    const buttons = listRef.current?.querySelectorAll('button') ?? [];
+    const target =
+      buttons[pending.index] ?? buttons[pending.index - 1] ?? inputRef.current;
+    target?.focus();
+  }, [files]);
+
+  // Disabled, a drop is still stopped, so the browser doesn't open the file
+  // in place of the page.
+  const block = (event: DragEvent) => event.preventDefault();
+  const dragProps = disabled
+    ? { onDragOver: block, onDrop: block }
+    : dropzone && {
+        onDragEnter: (event: DragEvent) => {
+          event.preventDefault();
+          setDragging(true);
+        },
+        onDragOver: (event: DragEvent) => {
+          event.preventDefault();
+          setDragging(true);
+        },
+        onDragLeave: (event: DragEvent) => {
+          if (
+            !event.currentTarget.contains(event.relatedTarget as Node | null)
+          ) {
+            setDragging(false);
+          }
+        },
+        onDrop: (event: DragEvent) => {
+          event.preventDefault();
           setDragging(false);
-        }
-      },
-      onDrop: (event: DragEvent) => {
-        event.preventDefault();
-        setDragging(false);
-        add([...event.dataTransfer.files]);
-      },
-    };
+          add([...event.dataTransfer.files]);
+        },
+      };
 
   return (
     <div
@@ -268,6 +301,7 @@ export function FileUpload({
         data-disabled={!dropzone && disabled ? '' : undefined}
       >
         <BaseField.Control
+          {...rest}
           ref={(node: HTMLInputElement | null) => {
             inputRef.current = node;
             setRef(ref, node);
@@ -280,8 +314,10 @@ export function FileUpload({
           disabled={disabled}
           aria-invalid={invalid || undefined}
           aria-required={required || undefined}
-          onChange={(event) => add([...(event.currentTarget.files ?? [])])}
-          {...rest}
+          onChange={(event) => {
+            onChange?.(event);
+            add([...(event.currentTarget.files ?? [])]);
+          }}
         />
         {dropzone ? (
           <>
@@ -307,12 +343,14 @@ export function FileUpload({
           disabled={disabled}
           listRef={listRef}
           onRemove={(index) => {
-            removedAt.current = index;
+            removing.current = { index, from: files };
             commit(files.filter((_, i) => i !== index));
           }}
         />
       )}
-      <VisuallyHidden role="status">{message}</VisuallyHidden>
+      <VisuallyHidden role="status">
+        {message.text && <span key={message.id}>{message.text}</span>}
+      </VisuallyHidden>
     </div>
   );
 }

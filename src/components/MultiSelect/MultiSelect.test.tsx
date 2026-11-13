@@ -459,3 +459,17 @@ describe('searchable', () => {
     await waitFor(() => expect(input()).not.toHaveAttribute('placeholder'));
   });
 });
+
+it('searchable: an option label with $ patterns keeps its text in the remove name', () => {
+  render(
+    <MultiSelect
+      searchable
+      aria-label="Tags"
+      options={[{ value: 'odd', label: 'Q$&A $$' }]}
+      defaultValue={['odd']}
+    />,
+  );
+  expect(
+    screen.getByRole('button', { name: 'Remove Q$&A $$' }),
+  ).toBeInTheDocument();
+});

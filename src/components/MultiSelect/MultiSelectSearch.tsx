@@ -108,7 +108,7 @@ export function MultiSelectSearch({
                     <span className={styles.chipLabel}>{label}</span>
                     <BaseCombobox.ChipRemove
                       className={styles.chipRemove}
-                      aria-label={labels.remove.replace('{label}', label)}
+                      aria-label={labels.remove.replace('{label}', () => label)}
                     >
                       <span className={styles.chipRemoveIcon}>
                         <XIcon aria-hidden="true" />

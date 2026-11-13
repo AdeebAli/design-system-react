@@ -541,3 +541,84 @@ describe('announcements', () => {
     expect(status()).toHaveTextContent('');
   });
 });
+
+describe('review fixes', () => {
+  it("a consumer's onChange runs, and the pick still reaches the list", async () => {
+    const onChange = vi.fn();
+    const onValueChange = vi.fn();
+    render(
+      <FileUpload
+        aria-label="Files"
+        onChange={onChange}
+        onValueChange={onValueChange}
+      />,
+    );
+    const a = file('a.txt');
+    await user().upload(input(), a);
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onValueChange.mock.calls).toEqual([[[a]]]);
+  });
+
+  it('a disabled dropzone still stops the browser from opening a dropped file', () => {
+    render(<FileUpload aria-label="Files" disabled />);
+    for (const type of ['dragover', 'drop']) {
+      const event = new Event(type, { bubbles: true, cancelable: true });
+      root().dispatchEvent(event);
+      expect(event.defaultPrevented).toBe(true);
+    }
+  });
+
+  it('names with $ patterns keep their text in labels', () => {
+    const odd = file('Q$&A $$ cost.pdf');
+    render(
+      <FileUpload
+        aria-label="Files"
+        defaultValue={[odd]}
+        getFileStatus={() => ({ status: 'uploading' })}
+      />,
+    );
+    expect(
+      screen.getByRole('button', { name: 'Remove Q$&A $$ cost.pdf' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('progressbar', { name: 'Uploading Q$&A $$ cost.pdf' }),
+    ).toBeInTheDocument();
+  });
+
+  it('replacing the only file is announced again, in a new text node', async () => {
+    render(<FileUpload aria-label="Files" />);
+    await user().upload(input(), file('a.txt'));
+    const status = screen.getByRole('status');
+    expect(status).toHaveTextContent('1 files selected');
+    const first = status.firstElementChild;
+    await user().upload(input(), file('b.txt'));
+    expect(status).toHaveTextContent('1 files selected');
+    expect(status.firstElementChild).not.toBe(first);
+  });
+
+  it('announces every file that finished in one update', () => {
+    const a = file('a.txt');
+    const b = file('b.txt');
+    const { rerender } = render(
+      <FileUpload
+        aria-label="Files"
+        multiple
+        defaultValue={[a, b]}
+        getFileStatus={() => ({ status: 'uploading' })}
+      />,
+    );
+    rerender(
+      <FileUpload
+        aria-label="Files"
+        multiple
+        defaultValue={[a, b]}
+        getFileStatus={(f) =>
+          f === a ? { status: 'done' } : { status: 'error', error: 'Too big' }
+        }
+      />,
+    );
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'a.txt: Uploaded. b.txt: Too big',
+    );
+  });
+});
