@@ -286,3 +286,258 @@ describe('dropping', () => {
     expect(onValueChange).not.toHaveBeenCalled();
   });
 });
+
+describe('file list', () => {
+  const pdf = file('report.pdf', 1536, 'application/pdf');
+  const png = file('chart.png', 2048, 'image/png');
+  const items = () => screen.getAllByRole('listitem');
+
+  it('lists each file with its name, size, and a remove button', () => {
+    render(
+      <FileUpload aria-label="Files" multiple defaultValue={[pdf, png]} />,
+    );
+    const list = screen.getByRole('list');
+    expect(items()).toHaveLength(2);
+    expect(list).toContainElement(items()[0]!);
+    expect(items()[0]).toHaveTextContent('report.pdf');
+    expect(items()[0]).toHaveTextContent('1.5 kB');
+    expect(items()[1]).toHaveTextContent('chart.png');
+    expect(items()[1]).toHaveTextContent('2 kB');
+    expect(
+      screen.getByRole('button', { name: 'Remove report.pdf' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Remove chart.png' }),
+    ).toBeInTheDocument();
+  });
+
+  it('labels.remove names the remove buttons', () => {
+    render(
+      <FileUpload
+        aria-label="Files"
+        defaultValue={[pdf]}
+        labels={{ remove: 'Retirer {name}' }}
+      />,
+    );
+    expect(
+      screen.getByRole('button', { name: 'Retirer report.pdf' }),
+    ).toBeInTheDocument();
+  });
+
+  it('a long name keeps the full name in the DOM and in title', () => {
+    const long = file(`${'a'.repeat(196)}.pdf`);
+    render(<FileUpload aria-label="Files" defaultValue={[long]} />);
+    const name = screen.getByText(long.name);
+    expect(name).toHaveAttribute('title', long.name);
+  });
+
+  it('removing a file calls onValueChange without it', async () => {
+    const onValueChange = vi.fn();
+    render(
+      <FileUpload
+        aria-label="Files"
+        multiple
+        defaultValue={[pdf, png]}
+        onValueChange={onValueChange}
+      />,
+    );
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Remove report.pdf' }),
+    );
+    expect(onValueChange.mock.calls).toEqual([[[png]]]);
+    expect(items()).toHaveLength(1);
+  });
+
+  it('a removed file can be picked again', async () => {
+    const onValueChange = vi.fn();
+    render(
+      <FileUpload
+        aria-label="Files"
+        defaultValue={[pdf]}
+        onValueChange={onValueChange}
+      />,
+    );
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Remove report.pdf' }),
+    );
+    await user().upload(input(), pdf);
+    expect(onValueChange.mock.calls).toEqual([[[]], [[pdf]]]);
+  });
+
+  it('a disabled FileUpload disables the remove buttons', () => {
+    render(<FileUpload aria-label="Files" defaultValue={[pdf]} disabled />);
+    expect(
+      screen.getByRole('button', { name: 'Remove report.pdf' }),
+    ).toBeDisabled();
+  });
+
+  it('hideFileList renders no list', () => {
+    render(<FileUpload aria-label="Files" defaultValue={[pdf]} hideFileList />);
+    expect(screen.queryByRole('list')).toBeNull();
+    expect(screen.queryByText('report.pdf')).toBeNull();
+  });
+
+  it('with no status, a file shows only its name, size, and remove button', () => {
+    render(<FileUpload aria-label="Files" defaultValue={[pdf]} />);
+    expect(items()[0]).not.toHaveAttribute('data-status');
+    expect(screen.queryByRole('progressbar')).toBeNull();
+  });
+
+  it('uploading shows a Progress named with the file name', () => {
+    render(
+      <FileUpload
+        aria-label="Files"
+        defaultValue={[pdf]}
+        getFileStatus={() => ({ status: 'uploading', progress: 40 })}
+      />,
+    );
+    const bar = screen.getByRole('progressbar', {
+      name: 'Uploading report.pdf',
+    });
+    expect(bar).toHaveAttribute('aria-valuenow', '40');
+    expect(items()[0]).toHaveAttribute('data-status', 'uploading');
+  });
+
+  it('uploading with no progress is indeterminate', () => {
+    render(
+      <FileUpload
+        aria-label="Files"
+        defaultValue={[pdf]}
+        getFileStatus={() => ({ status: 'uploading' })}
+      />,
+    );
+    expect(screen.getByRole('progressbar')).not.toHaveAttribute(
+      'aria-valuenow',
+    );
+  });
+
+  it('done shows a success icon and text', () => {
+    render(
+      <FileUpload
+        aria-label="Files"
+        defaultValue={[pdf]}
+        getFileStatus={() => ({ status: 'done' })}
+      />,
+    );
+    expect(items()[0]).toHaveAttribute('data-status', 'done');
+    expect(items()[0]).toHaveTextContent('Uploaded');
+    expect(items()[0]!.querySelector(`.${styles.doneIcon}`)).not.toBeNull();
+  });
+
+  it('error shows the error text and an icon, or labels.error without one', () => {
+    const { rerender } = render(
+      <FileUpload
+        aria-label="Files"
+        defaultValue={[pdf]}
+        getFileStatus={() => ({ status: 'error', error: 'Server said no' })}
+      />,
+    );
+    expect(items()[0]).toHaveAttribute('data-status', 'error');
+    expect(items()[0]).toHaveTextContent('Server said no');
+    expect(items()[0]!.querySelector(`.${styles.errorIcon}`)).not.toBeNull();
+    rerender(
+      <FileUpload
+        aria-label="Files"
+        defaultValue={[pdf]}
+        getFileStatus={() => ({ status: 'error' })}
+      />,
+    );
+    expect(items()[0]).toHaveTextContent('Upload failed');
+  });
+});
+
+describe('announcements', () => {
+  const pdf = file('report.pdf');
+  const png = file('chart.png');
+  const status = () => screen.getByRole('status');
+
+  it('the status element is mounted and empty at first', () => {
+    render(<FileUpload aria-label="Files" defaultValue={[pdf]} />);
+    expect(status()).toHaveTextContent('');
+  });
+
+  it('announces the count when the files change, from the same element', async () => {
+    render(<FileUpload aria-label="Files" multiple />);
+    const before = status();
+    await user().upload(input(), [pdf, png]);
+    expect(status()).toHaveTextContent('2 files selected');
+    expect(status()).toBe(before);
+  });
+
+  it('labels.selected formats the count', async () => {
+    render(
+      <FileUpload
+        aria-label="Files"
+        multiple
+        labels={{ selected: '{count} fichiers' }}
+      />,
+    );
+    await user().upload(input(), [pdf, png]);
+    expect(status()).toHaveTextContent('2 fichiers');
+  });
+
+  it('announces a change to done, then to error', () => {
+    const { rerender } = render(
+      <FileUpload
+        aria-label="Files"
+        defaultValue={[pdf]}
+        getFileStatus={() => ({ status: 'uploading' })}
+      />,
+    );
+    expect(status()).toHaveTextContent('');
+    rerender(
+      <FileUpload
+        aria-label="Files"
+        defaultValue={[pdf]}
+        getFileStatus={() => ({ status: 'done' })}
+      />,
+    );
+    expect(status()).toHaveTextContent('report.pdf: Uploaded');
+    rerender(
+      <FileUpload
+        aria-label="Files"
+        defaultValue={[pdf]}
+        getFileStatus={() => ({ status: 'error', error: 'Too slow' })}
+      />,
+    );
+    expect(status()).toHaveTextContent('report.pdf: Too slow');
+  });
+
+  it('does not announce uploading progress', () => {
+    const { rerender } = render(
+      <FileUpload
+        aria-label="Files"
+        defaultValue={[pdf]}
+        getFileStatus={() => ({ status: 'uploading', progress: 10 })}
+      />,
+    );
+    rerender(
+      <FileUpload
+        aria-label="Files"
+        defaultValue={[pdf]}
+        getFileStatus={() => ({ status: 'uploading', progress: 60 })}
+      />,
+    );
+    expect(status()).toHaveTextContent('');
+  });
+
+  it('keeps the status element with hideFileList', async () => {
+    render(<FileUpload aria-label="Files" multiple hideFileList />);
+    await user().upload(input(), [pdf, png]);
+    expect(status()).toHaveTextContent('2 files selected');
+  });
+
+  it('does not announce a file starting to upload', () => {
+    const { rerender } = render(
+      <FileUpload aria-label="Files" defaultValue={[pdf]} />,
+    );
+    rerender(
+      <FileUpload
+        aria-label="Files"
+        defaultValue={[pdf]}
+        getFileStatus={() => ({ status: 'uploading' })}
+      />,
+    );
+    expect(status()).toHaveTextContent('');
+  });
+});

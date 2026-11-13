@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Field } from '../Field';
 import { Stack } from '../Stack';
-import { FileUpload } from './FileUpload';
+import { FileUpload, type FileStatus } from './FileUpload';
 import type { FileRejection } from './mergeFiles';
 
 const meta: Meta<typeof FileUpload> = {
@@ -102,4 +102,106 @@ export const Disabled: Story = {
       </Field>
     </Stack>
   ),
+};
+
+const sample = (name: string, size: number) =>
+  new File([new Uint8Array(size)], name, { lastModified: 1 });
+
+const samples = [
+  sample('quarterly-report.pdf', 1_250_000),
+  sample('diagram.png', 340_000),
+  sample('notes.txt', 2_100),
+  sample(
+    'a-file-with-a-very-long-name-that-has-to-be-truncated-somewhere.pdf',
+    48_000,
+  ),
+];
+
+const sampleStatuses = new Map<File, FileStatus>([
+  [samples[0]!, { status: 'uploading', progress: 40 }],
+  [samples[1]!, { status: 'done' }],
+  [samples[2]!, { status: 'error', error: 'The server rejected this file' }],
+]);
+
+export const FileStatuses: Story = {
+  name: 'File list, every status',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`getFileStatus` adds a `Progress` bar while uploading, a success icon when done, and the error’s text with an icon on failure. With no status, a file shows only its name and size. Long names truncate, with the full name in `title`. Done and error changes are announced.',
+      },
+    },
+  },
+  args: {
+    multiple: true,
+    defaultValue: samples,
+    getFileStatus: (file) => sampleStatuses.get(file),
+  },
+};
+
+export const ButtonWithFiles: Story = {
+  name: 'Button, with files',
+  args: {
+    variant: 'button',
+    multiple: true,
+    defaultValue: samples.slice(0, 2),
+  },
+};
+
+/** Stands in for an upload: reports progress, then finishes. */
+function useFakeUploads(files: File[]) {
+  const [statuses, setStatuses] = useState(new Map<File, FileStatus>());
+  const started = useRef(new Set<File>());
+  useEffect(() => {
+    const timers: ReturnType<typeof setInterval>[] = [];
+    for (const file of files) {
+      if (started.current.has(file)) continue;
+      started.current.add(file);
+      let progress = 0;
+      const timer = setInterval(() => {
+        progress += 20;
+        setStatuses((current) =>
+          new Map(current).set(
+            file,
+            progress >= 100
+              ? { status: 'done' }
+              : { status: 'uploading', progress },
+          ),
+        );
+        if (progress >= 100) clearInterval(timer);
+      }, 400);
+      timers.push(timer);
+    }
+    return () => timers.forEach(clearInterval);
+  }, [files]);
+  return statuses;
+}
+
+function UploadWithProgress() {
+  const [files, setFiles] = useState<File[]>([]);
+  const statuses = useFakeUploads(files);
+  return (
+    <Field label="Attachments" hint="Each file uploads as soon as it’s added">
+      <FileUpload
+        multiple
+        value={files}
+        onValueChange={setFiles}
+        getFileStatus={(file) => statuses.get(file)}
+      />
+    </Field>
+  );
+}
+
+export const UploadRecipe: Story = {
+  name: 'Recipe: upload with progress',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'The project sends each file, such as with `XMLHttpRequest` and its `upload.onprogress`, and keeps a status per file for `getFileStatus`. Here a timer stands in for the network. **The server must check every upload’s type and size: the checks here are a convenience, not security.**',
+      },
+    },
+  },
+  render: () => <UploadWithProgress />,
 };

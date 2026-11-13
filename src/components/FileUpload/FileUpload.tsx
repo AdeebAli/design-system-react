@@ -9,6 +9,8 @@ import { box } from '../Box';
 import * as buttonStyles from '../Button/Button.css';
 import { useFieldControl } from '../Field/FieldContext';
 import { UploadIcon } from '../Icon/internal/Upload';
+import { VisuallyHidden } from '../VisuallyHidden';
+import { FileList } from './FileList';
 import * as styles from './FileUpload.css';
 import { mergeFiles, type FileRejection } from './mergeFiles';
 
@@ -31,11 +33,11 @@ export interface FileUploadLabels {
   remove?: string;
   /** Announced when the list changes, where `{count}` is the number of files. @default '{count} files selected' */
   selected?: string;
-  /** Shown while a file uploads. @default 'Uploading' */
+  /** Names a file's progress bar, where `{name}` is the file name. @default 'Uploading {name}' */
   uploading?: string;
-  /** Shown and announced when a file is done, where `{name}` is the file name. @default '{name} uploaded' */
+  /** Shown beside a file that's done, and announced after its name. @default 'Uploaded' */
   done?: string;
-  /** Announced when a file fails, where `{name}` is the file name. @default '{name} failed to upload' */
+  /** Shown beside a failed file with no `error` message, and announced after its name. @default 'Upload failed' */
   error?: string;
 }
 
@@ -44,9 +46,9 @@ export const defaultFileUploadLabels: Required<FileUploadLabels> = {
   browse: 'Choose files',
   remove: 'Remove {name}',
   selected: '{count} files selected',
-  uploading: 'Uploading',
-  done: '{name} uploaded',
-  error: '{name} failed to upload',
+  uploading: 'Uploading {name}',
+  done: 'Uploaded',
+  error: 'Upload failed',
 };
 
 interface FileUploadOwnProps {
@@ -99,6 +101,10 @@ function writeFiles(input: HTMLInputElement | null, files: readonly File[]) {
   input.files = transfer.files;
 }
 
+function sameList<T>(a: readonly T[], b: readonly T[]) {
+  return a.length === b.length && a.every((item, i) => item === b[i]);
+}
+
 function setRef<T>(ref: Ref<T> | undefined, value: T | null) {
   if (typeof ref === 'function') ref(value);
   else if (ref) ref.current = value;
@@ -143,14 +149,55 @@ export function FileUpload({
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [layout, rest] = splitLayoutProps(props);
   const dropzone = variant === 'dropzone';
-  // The file list (next task) reads these.
-  void getFileStatus;
-  void hideFileList;
+  const listRef = useRef<HTMLUListElement>(null);
+  // The index of a removed file, so focus can move once the list updates.
+  const removedAt = useRef<number | null>(null);
+
+  // Announcements, derived from what changed since the last render.
+  const statuses = files.map((file) => getFileStatus?.(file));
+  const kinds = statuses.map((status) => status?.status);
+  const [previous, setPrevious] = useState({ files, kinds });
+  const [message, setMessage] = useState('');
+  const filesChanged = !sameList(previous.files, files);
+  if (filesChanged || !sameList(previous.kinds, kinds)) {
+    let next = message;
+    if (filesChanged) {
+      next = labels.selected.replace('{count}', String(files.length));
+    } else {
+      const index = kinds.findIndex(
+        (kind, i) =>
+          kind !== previous.kinds[i] && (kind === 'done' || kind === 'error'),
+      );
+      const status = statuses[index];
+      if (status) {
+        const text =
+          status.status === 'done'
+            ? labels.done
+            : (status.error ?? labels.error);
+        next = `${files[index]!.name}: ${text}`;
+      }
+    }
+    setPrevious({ files, kinds });
+    if (next !== message) setMessage(next);
+  }
 
   // The input follows `value`, including a change from a controlled parent.
   useEffect(() => {
     writeFiles(inputRef.current, files);
+    // After a removal, focus the next remove button, then the previous one,
+    // then the input, so focus is never lost.
+    const index = removedAt.current;
+    if (index == null) return;
+    removedAt.current = null;
+    const buttons = listRef.current?.querySelectorAll('button') ?? [];
+    const target = buttons[index] ?? buttons[index - 1] ?? inputRef.current;
+    target?.focus();
   }, [files]);
+
+  const commit = (next: File[]) => {
+    setUncontrolled(next);
+    onValueChange?.(next);
+  };
 
   const add = (incoming: readonly File[]) => {
     const result = mergeFiles(files, incoming, {
@@ -170,8 +217,7 @@ export function FileUpload({
     ) {
       return;
     }
-    setUncontrolled(result.files);
-    onValueChange?.(result.files);
+    commit(result.files);
   };
 
   const dragProps = dropzone &&
@@ -253,6 +299,20 @@ export function FileUpload({
           </>
         )}
       </div>
+      {!hideFileList && files.length > 0 && (
+        <FileList
+          files={files}
+          statuses={statuses}
+          labels={labels}
+          disabled={disabled}
+          listRef={listRef}
+          onRemove={(index) => {
+            removedAt.current = index;
+            commit(files.filter((_, i) => i !== index));
+          }}
+        />
+      )}
+      <VisuallyHidden role="status">{message}</VisuallyHidden>
     </div>
   );
 }

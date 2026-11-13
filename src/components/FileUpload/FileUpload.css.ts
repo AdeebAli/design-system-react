@@ -106,3 +106,103 @@ export const input = style(
     selectors: { '&:disabled': { cursor: 'not-allowed' } },
   }),
 );
+
+export const list = style(
+  layered({
+    display: 'flex',
+    flexDirection: 'column',
+    gap: vars.space['1'],
+    margin: 0,
+    padding: 0,
+    listStyle: 'none',
+    minWidth: 0,
+  }),
+);
+
+export const item = style(
+  layered({
+    display: 'grid',
+    gridTemplateColumns: 'auto 1fr auto',
+    alignItems: 'center',
+    columnGap: vars.space['2'],
+    rowGap: vars.space['1'],
+    minWidth: 0,
+    paddingBlock: vars.space['1'],
+    paddingInlineStart: vars.space['2'],
+    borderRadius: vars.radius.md,
+    background: bg.muted,
+    color: fg.default,
+    fontSize: vars.font.size.sm,
+  }),
+);
+
+export const fileIcon = style(
+  layered({
+    display: 'inline-flex',
+    width: vars.size.icon.md,
+    height: vars.size.icon.md,
+    color: fg.muted,
+  }),
+);
+
+export const details = style(
+  layered({
+    display: 'flex',
+    flexDirection: 'column',
+    gap: vars.space['1'],
+    minWidth: 0,
+  }),
+);
+
+export const nameRow = style(
+  layered({
+    display: 'flex',
+    alignItems: 'baseline',
+    gap: vars.space['2'],
+    minWidth: 0,
+  }),
+);
+
+export const name = style(
+  layered({
+    minWidth: 0,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+  }),
+);
+
+export const size = style(
+  layered({ flexShrink: 0, color: fg.muted, whiteSpace: 'nowrap' }),
+);
+
+export const status = style(
+  layered({
+    display: 'flex',
+    alignItems: 'center',
+    gap: vars.space['1'],
+    color: fg.muted,
+  }),
+);
+
+export const doneIcon = style(
+  layered({
+    display: 'inline-flex',
+    flexShrink: 0,
+    width: vars.size.icon.sm,
+    height: vars.size.icon.sm,
+    color: fg.success,
+  }),
+);
+
+export const errorIcon = style(
+  layered({
+    display: 'inline-flex',
+    flexShrink: 0,
+    width: vars.size.icon.sm,
+    height: vars.size.icon.sm,
+    color: fg.danger,
+  }),
+);
+
+export const errorText = style(layered({ color: fg.danger }));
