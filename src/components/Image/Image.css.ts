@@ -1,4 +1,10 @@
-import { createVar, style, styleVariants } from '@vanilla-extract/css';
+import {
+  createVar,
+  globalStyle,
+  style,
+  styleVariants,
+} from '@vanilla-extract/css';
+import { componentsLayer } from '../../styles/layers.css';
 import { vars } from '../../themes/contract.css';
 import { layered } from '../../utils/recipe';
 
@@ -9,6 +15,8 @@ export const frame = style(
   layered({
     position: 'relative',
     overflow: 'hidden',
+    // The forced-colors border doesn't change its size.
+    boxSizing: 'border-box',
     maxInlineSize: '100%',
     borderRadius: vars.radius.image,
     selectors: {
@@ -31,11 +39,19 @@ export const radius = styleVariants(
 
 export const img = style(
   layered({
+    // Positioned, so it paints over the absolutely placed skeleton, even
+    // before hydration.
+    position: 'relative',
     display: 'block',
     maxInlineSize: '100%',
     blockSize: 'auto',
+    // Its own corners, so Prose's img rule (radius.image) doesn't reach it.
+    borderRadius: 'inherit',
     selectors: {
       [`${frame}[data-ratio] > &`]: { inlineSize: '100%', blockSize: '100%' },
+      // Hidden, not removed, so its alt still names it and a broken-image
+      // icon never shows.
+      [`${frame}[data-error] > &`]: { opacity: 0 },
     },
   }),
 );
@@ -46,7 +62,16 @@ export const fit = styleVariants({
 });
 
 export const skeleton = style(
-  layered({ position: 'absolute', inset: 0, borderRadius: 'inherit' }),
+  layered({
+    selectors: {
+      // The frame's child selector outranks Skeleton's own radius.
+      [`${frame} > &`]: {
+        position: 'absolute',
+        inset: 0,
+        borderRadius: 'inherit',
+      },
+    },
+  }),
 );
 
 export const fallback = style(
@@ -59,3 +84,17 @@ export const fallback = style(
     color: vars.color.fg.muted,
   }),
 );
+
+// Keeps the frame's edge visible in forced colors, where the skeleton's and
+// the fallback's backgrounds are dropped. A loaded image needs none.
+globalStyle(`${frame}:has(> ${skeleton}), ${frame}:has(> ${fallback})`, {
+  '@layer': {
+    [componentsLayer]: {
+      '@media': {
+        '(forced-colors: active)': {
+          border: `${vars.borderWidth.thin} solid transparent`,
+        },
+      },
+    },
+  },
+});
