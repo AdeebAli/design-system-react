@@ -135,6 +135,14 @@ From [Spec 16](specs/16-feedback-and-display.md).
 | `Divider`  | A line between things, horizontal or vertical, optionally with a label         |
 | `Avatar`   | A person or organization, with initials until the image loads, and a status    |
 
+## Image
+
+From [Spec 17](specs/17-image.md).
+
+| Component | Use it for |
+| --------- | ---------- |
+| `Image`   | A photo, screenshot, or illustration in a frame that reserves its space, with an optional skeleton and a fallback; `as` renders it through `next/image` |
+
 ## Theming
 
 From [Spec 02](specs/02-tokens-and-themes.md) and [Spec 03](specs/03-theme-provider.md). See [Theming](../README.md#theming) in the README.
