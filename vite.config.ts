@@ -10,6 +10,7 @@ export default defineConfig({
     include: [
       '@vanilla-extract/sprinkles/createRuntimeSprinkles',
       '@vanilla-extract/recipes/createRuntimeFn',
+      '@base-ui/react/accordion',
       '@base-ui/react/alert-dialog',
       '@base-ui/react/avatar',
       '@base-ui/react/button',

@@ -86,6 +86,8 @@ const serverModules = [
   'components/Alert/Alert.js',
   'components/Divider/Divider.js',
   'components/EmptyState/EmptyState.js',
+  'components/Breadcrumbs/Breadcrumbs.js',
+  'components/Breadcrumbs/BreadcrumbItem.js',
 ];
 for (const module of serverModules) {
   const path = join(dist, module);

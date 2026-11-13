@@ -86,6 +86,18 @@ From [Spec 10](specs/10-navigation.md).
 | `NavBar`, `NavBarLink`                | The site's main navigation bar, with a menu below `md` |
 | `Tabs`, `TabsList`, `Tab`, `TabsPanel` | Switching between panels on the same page            |
 
+## App navigation
+
+From [Spec 15](specs/15-app-navigation.md).
+
+| Component | Use it for |
+| --- | --- |
+| `Sidebar`, `SidebarGroup`, `SidebarLink` | An app's main navigation down one side, with an optional icon rail from `md` up, and a drawer below `md` |
+| `Breadcrumbs`, `BreadcrumbItem` | Where a page sits, with links back up; works in a server component |
+| `Accordion`, `AccordionItem` | Sections that expand in place, such as FAQs and settings |
+
+Put `Sidebar` in a `Flex` with `direction={{ base: 'column', md: 'row' }}`, beside a `Box as="main" flexGrow="1" minWidth="0"`, so its small-screen bar sits above the content. Keeping `collapsed` across visits, such as in a cookie, is the project's: Storybook's Sidebar page shows how.
+
 ## Overlays
 
 From [Spec 12](specs/12-overlays.md).
