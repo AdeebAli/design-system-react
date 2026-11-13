@@ -19,6 +19,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
   Icon,
+  Image,
   Link,
   NavBar,
   NavBarLink,
@@ -74,6 +75,13 @@ createRoot(document.getElementById('root')!).render(
       </Badge>
       <Stat label="Revenue" value="$21.4k" change="4.1" trend="up" />
     </Card>
+    <Image
+      data-testid="image"
+      src={`data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="160" height="90"><rect width="160" height="90" fill="#4338ca"/></svg>')}`}
+      alt="An indigo panel"
+      ratio="16/9"
+      maxWidth="container.sm"
+    />
     <RhfForm />
     <PortalProbe />
     <Tabs defaultValue="overview">
