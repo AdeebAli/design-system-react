@@ -35,6 +35,7 @@ export * from './components/ToggleChip';
 export * from './components/ToggleChipGroup';
 export * from './components/ColorModeToggle';
 export * from './components/NavBar';
+export * from './components/Sidebar';
 export * from './components/Pagination';
 export * from './components/Breadcrumbs';
 export * from './components/Tabs';
