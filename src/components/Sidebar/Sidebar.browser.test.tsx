@@ -108,6 +108,12 @@ it('the end border is on the left in RTL', () => {
   expect(style.borderRightStyle).toBe('none');
 });
 
+it('collapsed without collapsible has no rail, since nothing could expand it', () => {
+  render(<Layout collapsed />);
+  expect(nav()).not.toHaveAttribute('data-collapsed');
+  expect(nav().getBoundingClientRect().width).toBe(240);
+});
+
 it('links are 32px tall', () => {
   render(<Layout />);
   expect(link('Settings').getBoundingClientRect().height).toBe(32);
@@ -493,6 +499,10 @@ describe('below md', () => {
     await open();
     await page.viewport(1024, 700);
     await closed();
+    // The menu button is hidden now, so focus goes to the side nav instead.
+    await expect
+      .poll(() => document.activeElement)
+      .toBe(within(nav()).getByRole('link', { name: 'Acme' }));
   });
 
   it('sticky keeps the bar at the top; sticky={false} scrolls it away', async () => {

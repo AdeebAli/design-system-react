@@ -165,6 +165,14 @@ it('data-collapsed is in the server HTML', () => {
   expect(expanded).not.toMatch(/data-collapsed/);
 });
 
+it('without collapsible, collapsed and defaultCollapsed have no effect, even in the server HTML', () => {
+  expect(renderToString(<App defaultCollapsed />)).not.toMatch(
+    /data-collapsed/,
+  );
+  render(<App collapsed />);
+  expect(nav()).not.toHaveAttribute('data-collapsed');
+});
+
 it('toggling keeps focus on the button and keeps the same link nodes', async () => {
   render(<App collapsible />);
   const before = link('Dashboard');

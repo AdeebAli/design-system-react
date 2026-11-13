@@ -98,7 +98,8 @@ export function Sidebar({
 }: SidebarProps) {
   const [layout, rest] = splitLayoutProps(props);
   const [uncontrolled, setUncontrolled] = useState(defaultCollapsed);
-  const collapsed = controlledCollapsed ?? uncontrolled;
+  // Only with collapsible, which supplies the button to expand it again.
+  const collapsed = collapsible && (controlledCollapsed ?? uncontrolled);
   const text = {
     collapse: labels?.collapse ?? 'Collapse sidebar',
     expand: labels?.expand ?? 'Expand sidebar',
@@ -117,6 +118,9 @@ export function Sidebar({
 
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLButtonElement>(null);
+  // Where focus goes when the drawer closes: the menu button, unless the
+  // window has grown past md and hidden it.
+  const returnFocus = useRef<HTMLElement | null>(null);
   // The drawer's copy has no rail, and a link click closes it.
   const drawerContext = useMemo<SidebarContextValue>(
     () => ({
@@ -135,7 +139,14 @@ export function Sidebar({
     if (!open) return;
     const query = window.matchMedia(md);
     const close = () => {
-      if (query.matches) setOpen(false);
+      if (!query.matches) return;
+      // The bar holds the menu button, and the side nav follows it.
+      const nav = menuRef.current?.parentElement?.nextElementSibling;
+      returnFocus.current =
+        nav?.querySelector<HTMLElement>(
+          'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
+        ) ?? null;
+      setOpen(false);
     };
     query.addEventListener('change', close);
     return () => query.removeEventListener('change', close);
@@ -147,7 +158,10 @@ export function Sidebar({
         brand={brand}
         menuLabel={menuLabel}
         open={open}
-        onOpen={() => setOpen(true)}
+        onOpen={() => {
+          returnFocus.current = menuRef.current;
+          setOpen(true);
+        }}
         menuRef={menuRef}
         sticky={sticky}
       />
@@ -194,7 +208,7 @@ export function Sidebar({
         <DrawerContent
           side="start"
           aria-label={menuLabel}
-          finalFocus={menuRef}
+          finalFocus={returnFocus}
           closeLabel={labels?.close ?? 'Close'}
           className={styles.drawer}
         >
