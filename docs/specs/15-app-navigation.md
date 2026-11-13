@@ -37,7 +37,7 @@ The main navigation for an app, down one side of the page.
       <SidebarLink as={NextLink} href="/settings" startIcon={<Icon icon={Settings} />}>Settings</SidebarLink>
     </SidebarGroup>
   </Sidebar>
-  <Box as="main" flex="1" minWidth="0">…</Box>
+  <Box as="main" flexGrow="1" minWidth="0">…</Box>
 </Flex>
 ```
 
@@ -49,7 +49,7 @@ The main navigation for an app, down one side of the page.
 | `brand` | ReactNode: top, always visible | none |
 | `footer` | ReactNode: bottom, always visible | none |
 | `collapsible` | boolean: from `md` up, adds a button that shrinks it to a rail of icons | `false` |
-| `collapsed`, `defaultCollapsed`, `onCollapsedChange` | boolean | `false` |
+| `collapsed`, `defaultCollapsed`, `onCollapsedChange` | boolean: only with `collapsible`, which supplies the button to expand it again | `false` |
 | `sticky` | boolean: stays in view at full viewport height. `false` scrolls with the page, at its content's height | `true` |
 | `menuLabel` | string: the small-screen menu button's name | `"Menu"` |
 | `labels` | Strings: `collapse`, `expand`, `close` | English |
@@ -68,7 +68,7 @@ It accepts layout props. `sticky` defaults to `true`, unlike `NavBar`'s, because
 
 ### Collapsed rail
 
-From `md` up, `collapsible` adds a real button at the end of the top section, named by `labels.collapse` ("Collapse sidebar") or `labels.expand` ("Expand sidebar"). The name carries the state, so it has no `aria-expanded`, which would announce it twice. Focus stays on the button, which keeps its place in the rail. `collapsed` and `defaultCollapsed` are in the server HTML, through `data-collapsed`, and have no effect below `md`.
+From `md` up, `collapsible` adds a real button at the end of the top section, named by `labels.collapse` ("Collapse sidebar") or `labels.expand` ("Expand sidebar"). The name carries the state, so it has no `aria-expanded`, which would announce it twice. Focus stays on the button, which keeps its place in the rail. `collapsed` and `defaultCollapsed` are in the server HTML, through `data-collapsed`, and have no effect below `md`. They have no effect without `collapsible` either, since nothing could expand the rail.
 
 - **Links show only their icons,** and a `Tooltip` shows the link's `children` on hover and focus (Spec 12). It's always rendered, using `disabled` when not collapsed, so toggling doesn't remount links and lose focus. `TooltipProvider` stays optional.
 - **Link text stays in the DOM,** visually hidden, so the accessible name doesn't change, and so server rendering matches.
@@ -190,7 +190,7 @@ Spec 05's definition of done, plus:
 **Unit:**
 
 - `Sidebar` renders a `nav` with named lists, each `SidebarLink` is an `li`, `active` sets `aria-current`, `as` works, and a link outside a `Sidebar` warns.
-- `collapsed` works controlled and uncontrolled, and a link with no icon warns under `collapsible`. Toggling the rail keeps focus on its button and doesn't remount links.
+- `collapsed` works controlled and uncontrolled, and has no effect without `collapsible`. A link with no icon warns under `collapsible`. Toggling the rail keeps focus on its button and doesn't remount links.
 - `Breadcrumbs` renders `nav` and `ol`, `current` is a `span` with `aria-current`, and the types reject `current` with `href`.
 - `Accordion` works controlled and uncontrolled, `multiple` applies, `headingLevel` sets the tag and not the size, and `keepMounted` keeps content.
 

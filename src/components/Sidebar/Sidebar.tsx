@@ -41,9 +41,9 @@ interface SidebarOwnProps {
   footer?: ReactNode;
   /** From `md` up, adds a button that shrinks it to a rail of icons. @default false */
   collapsible?: boolean;
-  /** Whether it's a rail, when controlled. No effect below `md`. */
+  /** Whether it's a rail, when controlled. No effect below `md`, or without `collapsible`. */
   collapsed?: boolean;
-  /** Whether it starts as a rail, when uncontrolled. @default false */
+  /** Whether it starts as a rail, when uncontrolled. Needs `collapsible`. @default false */
   defaultCollapsed?: boolean;
   /** Called with the new collapsed state. */
   onCollapsedChange?: (collapsed: boolean) => void;
