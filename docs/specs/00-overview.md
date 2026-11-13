@@ -214,7 +214,7 @@ Illustrative only; exact APIs are defined in later specs.
 
 ## v1 scope
 
-About 57 components, built in dependency order:
+About 58 components, built in dependency order:
 
 | Group | Components |
 |---|---|
@@ -229,7 +229,7 @@ About 57 components, built in dependency order:
 | Overlays | `Dialog`, `Popover`, `Tooltip`, `Menu`, `Toast` |
 | Data | `Table`, `DataTable`, `Pagination`, `Skeleton`, `EmptyState` |
 | Feedback | `Alert`, `Spinner`, `Progress` |
-| Display | `Avatar`, `Divider`, `Drawer` |
+| Display | `Avatar`, `Divider`, `Drawer`, `Image` (Spec 17, added 2026-11-13) |
 
 ## Release milestones
 
@@ -248,6 +248,7 @@ published release.
 | **v0.5** | 16: Feedback and display | Status feedback, avatars, and drawers |
 | **v0.6** | 14: Advanced inputs | Richer forms |
 | **v0.7** | 15: App navigation | App shells |
+| **v0.8** | 17: Image | Images that reserve their space, with loading and failure states, including through `next/image` |
 | **v1.0** | Stabilization: API review, docs, fixes from real use | Stability guarantee begins |
 
 **Versioning before 1.0:** following semver convention, minor releases in
@@ -275,6 +276,7 @@ published release.
 | 14 | Advanced inputs: `Combobox`, `MultiSelect`, `FileUpload` | Accepted |
 | 15 | App navigation: `Sidebar`, `Breadcrumbs`, `Accordion` | Accepted |
 | 16 | Feedback and display: `Alert`, `Spinner`, `Progress`, `Avatar`, `Divider`, `Drawer` | Accepted |
+| 17 | Image | Accepted |
 
 ## Quality gates (proposed)
 
