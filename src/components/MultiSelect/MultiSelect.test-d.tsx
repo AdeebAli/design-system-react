@@ -28,3 +28,23 @@ test('ref is the trigger button by default', () => {
   // @ts-expect-error not an input
   <MultiSelect options={options} ref={createRef<HTMLInputElement>()} />;
 });
+
+test('searchable takes search props, and ref is the input', () => {
+  <MultiSelect
+    searchable
+    options={options}
+    onSearch={() => undefined}
+    loading
+    selectedOptions={[]}
+    ref={createRef<HTMLInputElement>()}
+    onValueChange={(value) => {
+      expectTypeOf(value).toEqualTypeOf<string[]>();
+    }}
+  />;
+  // @ts-expect-error not a button
+  <MultiSelect
+    searchable
+    options={options}
+    ref={createRef<HTMLButtonElement>()}
+  />;
+});

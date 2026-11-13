@@ -35,7 +35,7 @@ export function MultiSelectButton({
   className,
   'aria-describedby': describedBy,
   ...props
-}: MultiSelectButtonProps) {
+}: Omit<MultiSelectButtonProps, 'searchable'>) {
   const field = useFieldControl('button');
   const invalid = invalidProp ?? field.invalid;
   const disabled = disabledProp ?? field.disabled;

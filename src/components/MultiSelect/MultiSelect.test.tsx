@@ -246,3 +246,216 @@ it('an explicit searchable={false} renders the button with no unknown-prop warni
   expect(error).not.toHaveBeenCalled();
   error.mockRestore();
 });
+
+describe('searchable', () => {
+  const input = () => screen.getByRole('combobox');
+
+  it('renders one chip per value, each with a named remove button', () => {
+    render(
+      <MultiSelect
+        searchable
+        aria-label="Topics"
+        options={topics}
+        defaultValue={['design', 'writing']}
+      />,
+    );
+    expect(input().tagName).toBe('INPUT');
+    expect(
+      screen.getByRole('button', { name: 'Remove Design' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Remove Writing' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Remove Research' }),
+    ).toBeNull();
+  });
+
+  it('labels.remove names the remove buttons', () => {
+    render(
+      <MultiSelect
+        searchable
+        aria-label="Sujets"
+        options={topics}
+        defaultValue={['design']}
+        labels={{ remove: 'Retirer {label}' }}
+      />,
+    );
+    expect(
+      screen.getByRole('button', { name: 'Retirer Design' }),
+    ).toBeInTheDocument();
+  });
+
+  it('chips and the input carry aria-description from labels.removeHint', () => {
+    render(
+      <MultiSelect
+        searchable
+        aria-label="Topics"
+        options={topics}
+        defaultValue={['design']}
+        labels={{ removeHint: 'Backspace removes' }}
+      />,
+    );
+    expect(input()).toHaveAttribute('aria-description', 'Backspace removes');
+    const chip = screen.getByText('Design');
+    expect(chip.closest('[aria-description]')).toHaveAttribute(
+      'aria-description',
+      'Backspace removes',
+    );
+    expect(chip.closest('[aria-description]')).not.toBe(input());
+  });
+
+  it('ref goes to the input; className, style, and layout props to the chip wrapper', () => {
+    const ref = createRef<HTMLInputElement>();
+    render(
+      <MultiSelect
+        searchable
+        ref={ref}
+        aria-label="Topics"
+        options={topics}
+        defaultValue={['design']}
+        className="custom"
+        style={{ maxWidth: 300 }}
+        marginTop="4"
+      />,
+    );
+    expect(ref.current).toBe(input());
+    const wrapper = input().closest('.custom')!;
+    expect(wrapper).toContainElement(screen.getByText('Design'));
+    expect(wrapper).toHaveStyle({ maxWidth: '300px' });
+    expect(wrapper.className.split(' ')).toContain(box({ marginTop: '4' }));
+    expect(input()).not.toHaveClass('custom');
+  });
+
+  it('name submits one entry per value', () => {
+    const { container } = render(
+      <form>
+        <MultiSelect
+          searchable
+          aria-label="Topics"
+          options={topics}
+          name="topics"
+          defaultValue={['design', 'writing']}
+        />
+      </form>,
+    );
+    const form = container.querySelector('form')!;
+    expect(new FormData(form).getAll('topics')).toEqual(['design', 'writing']);
+  });
+
+  it('onValueChange receives the whole list', async () => {
+    const onValueChange = vi.fn();
+    render(
+      <MultiSelect
+        searchable
+        aria-label="Topics"
+        options={topics}
+        defaultValue={['design']}
+        onValueChange={onValueChange}
+      />,
+    );
+    await userEvent.click(input());
+    await userEvent.click(
+      await screen.findByRole('option', { name: 'Writing' }),
+    );
+    expect(onValueChange.mock.calls).toEqual([[['design', 'writing']]]);
+  });
+
+  it('controlled: chips follow the prop', async () => {
+    const onValueChange = vi.fn();
+    render(
+      <MultiSelect
+        searchable
+        aria-label="Topics"
+        options={topics}
+        value={['design']}
+        onValueChange={onValueChange}
+      />,
+    );
+    await userEvent.click(
+      screen.getByRole('button', { name: 'Remove Design' }),
+    );
+    expect(onValueChange).toHaveBeenCalledWith([]);
+    expect(
+      screen.getByRole('button', { name: 'Remove Design' }),
+    ).toBeInTheDocument();
+  });
+
+  it('selectedOptions labels a starting value that is not in options', () => {
+    render(
+      <MultiSelect
+        searchable
+        aria-label="People"
+        options={[]}
+        onSearch={() => undefined}
+        defaultValue={['u7']}
+        selectedOptions={[{ value: 'u7', label: 'Ada Lovelace' }]}
+      />,
+    );
+    expect(
+      screen.getByRole('button', { name: 'Remove Ada Lovelace' }),
+    ).toBeInTheDocument();
+  });
+
+  it('Field invalid, disabled, and required reach the input and wrapper', () => {
+    render(
+      <Field label="Topics" error="Pick one" disabled required>
+        <MultiSelect searchable options={topics} />
+      </Field>,
+    );
+    expect(input()).toHaveAttribute('aria-invalid', 'true');
+    expect(input()).toHaveAttribute('aria-required', 'true');
+    expect(input()).toBeDisabled();
+    expect(screen.getByRole('combobox', { name: 'Topics' })).toBe(input());
+  });
+
+  it('invalid and disabled props work outside a Field', () => {
+    render(
+      <MultiSelect
+        searchable
+        aria-label="Topics"
+        options={topics}
+        invalid
+        disabled
+        className="wrap"
+      />,
+    );
+    expect(input()).toHaveAttribute('aria-invalid', 'true');
+    expect(input()).toBeDisabled();
+    const wrapper = input().closest('.wrap')!;
+    expect(wrapper).toHaveAttribute('data-invalid');
+    expect(wrapper).toHaveAttribute('data-disabled');
+  });
+
+  it('sets data-popup-open on the wrapper while open', async () => {
+    render(
+      <MultiSelect
+        searchable
+        aria-label="Topics"
+        options={topics}
+        className="wrap"
+      />,
+    );
+    const wrapper = input().closest('.wrap')!;
+    expect(wrapper).not.toHaveAttribute('data-popup-open');
+    await userEvent.click(input());
+    await waitFor(() => expect(wrapper).toHaveAttribute('data-popup-open'));
+  });
+
+  it('shows the placeholder only while nothing is selected', async () => {
+    render(
+      <MultiSelect
+        searchable
+        aria-label="Topics"
+        options={topics}
+        placeholder="Add topics"
+      />,
+    );
+    expect(input()).toHaveAttribute('placeholder', 'Add topics');
+    await userEvent.click(input());
+    await userEvent.click(
+      await screen.findByRole('option', { name: 'Design' }),
+    );
+    await waitFor(() => expect(input()).not.toHaveAttribute('placeholder'));
+  });
+});

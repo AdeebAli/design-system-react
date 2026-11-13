@@ -7,21 +7,18 @@ import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
 import { box } from '../Box';
 import { useFieldControl } from '../Field/FieldContext';
-import { CheckIcon } from '../Icon/internal/Check';
 import { ChevronDownIcon } from '../Icon/internal/ChevronDown';
 import { XIcon } from '../Icon/internal/X';
 import * as inputStyles from '../Input/Input.css';
 import { OverlayDirection } from '../overlays/direction';
 import type { Option, OptionGroup } from '../Select/options';
-import * as selectStyles from '../Select/Select.css';
 import type { SelectSize } from '../Select/Select';
 import * as styles from './Combobox.css';
-import { SearchStatus } from './SearchStatus';
+import { SearchPopup } from './SearchPopup';
 import {
   defaultComboboxLabels,
   useOptionSearch,
   type ComboboxLabels,
-  type ItemGroup,
   type SearchProps,
 } from './useOptionSearch';
 
@@ -157,50 +154,7 @@ export function Combobox({
             </span>
           </BaseCombobox.Trigger>
         </BaseCombobox.InputGroup>
-        <BaseCombobox.Portal>
-          <BaseCombobox.Positioner
-            className={selectStyles.positioner}
-            sideOffset={4}
-          >
-            <BaseCombobox.Popup className={selectStyles.popup}>
-              <SearchStatus loading={loading} labels={labels} />
-              <BaseCombobox.List>
-                {(group: ItemGroup, index: number) => (
-                  <BaseCombobox.Group
-                    key={group.label ?? `group-${index}`}
-                    items={group.items}
-                    className={selectStyles.group}
-                  >
-                    {group.label != null && (
-                      <BaseCombobox.GroupLabel
-                        className={selectStyles.groupLabel}
-                      >
-                        {group.label}
-                      </BaseCombobox.GroupLabel>
-                    )}
-                    <BaseCombobox.Collection>
-                      {(option: Option) => (
-                        <BaseCombobox.Item
-                          key={option.value}
-                          value={option.value}
-                          disabled={option.disabled}
-                          className={selectStyles.item}
-                        >
-                          {option.label}
-                          <BaseCombobox.ItemIndicator
-                            className={selectStyles.indicator}
-                          >
-                            <CheckIcon aria-hidden="true" />
-                          </BaseCombobox.ItemIndicator>
-                        </BaseCombobox.Item>
-                      )}
-                    </BaseCombobox.Collection>
-                  </BaseCombobox.Group>
-                )}
-              </BaseCombobox.List>
-            </BaseCombobox.Popup>
-          </BaseCombobox.Positioner>
-        </BaseCombobox.Portal>
+        <SearchPopup loading={loading} labels={labels} />
       </BaseCombobox.Root>
     </OverlayDirection>
   );
