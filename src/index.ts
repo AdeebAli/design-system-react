@@ -28,6 +28,7 @@ export * from './components/RadioGroup';
 export * from './components/Radio';
 export * from './components/Switch';
 export * from './components/Select';
+export * from './components/Combobox';
 export * from './components/ToggleChip';
 export * from './components/ToggleChipGroup';
 export * from './components/ColorModeToggle';
