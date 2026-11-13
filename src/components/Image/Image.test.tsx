@@ -210,6 +210,13 @@ describe('loading and failure', () => {
     });
   });
 
+  it('an empty src fails, where img has no decode()', () => {
+    // jsdom: complete is true with no src, and there's no decode().
+    expect(HTMLImageElement.prototype).not.toHaveProperty('decode');
+    render(<Image src="" alt="x" ratio="1/1" />);
+    expect(frame()).toHaveAttribute('data-error');
+  });
+
   it("the project's onLoad runs, after Image's", () => {
     const seen: (string | null)[] = [];
     render(

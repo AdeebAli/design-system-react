@@ -130,7 +130,12 @@ export function Image<E extends ElementType = 'img'>({
       return;
     }
     // Some browsers report 0 for an SVG with no intrinsic size, so a 0 is a
-    // failure only if the image can't be decoded.
+    // failure only if the image can't be decoded. Without decode(), as in
+    // jsdom, it's a failure.
+    if (typeof element.decode !== 'function') {
+      setSettled({ src, status: 'error' });
+      return;
+    }
     let current = true;
     element.decode().then(
       () => current && setSettled({ src, status: 'loaded' }),
