@@ -97,7 +97,17 @@ export const contractShape = {
     drawer: { sm: n, md: n, lg: n },
     avatar: { sm: n, md: n, lg: n, xl: n },
   },
-  radius: { none: n, sm: n, md: n, lg: n, xl: n, full: n, card: n, control: n },
+  radius: {
+    none: n,
+    sm: n,
+    md: n,
+    lg: n,
+    xl: n,
+    full: n,
+    card: n,
+    control: n,
+    image: n,
+  },
   borderWidth: { thin: n, thick: n },
   shadow: {
     none: n,

@@ -40,6 +40,7 @@ export const softShared: Omit<ThemeTokens, 'color' | 'shadow'> = {
     full: '9999px',
     card: 'var(--ds-radius-xl)',
     control: 'var(--ds-radius-md)',
+    image: 'var(--ds-radius-md)',
   },
   borderWidth: { thin: '1px', thick: '2px' },
   motion: {

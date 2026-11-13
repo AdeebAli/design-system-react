@@ -97,7 +97,7 @@ export interface ThemeTokens {
     avatar: Record<'sm' | 'md' | 'lg' | 'xl', string>;
   };
   radius: Record<
-    'none' | 'sm' | 'md' | 'lg' | 'xl' | 'full' | 'card' | 'control',
+    'none' | 'sm' | 'md' | 'lg' | 'xl' | 'full' | 'card' | 'control' | 'image',
     string
   >;
   borderWidth: Record<'thin' | 'thick', string>;

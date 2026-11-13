@@ -212,7 +212,7 @@ rule('pre', {
 
 rule('img, video, iframe', { maxWidth: '100%' });
 rule('img, video', { height: 'auto' });
-rule('img', { borderRadius: radius.md });
+rule('img', { borderRadius: radius.image });
 
 rule('figure', { marginInline: 0 });
 rule('figcaption', {
