@@ -1,6 +1,6 @@
 # Handoff: design-system-react
 
-- **Date:** 2026-11-13 (updated after the v0.7 build; PR #33 open)
+- **Date:** 2026-11-13 (updated after releasing v0.7.0, with the v0.5–v0.7 retro's changes)
 
 ## Goal
 
@@ -8,12 +8,14 @@ Build `@adeebali/design-system-react`, a general-purpose React design system. Sp
 
 ## Status
 
-- **Released:** v0.1 (Specs 01–07), v0.2 (Specs 08–09), v0.3 (Specs 10–11), v0.4 (Specs 12–13), v0.4.1, v0.5.0 (Spec 16), and v0.6.0 (Spec 14). Storybook is at https://adeebali.github.io/design-system-react/.
-- **v0.7 built (Spec 15):** `Sidebar`, `Breadcrumbs`, and `Accordion`, on branch `feat/v0.7-app-navigation`, PR #33 (https://github.com/AdeebAli/design-system-react/pull/33). This completes Spec 00's v1 scope.
-  - The PR is a draft until this note's commit, then marked ready.
-  - Visual baselines are committed (`b3bc941`).
-  - CI on the baseline commit needs the owner's **Approve workflows to run**.
-- **Next:** the owner's manual checks, approving CI, merging, `npm run release -- minor`, then v1.0 stabilization (Spec 00), which has no plan yet.
+- **Released:** v0.1 (Specs 01–07), v0.2 (Specs 08–09), v0.3 (Specs 10–11), v0.4 (Specs 12–13), v0.4.1, v0.5.0 (Spec 16), v0.6.0 (Spec 14), and **v0.7.0 (Spec 15), released 2026-11-13**. Storybook is at https://adeebali.github.io/design-system-react/.
+  - v0.7.0 adds `Sidebar`, `Breadcrumbs`, and `Accordion`, and completes Spec 00's v1 scope.
+  - The owner merged PR #33 as `e0be851`. `npm run release -- minor` made `60404cb` and tag `v0.7.0`.
+  - Release: https://github.com/AdeebAli/design-system-react/releases/tag/v0.7.0, with PR #33's notes applied by hand.
+- **Retro (v0.5–v0.7), 2026-11-13:** logged in `~/.claude/retros/2026-11-13-v0-5-to-v0-7-departures-shared-state-fixtures.md`.
+  - The owner accepted P1, P2, P4, P5, and P6, and declined P3 (a global rule 6 sub-bullet).
+  - P1, P2, P4, and P5 ship in this note's PR (thread 13). P6 is a step in the v1.0 plan (next step 3).
+- **Next:** merge this note's PR, then plan v1.0 stabilization (Spec 00).
 
 ## Decisions
 
@@ -52,9 +54,37 @@ Architecture decisions are in `docs/adr/`.
 - **Dead code removed:** a "collapse button hidden below `md`" rule. The whole side nav is hidden below `md`.
 - **Owner approval:** push, the PR, and this handoff waited for the owner's approval (CLAUDE.md). The owner approved the push and PR on 2026-11-13.
 
+## Dependencies
+
+Checked 2026-11-13 against `npm view`. The README's "Dependencies" table is the consumer view; this is the maintainer view.
+
+| Package | Range | Installed | Latest | Note |
+| --- | --- | --- | --- | --- |
+| `@base-ui/react` | `^1.9.0` | 1.9.0 | 1.9.0 | Runtime. Plans pin its API names; a newer version goes to the owner before upgrading. |
+| `@vanilla-extract/recipes` | `^0.5.7` | 0.5.7 | 0.5.7 | Runtime: `createRuntimeFn`. |
+| `@vanilla-extract/sprinkles` | `^1.7.1` | 1.7.1 | 1.7.1 | Runtime: `createRuntimeSprinkles`. |
+| `react`, `react-dom` | peer `^19` | 19.3.1 | 19.3.1 | Dev install. |
+| `typescript` | dev | 6.0.3 | 7.0.2 | A new major is out; not evaluated. |
+| `vite` | dev | 8.3.6 | 8.3.8 | Patch behind. |
+| `storybook` | dev | 10.6.6 | 10.6.7 | Patch behind. |
+| `typescript-eslint` | dev | 8.72.1 | 8.72.2 | Both in the `npm audit` range (thread 3). |
+| `vitest`, `@playwright/test` | dev | 5.1.0, 1.65.0 | same | CI's image is `mcr.microsoft.com/playwright:v1.65.0-noble`; it moves with `@playwright/test`. |
+| Node | `.nvmrc` 26, `engines` `>=22` | 26.13.0 | | Thread 5. |
+
+- **Trigger:** each plan's setup reruns `npm view` for these packages and updates this table. The v1.0 plan decides on TypeScript 7 and the patch updates.
+- **Release ranges:** a runtime dependency's range changes only in a release, with a line in its notes.
+
 ## Changes
 
-**Branch `feat/v0.7-app-navigation`** (from `main` at `5185b8c`), PR #33:
+**This note's PR** (branch `docs/handoff-v0.7.0-and-retro`, from `main` at `60404cb`): the retro's P1, P2, P4, and P5 (thread 13), the README "Dependencies" table, and this note.
+
+**The v0.7.0 release:**
+- The owner merged PR #33 as `e0be851`, and CI on it passed, `visual` included.
+- `npm run release -- minor` on a clean, up-to-date `main`: all checks passed, then `60404cb` (version 0.7.0), tag `v0.7.0`, push, and the GitHub release.
+- The release notes are PR #33's draft plus the Full Changelog link, applied with `gh release edit v0.7.0`. Read back with `gh release view`, `diff -B` was clean.
+- CI, Publish, and Storybook on `60404cb` all succeeded.
+
+**Branch `feat/v0.7-app-navigation`** (from `main` at `5185b8c`), PR #33 (for reference):
 - `8e12043` `Breadcrumbs` (plus two `verify-dist` server modules).
 - `594055f` `Accordion` (plus `vite.config.ts` `optimizeDeps`).
 - `9f537d3` `Sidebar` from `md` up.
@@ -95,15 +125,14 @@ Architecture decisions are in `docs/adr/`.
 
 **Not verified:**
 
-- **CI on `b3bc941` (the baselines).** It needs **Approve workflows to run**. Trigger: next step 1.
-- **The PR #33 manual checks:** a screen reader pass on all three, forced colors on all three, and swiping the `Sidebar` drawer closed on a real phone. Trigger: next step 2, as unchecked boxes in PR #33.
+- **The PR #33 manual checks:** a screen reader pass on all three, forced colors on all three, and swiping the `Sidebar` drawer closed on a real phone. PR #33 was merged, but whether they were done hasn't been reported. Trigger: next step 2.
 - **Base UI behaviors the wrappers don't own** can't be broken in wrapper code, so they rest on Base UI and its tests:
   - Carried forward: `Escape`, `Backspace` on chips, and `data-popup-open`/`data-selected` on options.
   - Added in v0.7: Accordion's `beforematch` opening, the tooltip closing on unhover and opening on focus, and `Drawer`'s focus trap, scroll lock, and focus restore.
   - Trigger: none; any Base UI upgrade reruns the suite.
 - **The Next fixture's no-console-errors check** wasn't broken separately; that would need a hydration mismatch in the tarball. Trigger: none, as in v0.6.
 - **"A failed image shows initials after hydration" (Spec 16)** is tested with a client render. Trigger: none; the owner can ask for a fixture test. Carried forward.
-- **Installing 0.5.x or 0.6.x from GitHub Packages.** Only the publish job's success was seen. Trigger: none; the v0.1 install proved the pipeline. Carried forward.
+- **Installing 0.5.x, 0.6.x, or 0.7.0 from GitHub Packages.** Only the publish job's success was seen. Trigger: none; the v0.1 install proved the pipeline. Carried forward.
 
 ## Open threads
 
@@ -112,7 +141,6 @@ Architecture decisions are in `docs/adr/`.
 5. **`engines.node` is `>=22`.** Trigger: the release script refuses to release after April 30, 2027, until the floor and CI's Node matrix are raised. (Carried forward.)
 6. **Deferred minor findings.** Trigger: none; pick from this list when convenient, or in v1.0 stabilization.
    - **v0.7:**
-     - **Proposal (rule 3):** `warnOnce`'s module-level `seen` set makes warning tests order-dependent. A test earlier in a file that triggers the same key fails the warning test for the wrong reason. The one-line fix: export a test-only reset from `src/utils/warn.ts`, and call it in `afterEach` in the test setup. This affects every component's warning tests.
      - **Resize-close focus target** (`src/components/Sidebar/Sidebar.tsx`, the `close` handler in the media-query effect):
        - It finds nothing when the side nav has no focusable element, so focus falls to body.
        - Its selector doesn't skip hidden elements or `tabindex="-1"` elements.
@@ -121,9 +149,30 @@ Architecture decisions are in `docs/adr/`.
    - **v0.6, v0.5, and v0.4:** unchanged; see `git show 5185b8c:docs/HANDOFF.md` thread 6 for the full lists.
 7. **One intermittent browser test, not diagnosed:** `Table.browser.test.tsx` "scrollable scrolls by keyboard". It failed only on macOS under full-suite load. It passed in both `npm run check` runs this session. Trigger: CI on every PR and each release's `npm run check`. If it fails, find the cause in the CI image before rerunning. (Carried forward.)
 11. **A two-row header still gets the sticky-header `scroll-padding-block-start`** (`src/components/Table/Table.css.ts:44`), so a focused cell stops about one header row below the top. Nothing is hidden. Trigger: none; pick it up when convenient. (Carried forward.)
+13. **The retro's changes ship in this note's PR,** a separate PR, as the owner chose on 2026-11-13. Trigger: next step 1, merging it. The four changes:
+    - **P1:** `resetWarnings()` in `src/utils/warn.ts`, called `afterEach` in `vitest.setup.ts` and `vitest.browser.setup.ts`.
+      - Its test in `warn.test.ts` was seen failing first.
+      - Two pairs of tests prove the hooks: `warn.test.ts` for unit and `warn.browser.test.tsx` for browser. The second test of each pair checks that its project's hook ran after the first.
+      - With its project's hook removed, each pair failed only at `warn.test.ts:41` and `warn.browser.test.tsx:17`. A fresh review asked for these tests.
+      - **Resolved:** thread 6's order-dependent `warnOnce` tests, the v0.4, v0.6, and v0.7 workarounds.
+    - **P4:** `vite.config.ts` derives Base UI's `optimizeDeps` from the source (`baseUiEntryPoints.ts`).
+      - The guard (`src/baseUiDeps.test.ts`) was rewritten. Each of its assertions was break-checked: the helper skipping a folder, a hand-written entry, and the spread removed.
+      - Vite's resolved config lists all 23 entries.
+      - **Not verified:** the mid-run reload it prevents couldn't be reproduced on demand, with either a cold or a warm cache missing `accordion`. Trigger: none; the guard keeps the list complete either way.
+    - **P2 and P5:** two project `CLAUDE.md` "Planning workflow" bullets: the ruling ledger format, and break-checks for fixture assertions.
+    - **Full check:** `npm run check` exit 0 on this branch before the hook tests and the README range fix: unit 1065, stories and browser 1169, `verify-dist: ok`, fixtures 74 passed and 32 skipped.
+    - **Review:** a fresh read-only Sonnet review of the working tree over `60404cb` found no Critical issues. It found one Important gap, the hooks with no test, now covered. Its Minors:
+      - The README's `lucide-react` range said "any", which was unverified; fixed.
+      - The `CLAUDE.md` fixture bullet is hard to parse. It's the owner's approved wording, so it's left for the owner.
+      - The rest needed no change: `resetWarnings` is not in the public API, and the helper matches only `from '…'` imports, which the guard's broader regex backs up.
+    - **The review covers everything in this PR except** the two hook test pairs (written in response to it) and the README range fix.
 12. **Uppercase group labels in accessible names.** Chrome exposes CSS-uppercased `SidebarGroup` labels in list names ("WORKSPACE"), as it does for Spec 13's table headers. Some screen readers spell short all-caps words letter by letter. Trigger: the PR #33 screen reader check; if it's a problem, a spec change for both components.
 
 **Resolved this session:**
+- **After v0.7's merge:**
+  - CI on the baselines: CI on `e0be851` passed, `visual` included.
+  - Merging and releasing v0.7.0: `60404cb`, with the notes applied and read back.
+  - The retro stash: popped onto this note's branch, with nothing lost (`git stash list` is empty).
 - **Old "not verified" items:**
   - The PR #31 manual checks: the owner reported all done on 2026-11-12.
   - Drag events to a disabled file input: covered by the owner's touch and drop checks in PR #31.
@@ -137,11 +186,14 @@ Architecture decisions are in `docs/adr/`.
 
 ## Next steps
 
-1. Owner: in PR #33's merge box, select **Approve workflows to run** for `b3bc941` and this note's commit, so `visual` runs against the new baselines. Don't close and reopen the PR.
-2. Owner: do the PR #33 manual checks, including the uppercase group labels (thread 12).
-3. Merge PR #33 once CI passes, then on a clean, up-to-date `main` run `npm run release -- minor`. Apply PR #33's "Release notes draft" with `gh release edit v0.7.0`, and read it back with `gh release view`.
-4. Start v1.0 stabilization (Spec 00: API review, docs, fixes from real use). Write its plan first, collecting thread 6's deferred minors and the `warnOnce` proposal, and rerun `npm audit` and `npm view @base-ui/react version` while planning.
+1. Merge this note's PR once CI passes (thread 13). Optionally, reword the `CLAUDE.md` fixture bullet.
+2. Owner: confirm which PR #33 manual checks were done, including the uppercase group labels (thread 12). Anything not done goes into the v1.0 plan as a step.
+3. Start v1.0 stabilization (Spec 00: API review, docs, fixes from real use). Write its plan first, and while planning, rerun `npm audit` and `npm view @base-ui/react version`. The plan:
+   - collects thread 6's deferred minors;
+   - includes a step that type-checks every `tsx` example in `docs/specs/*.md` and the README (retro P6; Spec 15's `flex="1"` was one such error);
+   - follows the new `CLAUDE.md` ruling and fixture break-check formats;
+   - updates the Dependencies table above, and decides on TypeScript 7.
 
 ## Resume prompt
 
-> Read `docs/HANDOFF.md`. v0.7 (Sidebar, Breadcrumbs, Accordion) is in PR #33 with baselines committed. Ask me whether CI passed after I approved the workflows, which PR #33 manual checks I did, and whether PR #33 is merged; then release v0.7.0 with `npm run release -- minor` and the PR's release notes, and plan v1.0 stabilization from Spec 00, folding in thread 6 and the `warnOnce` proposal.
+> Read `docs/HANDOFF.md`. v0.7.0 is released. Ask me whether the handoff and retro PR is merged, and which PR #33 manual checks I did. Then plan v1.0 stabilization from Spec 00, folding in thread 6, the spec-example type-check step (retro P6), the Dependencies table, and any manual checks not done.
