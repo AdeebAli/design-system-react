@@ -1,6 +1,6 @@
 # Handoff: design-system-react
 
-- **Date:** 2026-11-11
+- **Date:** 2026-11-12
 
 ## Goal
 
@@ -8,14 +8,10 @@ Build `@adeebali/design-system-react`, a general-purpose React design system. Sp
 
 ## Status
 
-- **Done:** v0.1 (specs 01–07), v0.2 (Specs 08–09), v0.3 (Specs 10–11), v0.4 (Spec 12 Overlays, Spec 13 Data), and v0.4.1 (open threads 1, 2, 3, 8, 9), each merged and released, with Storybook at https://adeebali.github.io/design-system-react/.
-- **v0.4.1 released:** PR #26 squash merged as `337db60`; `npm run release -- patch` made `a67ef89` and tag `v0.4.1`; release https://github.com/AdeebAli/design-system-react/releases/tag/v0.4.1.
-- **Planned, not started,** each its own branch, PR, and release, in this order, each started only after the previous one is released:
-  1. `docs/superpowers/plans/2026-11-11-v0-5-feedback-and-display.md` (v0.5, minor; 9 tasks): Spec 16, plus every new theme token for v0.5–v0.7.
-  2. `docs/superpowers/plans/2026-11-11-v0-6-advanced-inputs.md` (v0.6, minor; 6 tasks): Spec 14.
-  3. `docs/superpowers/plans/2026-11-11-v0-7-app-navigation.md` (v0.7, minor; 5 tasks): Spec 15.
-  - v0.5–v0.7 are recommended subagent-driven, but the owner hasn't chosen yet (thread 10).
-- **Next:** the owner chooses v0.5's execution method (thread 10), then the v0.5 build.
+- **Done and released:** v0.1 (specs 01–07), v0.2 (Specs 08–09), v0.3 (Specs 10–11), v0.4 (Specs 12–13), and v0.4.1 (tag `v0.4.1`, `a67ef89`). Storybook is at https://adeebali.github.io/design-system-react/.
+- **v0.5 built, not merged:** all 9 tasks of `docs/superpowers/plans/2026-11-11-v0-5-feedback-and-display.md` (Spec 16: `Alert`, `Spinner`, `Progress`, `Avatar`, `Divider`, `Drawer`) are committed on `feat/v0.5-feedback-and-display`, opened as a draft PR. `npm ci && npm run check` passes.
+- **Waiting on:** the final Opus whole-branch review, the visual baselines run, the owner's manual checks, then merge and `npm run release -- minor`.
+- **Planned, not started,** each after the previous release: v0.6 (`docs/superpowers/plans/2026-11-11-v0-6-advanced-inputs.md`, Spec 14) and v0.7 (`docs/superpowers/plans/2026-11-11-v0-7-app-navigation.md`, Spec 15).
 
 ## Decisions
 
@@ -66,6 +62,23 @@ Architecture decisions are in `docs/adr/`. Every v0.4 build ruling is listed und
   - `@base-ui/react` 1.9.0 is still the latest, and it has every part and prop Specs 14–16 name (including `Combobox` `filteredItems`/`createItems`, `Drawer` `swipeDirection`/`VirtualKeyboardProvider`, `Avatar.Image` `keepMounted`, `Accordion` `hiddenUntilFound`).
   - `@tanstack/react-table` latest is 9.3.1.
   - `npm audit`: still 11 moderate, all dev-only.
+
+### v0.5 decisions and rulings (2026-11-12)
+
+The ledger, with every break-check line, is `.superpowers/sdd/2026-11-12-v0-5-feedback-and-display/progress.md` (local, gitignored).
+
+- **Execution was hybrid** (owner): Tasks 1–6 and 9 inline; Tasks 7–8 (Drawer) by a fresh Sonnet implementer each, each followed by a fresh read-only Sonnet reviewer; a final Opus whole-branch review before merge. Task 8's implementer ran about 10 hours, mostly break-checks; nobody checked on it while it ran. Next time, look in on a long agent.
+- **Release notes stay manual** (owner: "manual was fine"). PR #28 (`--notes-file` for the release script) was closed unmerged. After each release, apply the PR body's draft with `gh release edit`.
+- **Box's `background` and `color` don't take the avatar pairs** (owner; Spec 04 amended). Rejected: exposing them on every Box.
+- **Avatar status shapes** (owner, asked when found; Spec 16 amended): Spec 16 gave `away` and `offline` the same ring, against its own "own shape" rule. `away` is a ring with its lower half filled; `offline` is a hollow ring. Rejected: a crescent for `away`.
+- **The new theme tokens are only `color.{bg,fg}.avatar.{1-6}`.** The size tokens the plan listed already shipped in v0.1; the plan was corrected.
+- **A labeled `Divider` is plain text, not a separator** (owner, 2026-11-12; Spec 16 amended). The owner's VoiceOver check heard only "horizontal splitter" between the buttons in `Divider › WithLabel`, never "or": a separator's contents are treated as decoration. Rejected: naming the separator with `aria-labelledby` (needs `useId`, which may not work in a server component), and documenting the label as visual only. A browser test reads Chrome's accessibility tree for the test frame and checks "or" is there as text with no separator.
+- **A tall bottom sheet shrinks by the keyboard's height** (`maxBlockSize: calc(85dvh - var(--drawer-keyboard-inset, 0rem) + bleed)`), found by Task 8's review: lifted by a 300px keyboard, its top was at −180px. The fallback needs a unit, since a unitless `0` makes the `calc()` invalid.
+- **Rulings where the spec is silent** (cost if wrong):
+  - `Avatar`: initials uppercased with `toUpperCase`, not the host's locale, so server and client agree (the final review found a Turkish-locale hydration mismatch); dot sizes 6/8/12/16px with rings a quarter of the dot; busy bar in `fg.onStatus`; forced colors draws dots in `CanvasText`. `initials` and the color hash are internal. Cost: a token or constant each.
+  - `Drawer`: bleed `space.12` and exit offset width plus `space.8` (a theme with a larger shadow shows a sliver while closing); a `drawer-no-close` warning, as Dialog has; direction is read when the drawer opens, not tracked while open; `toSwipeDirection` isn't exported.
+  - Bottom sheet: below `md` (48rem) it fills the width, so between 44rem (`size.dialog.lg`) and 48rem it's wider than 44rem. That's Spec 16 read literally; dropping one media query changes it. The handle is `space.10` by `space.1` in `border.control`. `--drawer-keyboard-inset` is applied as `inset-block-end` (Base UI supplies no styles).
+  - The Next.js fixture test doesn't press Escape: a server page can't break that step alone, so it couldn't be seen failing. Escape is covered in `Drawer.browser.test.tsx`.
 
 ### v0.4.1 decisions and rulings
 
@@ -125,61 +138,44 @@ Calls made during the build where the spec was silent, each with what it costs i
 
 ## Changes
 
-**This session (2026-11-11), the v0.4.1 release:**
-- PR #26 squash merged by the owner as `337db60`.
-- `npm run release -- patch` on a clean, up-to-date `main`: all checks passed, then `a67ef89` (version 0.4.1 in `package.json` and `package-lock.json`), tag `v0.4.1`, push (the owner's ruleset bypass), and the GitHub release.
-- Release notes: the script's `--generate-notes` produced only the PR list, though the old next step 1 said to use the draft in PR #26's body. With the owner's approval they were replaced by that draft (Fixes, Docs, Changes) plus the Full Changelog link, through `gh release edit v0.4.1`.
-- This note, on branch `docs/handoff-v0.4.1`.
+**v0.5, branch `feat/v0.5-feedback-and-display`** (11 commits on `main` at `f902386`):
+- `0f0d1c2` avatar color tokens (themes, contrast, Box types, Colors docs, Specs 02 and 04); `b1a6dbb` `Spinner`, used by `Button`; `0a12eb1` `Alert` (server component, client `AlertDismiss`); `7b28ae4` `Divider`; `9d47a9f` `Progress`, plus `src/baseUiDeps.test.ts` (every Base UI entry in `vite.config.ts` `optimizeDeps`); `e1d4287` `Avatar` (Spec 16 amended); `633b159` `Drawer`; `51e50f6` the bottom sheet; `7fde5db` its keyboard fix and test renames from the Task 8 review; `da3de1e` the `Overview/Feedback` page, the Next.js `/feedback` page, Vite fixture additions, `tests/fixtures/feedback.spec.ts`, and `docs/components.md`; `329e66d` a lint fix.
+- `scripts/verify-dist.mjs` checks `Spinner`, `Alert`, and `Divider` have no `"use client"`, and `AlertDismiss` has it.
+- This note, in the same PR.
 
-**The v0.4.1 build, branch `fix/v0.4.1-open-threads`, PR #26 (for reference):**
-- `9874dac`: the four plans, the previous note, Spec 00's milestone table, and Specs 14–15's `Milestone` lines.
-- `88e94d1`: `Tabs`, `RadioGroup`, `ToggleChipGroup` follow the root `dir`; new RTL tests (including new `RadioGroup` and `ToggleChipGroup` browser test files) and a `Select` centering test.
-- `572367e`: `Table.css.ts` sticks only a one-row header; new tests and the `StickyTwoRowHeader` story; Spec 13 and the Table docs (one-row header, two `rowSpan` limits).
-- `59e6ea6`: `TanStackRecipe.example.tsx`, the `TanStackRecipe` story, `@tanstack/react-table@9.3.1` devDependency, and `eslint.config.js` allowing devDependencies in `*.example.*`.
-- `42c151f`: lockfile regenerated under `.nvmrc`'s Node (ruling 7).
-- `f9f79c2`: the recipe story's ascending-order check (ruling 8).
-- `72722d1`: visual baselines from the `update-visual-baselines` workflow (run 43160231650): the `TanStackRecipe` screenshots changed and `StickyTwoRowHeader` screenshots were added, 8 files, all reviewed. The first baselines run (43159502446) was rejected on push because `f9f79c2` had moved the branch, so it was dispatched again on the branch.
-- The handoff (`docs/HANDOFF.md`), in the acceptance commit `3c38bc2`, updated in `9d053c9` and `ba6f37d`.
-- `803580d`: `CLAUDE.md` prefixes Node commands with `nvm use` and asks for break-check ledger lines.
-- `b8ac114`: `tsconfig.build.json` excludes `*.example.tsx`; the redundant `vite/client` reference is removed (owner's request after the review).
-- `ce5a5f1`: the touch-emulation tests (`Input.touch.browser.test.tsx`, `Tooltip.touch.browser.test.tsx`) run in a new `browser-touch` Vitest project, which `test:stories` includes; `vitest.desktop-pointer.setup.ts` guards the `browser` project (owner's request to diagnose thread 7).
-- Public API unchanged: `git diff v0.4.0 -- src/index.ts` is empty.
-
-**v0.4.0 release (for reference):** PR #24 squash merged as `e6b254b`; `npm run release -- minor` made `9bd299b` and tag `v0.4.0`, with hand-edited release notes.
+The v0.4.1 release and build details are in `git show f902386:docs/HANDOFF.md`.
 
 ## Verification
 
-**The v0.4.1 release:**
-- `npm run release -- patch` on `337db60`: its `npm run check` passed (the script stops on any failure), ending with fixtures 64 passed and 22 skipped; then it pushed and created the release.
-- CI on PR #26's head `803580d` (run 43173957869): all six jobs passed, including `stories` and `visual`. CI on `main` at `337db60` (run 43174978579): passed.
-- `Publish release` (run 43176128833) and `Storybook release` (run 43176128836) on `a67ef89`: both succeeded.
-- The owner reports both manual checks from PR #26 passed: the RTL keyboard spot check with VoiceOver, and VoiceOver and NVDA on `Table` › `StickyWithSpans` (thread 9c).
-- The edited release notes, read back with `gh release view v0.4.1`, match the draft except for one trailing newline.
-- The review covered all code up to `ce5a5f1`. After it: `ba6f37d` (handoff), `803580d` (`CLAUDE.md`), and `a67ef89` (version bump); none changes `src` or tests.
-
-**The v0.4.1 build (for reference):**
-
-- `npm ci && npm run check` on `42c151f`, under `.nvmrc`'s Node: exit 0. Unit 756/756, stories and browser 769/769 (axe in both modes), build and `verify-dist`, fixtures 64 passed and 22 skipped (tests scoped to one fixture app, as for v0.4.0). The only warnings were tooling deprecations (`eslint@9.39.5`, Node `module.register()`) and npm's install-scripts notice for `esbuild` and `fsevents`, none from this branch.
-- After `f9f79c2`: typecheck, lint, format, and `test:stories` 769/769 again.
-- CI on `3c38bc2` (run 43161220975): all six jobs passed, including `visual` with the new baselines.
-- After `b8ac114`: typecheck, lint, format, the DataTable stories 20/20, and `npm run build` (`verify-dist: ok`, no TanStack in `dist`).
-- Touch-test fix, in the CI image (Node 26, arm64; CI is x64): with only the guard added, the `browser` project failed 44 tests, every one with the guard's message. After the move, `browser` + `browser-touch` passed 4 of 4 runs (333/333) and `test:stories` passed 2 of 2 (769/769). Locally, `browser` + `browser-touch` passed 333/333.
-- CI on `f9f79c2` (run 43160072395): `static`, `unit`, `stories`, `package (node nvmrc)`, and `package (node 22)` passed. `visual` failed only on the eight screenshots that `72722d1` then committed.
-- Every new test was seen failing first, or was broken on purpose and seen failing: the RTL tests before the wrap; the two-row header test before the selector change; the corner tests with the corner selector broken; the `Select` centering test with `align="start"`; the recipe's sort checks with `sortedRowModel` removed; typecheck with `useReactTable`.
-- **Independent review:** a fresh Opus reviewer on `5eda67e..42c151f` found it ready to merge (0 Critical, 0 Important, 4 Minor), and the same reviewer reviewed `f9f79c2` (OK). The same reviewer also reviewed `b8ac114` (OK), so the review covered all code up to `b8ac114`. It then reviewed the touch-test fix as `54df8ed` (no Critical or Important issues). `ce5a5f1`, the pushed form of that commit, differs only in two comments (its Minor: the isolation comes from a separate browser context per project, not a separate browser), so the review covers all code up to `ce5a5f1`. Not independently reviewed: `72722d1` (screenshots from the workflow run 43160231650, reviewed by eye) and the handoff commits.
+- `npm ci && npm run check` on `da3de1e` plus the lint fix in `329e66d`, under `.nvmrc`'s Node: exit 0. Unit 881/881 with type tests, script tests 22/22, stories and browser 949/949 (axe in both modes), `verify-dist: ok`, fixtures 67 passed and 25 skipped (tests scoped to one app). The only warnings are the known tooling deprecations (`eslint@9.39.5`, Node `module.register()`) and npm's install-scripts notice.
+- Every new assertion was seen failing on its own line, or deleted when it couldn't fail; the ledger lists each one. The fixture tests failed first without the pages; each HTML assertion was checked against the real `/feedback` HTML with its target removed.
+- `npm audit` (thread 3 rerun): 11 moderate, 0 high, 0 critical, all dev-only (minimatch via api-extractor and `typescript-eslint`, glob via Storybook). Same as v0.4.1. `typescript-eslint` 8.72.2, the latest, is still in the advisory range, so it wasn't upgraded.
+- **Independent review:** fresh read-only Sonnet reviewers covered `633b159` (Task 7) and `51e50f6` (Task 8). The final Opus whole-branch review covered everything up to `706a127`: ready after fixes, 0 Critical, 2 Important, 5 Minor, all fixed in the next commit, each with a test seen failing:
+  - `Avatar`'s fallback painted over the server-rendered image before hydration; the fallback now comes first in the DOM, and a test checks the image is on top of server HTML that isn't hydrated.
+  - `debug-storybook.log` had been committed in `0f0d1c2`; removed and ignored.
+  - `Progress`: the radius test asserts `radius.full` (9999px), and a new test covers the RTL indeterminate animation.
+  - `initials` no longer depends on the host's locale.
+  - `Alert` renders no empty wrapper for `false` or `''`.
+  - `Divider`'s `ref` is `Ref<HTMLElement>`, since it's an `hr` by default; ref forwarding is tested for each kind.
+- A fresh read-only Sonnet reviewer covered that fix commit, `79931e8`: ready, with three nits recorded under thread 6. The review covers all code up to `79931e8`. After it, the labeled-`Divider` change `8bf529a` (plain text, from the owner's VoiceOver check, which then passed) was reviewed by a fresh read-only Sonnet reviewer: ready, one nit under thread 6. The reviews cover all code up to `8bf529a`.
+- **The shared accessibility-tree helper** (owner's request, after that review's nit): `src/utils/browserTestUtils.ts` (`axTree`, `axNames`, `axEntries`) replaces the copies in the NavBar, Pagination, and Divider browser tests, and has its own tests. Building it showed Chrome returns the tree breadth-first, so the helper walks it depth-first into reading order. Every assertion was seen failing. Not independently reviewed: the owner skipped the review for now (2026-11-12), since it changes only tests. Trigger: the owner can ask for one before merge; otherwise none.
 
 **Not verified:**
 
-- CI on the `a67ef89` push (run 43176126303) was still running when this note was written. Trigger: CI on this note's PR, which runs on top of `a67ef89`.
-- Installing 0.4.x from GitHub Packages, and that 0.4.1 appears there (only the publish job's success was seen). `gh` lacks `read:packages`. Trigger: none; the v0.1 install proved the pipeline. (Carried forward.)
-- The v0.5–v0.7 plans haven't had an independent review. Trigger: none before their builds; each branch gets a fresh whole-branch review before merge. (Carried forward.)
+- The owner's manual checks (screen reader on all six, including a VoiceOver recheck of the labeled `Divider` after the plain-text change; forced colors; swiping a `Drawer` closed on a real phone; a bottom `Drawer` with the on-screen keyboard). Trigger: the checklist in the v0.5 PR body, before merge.
+- CI and visual baselines for the branch. Trigger: the draft PR with the `update-baselines` label; the owner selects **Approve workflows to run** after the baselines commit.
+- "A failed image shows initials after hydration" (Spec 16) is tested with a client render, not a hydrated page. Trigger: none; the owner can ask for a fixture test.
+- Installing 0.4.x from GitHub Packages. Trigger: none; the v0.1 install proved the pipeline. (Carried forward.)
+- The v0.6 and v0.7 plans haven't had an independent review. Trigger: none before their builds; each branch gets a whole-branch review before merge. (Carried forward.)
 
 ## Open threads
 
 4. **Inter comes from `inter-ui`,** because Fontsource's files drop `cv05` and `cv08`. Trigger: a test pins the 4.1.1 ranges. (Carried forward.)
 5. **`engines.node` is `>=22`.** Trigger: the release script refuses to release after April 30, 2027, until the floor and CI's Node matrix are raised. (Carried forward.)
-6. **Deferred minor findings from v0.4.** The final review found none blocking. Trigger: none; pick from this list when convenient.
-   - Dialog: the close button scrolls out of view in tall content (`Dialog.css.ts`); the `closeOnOutsideClick` + `alert` warning fires while closed; `React.*` types used without an import in `DialogTitle`/`DialogDescription`; an unexplained `- 1` in the full-width browser test.
+6. **Deferred minor findings from v0.4, plus Drawer.** Trigger: none; pick from this list when convenient. (Carried forward, with Drawer added.)
+   - Dialog and Drawer: the close button scrolls out of view in tall content (`Dialog.css.ts`, `Drawer.css.ts`); Drawer matches Dialog on purpose. Dialog: the `closeOnOutsideClick` + `alert` warning fires while closed; `React.*` types used without an import in `DialogTitle`/`DialogDescription`; an unexplained `- 1` in the full-width browser test.
+   - From the review of `79931e8`: before hydration, an avatar image with transparent areas shows the initials through them (opaque photos are fine); `Alert`'s `hasContent` lets `true` and `[]` through, rendering an empty part; `Divider`'s `Ref<HTMLElement>` also accepts a `RefObject<HTMLDivElement>`, which then holds an `hr`.
+   - Drawer: the bottom sheet keeps its safe-area padding while the keyboard is up (up to about 34px extra on an iPhone); the provider test waits a fixed 300ms before asserting the variable is absent on a side panel.
    - Popover: arrow offsets use physical `left`/`right`; the rotated arrow shadow's direction; the shadow clip uses `space.12`; weak tests (`lastMessage` reads `calls[0]`, layout props, no `aria-labelledby` test); a redundant `Omit<children>` in `PopoverTitle`.
    - Overlay foundations: the `gapOffset` comment should say a subtree theme isn't followed; RTL and non-bottom popup motion is untested; non-null assertions on the `var()` regex.
    - Tooltip: the provider test's 700ms timeout is close to the 600ms default.
@@ -194,27 +190,26 @@ Calls made during the build where the spec was silent, each with what it costs i
 7. **One intermittent browser test, not diagnosed.**
    - `Table.browser.test.tsx` "scrollable scrolls by keyboard" (line 151) failed once in three local full runs (`scrollLeft` stayed 0) and passed otherwise. It predates the sticky change. In the CI image (`mcr.microsoft.com/playwright:v1.65.0-noble`) it passed 5 of 5 runs of `Table.browser.test.tsx` alone and 2 full `test:stories` runs, and it passed on CI run 43127830011. Its one failure was on macOS under full-suite load. It failed again locally on `d219774`, and an instrumented copy caught one failure in three full runs: `ArrowRight` scrolled 40px, then `ArrowDown` reached the focused wrapper, wasn't prevented, with the page focused and visible, yet `scrollTop` stayed 0 for 2.5s. Ruled out: `ArrowDown` arriving during the `ArrowRight` scroll animation (pressing both back to back scrolls both).
    - It isn't explained by the v0.4.1 touch-emulation fix (`ce5a5f1`): that taint happens only on Linux, and this test's failures were on macOS. It passed in the v0.4.1 release's local `npm run check` and on CI for `803580d` and `337db60`. Trigger: CI on every PR and each release's `npm run check`. If it fails, find the cause in the CI image before rerunning. Nothing forces a diagnosis while it keeps passing.
-10. **v0.5–v0.7 execution method.** The owner hasn't chosen (subagent-driven is recommended: about 2 agents per task plus a final review). Trigger: the start of each plan's build session.
+10. **v0.6 and v0.7 execution method.** v0.5 was hybrid. Trigger: the start of each plan's build session. (Carried forward, narrowed.)
 11. **A deferred minor finding from v0.4.1's final review.** A two-row header still gets the sticky-header `scroll-padding-block-start` (`stickyHeaderPad`, `src/components/Table/Table.css.ts:44`), so a focused cell stops about one header row below the top while nothing sticks. Nothing is hidden. Trigger: none; pick it up when convenient. (Carried forward; the other two minors were resolved in `b8ac114`.)
 
-12. **Release notes need a manual edit after every release.** `scripts/release.mjs` calls `gh release create --generate-notes`, which lists only PRs, so the drafted notes were applied by hand for v0.4.0 and again for v0.4.1 (`gh release edit`). Proposed fix: let the script take `--notes-file <path>` and pass it to `gh release create`. Trigger: the owner's decision before the v0.5 release; otherwise the v0.5 release needs the same manual edit.
-
 Resolved this session:
-- Thread 9c, `scope="row"` with `rowSpan`: the owner's VoiceOver and NVDA check on `Table` › `StickyWithSpans` passed, so the markup is kept and no `headers` docs are needed.
-- Old unverified item, CI on `ce5a5f1` and the note's update: CI on PR #26's head `803580d` passed all six jobs (run 43173957869). The held run 43161001609 on `72722d1` is superseded.
-- Old unverified item, the owner's manual checks: both passed (owner's report; thread 9c above and the RTL spot check).
-- Old next step 1, merge and release: PR #26 merged as `337db60`; v0.4.1 released as `a67ef89`, with the drafted notes (see Changes).
-- Old next step 2, the handoff update after the release: this note.
+- Thread 12, release notes: the owner keeps editing them by hand; PR #28 closed unmerged.
+- Thread 10 for v0.5: hybrid (see v0.5 decisions).
+- Thread 3 rerun: audit unchanged (see Verification).
+- Old unverified item, CI on the `a67ef89` push: CI on PR #27 (run 43176892793), which ran on top of it, passed.
+- Old next steps 1 and 2: the owner chose (thread 10, thread 12), and v0.5 is built.
 
-The list of threads resolved in the v0.4.1 build (1, 2, 3, 8, 9a–b, 7's hover failures, 11's other minors) is dropped here; it stays readable in `git show 337db60:docs/HANDOFF.md`.
-
-Resolved lists from earlier notes (v0.4.0 release, v0.4 build, planning session) stay readable in `git show 5eda67e:docs/HANDOFF.md`.
+Resolved lists from earlier notes stay readable in `git show f902386:docs/HANDOFF.md` and `git show 5eda67e:docs/HANDOFF.md`.
 
 ## Next steps
 
-1. The owner chooses v0.5's execution method (thread 10) and whether the release script should take the drafted notes (thread 12).
-2. Build v0.5 from `docs/superpowers/plans/2026-11-11-v0-5-feedback-and-display.md` on its own branch and PR. Then v0.6 and v0.7, each started only after the previous one is released.
+1. Confirm CI passes on the PR head. The baselines (`89b1498`) are committed and reviewed by eye.
+2. If GitHub holds CI after a bot commit, the owner selects **Approve workflows to run**.
+3. The owner does the manual checks in the PR body.
+4. Mark the PR ready, squash merge, then `npm run release -- minor` and apply the PR body's release notes with `gh release edit v0.5.0`.
+5. Update this note after the release, then start v0.6.
 
 ## Resume prompt
 
-> Read `docs/HANDOFF.md`. v0.4.1 is merged and released (tag `v0.4.1`, `a67ef89`). Confirm CI passed on this handoff's PR, then ask me how to execute the v0.5 plan (`docs/superpowers/plans/2026-11-11-v0-5-feedback-and-display.md`, thread 10) and whether to let `npm run release` take a notes file (thread 12), and start the v0.5 build on its own branch.
+> Read `docs/HANDOFF.md`. v0.5 is built on `feat/v0.5-feedback-and-display` with a draft PR open. The final review and its fixes are done and reviewed. Check CI on the PR head. Then ask me about the manual checks before merge and the v0.5.0 release.

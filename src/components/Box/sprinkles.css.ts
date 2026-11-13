@@ -169,11 +169,21 @@ const responsive = defineProperties({
   },
 });
 
+// Box's colors are the flat tokens. The avatar pairs are for Avatar only
+// (Spec 04).
+function withoutAvatar<T extends { avatar: unknown }>(group: T) {
+  const copy: Partial<T> = { ...group };
+  delete copy.avatar;
+  return copy as Omit<T, 'avatar'>;
+}
+const backgrounds = withoutAvatar(vars.color.bg);
+const foregrounds = withoutAvatar(vars.color.fg);
+
 const visual = defineProperties({
   '@layer': utilitiesLayer,
   properties: {
-    background: { transparent: 'transparent', ...vars.color.bg },
-    color: { inherit: 'inherit', ...vars.color.fg },
+    background: { transparent: 'transparent', ...backgrounds },
+    color: { inherit: 'inherit', ...foregrounds },
     borderColor: vars.color.border,
     borderWidth: {
       none: { borderWidth: 0, borderStyle: 'none' },

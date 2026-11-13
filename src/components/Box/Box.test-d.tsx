@@ -16,6 +16,10 @@ test('tokens compile, and arbitrary values fail', () => {
   <Box background="surface" borderRadius="card" boxShadow="card" />;
   // @ts-expect-error not a bg token
   <Box background="red" />;
+  // @ts-expect-error the avatar pairs are for Avatar only (Spec 04)
+  <Box background="avatar" />;
+  // @ts-expect-error the avatar pairs are for Avatar only (Spec 04)
+  <Box color="avatar" />;
 });
 
 test('responsive objects compile, and unknown breakpoints fail', () => {

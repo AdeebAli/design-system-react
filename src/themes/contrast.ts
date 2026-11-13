@@ -17,7 +17,7 @@ const surfaces = SURFACES.map((name) => `color.bg.${name}`);
 const statusFg = STATUS.map((name) => `color.fg.${name}`);
 const statusBg = STATUS.map((name) => `color.bg.${name}`);
 
-/** Spec 02's contrast table, except the avatar row, which arrives in v0.5. */
+/** Spec 02's contrast table. */
 export const CONTRAST_PAIRS: ContrastPair[] = [
   ...pairs(
     ['color.fg.default', 'color.fg.muted', 'color.fg.accent', ...statusFg],
@@ -45,6 +45,9 @@ export const CONTRAST_PAIRS: ContrastPair[] = [
   ...pairs(['color.fg.onStatus'], [...statusBg, 'color.bg.dangerHover'], 4.5),
   ...pairs(['color.fg.default'], ['color.bg.mutedHover'], 4.5),
   ...pairs(['color.fg.inverse'], ['color.bg.inverse'], 4.5),
+  ...[1, 2, 3, 4, 5, 6].flatMap((n) =>
+    pairs([`color.fg.avatar.${n}`], [`color.bg.avatar.${n}`], 4.5),
+  ),
   ...pairs(
     ['color.border.control', 'color.border.danger', 'color.focus'],
     surfaces,

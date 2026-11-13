@@ -29,6 +29,15 @@ export const softLight: ThemeTokens = {
       dangerHover: status.danger.lightHover,
       inverse: neutral[875],
       disabled: neutral[150],
+      // Blue, teal, green, amber, rose, violet.
+      avatar: {
+        '1': '#dbeafe',
+        '2': '#ccfbf1',
+        '3': '#dcfce7',
+        '4': '#fef3c7',
+        '5': '#ffe4e6',
+        '6': '#ede9fe',
+      },
     },
     fg: {
       default: neutral[875],
@@ -43,6 +52,14 @@ export const softLight: ThemeTokens = {
       onStatus: neutral[0],
       inverse: neutral[100],
       disabled: neutral[500],
+      avatar: {
+        '1': '#1e40af',
+        '2': '#115e59',
+        '3': '#166534',
+        '4': '#92400e',
+        '5': '#9f1239',
+        '6': '#5b21b6',
+      },
     },
     border: {
       subtle: neutral[200],

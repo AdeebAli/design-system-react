@@ -11,7 +11,7 @@ import { CircleCheckIcon } from '../Icon/internal/CircleCheck';
 import { InfoIcon } from '../Icon/internal/Info';
 import { TriangleAlertIcon } from '../Icon/internal/TriangleAlert';
 import { XIcon } from '../Icon/internal/X';
-import { Spinner } from '../Button/Spinner';
+import { Spinner } from '../Spinner';
 import { IconButton } from '../IconButton';
 import * as styles from './Toast.css';
 import type { ToastData, ToastPosition, ToastTone } from './toastOptions';

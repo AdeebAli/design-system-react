@@ -51,7 +51,9 @@ Each one has a test in the named task.
 - Modify: `src/themes/{types.ts,softShared.ts,softLight.ts,softDark.ts,contrast.ts,contrast.test.ts,contract.test.ts}`, `docs/specs/02-tokens-and-themes.md` (the token and contrast tables)
 
 **Interfaces:**
-- Produces (all of v0.5–v0.7's new tokens in one release, so theme authors update once): `vars.size.sidebar` (`15rem`), `vars.size.sidebarRail` (`3.5rem`), `vars.size.avatar.{sm,md,lg,xl}` (`1.5rem`, `2rem`, `2.5rem`, `4rem`), `vars.size.drawer.{sm,md,lg}` (`20rem`, `28rem`, `40rem`), `vars.color.bg.avatar.{1-6}`, and `vars.color.fg.avatar.{1-6}` (per mode).
+- Produces: `vars.color.bg.avatar.{1-6}` and `vars.color.fg.avatar.{1-6}` (per mode), the only new tokens in v0.5–v0.7.
+- *Corrected during the build:* `size.sidebar`, `size.sidebarRail`, `size.avatar.*`, and `size.drawer.*` have been in the theme since v0.1 (`9c49e84`), with Spec 02's values. Task 1 adds tests for them, not the tokens.
+- *Owner's decision during the build:* Box's `background` and `color` props leave out the nested avatar pairs (Spec 04 amended), and the Colors docs page gets an avatar-pairs table.
 
 - [ ] **Step 1: Write the failing tests.** `contract.test.ts`: the new paths exist with the values above. `contrast.test.ts`: add `color.fg.avatar.{n}` on `color.bg.avatar.{n}` at 4.5 for n = 1–6, in both modes. Remove "except the avatar row" from `CONTRAST_PAIRS`'s comment.
 - [ ] **Step 2: Run** `npx vitest run --project unit src/themes`. Expected: fail, because the tokens are missing.
@@ -126,7 +128,7 @@ Each one has a test in the named task.
 - [ ] **Step 1: Write the failing tests.**
   - Unit: `value`/`max` set `aria-valuenow`/`aria-valuemax`, `null` omits `aria-valuenow` and sets `data-indeterminate`, `label` names the progressbar, and `aria-label` names it.
   - Type test: no name is a type error.
-  - Browser: `value={150}` and `value={-5}` keep the indicator within the track, with no page overflow at 320px (Review Focus 3). Reduced motion turns the indeterminate state into a static partial fill that stays visible. Forced colors gives the track a 1px border.
+  - Browser: `value={150}` and `value={-5}` keep the indicator within the track, with no page overflow at 320px (Review Focus 1). Reduced motion turns the indeterminate state into a static partial fill that stays visible. Forced colors gives the track a 1px border.
 - [ ] **Step 2: Run** `npx vitest run --project unit src/components/Progress`. Expected: fail, because the module is missing.
 - [ ] **Step 3: Implement** on `Progress.Root/Label/Value/Track/Indicator`, per Spec 16. Clamp the indicator's inline size with `min(100%, max(0%, …))` if Base UI doesn't.
 - [ ] **Step 4: Run** the Step 2 command and `npx vitest run --project browser src/components/Progress`. Expected: pass.
@@ -146,7 +148,7 @@ Each one has a test in the named task.
   - `AvatarStatus`.
 
 - [ ] **Step 1: Write the failing tests.**
-  - `initials.test.ts`: `'Ada Park'` → `'AP'`, `'Ada'` → `'A'`, `'Ada Mae Park'` → `'AP'`, `'Đặng Văn'` → `'ĐV'`, `'김 민준'` → `'김민'`, and the Review Focus 4 cases.
+  - `initials.test.ts`: `'Ada Park'` → `'AP'`, `'Ada'` → `'A'`, `'Ada Mae Park'` → `'AP'`, `'Đặng Văn'` → `'ĐV'`, `'김 민준'` → `'김민'`, and the Review Focus 2 cases.
   - `colorFromName.test.ts`: the same name gives the same index, and the indices for 50 sample names span all six.
   - Unit: the root has `role="img"` and `aria-label="Ada Park"`, or `"Ada Park, online"` with `status`. Its contents are `aria-hidden`. `decorative` sets `aria-hidden` on the root. `data-shape` is set. A failed image shows the initials.
   - Browser:
@@ -235,7 +237,7 @@ it('tall Drawer content scrolls inside the panel, not the page');
 - [ ] **Step 1: Write the failing fixture tests.** Next `/feedback`: the raw HTML contains a server-rendered `Alert`, `Spinner`, and `Divider`, plus `Progress`, an `Avatar` whose `img` is in the HTML, and a `Drawer` trigger. The drawer opens. There are no hydration warnings (reuse `color-mode.spec.ts`'s console check). Vite: an `Alert` and a `Drawer` render with styles. Run `npm run test:fixtures`. Expected: fail, because the page is missing.
 - [ ] **Step 2: Add the page** until it passes.
 - [ ] **Step 3: Overview page and docs.** Add `Feedback.stories.tsx` to `overviewPages.test.ts`'s no-`style`/`className` list. Add the six components to `docs/components.md`.
-- [ ] **Step 4: Audit (thread 3).** Run `npm audit --json` and `npm view typescript-eslint version`. If a fixed `typescript-eslint` exists, upgrade it in this step and rerun `npm run lint`. Record the advisory count, severities, and versions for the handoff either way. If any advisory is in a runtime dependency or is `high`, stop and raise it.
+- [ ] **Step 4: Audit** (v0.4.1 resolved thread 3; rerun it for the handoff). Run `npm audit --json` and `npm view typescript-eslint version`. If a fixed `typescript-eslint` exists, upgrade it in this step and rerun `npm run lint`. Record the advisory count, severities, and versions for the handoff either way. If any advisory is in a runtime dependency or is `high`, stop and raise it.
 - [ ] **Step 5: Acceptance.** Walk Spec 16's acceptance criteria and test lists, recording each item as passed (with its test name) or needing the owner. Run `npm ci && npm run check`. Expected: exit 0, every project ran, and no warnings.
 - [ ] **Step 6: Baselines.** Push, open the PR as a draft, add the `update-baselines` label, review the committed screenshots, then select **Approve workflows to run** in the merge box. Don't close and reopen the PR. Expected: all CI jobs pass.
 - [ ] **Step 7: Manual checks for the owner, in the PR body, not marked done:**
@@ -243,7 +245,7 @@ it('tall Drawer content scrolls inside the panel, not the page');
   - Forced colors on all six.
   - Swiping a `Drawer` closed from each side on a real phone, and a bottom `Drawer` with an input and the on-screen keyboard.
 - [ ] **Step 8: Release notes draft in the PR body,** for `npm run release -- minor`:
-  - "Breaking changes": the new required theme tokens from Task 1 (`size.sidebar`, `size.sidebarRail`, `size.avatar.*`, `size.drawer.*`, `color.{bg,fg}.avatar.{1-6}`). A project with its own full theme must add them, with the Soft values listed.
+  - "Breaking changes": the new required theme tokens from Task 1, `color.{bg,fg}.avatar.{1-6}`. A project with its own full theme must add them, with the Soft values listed. (The size tokens shipped in v0.1.)
   - "New components": the six.
   - "Changes": Button's `loading` uses `Spinner`, which is internal only.
 - [ ] **Step 9: Update `docs/HANDOFF.md` through the `handoff` skill,** as a reconciliation:

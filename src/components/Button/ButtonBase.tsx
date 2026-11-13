@@ -7,9 +7,9 @@ import { cx } from '../../utils/cx';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import { warnOnce } from '../../utils/warn';
 import { Box, box } from '../Box';
+import { Spinner } from '../Spinner';
 import { VisuallyHidden } from '../VisuallyHidden';
 import * as styles from './Button.css';
-import { Spinner } from './Spinner';
 import { resolveTone, type ButtonTone, type ButtonVariant } from './tones';
 
 /** Button sizes, at the control heights 28, 36, and 44px. */

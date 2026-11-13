@@ -1,4 +1,4 @@
-import { keyframes, style } from '@vanilla-extract/css';
+import { style } from '@vanilla-extract/css';
 import { recipe } from '@vanilla-extract/recipes';
 import { vars } from '../../themes/contract.css';
 import { layered } from '../../utils/recipe';
@@ -152,19 +152,4 @@ export const button = recipe({
 /** Wraps an icon element so it doesn't shrink. */
 export const iconSlot = style(
   layered({ display: 'inline-flex', flexShrink: 0 }),
-);
-
-const spin = keyframes({ to: { transform: 'rotate(360deg)' } });
-
-export const spinner = style(
-  layered({
-    width: vars.size.icon.md,
-    height: vars.size.icon.md,
-    flexShrink: 0,
-    animationName: spin,
-    // 0ms under reduced motion (Spec 02), which leaves it still and visible.
-    animationDuration: `calc(${vars.motion.duration.slow} * 2.5)`,
-    animationTimingFunction: 'linear',
-    animationIterationCount: 'infinite',
-  }),
 );

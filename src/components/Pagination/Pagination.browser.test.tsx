@@ -1,36 +1,7 @@
 import { render, screen } from '@testing-library/react';
-import { cdp, page } from 'vitest/browser';
+import { page } from 'vitest/browser';
+import { axNames } from '../../utils/browserTestUtils';
 import { Pagination } from './Pagination';
-
-interface FrameTree {
-  frame: { id: string };
-  childFrames?: FrameTree[];
-}
-
-// Tests run in an iframe, so the tree is read from the deepest frame.
-async function testFrameId() {
-  const { frameTree } = (await cdp().send('Page.getFrameTree')) as {
-    frameTree: FrameTree;
-  };
-  let tree = frameTree;
-  while (tree.childFrames?.length) tree = tree.childFrames.at(-1)!;
-  return tree.frame.id;
-}
-
-async function axNames(role: string) {
-  const { nodes } = (await cdp().send('Accessibility.getFullAXTree', {
-    frameId: await testFrameId(),
-  })) as {
-    nodes: {
-      role?: { value: string };
-      name?: { value: string };
-      ignored?: boolean;
-    }[];
-  };
-  return nodes
-    .filter((node) => !node.ignored && node.role?.value === role)
-    .map((node) => node.name?.value);
-}
 
 const noop = (page: number) => void page;
 

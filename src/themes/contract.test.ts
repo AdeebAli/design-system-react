@@ -47,3 +47,38 @@ it('has size tokens for the choice controls and chips (Spec 09)', () => {
   expect(vars.size.switch.width).toBe('var(--ds-size-switch-width)');
   expect(vars.size.chip.md).toBe('var(--ds-size-chip-md)');
 });
+
+it('has the Spec 02 sizes that Avatar, Drawer, and Sidebar use', () => {
+  expect(softLight.size.avatar).toEqual({
+    sm: '1.5rem',
+    md: '2rem',
+    lg: '2.5rem',
+    xl: '4rem',
+  });
+  expect(softLight.size.drawer).toEqual({
+    sm: '20rem',
+    md: '28rem',
+    lg: '40rem',
+  });
+  expect(softLight.size.sidebar).toBe('15rem');
+  expect(softLight.size.sidebarRail).toBe('3.5rem');
+  expect(vars.size.avatar.xl).toBe('var(--ds-size-avatar-xl)');
+  expect(vars.size.drawer.md).toBe('var(--ds-size-drawer-md)');
+});
+
+const AVATAR_PAIRS = ['1', '2', '3', '4', '5', '6'] as const;
+
+it('exposes six avatar color pairs (Spec 16)', () => {
+  for (const n of AVATAR_PAIRS) {
+    expect(vars.color.bg.avatar[n]).toBe(`var(--ds-color-bg-avatar-${n})`);
+    expect(vars.color.fg.avatar[n]).toBe(`var(--ds-color-fg-avatar-${n})`);
+  }
+});
+
+it.each([
+  ['softLight', softLight],
+  ['softDark', softDark],
+])('%s gives each avatar pair its own background', (_, theme) => {
+  const backgrounds = AVATAR_PAIRS.map((n) => theme.color.bg.avatar[n]);
+  expect(new Set(backgrounds).size).toBe(6);
+});

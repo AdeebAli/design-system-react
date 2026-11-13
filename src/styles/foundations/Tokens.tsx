@@ -64,8 +64,62 @@ export function ColorTable({
         </tr>
       </thead>
       <tbody>
-        {Object.keys(softLight.color[group]).map((name) => (
-          <Row key={name} path={`color.${group}.${name}`} against={against} />
+        {Object.entries(softLight.color[group])
+          // The avatar pairs are a nested group, with a table of their own.
+          .filter(([, value]) => typeof value === 'string')
+          .map(([name]) => (
+            <Row key={name} path={`color.${group}.${name}`} against={against} />
+          ))}
+      </tbody>
+    </table>
+  );
+}
+
+/** `Avatar`'s six color pairs, each text color on its own background. */
+export function AvatarColorTable() {
+  return (
+    <table>
+      <thead>
+        <tr>
+          <th>Pair</th>
+          <th>Soft Light</th>
+          <th>Soft Dark</th>
+          <th>Light contrast</th>
+          <th>Dark contrast</th>
+        </tr>
+      </thead>
+      <tbody>
+        {(['1', '2', '3', '4', '5', '6'] as const).map((n) => (
+          <tr key={n}>
+            <td>
+              <code>{`color.{bg,fg}.avatar.${n}`}</code>
+            </td>
+            {[softLight, softDark].map((theme, index) => (
+              <td key={index}>
+                <span
+                  style={{
+                    ...swatch,
+                    display: 'inline-grid',
+                    placeItems: 'center',
+                    fontSize: '0.625rem',
+                    fontWeight: 600,
+                    background: theme.color.bg.avatar[n],
+                    color: theme.color.fg.avatar[n],
+                  }}
+                >
+                  AP
+                </span>
+                <code>
+                  {theme.color.fg.avatar[n]} on {theme.color.bg.avatar[n]}
+                </code>
+              </td>
+            ))}
+            {[softLight, softDark].map((theme, index) => (
+              <td key={index}>
+                {ratio(theme, `color.fg.avatar.${n}`, `color.bg.avatar.${n}`)}
+              </td>
+            ))}
+          </tr>
         ))}
       </tbody>
     </table>

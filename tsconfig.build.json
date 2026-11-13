@@ -10,6 +10,7 @@
     "src/**/*.test-d.ts",
     "src/**/*.test-d.tsx",
     "src/**/testUtils.tsx",
+    "src/**/browserTestUtils.ts",
     "fixtures"
   ]
 }

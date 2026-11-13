@@ -3,6 +3,7 @@ import { createRef } from 'react';
 import { createPortal } from 'react-dom';
 import { renderToString } from 'react-dom/server';
 import { cdp, page, userEvent } from 'vitest/browser';
+import { axNames } from '../../utils/browserTestUtils';
 import { Select } from '../Select';
 import { NavBar, NavBarLink } from './index';
 
@@ -43,35 +44,7 @@ function links(root: ParentNode = document) {
   );
 }
 
-interface FrameTree {
-  frame: { id: string };
-  childFrames?: FrameTree[];
-}
-
-// Tests run in an iframe, so the tree is read from the deepest frame.
-async function testFrameId() {
-  const { frameTree } = (await cdp().send('Page.getFrameTree')) as {
-    frameTree: FrameTree;
-  };
-  let tree = frameTree;
-  while (tree.childFrames?.length) tree = tree.childFrames.at(-1)!;
-  return tree.frame.id;
-}
-
-async function axLinkNames() {
-  const { nodes } = (await cdp().send('Accessibility.getFullAXTree', {
-    frameId: await testFrameId(),
-  })) as {
-    nodes: {
-      role?: { value: string };
-      name?: { value: string };
-      ignored?: boolean;
-    }[];
-  };
-  return nodes
-    .filter((node) => !node.ignored && node.role?.value === 'link')
-    .map((node) => node.name?.value);
-}
+const axLinkNames = () => axNames('link');
 
 it('from md, the links sit in one row with brand and actions, and the menu button is hidden', async () => {
   await page.viewport(1280, 800);
