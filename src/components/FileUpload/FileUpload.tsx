@@ -46,6 +46,8 @@ export interface FileUploadLabels {
   done?: string;
   /** Shown beside a failed file with no `error` message, and announced after its name. @default 'Upload failed' */
   error?: string;
+  /** Announces a file's done or error status, where `{name}` is the file name and `{status}` the status text. @default '{name}: {status}' */
+  announce?: string;
 }
 
 export const defaultFileUploadLabels: Required<FileUploadLabels> = {
@@ -56,6 +58,7 @@ export const defaultFileUploadLabels: Required<FileUploadLabels> = {
   uploading: 'Uploading {name}',
   done: 'Uploaded',
   error: 'Upload failed',
+  announce: '{name}: {status}',
 };
 
 interface FileUploadOwnProps {
@@ -181,11 +184,13 @@ export function FileUpload({
         status.status !== previous.kinds[i] &&
         (status.status === 'done' || status.status === 'error')
           ? [
-              `${files[i]!.name}: ${
-                status.status === 'done'
-                  ? labels.done
-                  : (status.error ?? labels.error)
-              }`,
+              labels.announce
+                .replace('{name}', () => files[i]!.name)
+                .replace('{status}', () =>
+                  status.status === 'done'
+                    ? labels.done
+                    : (status.error ?? labels.error),
+                ),
             ]
           : [],
       );

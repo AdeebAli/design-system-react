@@ -83,7 +83,7 @@ A single choice, found by typing. Built on Base UI's `Combobox`.
 - **`Input`'s structure applies:** `ref` and native attributes go to the `input`, and `className`, `style`, and layout props go to its wrapper. The 16px rule for touch screens also applies (Spec 09).
 - **Clicking the `Field` label focuses the input,** since it's a native input.
 - **The chevron is a trigger button** outside the `Tab` order, as Base UI renders it beside an input, and `clearable` adds a real button named `labels.clear`. Clearing returns focus to the input.
-- **Leaving the input with unmatched text restores the selected label,** so the text never disagrees with the value. The wrapper does this on blur, since Base UI's docs don't promise it.
+- **Leaving the input with unmatched text restores the selected label,** so the text never disagrees with the value. Base UI 1.9.0 does this when the popup closes. Its docs don't promise it, so the wrapper's browser tests pin it (leaving with `Tab`, and with `Escape` then `Tab`), and an upgrade that drops it fails CI (owner, 2026-11-12).
 - **With React Hook Form, the empty value is `null`,** as with `Select`.
 
 ## `MultiSelect`
@@ -104,7 +104,7 @@ Several choices. `value`, `defaultValue`, and `onValueChange` use `string[]`, wi
 | **`className`, `style`, layout props go to** | The trigger | The chip wrapper |
 
 - **Its props are a union on `searchable`,** which allows search props and sets `ref`'s type. `MultiSelect` has one value type either way, so hover types stay simple (Spec 00).
-- **The popup stays open while choosing,** and closes on `Escape`, `Tab`, or an outside click. Base UI's `Select` does this with `multiple`. Its `Combobox` closes and clears the filter on each pick, so with `searchable` the wrapper cancels both, as its docs show, and the filter stays until the popup closes. Each option shows the same check icon as `Select`.
+- **The popup stays open while choosing,** and closes on `Escape`, `Tab`, or an outside click. Base UI's `Select` does this with `multiple`. Its `Combobox` closes and clears the filter after a pick made while filtering, so with `searchable` the wrapper cancels the close. In Base UI 1.9.0 that also keeps the filter, which a browser test pins, so the filter stays until the popup closes (owner, 2026-11-12). Each option shows the same check icon as `Select`.
 - **Chips:** `bg.muted`, `radius.sm`, `font.size.sm`, with a remove button named `labels.remove` (`"Remove {label}"`). Remove buttons have a 24px target (WCAG 2.5.8). `Backspace` in an empty input removes the last chip, which Base UI handles. Chips and the input carry `aria-description` for how to remove them, using `labels.removeHint`, as Base UI's docs advise.
 - **The default control's name stays the `Field` label (Spec 09),** with its visible summary, and every selected label is in a `VisuallyHidden` element it references through `aria-describedby`, alongside any hint or error. So truncation hides nothing from screen readers.
 - **No select-all and no selection limit.** A project can add a select-all button that sets `value`.
@@ -154,7 +154,7 @@ An `ul` under the control, with each file's name, its size, and a remove button 
 - **Long names truncate at the end,** and the full name stays in the DOM for screen readers and in `title`. Remove buttons have a 24px target (WCAG 2.5.8), and the hidden input covers only the drop target, not the list.
 - **Each `Progress` is named with its file's name.**
 - **Removing a file moves focus** to the next remove button, then the previous one, and then the input, so focus is never lost.
-- **Changes are announced** through an always-mounted `role="status"` element: `labels.selected` (`"{count} files selected"`), and status changes to `done` or `error`.
+- **Changes are announced** through an always-mounted `role="status"` element: `labels.selected` (`"{count} files selected"`), and status changes to `done` or `error`, each as `labels.announce` (`"{name}: {status}"`, where `{status}` is `labels.done`, the error message, or `labels.error`) (owner, 2026-11-12).
 - **Sizes** use `Intl.NumberFormat` units. There are no files during server rendering, so it can't cause a hydration mismatch.
 - **Not included:** image previews, folders, paste, and resumable or chunked uploads.
 

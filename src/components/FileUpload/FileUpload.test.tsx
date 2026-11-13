@@ -622,3 +622,25 @@ describe('review fixes', () => {
     );
   });
 });
+
+it('labels.announce orders the file name and status', () => {
+  const a = file('a.txt');
+  const labels = { announce: '{status} – {name}', done: 'Envoyé' };
+  const { rerender } = render(
+    <FileUpload
+      aria-label="Files"
+      defaultValue={[a]}
+      labels={labels}
+      getFileStatus={() => ({ status: 'uploading' })}
+    />,
+  );
+  rerender(
+    <FileUpload
+      aria-label="Files"
+      defaultValue={[a]}
+      labels={labels}
+      getFileStatus={() => ({ status: 'done' })}
+    />,
+  );
+  expect(screen.getByRole('status')).toHaveTextContent('Envoyé – a.txt');
+});
