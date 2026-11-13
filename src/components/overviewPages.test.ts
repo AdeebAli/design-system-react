@@ -4,8 +4,9 @@ import { fileURLToPath } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
 
-// Specs 08 to 13 and 16: these pages must be buildable without escape hatches.
+// Specs 08 to 14 and 16: these pages must be buildable without escape hatches.
 it.each([
+  ['AdvancedInputs.stories.tsx'],
   ['Bento.stories.tsx'],
   ['Data.stories.tsx'],
   ['Feedback.stories.tsx'],

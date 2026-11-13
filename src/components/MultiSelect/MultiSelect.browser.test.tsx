@@ -275,3 +275,28 @@ describe('searchable', () => {
     expect(screen.getByRole('status')).toBe(status);
   });
 });
+
+it('a chip uses bg.muted, radius.sm, and font.size.sm', () => {
+  render(
+    <MultiSelect
+      searchable
+      aria-label="Topics"
+      options={topics}
+      defaultValue={['design']}
+    />,
+  );
+  const chip = screen
+    .getByRole('button', { name: 'Remove Design' })
+    .closest<HTMLElement>(`.${styles.chip}`)!;
+  const probe = document.createElement('div');
+  probe.style.background = 'var(--ds-color-bg-muted)';
+  probe.style.borderRadius = 'var(--ds-radius-sm)';
+  probe.style.fontSize = 'var(--ds-font-size-sm)';
+  document.body.append(probe);
+  const c = getComputedStyle(chip);
+  const p = getComputedStyle(probe);
+  expect(c.backgroundColor).toBe(p.backgroundColor);
+  expect(c.borderTopLeftRadius).toBe(p.borderTopLeftRadius);
+  expect(c.fontSize).toBe(p.fontSize);
+  probe.remove();
+});

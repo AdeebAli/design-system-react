@@ -273,3 +273,68 @@ describe('file list', () => {
     expect(remove('one.txt').contains(hit)).toBe(true);
   });
 });
+
+describe('appearance', () => {
+  function probe(styles: Partial<CSSStyleDeclaration>) {
+    const el = document.createElement('div');
+    Object.assign(el.style, styles);
+    document.body.append(el);
+    return { style: getComputedStyle(el), remove: () => el.remove() };
+  }
+
+  it('the dropzone uses bg.sunken, a dashed border.control border, radius.control, and space.6 padding', () => {
+    render(<FileUpload aria-label="Files" />);
+    const p = probe({
+      background: 'var(--ds-color-bg-sunken)',
+      borderTop: '1px dashed var(--ds-color-border-control)',
+      borderRadius: 'var(--ds-radius-control)',
+      padding: 'var(--ds-space-6)',
+      color: 'var(--ds-color-fg-muted)',
+    });
+    const t = getComputedStyle(target());
+    expect(t.backgroundColor).toBe(p.style.backgroundColor);
+    expect(t.borderTopWidth).toBe('1px');
+    expect(t.borderTopColor).toBe(p.style.borderTopColor);
+    expect(t.borderTopLeftRadius).toBe(p.style.borderTopLeftRadius);
+    expect(t.paddingTop).toBe(p.style.paddingTop);
+    expect(
+      getComputedStyle(screen.getByText('Drop files here or browse')).color,
+    ).toBe(p.style.color);
+    p.remove();
+  });
+
+  it('invalid uses border.danger, as Input does', () => {
+    render(<FileUpload aria-label="Files" invalid />);
+    const p = probe({ borderTop: '1px solid var(--ds-color-border-danger)' });
+    expect(getComputedStyle(target()).borderTopColor).toBe(
+      p.style.borderTopColor,
+    );
+    p.remove();
+  });
+
+  it('disabled uses bg.disabled, fg.disabled, and border.disabled, as Input does', () => {
+    render(<FileUpload aria-label="Files" disabled />);
+    const p = probe({
+      background: 'var(--ds-color-bg-disabled)',
+      color: 'var(--ds-color-fg-disabled)',
+      borderTop: '1px solid var(--ds-color-border-disabled)',
+    });
+    const t = getComputedStyle(target());
+    expect(t.backgroundColor).toBe(p.style.backgroundColor);
+    expect(t.color).toBe(p.style.color);
+    expect(t.borderTopColor).toBe(p.style.borderTopColor);
+    p.remove();
+  });
+
+  it('keyboard focus shows the shared ring on the target', async () => {
+    render(<FileUpload aria-label="Files" />);
+    const p = probe({ outline: '2px solid var(--ds-color-focus)' });
+    await userEvent.tab();
+    expect(input()).toHaveFocus();
+    const t = getComputedStyle(target());
+    expect(t.outlineStyle).toBe('solid');
+    expect(t.outlineWidth).toBe('2px');
+    expect(t.outlineColor).toBe(p.style.outlineColor);
+    p.remove();
+  });
+});

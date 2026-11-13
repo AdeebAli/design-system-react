@@ -18,7 +18,7 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 ## Base UI controls: `Controller`
 
-`Select`, `Checkbox`, `RadioGroup`, `Switch`, and `ToggleChipGroup` call their change handlers with a value, not a DOM event, so use `Controller`:
+`Select`, `Combobox`, `MultiSelect`, `FileUpload`, `Checkbox`, `RadioGroup`, `Switch`, and `ToggleChipGroup` call their change handlers with a value, not a DOM event, so use `Controller`:
 
 ```tsx
 <Controller
@@ -44,16 +44,78 @@ import { Meta } from '@storybook/addon-docs/blocks';
 | `Checkbox`        | `checked`          | `onCheckedChange` |
 | `Switch`          | `checked`          | `onCheckedChange` |
 | `ToggleChipGroup` | `value` (an array) | `onValueChange`   |
+| `Combobox`        | `value`            | `onValueChange`   |
+| `MultiSelect`     | `value` (an array) | `onValueChange`   |
+| `FileUpload`      | `value` (`File[]`) | `onValueChange`   |
 
 Pass `field.ref` too, so React Hook Form can focus the first invalid control after a failed submit. For a `RadioGroup`, that focuses the checked radio, or the first enabled one.
 
 ## Defaults
 
 - **`Select` starts at `null`,** not `''` or `undefined`. `null` shows the placeholder. `undefined` would switch the `Select` from uncontrolled to controlled.
+- **`Combobox` starts at `null`,** like `Select`.
+- **`MultiSelect` starts at `[]`,** in both modes, and **`FileUpload` at `[]`.**
 - **`Checkbox` and `Switch` start at `false`**, and `RadioGroup` at one of its values.
 
 ```tsx
-useForm({ defaultValues: { plan: null, archived: false, billing: 'monthly' } });
+useForm({
+  defaultValues: {
+    plan: null,
+    country: null,
+    topics: [],
+    assignees: [],
+    attachments: [],
+    archived: false,
+    billing: 'monthly',
+  },
+});
+```
+
+## Advanced inputs
+
+`Combobox` and both `MultiSelect` modes pass `ref` to the element that takes focus: the `input` for `Combobox` and `MultiSelect searchable`, and the trigger button for the default `MultiSelect`. `FileUpload` passes it to its file input.
+
+```tsx
+<Controller
+  name="assignees"
+  control={control}
+  rules={{ validate: (v) => v.length > 0 || 'Add at least one person' }}
+  render={({ field, fieldState }) => (
+    <Field label="Assignees" error={fieldState.error?.message}>
+      <MultiSelect
+        searchable
+        options={people}
+        onSearch={searchPeople}
+        loading={searching}
+        selectedOptions={savedAssignees}
+        value={field.value}
+        onValueChange={field.onChange}
+        ref={field.ref}
+      />
+    </Field>
+  )}
+/>
+```
+
+`FileUpload`'s value is the list of `File`s, so validate it in `rules`, and send the files yourself on submit. Its `accept` and `maxSize` checks don't replace the server's: they're a convenience.
+
+```tsx
+<Controller
+  name="attachments"
+  control={control}
+  rules={{ validate: (files) => files.length > 0 || 'Add a file' }}
+  render={({ field, fieldState }) => (
+    <Field label="Attachments" error={fieldState.error?.message}>
+      <FileUpload
+        multiple
+        accept=".pdf"
+        value={field.value}
+        onValueChange={field.onChange}
+        ref={field.ref}
+      />
+    </Field>
+  )}
+/>
 ```
 
 ## Required fields

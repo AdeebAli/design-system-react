@@ -66,6 +66,17 @@ From [Spec 09](specs/09-forms.md).
 | `IconButton`                  | A button with only an icon; needs `aria-label`            |
 | `ColorModeToggle`             | An `IconButton` that switches between light and dark      |
 
+## Advanced inputs
+
+From [Spec 14](specs/14-advanced-inputs.md).
+
+| Component                | Use it for                                                         |
+| ------------------------ | ------------------------------------------------------------------ |
+| `Combobox`               | A single choice from a long list, found by typing                  |
+| `MultiSelect`            | Several choices from a short list, shown as "Design +2"            |
+| `MultiSelect searchable` | Several choices from a long list, shown as chips                   |
+| `FileUpload`             | Picking files by browsing or dropping; the project does the upload |
+
 ## Navigation
 
 From [Spec 10](specs/10-navigation.md).
