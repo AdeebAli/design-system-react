@@ -1,6 +1,6 @@
 # Handoff: design-system-react
 
-- **Date:** 2026-11-12
+- **Date:** 2026-11-12 (updated after the v0.6.0 release)
 
 ## Goal
 
@@ -9,8 +9,8 @@ Build `@adeebali/design-system-react`, a general-purpose React design system. Sp
 ## Status
 
 - **Released:** v0.1 (Specs 01–07), v0.2 (Specs 08–09), v0.3 (Specs 10–11), v0.4 (Specs 12–13), v0.4.1, and v0.5.0 (Spec 16). Storybook is at https://adeebali.github.io/design-system-react/.
-- **v0.6 is built, not merged.** Spec 14 (`Combobox`, `MultiSelect`, `FileUpload`) from `docs/superpowers/plans/2026-11-11-v0-6-advanced-inputs.md` is on `feat/v0.6-advanced-inputs`, draft PR #31 (https://github.com/AdeebAli/design-system-react/pull/31). Its visual baselines are committed (`f97a736`, `0cbc263`). CI on those commits waits for the owner to select **Approve workflows to run**.
-- **Next:** the owner approves the workflows, does the manual checks in PR #31, and merges; then `npm run release -- minor`; then v0.7 (`docs/superpowers/plans/2026-11-11-v0-7-app-navigation.md`, Spec 15).
+- **v0.6.0 released (2026-11-12):** PR #31 squash merged as `6940af8`; `npm run release -- minor` made `5c5e8b1` and tag `v0.6.0`; release https://github.com/AdeebAli/design-system-react/releases/tag/v0.6.0, with the PR body's notes applied by hand.
+- **Next:** v0.7 (`docs/superpowers/plans/2026-11-11-v0-7-app-navigation.md`, Spec 15). The owner chooses the execution method (thread 10).
 
 ## Decisions
 
@@ -51,7 +51,13 @@ Architecture decisions are in `docs/adr/`. The decisions and rulings from v0.4, 
 
 ## Changes
 
-On branch `feat/v0.6-advanced-inputs` (from `main` at `c1b6c3d`), draft PR #31:
+**The v0.6.0 release:**
+- PR #31 squash merged by the owner as `6940af8`; CI on it passed.
+- `npm run release -- minor` on a clean, up-to-date `main`: all checks passed, then `5c5e8b1` (version 0.6.0), tag `v0.6.0`, push (the owner's ruleset bypass), and the GitHub release.
+- Release notes: PR #31's "Release notes draft" (New components) plus the Full Changelog link, applied with `gh release edit v0.6.0`.
+- This note, on branch `docs/handoff-v0.6.0`.
+
+**The v0.6 build, branch `feat/v0.6-advanced-inputs` (from `main` at `c1b6c3d`), PR #31 (for reference):**
 - `492a41c` `Combobox` (plus `@base-ui/react/combobox` in `vite.config.ts` `optimizeDeps`).
 - `9fe738c` `MultiSelect`.
 - `e83b497` `MultiSelect searchable` (and the shared `SearchPopup`).
@@ -67,6 +73,14 @@ On branch `feat/v0.6-advanced-inputs` (from `main` at `c1b6c3d`), draft PR #31:
 - This note.
 
 ## Verification
+
+**The v0.6.0 release:**
+- `npm run release -- minor` on `6940af8`: its `npm run check` passed (unit 1021, stories and browser 1075, `verify-dist: ok`, fixtures 70 passed and 28 skipped), then it pushed and created the release.
+- CI on `6940af8` and `5c5e8b1`, Publish and Storybook on `5c5e8b1`: all succeeded.
+- The edited release notes, read back with `gh release view v0.6.0`, match the draft (`diff -B` clean).
+- Not verified: installing 0.6.0 from GitHub Packages (only the publish job's success was seen). Trigger: none, as with 0.5.x below.
+
+**The v0.6 build (for reference):**
 
 - `npm ci && npm run check`, exit 0 on `9808468`:
   - unit 1013
@@ -93,13 +107,12 @@ On branch `feat/v0.6-advanced-inputs` (from `main` at `c1b6c3d`), draft PR #31:
 
 **Not verified:**
 
-- **The PR #31 manual checks**, none done. Trigger: the PR checklist, before merge.
+- **The PR #31 manual checks.** PR #31 was merged, but whether these were done hasn't been reported to me. Trigger: the owner confirms at the start of the v0.7 session (next step 1); anything not done moves to the v0.7 PR's manual checklist.
   - A screen reader pass on all three components, including chips and status announcements on a popup's first open.
   - Touch and forced colors on all three.
   - `FileUpload` on iOS and Android, with `capture`.
   - Voice control on the `FileUpload` button variant.
   - Forced colors on the six v0.5 components.
-- **CI on the baseline commits** (`f97a736`, `0cbc263`). It waits for the owner's **Approve workflows to run**. Trigger: that approval, before merge. CI on `14a0e6e` failed only in `visual`, from the missing baselines (126, all new stories or the grown React Hook Form docs page).
 - **Base UI behaviors the wrappers don't own** can't be broken in wrapper code, so they rest on Base UI and its tests: `Escape` closes, `Backspace` removes the last chip, `data-popup-open` and `data-selected` on options. Trigger: none; any Base UI upgrade reruns the suite.
 - **Whether browsers send drag events to a disabled file input** isn't checked. The disabled-drop test dispatches on the root. Trigger: the manual touch and drop checks in PR #31.
 - **"A failed image shows initials after hydration" (Spec 16)** is tested with a client render. Trigger: none; the owner can ask for a fixture test. Carried forward.
@@ -130,6 +143,8 @@ On branch `feat/v0.6-advanced-inputs` (from `main` at `c1b6c3d`), draft PR #31:
 11. **A two-row header still gets the sticky-header `scroll-padding-block-start`** (`src/components/Table/Table.css.ts:44`), so a focused cell stops about one header row below the top. Nothing is hidden. Trigger: none; pick it up when convenient. (Carried forward.)
 
 **Resolved this session:**
+- CI on the baseline commits: CI passed on `6940af8` (PR #31's merge on `main`), and on `5c5e8b1`, with Publish and Storybook also passing.
+- Old next steps 1, 3, 4: PR #31 merged, `npm run release -- minor` made v0.6.0, and its notes were applied (read back with `gh release view`; `diff -B` clean).
 - Old next step 1: PR #30 (the v0.5.0 handoff) passed CI and was merged as `c1b6c3d`. That also resolves the old unverified item about CI on the `bbd81d9` push.
 - Old next step 2 and thread 10's v0.6 half: v0.6 was built inline (above).
 - Old unverified item: the v0.6 plan's independent review was replaced by the whole-branch reviews above.
@@ -137,12 +152,10 @@ On branch `feat/v0.6-advanced-inputs` (from `main` at `c1b6c3d`), draft PR #31:
 
 ## Next steps
 
-1. On PR #31, select **Approve workflows to run**, and confirm CI passes on `0cbc263` and on this note's commit. Don't close and reopen the PR.
-2. Do the manual checks in PR #31's checklist.
-3. Mark PR #31 ready, if it isn't already, and squash merge it.
-4. On a clean, up-to-date `main`, run `npm run release -- minor`, then apply the "Release notes draft" from PR #31's body with `gh release edit v0.6.0`.
-5. Update this note, then start v0.7 from `docs/superpowers/plans/2026-11-11-v0-7-app-navigation.md` (Spec 15), asking the owner for the execution method (thread 10).
+1. Confirm with the owner which PR #31 manual checks were done; carry the rest into the v0.7 PR's checklist.
+2. Merge this note's PR once CI passes.
+3. Start v0.7 from `docs/superpowers/plans/2026-11-11-v0-7-app-navigation.md` (Spec 15): the owner chooses the execution method (thread 10). Before starting, rerun `npm view @base-ui/react version`.
 
 ## Resume prompt
 
-> Read `docs/HANDOFF.md`. v0.6 (Combobox, MultiSelect, FileUpload) is in draft PR #31 with baselines committed. Check whether I've approved the workflows and done the manual checks, then help me merge and run `npm run release -- minor`, apply the release notes from the PR body, update the handoff, and ask me how to execute v0.7.
+> Read `docs/HANDOFF.md`. v0.6.0 is released. Ask me which PR #31 manual checks I did, and which execution method to use for v0.7 (`docs/superpowers/plans/2026-11-11-v0-7-app-navigation.md`), then start the build, carrying any undone manual checks into the v0.7 PR's checklist.
