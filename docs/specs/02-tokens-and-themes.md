@@ -136,6 +136,7 @@ Every key below is required in every theme. Values for Soft are in
 | `radius.{none,sm,md,lg,xl,full}` | Radius scale |
 | `radius.card` | Cards (semantic alias) |
 | `radius.control` | Buttons, inputs, selects (semantic alias) |
+| `radius.image` | `Image` (semantic alias; Spec 17) |
 | `borderWidth.{thin,thick}` | 1px / 2px |
 | `shadow.{none,sm,md,lg,xl}` | Elevation scale |
 | `shadow.card` | Cards (semantic alias) |
@@ -160,6 +161,7 @@ that alias:
 |---|---|
 | `radius.card` | `radius.xl` |
 | `radius.control` | `radius.md` |
+| `radius.image` | `radius.md` |
 | `shadow.card` | `shadow.md` (Soft Light), `shadow.sm` (Soft Dark) |
 | `shadow.cardHover` | `shadow.lg` |
 | `shadow.raised` | `shadow.lg` |
@@ -305,6 +307,7 @@ Spacing values are emitted in rem (px ÷ 16), except `space.px`, which stays
 | `radius.none` / `sm` / `md` / `lg` / `xl` / `full` | 0 / 6px / 12px / 16px / 20px / 9999px |
 | `radius.card` | `xl` (20px) |
 | `radius.control` | `md` (12px; chosen by the owner from a side-by-side comparison) |
+| `radius.image` | `md` (12px, matching images in `Prose`; Spec 17) |
 | `borderWidth.thin` / `thick` | 1px / 2px |
 
 ### Elevation

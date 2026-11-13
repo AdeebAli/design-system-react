@@ -82,7 +82,7 @@ Rules apply to plain elements. Margins and padding use `em`, so they scale with 
 | `blockquote` | `borderWidth.thick` `bg.accent` start border, italic, `fg.muted` |
 | `code`, `kbd` | Match `Code` and `Kbd`. `pre code` turns off the background, padding, and radius, and inherits its size |
 | `pre` | `font.family.mono`, `font.size.sm`, `bg.sunken`, `radius.md`, `space.4` padding, a `1px` `border.subtle` border, scrolls sideways |
-| `img`, `video`, `iframe` | `max-width: 100%`, and `height: auto` on images. `radius.md` on images |
+| `img`, `video`, `iframe` | `max-width: 100%`, and `height: auto` on images. `radius.image` on images (amended by Spec 17, 2026-11-13) |
 | `figcaption` | Captions are `font.family.sans`, `font.size.sm`, `fg.muted` |
 | `table`, `th`, `td` | `font.family.sans`, `font.size.sm`, tabular numerals, full width. Headers are `xs` uppercase `medium` labels in `fg.muted`, with `border.subtle` row lines. Cells use `overflow-wrap: anywhere` |
 | `hr` | A `border.subtle` top border, with large vertical margins |
