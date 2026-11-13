@@ -38,6 +38,7 @@ export * from './components/NavBar';
 export * from './components/Pagination';
 export * from './components/Breadcrumbs';
 export * from './components/Tabs';
+export * from './components/Accordion';
 export * from './components/Dialog';
 export * from './components/Drawer';
 export * from './components/Popover';
