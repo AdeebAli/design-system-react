@@ -1,0 +1,372 @@
+'use client';
+
+import { Field as BaseField } from '@base-ui/react/field';
+import {
+  useEffect,
+  useEffectEvent,
+  useRef,
+  useState,
+  type DragEvent,
+  type Ref,
+} from 'react';
+import { cx } from '../../utils/cx';
+import { splitLayoutProps } from '../../utils/splitLayoutProps';
+import type { ComponentProps } from '../../utils/types';
+import { box } from '../Box';
+import * as buttonStyles from '../Button/Button.css';
+import { useFieldControl } from '../Field/FieldContext';
+import { UploadIcon } from '../Icon/internal/Upload';
+import { VisuallyHidden } from '../VisuallyHidden';
+import { FileList } from './FileList';
+import * as styles from './FileUpload.css';
+import { mergeFiles, type FileRejection } from './mergeFiles';
+
+/** A file's upload state, from `getFileStatus`. */
+export interface FileStatus {
+  status: 'uploading' | 'done' | 'error';
+  /** Percent complete, 0–100, while `uploading`. Omit it for an indeterminate bar. */
+  progress?: number;
+  /** The error message, shown with `error`. */
+  error?: string;
+}
+
+/** Strings for translation. */
+export interface FileUploadLabels {
+  /** The dropzone's text. @default 'Drop files here or browse' */
+  prompt?: string;
+  /** The button variant's text. @default 'Choose files' */
+  browse?: string;
+  /** A file's remove button name, where `{name}` is the file name. @default 'Remove {name}' */
+  remove?: string;
+  /** Announced when the list changes, where `{count}` is the number of files. @default '{count} files selected' */
+  selected?: string;
+  /** Names a file's progress bar, where `{name}` is the file name. @default 'Uploading {name}' */
+  uploading?: string;
+  /** Shown beside a file that's done, and announced after its name. @default 'Uploaded' */
+  done?: string;
+  /** Shown beside a failed file with no `error` message, and announced after its name. @default 'Upload failed' */
+  error?: string;
+  /** Announces a file's done or error status, where `{name}` is the file name and `{status}` the status text. @default '{name}: {status}' */
+  announce?: string;
+}
+
+export const defaultFileUploadLabels: Required<FileUploadLabels> = {
+  prompt: 'Drop files here or browse',
+  browse: 'Choose files',
+  remove: 'Remove {name}',
+  selected: '{count} files selected',
+  uploading: 'Uploading {name}',
+  done: 'Uploaded',
+  error: 'Upload failed',
+  announce: '{name}: {status}',
+};
+
+interface FileUploadOwnProps {
+  /** The files, when controlled. */
+  value?: File[];
+  /** The files at first, when uncontrolled. @default [] */
+  defaultValue?: File[];
+  /** Called with the new list of files. */
+  onValueChange?: (files: File[]) => void;
+  /** Whether selections add to the list. Otherwise a new file replaces the old one. @default false */
+  multiple?: boolean;
+  /** The accepted types, as the native attribute. Also checked on drop. */
+  accept?: string;
+  /** The largest file accepted, in bytes. */
+  maxSize?: number;
+  /** The most files accepted, with `multiple`. */
+  maxFiles?: number;
+  /** Called with the files that weren't added, and why. */
+  onReject?: (rejections: FileRejection[]) => void;
+  /** Each file's upload state, which the project reports. */
+  getFileStatus?: (file: File) => FileStatus | undefined;
+  /** `dropzone` adds a large drop target; `button` is compact. @default 'dropzone' */
+  variant?: 'dropzone' | 'button';
+  /** Hides the file list, for a project rendering its own from `value`. @default false */
+  hideFileList?: boolean;
+  /** Marks it invalid. @default From `Field` */
+  invalid?: boolean;
+  /** Disables it. @default From `Field` */
+  disabled?: boolean;
+  /** Sets `aria-required`, not the native attribute. It doesn't validate. @default From `Field` */
+  required?: boolean;
+  /** The name the files are submitted under in a form. */
+  name?: string;
+  /** Strings for translation. */
+  labels?: FileUploadLabels;
+}
+
+/**
+ * `FileUpload`'s props. `ref` and native attributes, such as `capture`, go to
+ * the hidden file input; `className`, `style`, and layout props go to the root.
+ */
+export type FileUploadProps = ComponentProps<'input', FileUploadOwnProps>;
+
+/** Writes a list into an input's `files`, so a form submits what's displayed. */
+function writeFiles(input: HTMLInputElement | null, files: readonly File[]) {
+  // jsdom has no DataTransfer; every supported browser does.
+  if (!input || typeof DataTransfer === 'undefined') return;
+  const transfer = new DataTransfer();
+  for (const file of files) transfer.items.add(file);
+  input.files = transfer.files;
+}
+
+function sameList<T>(a: readonly T[], b: readonly T[]) {
+  return a.length === b.length && a.every((item, i) => item === b[i]);
+}
+
+function setRef<T>(ref: Ref<T> | undefined, value: T | null) {
+  if (typeof ref === 'function') ref(value);
+  else if (ref) ref.current = value;
+}
+
+/**
+ * Picks files, by browsing or dropping. It doesn't send them: the project
+ * uploads them and reports each file's status through `getFileStatus`.
+ * Checking `accept` and `maxSize` here is a convenience, not security: the
+ * server must check uploads.
+ */
+export function FileUpload({
+  value,
+  defaultValue,
+  onValueChange,
+  multiple = false,
+  accept,
+  maxSize,
+  maxFiles,
+  onReject,
+  getFileStatus,
+  variant = 'dropzone',
+  hideFileList = false,
+  invalid: invalidProp,
+  disabled: disabledProp,
+  required: requiredProp,
+  name,
+  labels: labelsProp,
+  className,
+  style,
+  ref,
+  onChange,
+  ...props
+}: FileUploadProps) {
+  const field = useFieldControl('native');
+  const invalid = invalidProp ?? field.invalid;
+  const disabled = field.disabled || disabledProp === true;
+  const required = requiredProp ?? field.required;
+  const labels = { ...defaultFileUploadLabels, ...labelsProp };
+  const [uncontrolled, setUncontrolled] = useState<File[]>(defaultValue ?? []);
+  const files = value ?? uncontrolled;
+  const [dragging, setDragging] = useState(false);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const [layout, rest] = splitLayoutProps(props);
+  const dropzone = variant === 'dropzone';
+  const listRef = useRef<HTMLUListElement>(null);
+  // A removal in progress, so focus can move once the list updates.
+  const removing = useRef<{
+    index: number;
+    file: File;
+    from: readonly File[];
+  } | null>(null);
+
+  // Announcements, derived from what changed since the last render.
+  const statuses = files.map((file) => getFileStatus?.(file));
+  const kinds = statuses.map((status) => status?.status);
+  const [previous, setPrevious] = useState({ files, kinds });
+  // The id keys the announced text, so the same text, such as after
+  // replacing the only file, is a new node and is announced again.
+  const [message, setMessage] = useState({ text: '', id: 0 });
+  const filesChanged = !sameList(previous.files, files);
+  if (filesChanged || !sameList(previous.kinds, kinds)) {
+    let next: string | undefined;
+    if (filesChanged) {
+      next = labels.selected.replace('{count}', String(files.length));
+    } else {
+      const finished = statuses.flatMap((status, i) =>
+        status &&
+        status.status !== previous.kinds[i] &&
+        (status.status === 'done' || status.status === 'error')
+          ? [
+              // One pass, so a name containing "{status}" stays as it is.
+              labels.announce.replace(/\{(name|status)\}/g, (_, key) =>
+                key === 'name'
+                  ? files[i]!.name
+                  : status.status === 'done'
+                    ? labels.done
+                    : (status.error ?? labels.error),
+              ),
+            ]
+          : [],
+      );
+      if (finished.length > 0) next = finished.join('. ');
+    }
+    setPrevious({ files, kinds });
+    if (next != null) setMessage({ text: next, id: message.id + 1 });
+  }
+
+  const commit = (next: File[]) => {
+    setUncontrolled(next);
+    onValueChange?.(next);
+  };
+
+  const add = (incoming: readonly File[]) => {
+    // A pick or drop isn't the removal a parent may have declined.
+    removing.current = null;
+    const result = mergeFiles(files, incoming, {
+      multiple,
+      accept,
+      maxSize,
+      maxFiles,
+    });
+    if (result.rejections.length > 0) onReject?.(result.rejections);
+    // Put the input back to the current list now. If the list changes, the
+    // effect writes the new one; if a controlled parent ignores the change,
+    // the input still matches what's displayed.
+    writeFiles(inputRef.current, files);
+    if (
+      result.files.length === files.length &&
+      result.files.every((f, i) => f === files[i])
+    ) {
+      return;
+    }
+    commit(result.files);
+  };
+
+  // Files picked before hydration are in the server-rendered input, which
+  // the first sync would otherwise clear: add them to the list instead.
+  const adoptEarlyPick = useEffectEvent(() => {
+    const picked = [...(inputRef.current?.files ?? [])];
+    if (picked.length > 0) add(picked);
+  });
+  useEffect(() => {
+    adoptEarlyPick();
+  }, []);
+
+  // The input follows `value`, including a change from a controlled parent.
+  useEffect(() => {
+    writeFiles(inputRef.current, files);
+    // After a removal, focus the next remove button, then the previous one,
+    // then the input, so focus is never lost.
+    const pending = removing.current;
+    removing.current = null;
+    // Only when the removed file is the one that's gone: a parent that
+    // declined the removal may change the list later for its own reasons.
+    if (
+      !pending ||
+      files.length !== pending.from.length - 1 ||
+      files.includes(pending.file)
+    ) {
+      return;
+    }
+    const buttons = listRef.current?.querySelectorAll('button') ?? [];
+    const target =
+      buttons[pending.index] ?? buttons[pending.index - 1] ?? inputRef.current;
+    target?.focus();
+  }, [files]);
+
+  // Disabled, a drop is still stopped, so the browser doesn't open the file
+  // in place of the page.
+  const block = (event: DragEvent) => event.preventDefault();
+  const dragProps = disabled
+    ? { onDragOver: block, onDrop: block }
+    : dropzone && {
+        onDragEnter: (event: DragEvent) => {
+          event.preventDefault();
+          setDragging(true);
+        },
+        onDragOver: (event: DragEvent) => {
+          event.preventDefault();
+          setDragging(true);
+        },
+        onDragLeave: (event: DragEvent) => {
+          if (
+            !event.currentTarget.contains(event.relatedTarget as Node | null)
+          ) {
+            setDragging(false);
+          }
+        },
+        onDrop: (event: DragEvent) => {
+          event.preventDefault();
+          setDragging(false);
+          add([...event.dataTransfer.files]);
+        },
+      };
+
+  return (
+    <div
+      className={cx(box(layout), styles.root, className)}
+      style={style}
+      data-dragging={dragging ? '' : undefined}
+      data-invalid={invalid ? '' : undefined}
+      data-disabled={disabled ? '' : undefined}
+      {...dragProps}
+    >
+      <div
+        className={cx(
+          styles.target,
+          dropzone
+            ? styles.dropzone
+            : cx(
+                buttonStyles.button({
+                  variant: 'outline',
+                  tone: 'neutral',
+                  size: 'md',
+                }),
+                styles.button,
+              ),
+        )}
+        data-disabled={!dropzone && disabled ? '' : undefined}
+      >
+        <BaseField.Control
+          {...rest}
+          ref={(node: HTMLInputElement | null) => {
+            inputRef.current = node;
+            setRef(ref, node);
+          }}
+          type="file"
+          className={styles.input}
+          multiple={multiple}
+          accept={accept}
+          name={name}
+          disabled={disabled}
+          aria-invalid={invalid || undefined}
+          aria-required={required || undefined}
+          onChange={(event) => {
+            onChange?.(event);
+            add([...(event.currentTarget.files ?? [])]);
+          }}
+        />
+        {dropzone ? (
+          <>
+            <span className={styles.icon}>
+              <UploadIcon aria-hidden="true" />
+            </span>
+            <span>{labels.prompt}</span>
+          </>
+        ) : (
+          <>
+            <span className={styles.buttonIcon}>
+              <UploadIcon aria-hidden="true" />
+            </span>
+            <span>{labels.browse}</span>
+          </>
+        )}
+      </div>
+      {!hideFileList && files.length > 0 && (
+        <FileList
+          files={files}
+          statuses={statuses}
+          labels={labels}
+          disabled={disabled}
+          listRef={listRef}
+          onRemove={(index) => {
+            removing.current = { index, file: files[index]!, from: files };
+            commit(files.filter((_, i) => i !== index));
+          }}
+        />
+      )}
+      <VisuallyHidden role="status">
+        {message.text && <span key={message.id}>{message.text}</span>}
+      </VisuallyHidden>
+    </div>
+  );
+}

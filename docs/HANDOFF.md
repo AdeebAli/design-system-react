@@ -8,221 +8,141 @@ Build `@adeebali/design-system-react`, a general-purpose React design system. Sp
 
 ## Status
 
-- **Done and released:** v0.1 (specs 01–07), v0.2 (Specs 08–09), v0.3 (Specs 10–11), v0.4 (Specs 12–13), v0.4.1, and v0.5 (Spec 16: `Alert`, `Spinner`, `Progress`, `Avatar`, `Divider`, `Drawer`). Storybook is at https://adeebali.github.io/design-system-react/.
-- **v0.5.0 released:** PR #29 squash merged as `885b951`; `npm run release -- minor` made `bbd81d9` and tag `v0.5.0`; release https://github.com/AdeebAli/design-system-react/releases/tag/v0.5.0, with the PR body's notes applied by hand.
-- **Planned, not started,** each after the previous release: v0.6 (`docs/superpowers/plans/2026-11-11-v0-6-advanced-inputs.md`, Spec 14) and v0.7 (`docs/superpowers/plans/2026-11-11-v0-7-app-navigation.md`, Spec 15).
-- **Next:** the owner chooses v0.6's execution method (thread 10), then the v0.6 build.
+- **Released:** v0.1 (Specs 01–07), v0.2 (Specs 08–09), v0.3 (Specs 10–11), v0.4 (Specs 12–13), v0.4.1, and v0.5.0 (Spec 16). Storybook is at https://adeebali.github.io/design-system-react/.
+- **v0.6 is built, not merged.** Spec 14 (`Combobox`, `MultiSelect`, `FileUpload`) from `docs/superpowers/plans/2026-11-11-v0-6-advanced-inputs.md` is on `feat/v0.6-advanced-inputs`, draft PR #31 (https://github.com/AdeebAli/design-system-react/pull/31). Its visual baselines are committed (`f97a736`, `0cbc263`). CI on those commits waits for the owner to select **Approve workflows to run**.
+- **Next:** the owner approves the workflows, does the manual checks in PR #31, and merges; then `npm run release -- minor`; then v0.7 (`docs/superpowers/plans/2026-11-11-v0-7-app-navigation.md`, Spec 15).
 
 ## Decisions
 
-Architecture decisions are in `docs/adr/`. Every v0.4 build ruling is listed under "v0.4 rulings" below, and the deferred minor findings under open thread 6. The per-task reports stay in the local, gitignored `.superpowers/sdd/2026-11-10-v0-4-overlays-and-data/`. The v0.4 decisions worth knowing first:
+Architecture decisions are in `docs/adr/`. The decisions and rulings from v0.4, v0.4.1, and v0.5 (Base UI direction from the document root, the runtime popup gap, the toast queue, the DataTable rulings, the sticky first column, the labeled `Divider` as plain text, and others) are unchanged and listed in full in `git show c1b6c3d:docs/HANDOFF.md`. The v0.6 build's ledger, with every ruling and break-check, is `.superpowers/sdd/2026-11-11-v0-6-advanced-inputs/progress.md` (local, gitignored).
 
-- **Text direction for Base UI comes from the document root.**
-  - Base UI reads direction from React's `DirectionContext` (default `ltr`), not the DOM `dir`, for arrow keys, `side` start and end, and submenus.
-  - `src/components/overlays/direction.tsx` provides it from `document.documentElement`, through a shared `MutationObserver`, and `Menu`, `Popover` and `Tooltip` use it.
-  - A `dir` on a subtree isn't followed. The popups are portaled to `body`, so the root governs them anyway.
-- **The popup gap is read at runtime.** `gapOffset` is `() => number` and reads the `space.1.5` variable from the root. Base UI 1.9.0's offset function gets only sizes, never the element. A theme override of `space.1.5` moves the gap.
-- **`createToastManager` queues calls until a `ToastProvider` first connects** (owner's decision; Spec 12 amended).
-  - Base UI subscribes in an effect that runs after children's effects. Without the queue, a toast added in a page's mount effect was lost.
-  - Once a provider has connected, calls made while it's unmounted are dropped, with a development warning on `add`, so a stale toast can't reappear. An unmount and remount within one task, such as StrictMode's, keeps the queue (a `setTimeout` grace). Rejected: replaying after any remount (stale toasts), and a size cap.
-  - Toasts follow these rules:
-    - The provider's `duration` goes to Base UI's `timeout`.
-    - `update` derives the timeout from the toast's merged tone, action and duration.
-    - If `toast.promise`'s `success` function throws, the toast settles as the error state.
-- **The danger toast root keeps Base UI's `aria-hidden` until focused.** It's announced through Base UI's hidden `role="alert"`. Screen reader users reach it with `F6`, which the docs say. Rejected: `aria-hidden={false}` on the root, which risked a double announcement.
-- **Open-menu stories turn off only axe `aria-hidden-focus`.** Base UI's focus-guard spans trip it. Popover and Dialog pass only because axe treats any visible `role="dialog"` as modal.
-- **The `DataTable` selected count is one `role="status"` element** that shows the count from the first render. Rejected: a visible `aria-hidden` count plus an empty live region, which hid the count from screen reader users.
-- **`DataTable` paging survives bad input.**
-  - `NaN`/`Infinity` values for `totalRows`, `pageSize` and `page` are handled, after a security review found a set-state loop and a negative-slice bug.
-  - An invalid `locale` falls back to the default collator, with a warning.
-  - Mixed number and string columns put numbers first in both directions, and `NaN` sorts like `null`.
-  - Clicks inside popups portaled from a cell don't toggle the row.
-- **The sticky first column has a fixed width** (owner's decision, option (a); Spec 13 amended): half of `size.dialog.sm` (12rem in Soft), with `overflow-wrap: anywhere`, so the `scroll-padding` reserve always covers it and a focused cell is never hidden (WCAG 2.4.11). Chrome ignores `max-width` on cells, so `width` + `min-width` + `border-box` set it; each is mutation-checked. Rejected: (b) measuring the column, since a measured column can be wider than the scroll area and still hide focus (shown in a throwaway demo: 608px column in a 360px area); (c) accepting the limit, which fails 2.4.11.
-- **`Tooltip` `delay={0}` can flash for one frame on a touch tap** (owner accepted; Spec 12 and the Tooltip docs say so).
-- **Skeleton rows aren't capped.** Spec 13 says loading shows `pageSize` rows.
-- **The TanStack recipe targets v8 (8.21.3).** npm's `latest` is 9.x, which has no `useReactTable`. It was checked against the real package, and no dependency was added.
-- **Rows a first-column `rowSpan` covers are marked with `TableRow`'s `spanned`** (owner's choice, Spec 13 amended, `d219774`). The spanning cell sticks; marked rows' first cells don't. It replaced a CSS `:has()` version (`e59510c`, the owner's first choice) after a second review and measurement showed it made reordering a 2,000-row sticky table about ten times slower (146ms against 15ms), capped spans at 10 rows, and un-stuck later row headers when a covered row had its own second-column span. Rejected: going back to documenting the limit, and keeping the `:has()` version with its costs documented.
-- **Toast text stays selectable** (owner's call). With a mouse, dragging from selected toast text drags the text instead of swiping; making it unselectable would stop people copying an error message. Spec 12 defines swipe for touch, which doesn't select text.
-- **Visual baselines (carried from v0.2).** The workflow runs when the `update-baselines` label is added, with `--update-snapshots=changed`. After it commits to a PR, GitHub holds CI until the owner selects **Approve workflows to run**. Don't close and reopen the PR.
+### v0.6 decisions (owner, 2026-11-12)
 
-### v0.5 planning decisions (owner, 2026-11-11)
+- **Execution was inline,** with one final Opus whole-branch review (owner's choice; rejected: hybrid, fully subagent-driven). Code changed after that review twice, and each change got its own fresh read-only Sonnet review (see Verification).
+- **Spec 14 amended, three times:**
+  - `Combobox` has no wrapper blur handler. Base UI 1.9.0 restores the selected label when the popup closes, and browser tests pin it. Rejected: the wrapper's own blur handler, which would duplicate Base UI's.
+  - `MultiSelect searchable` cancels only the close after a pick. In Base UI 1.9.0 that also keeps the filter, and a browser test pins it. Rejected: also cancelling the filter clear, which would be dead code today.
+  - `FileUpload` has a new `labels.announce` (`'{name}: {status}'`) so translations can order status announcements. Rejected: a fixed "name: status" order.
 
-- **v0.5 is split into v0.4.1, v0.5, v0.6, and v0.7** (the owner's choice; 21 tasks were too many for one plan). Spec 16 goes first, because `FileUpload` needs `Progress` and `Sidebar` needs `Drawer`. Spec 00's milestone table and Specs 14–16's `Milestone` lines are amended in v0.4.1's first commit.
-  - Rejected: 4 PRs with one v0.5.0 release, and 3 releases with the threads folded into v0.5.
-- **Thread 1:** a TanStack v9 recipe (`useTable` + `tableFeatures`, read from the 9.3.1 package itself) as a typechecked `TanStackRecipe.example.tsx`, with `@tanstack/react-table@9.3.1` as a devDependency only.
-  - Rejected: a docs-only v9 recipe (it can drift again), and keeping v8 alongside v9.
-- **Thread 2:** add an RTL test for `Tabs`, `RadioGroup`, `ToggleChipGroup`, and `Select`, and wrap each one whose test fails in `OverlayDirection`.
-  - Rejected: tests and docs only.
-- **Thread 8:** only a one-row `TableHead` sticks (`thead > tr:only-child > *`), and a multi-row header scrolls normally. Spec 13 is amended.
-  - Rejected: making the whole `thead` sticky, which needs a new `headerRows` prop to keep focus clear (WCAG 2.4.11); documenting only.
-- **Thread 9:** document (a) the selected bar on a `spanned` row scrolling under the sticky spanning cell, and (b) the spanning cell following only its own row's hover and selection. Spec 13 is amended. (c) `scope="row"` with `rowSpan` is kept as correct HTML.
-  - Rejected: a new `selected` prop on cells.
-- **All new theme tokens ship in v0.5** (`size.sidebar`, `size.sidebarRail`, `size.avatar.*`, `size.drawer.*`, `color.{bg,fg}.avatar.{1-6}`), so custom full themes break once. v0.5.0's notes need a "Breaking changes" section. This was my call, listed in the v0.5 plan's departures, and the owner can still move the `Sidebar` tokens to v0.7.
-- **Facts checked while planning (2026-11-11):**
-  - `@base-ui/react` 1.9.0 is still the latest, and it has every part and prop Specs 14–16 name (including `Combobox` `filteredItems`/`createItems`, `Drawer` `swipeDirection`/`VirtualKeyboardProvider`, `Avatar.Image` `keepMounted`, `Accordion` `hiddenUntilFound`).
-  - `@tanstack/react-table` latest is 9.3.1.
-  - `npm audit`: still 11 moderate, all dev-only.
+### v0.6 rulings (where Spec 14 is silent; cost if wrong)
 
-### v0.5 decisions and rulings (2026-11-12)
-
-The ledger, with every break-check line, is `.superpowers/sdd/2026-11-12-v0-5-feedback-and-display/progress.md` (local, gitignored).
-
-- **Execution was hybrid** (owner): Tasks 1–6 and 9 inline; Tasks 7–8 (Drawer) by a fresh Sonnet implementer each, each followed by a fresh read-only Sonnet reviewer; a final Opus whole-branch review before merge. Task 8's implementer ran about 10 hours, mostly break-checks; nobody checked on it while it ran. Next time, look in on a long agent.
-- **Release notes stay manual** (owner: "manual was fine"). PR #28 (`--notes-file` for the release script) was closed unmerged. After each release, apply the PR body's draft with `gh release edit`.
-- **Box's `background` and `color` don't take the avatar pairs** (owner; Spec 04 amended). Rejected: exposing them on every Box.
-- **Avatar status shapes** (owner, asked when found; Spec 16 amended): Spec 16 gave `away` and `offline` the same ring, against its own "own shape" rule. `away` is a ring with its lower half filled; `offline` is a hollow ring. Rejected: a crescent for `away`.
-- **The new theme tokens are only `color.{bg,fg}.avatar.{1-6}`.** The size tokens the plan listed already shipped in v0.1; the plan was corrected.
-- **A labeled `Divider` is plain text, not a separator** (owner, 2026-11-12; Spec 16 amended). The owner's VoiceOver check heard only "horizontal splitter" between the buttons in `Divider › WithLabel`, never "or": a separator's contents are treated as decoration. Rejected: naming the separator with `aria-labelledby` (needs `useId`, which may not work in a server component), and documenting the label as visual only. A browser test reads Chrome's accessibility tree for the test frame and checks "or" is there as text with no separator.
-- **A tall bottom sheet shrinks by the keyboard's height** (`maxBlockSize: calc(85dvh - var(--drawer-keyboard-inset, 0rem) + bleed)`), found by Task 8's review: lifted by a 300px keyboard, its top was at −180px. The fallback needs a unit, since a unitless `0` makes the `calc()` invalid.
-- **Rulings where the spec is silent** (cost if wrong):
-  - `Avatar`: initials uppercased with `toUpperCase`, not the host's locale, so server and client agree (the final review found a Turkish-locale hydration mismatch); dot sizes 6/8/12/16px with rings a quarter of the dot; busy bar in `fg.onStatus`; forced colors draws dots in `CanvasText`. `initials` and the color hash are internal. Cost: a token or constant each.
-  - `Drawer`: bleed `space.12` and exit offset width plus `space.8` (a theme with a larger shadow shows a sliver while closing); a `drawer-no-close` warning, as Dialog has; direction is read when the drawer opens, not tracked while open; `toSwipeDirection` isn't exported.
-  - Bottom sheet: below `md` (48rem) it fills the width, so between 44rem (`size.dialog.lg`) and 48rem it's wider than 44rem. That's Spec 16 read literally; dropping one media query changes it. The handle is `space.10` by `space.1` in `border.control`. `--drawer-keyboard-inset` is applied as `inset-block-end` (Base UI supplies no styles).
-  - The Next.js fixture test doesn't press Escape: a server page can't break that step alone, so it couldn't be seen failing. Escape is covered in `Drawer.browser.test.tsx`.
-
-### v0.4.1 decisions and rulings
-
-Made during the v0.4.1 build where the plan or spec was silent or wrong, each with what it costs if wrong. The ledger is `.superpowers/sdd/2026-11-11-v0-4-1-open-threads/progress.md` (local, gitignored).
-
-1. **`Select` has no RTL bug, so it wasn't changed.** Its popup is centered on the trigger (Base UI's default `align`, with `alignItemWithTrigger={false}`), and Base UI reads direction only in the align-with-trigger path. The plan's test ("aligns to the trigger inline-start edge") assumed start alignment and failed in LTR too. It became "the popup centers on the trigger in RTL as in LTR". Cost: if the owner wants `Select` start-aligned, that's a visible change Spec 09 doesn't ask for.
-2. `RadioGroup` and `ToggleChipGroup` got new `*.browser.test.tsx` files. Each RTL test also checks `ArrowRight` in LTR. Cost: none.
-3. The two-row header test measures the sticky cells, not the `tr`: a `tr`'s box scrolls even when its cells stick, so measuring it passed vacuously. Cost: none.
-4. The sticky corner selector drops the `spanned` exclusion, since an only row can't be covered by a span. Breaking the selector fails both corner tests. Cost: none.
-5. Group header cells use the default `scope="col"`. `TableHeader` doesn't allow `scope="colgroup"`, and adding it would be an API change nobody asked for. Cost: group headers are announced as columns, not column groups.
-6. The `TanStackRecipe` story renders the example file itself and checks that it really sorts (ascending second row, descending first row); this replaced the hand-built demo. The shown source swaps `'../Table'` for `'@adeebali/design-system-react'`. Cost: the file and the docs differ by one import path.
-7. `npm ci` failed on Task 3's lockfile because the install ran without `nvm use` (npm 11.6.2 instead of 11.20.0), which dropped the optional `@emnapi/core` and `@emnapi/runtime` entries. It was regenerated under `.nvmrc`'s Node (`42c151f`). Cost: none.
-8. The final review's Minor 2 (the ascending-sort assertion couldn't fail) was re-graded and fixed (`f9f79c2`), per the owner's rule that an assertion must be able to fail. Cost: one commit.
-9. Set aside from the review: a `thead` with a hidden extra `tr` won't stick (a safe fallback); a two-row header combined with `stickyFirstColumn` and a header `rowSpan` sticks the second row's first cell unless it's marked `spanned` (this predates the branch); a `dir` on a subtree isn't followed (by design). Cost: those cases behave as described.
-
-### v0.4 rulings
-
-Calls made during the build where the spec was silent, each with what it costs if wrong. Superseded ones are marked.
-
-1. Built on a branch in the main checkout, not a worktree, as in v0.1–v0.3. Cost: none.
-2. `toast.promise`'s `loading` also accepts a no-argument function. Cost: a slightly wider type.
-3. `gapOffset` reads `--ds-space-1_5` from the document root; Base UI 1.9.0's offset function gets only sizes. Cost: a theme scoped to a subtree doesn't move the gap.
-4. Dialog scroll lock is tested by a stand-in (no position change, wheel doesn't scroll); the headless runner hides scrollbars. The no-layout-shift check is manual. Cost: a regression could ship until that check.
-5. `DialogContext` is `{alert, register, has}`, not the plan's shape, as lint forced. Cost: none outside Dialog.
-6. A long `DialogTitle` running under the close button was fixed instead of deferred. Cost: one fix round.
-7. Dialog's warning-text assertions and type-test mutation checks were folded into that round. Cost: one round.
-8. Tooltip uses logical `maxInlineSize`; a stale border comment was fixed and a hover mutation check added. Cost: one round.
-9. `ColorModeToggle` sets its own icon, name and variant after the passed props, with a type assertion and a mutation-checked `preventDefault` test. Cost: one round.
-10. `Tooltip` `delay={0}` flashes for one frame on touch; accepted as Base UI behavior; the owner accepted it and it is documented. Cost: the flash, for anyone who sets `delay={0}`.
-11. The v0.3 RTL keyboard bug isn't fixed in v0.4 (open thread 2). Cost: those widgets keep it until v0.5.
-12. `Menu` takes direction from the document root, not a subtree. Cost: a subtree `dir` is ignored.
-13. The provider's toast duration goes to Base UI's `timeout`, since Base UI starts timers in `addToast`. Cost: none.
-14. The danger toast root keeps Base UI's `aria-hidden`; its stories disable only axe `aria-hidden-focus`. Cost: screen reader users reach it with `F6`; the manual check covers it.
-15. Toast browser tests moved to the `toast.promise` task. Cost: none.
-16. `update(id, {tone})` recomputes the timeout; moved forward a task. Cost: none.
-17. *Superseded by 35:* toasts added before the provider mounts are dropped.
-18. `update` derives the timeout from the toast's merged state. Cost: none.
-19. A loading toast keeps its spinner on a title-only update, and a throwing state function no longer leaves it stuck. Cost: one round.
-20. If `success` throws, the toast settles as the error state. Cost: the `error` function may receive a non-promise error.
-21. Table's vacuous wrapper test, missing `hoverable`/`size` tests, and the double-border check were carried into the sticky Table task. Cost: none.
-22. The plan's `stickyCell` class was superseded by data attributes on `table`. Cost: none.
-23. Implementers stopped running concurrently on shared files after Skeleton's export edits were lost. Cost: time.
-24. Skeleton's vacuous width test, a `lines` NaN guard, and removing unrequested `flexShrink`/`minWidth` were folded into a fix. Cost: one round.
-25. *Supersedes a first-column width cap that never worked:* keep a token-derived `scroll-padding-inline-start` reserve and document the limit. *Superseded by the owner's option (a), a fixed column width.*
-26. `DataTable` sets `aria-busy` on its outer element, not Table's wrapper. Cost: a Table wrapper-props hook if "wrapper" is read literally.
-27. Mixed number and string columns sort numbers first in both directions. Cost: the owner may prefer another order.
-28. Three of the four security-review findings were fixed (`NaN` totals, negative page slice, invalid locale). Skeleton rows aren't capped: Spec 13 says `pageSize` rows. Cost: a huge `pageSize` renders that many rows.
-29. `NaN` sorts like `null`, last in both directions. Cost: none.
-30. Rejected the split selection count; one `role="status"` shows the count from first render. Cost: one round.
-31. `NaN`-as-`null` counts as an extension where Spec 13 is silent, not a departure. Cost: none.
-32. Task 17 stopped before the push; the controller wrote the handoff. Cost: CI came later.
-33. *Superseded by the owner's README decision:* keep the partial "Overlays and data" README section.
-34. Popover and Tooltip use the shared direction provider (Spec 12 requires `start`/`end` to follow direction); v0.3 widgets stay out of scope. Cost: open thread 2.
-35. *Supersedes 17:* the toast manager queues calls until `ToastProvider` connects. *Narrowed by the owner's decision: dropped after the provider has connected and gone.*
-36. The TanStack recipe targets v8, checked against the registry tarball, with no new devDependency. Cost: the recipe isn't typechecked in CI.
-37. The local workspace (task reports) is kept, not deleted. Cost: local disk.
+- **`Combobox`:**
+  - The chevron trigger is `aria-hidden` and out of the Tab order. Outside a `Field`, Base UI leaves it unnamed, and the input opens the list by keyboard. Cost: a new label key if it should be announced.
+  - A change to the same value isn't reported. Base UI sends `null` when typed text is deleted with nothing selected.
+  - No `Combobox.Empty`, because the status element shows "No results". A second live region would announce it twice.
+  - `labels.loading` is `'Loading'`, matching `Button`.
+- **Shared popup:** `SearchPopup` and `useOptionSearch` (in `src/components/Combobox/`) are shared by `Combobox` and `MultiSelect searchable`. `useOptionSearch` also takes the component name, which its warnings use.
+- **`MultiSelect`:**
+  - In the default mode, unknown values show the raw value, with no warning.
+  - `searchable` has no chevron, since Spec 14 says the control is "chips and an input".
+  - The wrapper sets `data-popup-open` on the chips itself, because Base UI doesn't.
+  - Base UI hides everything outside an open popup from assistive tech, chips included. The PR's screen reader check covers it.
+- **`FileUpload`:**
+  - Without `multiple`, a drop of several files keeps the first accepted file and rejects the rest as `count`.
+  - Rejected files don't count toward `maxFiles`.
+  - The button variant uses Button's outline/neutral/md look.
+  - The prompt and button text aren't `aria-hidden`; the input's name is the `Field` label.
+  - Announcements are derived during render, not in an effect, and are keyed so repeated text is announced again.
+  - A file picked before hydration is adopted into the list (`useEffectEvent`).
+  - Sizes use 1024-byte steps with one decimal.
+- **Search control styles:** `Combobox`'s input group and `MultiSelect searchable`'s chips and input have complete styles, not overrides of `Input`'s wrapper. Two classes in one cascade layer resolve by stylesheet order, which differed between the Storybook build (4px padding) and the test runner (12px). Found in the baseline screenshots. Any future same-layer override has the same hazard.
+- **Disabled `FileUpload` story:** axe's `color-contrast` rule is off in that story only. Disabled text is exempt (WCAG 1.4.3), but axe sees only the hidden input as disabled.
+- **Owner approval:** push, the PR, and this handoff waited for the owner's approval (CLAUDE.md).
 
 ## Changes
 
-**This session (2026-11-12), the v0.5.0 release:**
-- PR #29 squash merged by the owner as `885b951`.
-- `npm run release -- minor` on a clean, up-to-date `main`: all checks passed, then `bbd81d9` (version 0.5.0 in `package.json` and `package-lock.json`), tag `v0.5.0`, push (the owner's ruleset bypass), and the GitHub release.
-- Release notes: with the owner's approval, the "Release notes draft" section of PR #29's body (Breaking changes with the avatar token table, New components, Changes) plus the Full Changelog link replaced the generated notes, through `gh release edit v0.5.0`.
-- This note, on branch `docs/handoff-v0.5.0`.
-
-**The v0.5 build, branch `feat/v0.5-feedback-and-display`, PR #29 (for reference)** (on `main` at `f902386`):
-- `0f0d1c2` avatar color tokens (themes, contrast, Box types, Colors docs, Specs 02 and 04); `b1a6dbb` `Spinner`, used by `Button`; `0a12eb1` `Alert` (server component, client `AlertDismiss`); `7b28ae4` `Divider`; `9d47a9f` `Progress`, plus `src/baseUiDeps.test.ts` (every Base UI entry in `vite.config.ts` `optimizeDeps`); `e1d4287` `Avatar` (Spec 16 amended); `633b159` `Drawer`; `51e50f6` the bottom sheet; `7fde5db` its keyboard fix and test renames from the Task 8 review; `da3de1e` the `Overview/Feedback` page, the Next.js `/feedback` page, Vite fixture additions, `tests/fixtures/feedback.spec.ts`, and `docs/components.md`; `329e66d` a lint fix.
-- Then the review fixes (`79931e8`), the plain-text labeled `Divider` (`8bf529a`), the shared accessibility-tree helper (`0a0323b`), and handoff updates (`a353ef9`, `a4deff5`, `d9fc0df`, the PR head).
-- `scripts/verify-dist.mjs` checks `Spinner`, `Alert`, and `Divider` have no `"use client"`, and `AlertDismiss` has it.
-
-The v0.4.1 release and build details are in `git show f902386:docs/HANDOFF.md`.
+On branch `feat/v0.6-advanced-inputs` (from `main` at `c1b6c3d`), draft PR #31:
+- `492a41c` `Combobox` (plus `@base-ui/react/combobox` in `vite.config.ts` `optimizeDeps`).
+- `9fe738c` `MultiSelect`.
+- `e83b497` `MultiSelect searchable` (and the shared `SearchPopup`).
+- `e95fcc2` `FileUpload`, and the internal `Upload` icon.
+- `a12fb40` the file list and status (`File` and `CircleX` icons, `formatSize`).
+- `9808468` docs, fixtures, and appearance tests:
+  - `docs/components.md`, `src/components/ReactHookForm.mdx`, and the `Overview/Advanced inputs` page.
+  - The Next.js `/inputs` page and the Vite `Combobox`, tested in `tests/fixtures/inputs.spec.ts`.
+- `48d150c` final review fixes: early picks, a consumer `onChange`, disabled drops, re-announcements, `$` in labels, stale removal focus.
+- `14a0e6e` `labels.announce` and the Spec 14 amendments.
+- `75f7cfc` second review fixes, and the search control padding order.
+- `f97a736` and `0cbc263` visual baselines, from the workflow.
+- This note.
 
 ## Verification
 
-**The v0.5.0 release:**
-- `npm run release -- minor` on `885b951`: its `npm run check` passed (the script stops on any failure), ending with fixtures 67 passed and 25 skipped; then it pushed and created the release.
-- CI on PR #29's head `d9fc0df` (run 43325575374) and on `main` at `885b951` (run 43342919002): both passed.
-- `Publish` (run 43346896244) and `Storybook` (run 43346896152) on `bbd81d9`: both succeeded.
-- The edited release notes, read back with `gh release view v0.5.0`, match the draft except for one blank line (`diff -B` is clean).
-- The owner reports these manual checks from PR #29 passed: a screen reader pass on all six components (including the VoiceOver recheck of the labeled `Divider`), swiping a `Drawer` closed from each side on a real phone, and a bottom `Drawer` with an input and the on-screen keyboard on a real phone.
-- The reviews cover all code up to `8bf529a`. After it: `0a0323b` (test-only helper, review skipped by the owner), the handoff commits, and `bbd81d9` (version bump); none of the unreviewed commits changes shipped `src` code.
-
-**The v0.5 build (for reference):**
-
-- `npm ci && npm run check` on `da3de1e` plus the lint fix in `329e66d`, under `.nvmrc`'s Node: exit 0. Unit 881/881 with type tests, script tests 22/22, stories and browser 949/949 (axe in both modes), `verify-dist: ok`, fixtures 67 passed and 25 skipped (tests scoped to one app). The only warnings are the known tooling deprecations (`eslint@9.39.5`, Node `module.register()`) and npm's install-scripts notice.
-- Every new assertion was seen failing on its own line, or deleted when it couldn't fail; the ledger lists each one. The fixture tests failed first without the pages; each HTML assertion was checked against the real `/feedback` HTML with its target removed.
-- `npm audit` (thread 3 rerun): 11 moderate, 0 high, 0 critical, all dev-only (minimatch via api-extractor and `typescript-eslint`, glob via Storybook). Same as v0.4.1. `typescript-eslint` 8.72.2, the latest, is still in the advisory range, so it wasn't upgraded.
-- **Independent review:** fresh read-only Sonnet reviewers covered `633b159` (Task 7) and `51e50f6` (Task 8). The final Opus whole-branch review covered everything up to `706a127`: ready after fixes, 0 Critical, 2 Important, 5 Minor, all fixed in the next commit, each with a test seen failing:
-  - `Avatar`'s fallback painted over the server-rendered image before hydration; the fallback now comes first in the DOM, and a test checks the image is on top of server HTML that isn't hydrated.
-  - `debug-storybook.log` had been committed in `0f0d1c2`; removed and ignored.
-  - `Progress`: the radius test asserts `radius.full` (9999px), and a new test covers the RTL indeterminate animation.
-  - `initials` no longer depends on the host's locale.
-  - `Alert` renders no empty wrapper for `false` or `''`.
-  - `Divider`'s `ref` is `Ref<HTMLElement>`, since it's an `hr` by default; ref forwarding is tested for each kind.
-- A fresh read-only Sonnet reviewer covered that fix commit, `79931e8`: ready, with three nits recorded under thread 6. The review covers all code up to `79931e8`. After it, the labeled-`Divider` change `8bf529a` (plain text, from the owner's VoiceOver check, which then passed) was reviewed by a fresh read-only Sonnet reviewer: ready, one nit under thread 6. The reviews cover all code up to `8bf529a`.
-- **The shared accessibility-tree helper** (owner's request, after that review's nit): `src/utils/browserTestUtils.ts` (`axTree`, `axNames`, `axEntries`) replaces the copies in the NavBar, Pagination, and Divider browser tests, and has its own tests. Building it showed Chrome returns the tree breadth-first, so the helper walks it depth-first into reading order. Every assertion was seen failing. Not independently reviewed: the owner skipped the review (2026-11-12), since it changes only tests. It shipped in `885b951` unreviewed. Trigger: none; the owner can ask for one.
+- `npm ci && npm run check`, exit 0 on `9808468`:
+  - unit 1013
+  - stories and browser 1064, axe in both modes
+  - `verify-dist: ok`
+  - fixtures 70 passed, 28 skipped
+- `npm run check`, exit 0 on `75f7cfc`:
+  - unit 124 files, 1021 tests
+  - stories and browser 171 files, 1075 tests
+  - `verify-dist: ok`
+  - fixtures 70 passed, 28 skipped
+  - Only known warnings: npm's install-scripts notice and arethetypeswrong's ignored lines.
+- **Break-checks:** every new assertion was seen failing with the code it checks broken, each on its own line. The ledger lists each one.
+  - Break-checks found and removed dead code: `File.type` lowercasing, a forced-colors `CanvasText` border, `itemToStringLabel` on the searchable root, and a `minmax(0, …)` grid column.
+  - Vacuous tests were fixed: a warning key used up by an earlier test, invalid and disabled checks that only passed inside a `Field`, a `searchable={false}` DOM-attribute check.
+- **Fixtures:** each `/inputs` server-HTML assertion was checked against the real served HTML, with its target removed. The hydration (no console errors) test and the Vite filter test weren't broken separately; that would need a broken tarball.
+- **`npm audit` (thread 3 rerun):** 11 moderate, 0 high, 0 critical, all dev-only (minimatch via api-extractor and `typescript-eslint`, glob via Storybook docgen). Same as v0.5. `typescript-eslint` 8.72.2, the latest, is still in the affected range (`<=8.72.2`), so it wasn't upgraded.
+- **Reviews:**
+  - The final Opus whole-branch review of `c1b6c3d..9808468`: ready after fixes. I re-graded four findings to Important (early pick lost on hydration, consumer `onChange`, disabled drop opening the file, replacement not announced) and fixed them, plus two Minors, in `48d150c`, each with a test seen failing first.
+  - A fresh Sonnet review of `9808468..14a0e6e`: ready, with 3 Minors, fixed in `75f7cfc`.
+  - A fresh Sonnet review of `14a0e6e..75f7cfc`: ready with nits, with 2 Minors and 2 nits, deferred (thread 6).
+  - **The reviews cover all code up to `75f7cfc`.** After it come only the baseline commits and this note.
+- **Visual baselines:** reviewed the Advanced inputs form, the `FileUpload` statuses, `Combobox` open and clearable, and `MultiSelect searchable` in both modes.
 
 **Not verified:**
 
-- Forced colors on the six v0.5 components (the one PR #29 manual check the owner didn't do). Trigger: next step 2 adds it to the v0.6 PR's manual checklist.
-- CI on the `bbd81d9` push (run 43346894123) was still running when this note was written. Trigger: CI on this note's PR, which runs on top of `bbd81d9`.
-- "A failed image shows initials after hydration" (Spec 16) is tested with a client render, not a hydrated page. Trigger: none; the owner can ask for a fixture test. (Carried forward.)
-- Installing 0.5.x from GitHub Packages, and that 0.5.0 appears there (only the publish job's success was seen). Trigger: none; the v0.1 install proved the pipeline. (Carried forward.)
-- The v0.6 and v0.7 plans haven't had an independent review. Trigger: none before their builds; each branch gets a whole-branch review before merge. (Carried forward.)
+- **The PR #31 manual checks**, none done. Trigger: the PR checklist, before merge.
+  - A screen reader pass on all three components, including chips and status announcements on a popup's first open.
+  - Touch and forced colors on all three.
+  - `FileUpload` on iOS and Android, with `capture`.
+  - Voice control on the `FileUpload` button variant.
+  - Forced colors on the six v0.5 components.
+- **CI on the baseline commits** (`f97a736`, `0cbc263`). It waits for the owner's **Approve workflows to run**. Trigger: that approval, before merge. CI on `14a0e6e` failed only in `visual`, from the missing baselines (126, all new stories or the grown React Hook Form docs page).
+- **Base UI behaviors the wrappers don't own** can't be broken in wrapper code, so they rest on Base UI and its tests: `Escape` closes, `Backspace` removes the last chip, `data-popup-open` and `data-selected` on options. Trigger: none; any Base UI upgrade reruns the suite.
+- **Whether browsers send drag events to a disabled file input** isn't checked. The disabled-drop test dispatches on the root. Trigger: the manual touch and drop checks in PR #31.
+- **"A failed image shows initials after hydration" (Spec 16)** is tested with a client render. Trigger: none; the owner can ask for a fixture test. Carried forward.
+- **Installing 0.5.x or 0.6.x from GitHub Packages.** Trigger: none; the v0.1 install proved the pipeline. Carried forward.
+- **The v0.7 plan hasn't had an independent review.** Trigger: none before its build; the branch gets a whole-branch review before merge. Carried forward. The v0.6 half is resolved.
 
 ## Open threads
 
 4. **Inter comes from `inter-ui`,** because Fontsource's files drop `cv05` and `cv08`. Trigger: a test pins the 4.1.1 ranges. (Carried forward.)
 5. **`engines.node` is `>=22`.** Trigger: the release script refuses to release after April 30, 2027, until the floor and CI's Node matrix are raised. (Carried forward.)
-6. **Deferred minor findings from v0.4, plus Drawer.** Trigger: none; pick from this list when convenient. (Carried forward, with Drawer added.)
-   - Dialog and Drawer: the close button scrolls out of view in tall content (`Dialog.css.ts`, `Drawer.css.ts`); Drawer matches Dialog on purpose. Dialog: the `closeOnOutsideClick` + `alert` warning fires while closed; `React.*` types used without an import in `DialogTitle`/`DialogDescription`; an unexplained `- 1` in the full-width browser test.
-   - From the review of `79931e8`: before hydration, an avatar image with transparent areas shows the initials through them (opaque photos are fine); `Alert`'s `hasContent` lets `true` and `[]` through, rendering an empty part; `Divider`'s `Ref<HTMLElement>` also accepts a `RefObject<HTMLDivElement>`, which then holds an `hr`.
-   - Drawer: the bottom sheet keeps its safe-area padding while the keyboard is up (up to about 34px extra on an iPhone); the provider test waits a fixed 300ms before asserting the variable is absent on a side panel.
-   - Popover: arrow offsets use physical `left`/`right`; the rotated arrow shadow's direction; the shadow clip uses `space.12`; weak tests (`lastMessage` reads `calls[0]`, layout props, no `aria-labelledby` test); a redundant `Omit<children>` in `PopoverTitle`.
-   - Overlay foundations: the `gapOffset` comment should say a subtree theme isn't followed; RTL and non-bottom popup motion is untested; non-null assertions on the `var()` regex.
-   - Tooltip: the provider test's 700ms timeout is close to the 600ms default.
-   - Menu: the `control.sm` term in `Menu.css.ts` is a no-op under Soft; `MenuLinkItem` `startIcon`/`disabled` untested; a value cast in `MenuRadioGroup`; the direction cache can miss a `dir` change between render and first subscribe.
-   - Toast: stories lacked tones and positions (since added); a weak action-close-order test; no browser test of an action toast timing out with a duration.
-   - Table: `TableSortHeader` `as` is typed only for `href`; caption padding uses the two-value form; the Menu-above-sticky test doesn't isolate `isolation`; the `stickyBackground` class is emitted on every table; the partial-cover test asserts only "not fully covered".
-   - Pagination: a local `page` class duplicates ButtonBase's `square`; overrides win by import order; 4-digit page numbers sit flush; weak `pageRange` tests.
-   - EmptyState and Skeleton: tests compare class names only; `gap="3"` isn't in the spec.
-   - DataTable: `pageSize <= 0` unguarded; an uncommented uncontrolled clamp; test gaps (`defaultPage`, skeleton count with `totalRows`); the routing test doesn't check inline `maxHeight`; a wrapped two-line row header is about 3px shorter than in `Table`; `aria-labelledby` ignores a title in cell content; the interactive-content warning checks only at mount.
-   - Earlier tasks: a vacuous null-assertion loop in `Tabs.test.tsx`; `client-modules.mjs` misses a bare `import React from 'react'` used as `React.useState`; a `ColorModeToggle` forced-theme test that does little.
-   - Fixtures: the Vite Table style check sits in `overlays.spec.ts`; no fixture test triggers a toast; the fixture sort link doesn't sort.
-7. **One intermittent browser test, not diagnosed.**
-   - `Table.browser.test.tsx` "scrollable scrolls by keyboard" (line 151) failed once in three local full runs (`scrollLeft` stayed 0) and passed otherwise. It predates the sticky change. In the CI image (`mcr.microsoft.com/playwright:v1.65.0-noble`) it passed 5 of 5 runs of `Table.browser.test.tsx` alone and 2 full `test:stories` runs, and it passed on CI run 43127830011. Its one failure was on macOS under full-suite load. It failed again locally on `d219774`, and an instrumented copy caught one failure in three full runs: `ArrowRight` scrolled 40px, then `ArrowDown` reached the focused wrapper, wasn't prevented, with the page focused and visible, yet `scrollTop` stayed 0 for 2.5s. Ruled out: `ArrowDown` arriving during the `ArrowRight` scroll animation (pressing both back to back scrolls both).
-   - It isn't explained by the v0.4.1 touch-emulation fix (`ce5a5f1`): that taint happens only on Linux, and this test's failures were on macOS. It passed in the v0.4.1 and v0.5.0 releases' local `npm run check` and on CI for `803580d`, `337db60`, `d9fc0df`, and `885b951`. Trigger: CI on every PR and each release's `npm run check`. If it fails, find the cause in the CI image before rerunning. Nothing forces a diagnosis while it keeps passing.
-10. **v0.6 and v0.7 execution method.** v0.5 was hybrid. Trigger: the start of each plan's build session. (Carried forward.)
-11. **A deferred minor finding from v0.4.1's final review.** A two-row header still gets the sticky-header `scroll-padding-block-start` (`stickyHeaderPad`, `src/components/Table/Table.css.ts:44`), so a focused cell stops about one header row below the top while nothing sticks. Nothing is hidden. Trigger: none; pick it up when convenient. (Carried forward; the other two minors were resolved in `b8ac114`.)
+6. **Deferred minor findings.** Trigger: none; pick from this list when convenient. (Carried forward from v0.4 and v0.5. The full v0.4 list is in `git show c1b6c3d:docs/HANDOFF.md`.)
+   - **v0.6, from the third review:**
+     - `MultiSelect searchable`'s chip wrapper ends at `space.1`, against `space.3` for `Input`, so typed text runs to about 5px from the right border (`src/components/MultiSelect/MultiSelect.css.ts`, `chips`).
+     - Its block padding subtracts `borderWidth.thin`, while `Input.control` hardcodes `1px`. A theme with another `borderWidth.thin` miscomputes the small content height; `minHeight` still holds the control height.
+     - A declined removal followed by the parent removing that same file still moves focus (`src/components/FileUpload/FileUpload.tsx`, the `removing` ref).
+     - No test pins the searchable small height with a chip present, the chips input's disabled cursor, or the chip wrapper's focus ring.
+   - **v0.6, set aside by the final review:**
+     - `onSearch` also fires for Base UI's own input syncs.
+     - Reopening with a value shows every option seen, ungrouped (Base UI).
+     - Inline `selectedOptions` rebuilds items each render (performance only).
+     - A form reset doesn't clear the `FileUpload` list.
+     - Non-file drags highlight the dropzone.
+     - Switching `searchable` at runtime remounts the component.
+   - **v0.5:** Dialog and Drawer close buttons scroll away in tall content. Before hydration, an avatar image with transparent areas shows initials through them. `Alert`'s `hasContent` lets `true` and `[]` through. `Divider`'s ref type accepts a div ref. The bottom sheet keeps its safe-area padding with the keyboard up. A provider test waits a fixed 300ms.
+   - **v0.4:** Popover, overlay foundations, Tooltip, Menu, Toast, Table, Pagination, EmptyState and Skeleton, DataTable, earlier tasks, and fixtures. See the old note.
+7. **One intermittent browser test, not diagnosed:** `Table.browser.test.tsx` "scrollable scrolls by keyboard". It failed only on macOS under full-suite load. It passed in every `npm run check` and CI run this session. Trigger: CI on every PR and each release's `npm run check`. If it fails, find the cause in the CI image before rerunning. (Carried forward; details in the old note.)
+10. **v0.7 execution method.** v0.6 was inline with a final Opus review, then a fresh review of each later code commit. Trigger: the start of the v0.7 build session. (Carried forward; the v0.6 half is resolved.)
+11. **A two-row header still gets the sticky-header `scroll-padding-block-start`** (`src/components/Table/Table.css.ts:44`), so a focused cell stops about one header row below the top. Nothing is hidden. Trigger: none; pick it up when convenient. (Carried forward.)
 
-Resolved this session (the v0.5.0 release):
-- Old unverified item, the owner's manual checks: screen reader, Drawer swipe, and bottom sheet with keyboard passed (owner's report); forced colors wasn't done and is carried forward above.
-- Old unverified item, CI and visual baselines for the branch: CI on the PR head `d9fc0df` (run 43325575374) passed, including `visual`.
-- Old next steps 1–4: CI passed, the owner merged PR #29, `npm run release -- minor` made v0.5.0, and the release notes were applied (see Changes).
-- Old next step 5: this note is updated; v0.6 is next.
-- `0a0323b`'s skipped review: the trigger was "before merge"; it merged unreviewed, so it's recorded under Verification with no trigger.
-
-Resolved lists from earlier notes stay readable in `git show d9fc0df:docs/HANDOFF.md`, `git show f902386:docs/HANDOFF.md`, and `git show 5eda67e:docs/HANDOFF.md`.
+**Resolved this session:**
+- Old next step 1: PR #30 (the v0.5.0 handoff) passed CI and was merged as `c1b6c3d`. That also resolves the old unverified item about CI on the `bbd81d9` push.
+- Old next step 2 and thread 10's v0.6 half: v0.6 was built inline (above).
+- Old unverified item: the v0.6 plan's independent review was replaced by the whole-branch reviews above.
+- Old unverified item: forced colors on the v0.5 components is now a checkbox in PR #31.
 
 ## Next steps
 
-1. Confirm CI passes on this note's PR (it also covers the `bbd81d9` push), then merge it.
-2. Start v0.6 from `docs/superpowers/plans/2026-11-11-v0-6-advanced-inputs.md`: the owner chooses the execution method (thread 10), and the v0.6 PR's manual checklist includes forced colors on the six v0.5 components.
+1. On PR #31, select **Approve workflows to run**, and confirm CI passes on `0cbc263` and on this note's commit. Don't close and reopen the PR.
+2. Do the manual checks in PR #31's checklist.
+3. Mark PR #31 ready, if it isn't already, and squash merge it.
+4. On a clean, up-to-date `main`, run `npm run release -- minor`, then apply the "Release notes draft" from PR #31's body with `gh release edit v0.6.0`.
+5. Update this note, then start v0.7 from `docs/superpowers/plans/2026-11-11-v0-7-app-navigation.md` (Spec 15), asking the owner for the execution method (thread 10).
 
 ## Resume prompt
 
-> Read `docs/HANDOFF.md`. v0.5.0 is released and its handoff is merged. Ask me which execution method to use for v0.6 (`docs/superpowers/plans/2026-11-11-v0-6-advanced-inputs.md`), then start the build. Remember to add the v0.5 forced-colors check to the v0.6 PR's manual checklist.
+> Read `docs/HANDOFF.md`. v0.6 (Combobox, MultiSelect, FileUpload) is in draft PR #31 with baselines committed. Check whether I've approved the workflows and done the manual checks, then help me merge and run `npm run release -- minor`, apply the release notes from the PR body, update the handoff, and ask me how to execute v0.7.

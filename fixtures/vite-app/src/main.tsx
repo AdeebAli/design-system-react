@@ -6,6 +6,7 @@ import {
   Button,
   Card,
   ColorModeToggle,
+  Combobox,
   Dialog,
   DialogClose,
   DialogContent,
@@ -92,6 +93,14 @@ createRoot(document.getElementById('root')!).render(
         </DialogClose>
       </DialogContent>
     </Dialog>
+    <Combobox
+      aria-label="Fixture country"
+      options={[
+        { value: 'ca', label: 'Canada' },
+        { value: 'fr', label: 'France' },
+        { value: 'jp', label: 'Japan' },
+      ]}
+    />
     <Alert tone="info" title="Fixture alert" data-testid="alert">
       Rendered from the packed tarball.
     </Alert>
