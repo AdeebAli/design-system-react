@@ -5,14 +5,6 @@ import { BreadcrumbItem, Breadcrumbs } from './index';
 const meta: Meta<typeof Breadcrumbs> = {
   title: 'Components/App navigation/Breadcrumbs',
   component: Breadcrumbs,
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'Where a page sits, with links back up. Each `BreadcrumbItem` takes `href` (and a router link through `as`), or `current` for the page itself, which renders text with `aria-current="page"`. Separators come from CSS, are hidden from screen readers, and flip in right-to-left text. Long trails wrap. There’s no `"use client"` and no context, so it works in a server component, with a server-defined `as` too.',
-      },
-    },
-  },
 };
 
 export default meta;

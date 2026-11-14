@@ -1,25 +1,75 @@
-import { ArgTypes, Meta } from '@storybook/addon-docs/blocks';
-import * as TabsStories from './Tabs.stories';
-import { Tabs, TabsList, Tab, TabsPanel } from '.';
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as Stories_ from './Tabs.stories';
+import { Tab, Tabs, TabsList, TabsPanel } from '.';
 
-<Meta of={TabsStories} />
+<Meta of={Stories_} />
 
 # Tabs
 
-## API
+Switches between panels on the same page.
 
-### `Tabs`
+## Usage
+
+**Tabs or links?** `Tabs` switch between panels in the same page, without changing the URL. For links between pages, use [`NavBar`](?path=/docs/components-navigation-navbar--docs); a URL-driven row of tabs should be links, not `Tab`.
+
+- Build it from `Tabs`, a `TabsList` of `Tab`s, and a `TabsPanel` for each, matched by `value`.
+- Set `value` or `defaultValue`.
+- Closed panels aren't rendered unless `keepMounted` is set.
+- It's a client component.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Name the list, and keep tab labels short.
+    <Canvas of={Stories_.Playground} />
+  </Do>
+  <Dont
+    code={`<TabsList>
+  <Tab value="a">Overview of your account settings</Tab>
+</TabsList>`}
+  />
+</DoDont>
+
+<DoDont>
+  <Do>Use links for tabs that change the URL.</Do>
+  <Dont
+    code={`<Tab value="billing" onClick={() => router.push("/billing")}>Billing</Tab>`}
+  />
+</DoDont>
+
+## Accessibility
+
+- Arrow keys move focus between tabs, and `Enter` or `Space` selects one, so moving through tabs doesn't load content by accident.
+- Name the list with `aria-label` or `aria-labelledby`.
+- Each panel is labeled by its tab.
+
+## API
 
 <ArgTypes of={Tabs} />
 
-### `TabsList`
+<AlsoAccepts element="div" layout />
+
+### TabsList
 
 <ArgTypes of={TabsList} />
 
-### `Tab`
+<AlsoAccepts element="div" layout />
+
+### Tab
 
 <ArgTypes of={Tab} />
 
-### `TabsPanel`
+<AlsoAccepts element="button" layout />
+
+### TabsPanel
 
 <ArgTypes of={TabsPanel} />
+
+<AlsoAccepts element="div" layout />
+
+## Examples
+
+<Stories title={<></>} />

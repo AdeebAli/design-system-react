@@ -1,0 +1,59 @@
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as Stories_ from './Tooltip.stories';
+import { Tooltip, TooltipProvider } from '.';
+
+<Meta of={Stories_} />
+
+# Tooltip
+
+A short, visual-only hint on hover or keyboard focus.
+
+## Usage
+
+Use `Tooltip` to show a control's name or a keyboard shortcut to sighted mouse and keyboard users. For anything people need, use visible text or a [`Popover`](?path=/docs/components-overlays-popover--docs).
+
+- It doesn't appear on touch screens, so never put needed information in one.
+- `delay` applies to hover only; keyboard focus opens it immediately. With `delay={0}`, a tap can flash it open for one frame.
+- `TooltipProvider` is optional: inside one, a second tooltip opens without delay soon after the first closes.
+- A natively `disabled` button fires no hover or focus events, so its tooltip won't open: use `aria-disabled` instead of `disabled`, or wrap it in a focusable element.
+- It's a client component.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Repeat the trigger's own name, such as an `IconButton`'s `aria-label`.
+    <Canvas of={Stories_.OnIconButton} />
+  </Do>
+  <Dont
+    code={`<Tooltip content="Delete">
+  <IconButton icon={Trash2} aria-label="" />
+</Tooltip>`}
+  />
+</DoDont>
+
+<DoDont>
+  <Do>Put needed information in the page.</Do>
+  <Dont
+    code={`<Tooltip content="Passwords need 12 characters">
+  <Input type="password" />
+</Tooltip>`}
+  />
+</DoDont>
+
+## Accessibility
+
+- It's visual only: Base UI adds no ARIA, so `content` isn't announced. The trigger needs its own name.
+
+## API
+
+<ArgTypes of={Tooltip} />
+
+### TooltipProvider
+
+<ArgTypes of={TooltipProvider} />
+
+## Examples
+
+<Stories title={<></>} />

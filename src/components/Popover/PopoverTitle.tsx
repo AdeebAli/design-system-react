@@ -8,7 +8,10 @@ import { usePopoverContext, useRegisterTitle } from './PopoverContext';
 export type PopoverTitleProps = Omit<
   React.ComponentPropsWithRef<'h2'>,
   'children'
-> & { children?: React.ReactNode };
+> & {
+  /** The popover's title, which also names it. */
+  children?: React.ReactNode;
+};
 
 /** The popover's name. Renders an `h2`. */
 export function PopoverTitle(props: PopoverTitleProps) {

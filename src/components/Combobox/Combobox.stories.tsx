@@ -29,14 +29,6 @@ const meta: Meta<typeof Combobox> = {
     placeholder: 'Search countries…',
     'aria-label': 'Country',
   },
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'A single choice, found by typing. Only listed options can be chosen, and leaving the input with unmatched text restores the selected label. It takes the same `options` as `Select`, and `null` means nothing is selected; with React Hook Form, use `Controller` and a default of `null`. `ref` and native attributes go to the `input`; `className`, `style`, and layout props go to its wrapper. Results are filtered locally unless `onSearch` is set, and the match count is announced.',
-      },
-    },
-  },
 };
 
 export default meta;

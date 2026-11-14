@@ -1,0 +1,52 @@
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as Stories_ from './Toast.stories';
+import { ToastProvider } from '.';
+
+<Meta of={Stories_} />
+
+# Toast
+
+A brief message that goes away by itself.
+
+## Usage
+
+Use a toast to confirm something that just happened, such as a save. For a message that should stay until the problem is fixed, use [`Alert`](?path=/docs/components-feedback-and-display-alert--docs). Never put the only copy of important information in a toast.
+
+- Mount `ToastProvider` once near the root, where it stays mounted, and call `useToast()` anywhere below it. `createToastManager()` is for code outside React, passed as `manager`.
+- A toast with an `action`, or with `tone="danger"`, stays until dismissed unless it sets its own `duration`. An `action` that times out must also be available somewhere else.
+- Calls on a `createToastManager` manager (`add`, `update`, `close`, and `promise`) wait until `<ToastProvider manager>` has mounted and then run in order. If the provider never mounts, nothing shows. Once a provider has mounted and then unmounted, later calls are dropped with a development warning.
+- It's a client component.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Confirm what happened in a few words.
+    <Canvas of={Stories_.Tones} />
+  </Do>
+  <Dont code={`toast.add({ title: 'Something happened' })`} />
+</DoDont>
+
+<DoDont>
+  <Do>
+    Keep a toast's action available elsewhere too, such as an Undo in the page.
+  </Do>
+  <Dont
+    code={`toast.add({ title: 'Deleted', action: { label: 'Undo', onClick: restore }, duration: 3000 })
+// The only way to undo, gone in 3 seconds`}
+  />
+</DoDont>
+
+## Accessibility
+
+- Toasts are announced. `tone="danger"` is announced urgently.
+- Base UI hides a toast from a screen reader in browse mode while focus is outside the toasts, so a user browsing can't reach a danger toast or its action until they press `F6`, which moves focus to the toasts. Don't rely on a toast for anything needed.
+
+## API
+
+<ArgTypes of={ToastProvider} />
+
+## Examples
+
+<Stories title={<></>} />
