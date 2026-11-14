@@ -1,0 +1,56 @@
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as Stories_ from './ColorModeToggle.stories';
+import { ColorModeToggle } from '.';
+
+<Meta of={Stories_} />
+
+# ColorModeToggle
+
+An `IconButton` that switches between light and dark.
+
+## Usage
+
+Put `ColorModeToggle` in a header or settings area. It switches the mode through `useColorMode`, inside a `ThemeProvider`.
+
+- Clicking stores the opposite of what's on screen. "system" stays the starting point until someone clicks.
+- Before hydration it renders an icon-less button with a neutral name, at its final size, so nothing shifts.
+- It renders nothing when the mode is forced.
+- For a three-way light, dark, and system choice, build a [`Menu`](?path=/docs/components-overlays-menu--docs) with `useColorMode`. See [Themes](?path=/docs/guides-themes--docs).
+- It's a client component.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Use one toggle in the app's header.
+    <Canvas of={Stories_.Variants} />
+  </Do>
+  <Dont
+    code={`<IconButton icon={Moon} aria-label="Dark mode" onClick={() => document.documentElement.dataset.dsMode = 'dark'} />`}
+  />
+</DoDont>
+
+<DoDont>
+  <Do>Change `labels` to translate its names.</Do>
+  <Dont
+    code={`<ColorModeToggle aria-label="Theme" />
+// aria-label isn't accepted: the name says what clicking does`}
+  />
+</DoDont>
+
+## Accessibility
+
+- Its name says what a click does, "Switch to dark mode" or "Switch to light mode", and changes with the mode.
+- It's a native `button`.
+
+## API
+
+<ArgTypes of={ColorModeToggle} />
+
+<AlsoAccepts element="button" layout />
+
+## Examples
+
+<Stories title={<></>} />

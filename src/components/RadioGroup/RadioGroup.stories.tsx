@@ -6,14 +6,6 @@ import { RadioGroup } from './RadioGroup';
 const meta: Meta<typeof RadioGroup> = {
   title: 'Components/Forms and actions/RadioGroup',
   component: RadioGroup,
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'One choice from a few. Label the group with a `Field`; each `Radio` is named by its own `label`. Arrow keys move the selection. With React Hook Form, use `Controller` with `value` and `onValueChange`.',
-      },
-    },
-  },
 };
 
 export default meta;

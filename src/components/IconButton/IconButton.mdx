@@ -1,0 +1,51 @@
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as Stories_ from './IconButton.stories';
+import { IconButton } from '.';
+
+<Meta of={Stories_} />
+
+# IconButton
+
+A square button with only an icon.
+
+## Usage
+
+Use `IconButton` for a compact action whose icon is well known, such as close, edit, or more. When the action isn't obvious from its icon, use a [`Button`](?path=/docs/components-forms-and-actions-button--docs) with text.
+
+- `aria-label` is required by its types, and names the button, so the icon stays decorative.
+- It takes the same variants, tones, sizes, and states as `Button`, including `loading` and `as`.
+- It's a client component.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Name the action in `aria-label`.
+    <Canvas of={Stories_.Variants} />
+  </Do>
+  <Dont code={`<IconButton icon={Trash2} aria-label="Trash icon" />`} />
+</DoDont>
+
+<DoDont>
+  <Do>
+    Pair it with a `Tooltip` showing the same name for sighted mouse users.
+  </Do>
+  <Dont code={`<IconButton icon={Share} aria-label="" />`} />
+</DoDont>
+
+## Accessibility
+
+- It renders a native `button` named by `aria-label`.
+- A `Tooltip` can show the name visually, but never replaces `aria-label`.
+
+## API
+
+<ArgTypes of={IconButton} />
+
+<AlsoAccepts element="button" layout />
+
+## Examples
+
+<Stories title={<></>} />

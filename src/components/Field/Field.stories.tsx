@@ -12,14 +12,6 @@ const meta: Meta<typeof Field> = {
     hint: 'A whole number',
     children: <Input inputMode="numeric" />,
   },
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'Connects a label, hint, and error to one control. It displays them; it doesn’t manage form state or validate. `error` marks the field invalid, and needs text. `required` sets `aria-required` and shows a `*`, without native validation bubbles. For native validation, put `required` directly on `Input` or `Textarea`.',
-      },
-    },
-  },
 };
 
 export default meta;

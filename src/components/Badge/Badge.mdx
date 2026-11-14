@@ -1,0 +1,51 @@
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as Stories_ from './Badge.stories';
+import { Badge } from '.';
+
+<Meta of={Stories_} />
+
+# Badge
+
+A small, non-interactive status label.
+
+## Usage
+
+Use `Badge` for a status or count next to something, such as "Draft" or "3 new". For selectable pills, use [`ToggleChip`](?path=/docs/components-forms-and-actions-togglechip--docs). For a message, use [`Alert`](?path=/docs/components-feedback-and-display-alert--docs).
+
+- The text must carry the meaning, since color alone can't.
+- It works in server components.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Say the status in words, and pick the tone to match.
+    <Canvas of={Stories_.Tones} />
+  </Do>
+  <Dont
+    code={`<Badge tone="danger" />
+<Badge tone="success">●</Badge>`}
+  />
+</DoDont>
+
+<DoDont>
+  <Do>Use a `Button` or `ToggleChip` for something to click.</Do>
+  <Dont code={`<Badge onClick={() => setFilter('draft')}>Draft</Badge>`} />
+</DoDont>
+
+## Accessibility
+
+- It's plain text in a `span`, with no role, so it's read in line with the content around it.
+- An icon in `startIcon` is decorative.
+
+## API
+
+<ArgTypes of={Badge} />
+
+<AlsoAccepts element="span" layout />
+
+## Examples
+
+<Stories title={<></>} />

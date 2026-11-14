@@ -7,14 +7,6 @@ const meta: Meta<typeof Switch> = {
   title: 'Components/Forms and actions/Switch',
   component: Switch,
   args: { label: 'Live updates' },
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'A switch for a setting that applies immediately; use `Checkbox` for choices submitted with a form. The knob’s position shows the state, so color isn’t the only signal.',
-      },
-    },
-  },
 };
 
 export default meta;

@@ -16,14 +16,6 @@ const meta: Meta<typeof ColorModeToggle> = {
       </ThemeProvider>
     ),
   ],
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'An `IconButton` that switches between light and dark through `useColorMode`. Clicking stores the opposite of what’s on screen; "system" stays the starting point until someone clicks. Before hydration it renders an icon-less button with a neutral name, at its final size. It renders nothing when the mode is forced. For a three-way light, dark, and system choice, build a menu with `useColorMode`.',
-      },
-    },
-  },
 };
 
 export default meta;

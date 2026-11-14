@@ -1,0 +1,59 @@
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as Stories_ from './Input.stories';
+import { Input } from '.';
+
+<Meta of={Stories_} />
+
+# Input
+
+A single-line text input.
+
+## Usage
+
+Use `Input` for short text, such as a name, an email, or a search. For several lines, use [`Textarea`](?path=/docs/components-forms-and-actions-textarea--docs); for a choice from a list, [`Select`](?path=/docs/components-forms-and-actions-select--docs) or [`Combobox`](?path=/docs/components-advanced-inputs-combobox--docs). Label it with a [`Field`](?path=/docs/components-forms-and-actions-field--docs).
+
+- It keeps the native `value` and `onChange`, so it works with React Hook Form's `register`.
+- `ref` and native attributes go to the `input`. `className`, `style`, and layout props go to its wrapper, which also draws the focus ring around any icons.
+- Text is 16px on touch screens, so iOS doesn't zoom.
+- It's a client component.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Label it with a `Field`, and use the right `type` and `autoComplete`.
+    <Canvas of={Stories_.States} />
+  </Do>
+  <Dont
+    code={`<Input placeholder="Email address" />
+// The placeholder disappears on typing, and isn't a label`}
+  />
+</DoDont>
+
+<DoDont>
+  <Do>Put icons in the input's own slots, so the focus ring wraps them.</Do>
+  <Dont
+    code={`<Inline>
+  <Icon icon={Search} />
+  <Input />
+</Inline>`}
+  />
+</DoDont>
+
+## Accessibility
+
+- It renders a native `input`, so it works with every assistive technology and with autofill.
+- In a `Field`, it gets the label, hint, error, and `aria-invalid`.
+- Icons are decorative.
+
+## API
+
+<ArgTypes of={Input} />
+
+<AlsoAccepts element="input" layout />
+
+## Examples
+
+<Stories title={<></>} />

@@ -8,14 +8,6 @@ const meta: Meta<typeof IconButton> = {
   title: 'Components/Forms and actions/IconButton',
   component: IconButton,
   args: { icon: <Icon icon={X} />, 'aria-label': 'Close', variant: 'ghost' },
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'A square button with only an icon. `aria-label` is required by its types, and names the button, so the icon stays decorative. It takes the same variants, tones, sizes, and states as `Button`.',
-      },
-    },
-  },
 };
 
 export default meta;

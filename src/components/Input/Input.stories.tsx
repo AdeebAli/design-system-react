@@ -9,14 +9,6 @@ const meta: Meta<typeof Input> = {
   title: 'Components/Forms and actions/Input',
   component: Input,
   args: { 'aria-label': 'Search', placeholder: 'Search people…' },
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'A text input with the native `value` and `onChange`, so it works with React Hook Form’s `register`. `ref` and native attributes go to the `input`; `className`, `style`, and layout props go to its wrapper, which also draws the focus ring around any icons. Text is 16px on touch screens, so iOS doesn’t zoom.',
-      },
-    },
-  },
 };
 
 export default meta;
