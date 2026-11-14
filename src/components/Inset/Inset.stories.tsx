@@ -4,7 +4,7 @@ import { Tile } from '../../utils/Tile';
 import { Inset } from './Inset';
 
 const meta: Meta<typeof Inset> = {
-  title: 'Components/Inset',
+  title: 'Components/Layout/Inset',
   component: Inset,
   parameters: {
     docs: {

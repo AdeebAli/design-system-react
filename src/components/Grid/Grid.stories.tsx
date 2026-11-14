@@ -4,7 +4,7 @@ import { Tile } from '../../utils/Tile';
 import { Grid } from './Grid';
 
 const meta: Meta<typeof Grid> = {
-  title: 'Components/Grid',
+  title: 'Components/Layout/Grid',
   component: Grid,
   parameters: {
     docs: {

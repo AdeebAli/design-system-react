@@ -6,7 +6,7 @@ import { FileUpload, type FileStatus } from './FileUpload';
 import type { FileRejection } from './mergeFiles';
 
 const meta: Meta<typeof FileUpload> = {
-  title: 'Components/FileUpload',
+  title: 'Components/Advanced inputs/FileUpload',
   component: FileUpload,
   args: { 'aria-label': 'Attachments' },
   parameters: {

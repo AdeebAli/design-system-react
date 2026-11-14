@@ -4,7 +4,7 @@ import { Text } from '../Text';
 import { Kbd } from './Kbd';
 
 const meta: Meta<typeof Kbd> = {
-  title: 'Components/Kbd',
+  title: 'Components/Typography/Kbd',
   component: Kbd,
   args: { children: 'K' },
   parameters: {

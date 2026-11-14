@@ -12,7 +12,7 @@ import { TabsList } from './TabsList';
 import { TabsPanel } from './TabsPanel';
 
 const meta: Meta<typeof Tabs> = {
-  title: 'Components/Tabs',
+  title: 'Components/Navigation/Tabs',
   component: Tabs,
   args: { defaultValue: 'overview' },
   render: (args) => (

@@ -15,7 +15,7 @@ import {
 } from './index';
 
 const meta: Meta<typeof Popover> = {
-  title: 'Components/Popover',
+  title: 'Components/Overlays/Popover',
   component: Popover,
   parameters: {
     docs: {

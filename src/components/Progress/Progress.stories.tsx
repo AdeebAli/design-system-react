@@ -4,7 +4,7 @@ import { Stack } from '../Stack';
 import { Progress } from './Progress';
 
 const meta: Meta<typeof Progress> = {
-  title: 'Components/Progress',
+  title: 'Components/Feedback and display/Progress',
   component: Progress,
   args: { label: 'Uploading report.pdf', value: 42, showValue: true },
   parameters: {

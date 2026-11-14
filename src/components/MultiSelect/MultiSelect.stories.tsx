@@ -15,7 +15,7 @@ const topics: Option[] = [
 ];
 
 const meta: Meta<typeof MultiSelect> = {
-  title: 'Components/MultiSelect',
+  title: 'Components/Advanced inputs/MultiSelect',
   component: MultiSelect,
   args: {
     options: topics,

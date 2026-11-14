@@ -3,7 +3,7 @@ import { Tile } from '../../utils/Tile';
 import { Flex } from './Flex';
 
 const meta: Meta<typeof Flex> = {
-  title: 'Components/Flex',
+  title: 'Components/Layout/Flex',
   component: Flex,
   parameters: {
     docs: {

@@ -22,7 +22,7 @@ const countries: Option[] = [
 ];
 
 const meta: Meta<typeof Combobox> = {
-  title: 'Components/Combobox',
+  title: 'Components/Advanced inputs/Combobox',
   component: Combobox,
   args: {
     options: countries,

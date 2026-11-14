@@ -7,7 +7,7 @@ import { VisuallyHidden } from '../VisuallyHidden';
 import { Skeleton } from './Skeleton';
 
 const meta: Meta<typeof Skeleton> = {
-  title: 'Components/Skeleton',
+  title: 'Components/Data/Skeleton',
   component: Skeleton,
   args: { height: '10' },
   parameters: {

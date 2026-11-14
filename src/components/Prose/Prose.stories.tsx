@@ -95,7 +95,7 @@ function Article() {
 }
 
 const meta: Meta<typeof Prose> = {
-  title: 'Components/Prose',
+  title: 'Components/Typography/Prose',
   component: Prose,
   args: { as: 'article', marginX: 'auto' },
   render: (args) => (

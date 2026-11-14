@@ -4,7 +4,7 @@ import { Tile } from '../../utils/Tile';
 import { Container } from './Container';
 
 const meta: Meta<typeof Container> = {
-  title: 'Components/Container',
+  title: 'Components/Layout/Container',
   component: Container,
   parameters: {
     docs: {

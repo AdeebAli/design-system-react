@@ -15,7 +15,7 @@ import { Stack } from './Stack';
 import { Text } from './Text';
 
 const meta: Meta = {
-  title: 'Overview/App navigation',
+  title: 'Patterns/App navigation',
   parameters: {
     layout: 'fullscreen',
     docs: {

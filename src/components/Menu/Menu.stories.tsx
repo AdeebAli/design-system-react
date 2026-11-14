@@ -30,7 +30,7 @@ import {
 } from './index';
 
 const meta: Meta<typeof Menu> = {
-  title: 'Components/Menu',
+  title: 'Components/Overlays/Menu',
   component: Menu,
   parameters: {
     docs: {

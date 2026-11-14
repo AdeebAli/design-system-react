@@ -9,7 +9,7 @@ import { Inset } from './Inset';
 import { Stack } from './Stack';
 
 const meta: Meta = {
-  title: 'Overview/Layout',
+  title: 'Patterns/Layout',
   parameters: {
     docs: {
       description: {

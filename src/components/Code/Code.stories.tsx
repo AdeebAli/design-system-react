@@ -4,7 +4,7 @@ import { Text } from '../Text';
 import { Code } from './Code';
 
 const meta: Meta<typeof Code> = {
-  title: 'Components/Code',
+  title: 'Components/Typography/Code',
   component: Code,
   args: { children: 'npm run build' },
   parameters: {

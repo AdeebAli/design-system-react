@@ -13,7 +13,7 @@ const portrait = `data:image/svg+xml,${encodeURIComponent(
 )}`;
 
 const meta: Meta<typeof Avatar> = {
-  title: 'Components/Avatar',
+  title: 'Components/Feedback and display/Avatar',
   component: Avatar,
   args: { name: 'Ada Park' },
   parameters: {

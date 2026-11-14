@@ -29,7 +29,7 @@ const Search = (props: React.SVGProps<SVGSVGElement>) => (
 );
 
 const meta: Meta<typeof EmptyState> = {
-  title: 'Components/EmptyState',
+  title: 'Components/Data/EmptyState',
   component: EmptyState,
   args: {
     title: 'No results',

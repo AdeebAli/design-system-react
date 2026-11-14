@@ -18,7 +18,7 @@ const portrait = `data:image/svg+xml,${encodeURIComponent(
 )}`;
 
 const meta: Meta<typeof Image> = {
-  title: 'Components/Image',
+  title: 'Components/Image/Image',
   component: Image,
   args: {
     src: landscape,

@@ -3,7 +3,7 @@ import { forwardRef, type ComponentPropsWithoutRef } from 'react';
 import { BreadcrumbItem, Breadcrumbs } from './index';
 
 const meta: Meta<typeof Breadcrumbs> = {
-  title: 'Components/Breadcrumbs',
+  title: 'Components/App navigation/Breadcrumbs',
   component: Breadcrumbs,
   parameters: {
     docs: {

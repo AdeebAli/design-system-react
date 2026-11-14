@@ -11,7 +11,7 @@ const plans = [
 ];
 
 const meta: Meta<typeof Select> = {
-  title: 'Components/Select',
+  title: 'Components/Forms and actions/Select',
   component: Select,
   args: { options: plans, placeholder: 'Choose a plan', 'aria-label': 'Plan' },
   parameters: {

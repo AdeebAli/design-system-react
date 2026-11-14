@@ -5,7 +5,7 @@ import { Icon } from '../Icon';
 import { VisuallyHidden } from './VisuallyHidden';
 
 const meta: Meta<typeof VisuallyHidden> = {
-  title: 'Components/VisuallyHidden',
+  title: 'Components/Typography/VisuallyHidden',
   component: VisuallyHidden,
   parameters: {
     docs: {

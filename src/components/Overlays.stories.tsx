@@ -35,7 +35,7 @@ import { Text } from './Text';
 import { Tooltip } from './Tooltip';
 
 const meta: Meta = {
-  title: 'Overview/Overlays',
+  title: 'Patterns/Overlays',
   parameters: {
     layout: 'centered',
     docs: {

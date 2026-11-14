@@ -4,7 +4,7 @@ import { Stack } from '../Stack';
 import { Checkbox } from './Checkbox';
 
 const meta: Meta<typeof Checkbox> = {
-  title: 'Components/Checkbox',
+  title: 'Components/Forms and actions/Checkbox',
   component: Checkbox,
   args: { label: 'Include archived' },
   parameters: {

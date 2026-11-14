@@ -9,7 +9,7 @@ import { Stack } from '../Stack';
 import { Alert } from './Alert';
 
 const meta: Meta<typeof Alert> = {
-  title: 'Components/Alert',
+  title: 'Components/Feedback and display/Alert',
   component: Alert,
   args: {
     tone: 'info',

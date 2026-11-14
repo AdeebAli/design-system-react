@@ -5,7 +5,7 @@ import { Inline } from '../Inline';
 import { IconButton } from './IconButton';
 
 const meta: Meta<typeof IconButton> = {
-  title: 'Components/IconButton',
+  title: 'Components/Forms and actions/IconButton',
   component: IconButton,
   args: { icon: <Icon icon={X} />, 'aria-label': 'Close', variant: 'ghost' },
   parameters: {

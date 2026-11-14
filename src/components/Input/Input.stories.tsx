@@ -6,7 +6,7 @@ import { Stack } from '../Stack';
 import { Input } from './Input';
 
 const meta: Meta<typeof Input> = {
-  title: 'Components/Input',
+  title: 'Components/Forms and actions/Input',
   component: Input,
   args: { 'aria-label': 'Search', placeholder: 'Search people…' },
   parameters: {

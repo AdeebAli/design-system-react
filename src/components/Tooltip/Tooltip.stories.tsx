@@ -9,7 +9,7 @@ import { Link } from '../Link';
 import { Tooltip, TooltipProvider } from './index';
 
 const meta: Meta<typeof Tooltip> = {
-  title: 'Components/Tooltip',
+  title: 'Components/Overlays/Tooltip',
   component: Tooltip,
   parameters: {
     docs: {

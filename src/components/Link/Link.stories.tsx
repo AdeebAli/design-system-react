@@ -4,7 +4,7 @@ import { Text } from '../Text';
 import { Link } from './Link';
 
 const meta: Meta<typeof Link> = {
-  title: 'Components/Link',
+  title: 'Components/Typography/Link',
   component: Link,
   args: { href: '#', children: 'A link' },
   parameters: {

@@ -3,7 +3,7 @@ import { Stack } from '../Stack';
 import { Text } from './Text';
 
 const meta: Meta<typeof Text> = {
-  title: 'Components/Text',
+  title: 'Components/Typography/Text',
   component: Text,
   args: { children: 'The quick brown fox jumps over the lazy dog.' },
   parameters: {

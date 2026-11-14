@@ -6,7 +6,7 @@ import { Pagination } from './Pagination';
 const noop = (page: number) => void page;
 
 const meta: Meta<typeof Pagination> = {
-  title: 'Components/Pagination',
+  title: 'Components/Data/Pagination',
   component: Pagination,
   args: { page: 3, totalPages: 10 },
   parameters: {

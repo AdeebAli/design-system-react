@@ -18,7 +18,7 @@ import {
 } from './index';
 
 const meta: Meta<typeof Drawer> = {
-  title: 'Components/Drawer',
+  title: 'Components/Overlays/Drawer',
   component: Drawer,
   parameters: {
     docs: {

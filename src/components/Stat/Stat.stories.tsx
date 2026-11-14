@@ -4,7 +4,7 @@ import { Grid } from '../Grid';
 import { Stat } from './Stat';
 
 const meta: Meta<typeof Stat> = {
-  title: 'Components/Stat',
+  title: 'Components/Display/Stat',
   component: Stat,
   args: { label: 'Revenue', value: '$21.4k', change: '4.1', trend: 'up' },
   parameters: {

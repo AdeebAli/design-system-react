@@ -4,7 +4,7 @@ import { Tile } from '../../utils/Tile';
 import { Center } from './Center';
 
 const meta: Meta<typeof Center> = {
-  title: 'Components/Center',
+  title: 'Components/Layout/Center',
   component: Center,
   parameters: {
     docs: {

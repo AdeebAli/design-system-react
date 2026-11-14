@@ -3,7 +3,7 @@ import { ThemeProvider } from '../../theme/ThemeProvider';
 import { ColorModeToggle } from './ColorModeToggle';
 
 const meta: Meta<typeof ColorModeToggle> = {
-  title: 'Components/ColorModeToggle',
+  title: 'Components/Forms and actions/ColorModeToggle',
   component: ColorModeToggle,
   decorators: [
     (Story, context) => (

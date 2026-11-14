@@ -4,7 +4,7 @@ import { Radio } from '../Radio';
 import { RadioGroup } from './RadioGroup';
 
 const meta: Meta<typeof RadioGroup> = {
-  title: 'Components/RadioGroup',
+  title: 'Components/Forms and actions/RadioGroup',
   component: RadioGroup,
   parameters: {
     docs: {

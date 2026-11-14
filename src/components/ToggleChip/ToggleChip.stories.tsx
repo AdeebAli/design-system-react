@@ -5,7 +5,7 @@ import { Inline } from '../Inline';
 import { ToggleChip } from './ToggleChip';
 
 const meta: Meta<typeof ToggleChip> = {
-  title: 'Components/ToggleChip',
+  title: 'Components/Forms and actions/ToggleChip',
   component: ToggleChip,
   args: { children: 'Archived' },
   parameters: {

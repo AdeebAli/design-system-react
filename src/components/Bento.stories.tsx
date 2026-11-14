@@ -11,7 +11,7 @@ import { Stat } from './Stat';
 import { Text } from './Text';
 
 const meta: Meta = {
-  title: 'Overview/Bento',
+  title: 'Patterns/Bento',
   parameters: {
     layout: 'fullscreen',
     docs: {

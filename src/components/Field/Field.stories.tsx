@@ -5,7 +5,7 @@ import { Textarea } from '../Textarea';
 import { Field } from './Field';
 
 const meta: Meta<typeof Field> = {
-  title: 'Components/Field',
+  title: 'Components/Forms and actions/Field',
   component: Field,
   args: {
     label: 'Seats',

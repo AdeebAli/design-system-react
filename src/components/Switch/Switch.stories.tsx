@@ -4,7 +4,7 @@ import { Stack } from '../Stack';
 import { Switch } from './Switch';
 
 const meta: Meta<typeof Switch> = {
-  title: 'Components/Switch',
+  title: 'Components/Forms and actions/Switch',
   component: Switch,
   args: { label: 'Live updates' },
   parameters: {

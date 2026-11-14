@@ -10,7 +10,7 @@ import { NavBar } from './NavBar';
 import { NavBarLink } from './NavBarLink';
 
 const meta: Meta<typeof NavBar> = {
-  title: 'Components/NavBar',
+  title: 'Components/Navigation/NavBar',
   component: NavBar,
   args: {
     'aria-label': 'Main',

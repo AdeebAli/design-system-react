@@ -16,7 +16,7 @@ import {
 } from './index';
 
 const meta: Meta<typeof Table> = {
-  title: 'Components/Table',
+  title: 'Components/Data/Table',
   component: Table,
   args: { 'aria-label': 'Customers' },
   parameters: {

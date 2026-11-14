@@ -5,7 +5,7 @@ import { Inline } from '../Inline';
 import { ToastProvider, useToast, type ToastProviderProps } from './index';
 
 const meta: Meta<typeof ToastProvider> = {
-  title: 'Components/Toast',
+  title: 'Components/Overlays/Toast',
   component: ToastProvider,
   parameters: {
     docs: {

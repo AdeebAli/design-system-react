@@ -15,7 +15,7 @@ const TONES: BadgeTone[] = [
 ];
 
 const meta: Meta<typeof Badge> = {
-  title: 'Components/Badge',
+  title: 'Components/Display/Badge',
   component: Badge,
   args: { children: 'Active' },
   parameters: {

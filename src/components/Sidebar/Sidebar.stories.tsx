@@ -15,7 +15,7 @@ import { Text } from '../Text';
 import { Sidebar, SidebarGroup, SidebarLink, type SidebarProps } from './index';
 
 const meta: Meta<typeof Sidebar> = {
-  title: 'Components/Sidebar',
+  title: 'Components/App navigation/Sidebar',
   component: Sidebar,
   args: { 'aria-label': 'Main' },
   decorators: [

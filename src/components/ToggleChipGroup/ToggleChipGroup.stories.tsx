@@ -4,7 +4,7 @@ import { ToggleChip } from '../ToggleChip';
 import { ToggleChipGroup } from './ToggleChipGroup';
 
 const meta: Meta<typeof ToggleChipGroup> = {
-  title: 'Components/ToggleChipGroup',
+  title: 'Components/Forms and actions/ToggleChipGroup',
   component: ToggleChipGroup,
   parameters: {
     docs: {

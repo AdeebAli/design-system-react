@@ -7,7 +7,7 @@ import { Text } from '../Text';
 import { Card } from './Card';
 
 const meta: Meta<typeof Card> = {
-  title: 'Components/Card',
+  title: 'Components/Display/Card',
   component: Card,
   args: { children: <Text>Card content</Text> },
   parameters: {

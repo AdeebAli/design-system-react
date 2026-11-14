@@ -17,7 +17,7 @@ import {
 } from './index';
 
 const meta: Meta<typeof Dialog> = {
-  title: 'Components/Dialog',
+  title: 'Components/Overlays/Dialog',
   component: Dialog,
   parameters: {
     docs: {

@@ -7,7 +7,7 @@ import { Input } from '../Input';
 import { Accordion, AccordionItem } from './index';
 
 const meta: Meta<typeof Accordion> = {
-  title: 'Components/Accordion',
+  title: 'Components/App navigation/Accordion',
   component: Accordion,
   parameters: {
     docs: {

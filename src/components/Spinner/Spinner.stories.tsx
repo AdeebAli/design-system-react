@@ -7,7 +7,7 @@ import { Text } from '../Text';
 import { Spinner } from './Spinner';
 
 const meta: Meta<typeof Spinner> = {
-  title: 'Components/Spinner',
+  title: 'Components/Feedback and display/Spinner',
   component: Spinner,
   parameters: {
     docs: {

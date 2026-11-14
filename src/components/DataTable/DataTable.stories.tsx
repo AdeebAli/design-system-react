@@ -41,7 +41,7 @@ const columns: DataTableColumn<Customer>[] = [
 ];
 
 const meta: Meta<typeof DataTable<Customer>> = {
-  title: 'Components/DataTable',
+  title: 'Components/Data/DataTable',
   component: DataTable,
   args: {
     'aria-label': 'Customers',

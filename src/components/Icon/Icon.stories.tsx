@@ -5,7 +5,7 @@ import { Box } from '../Box';
 import { Icon } from './Icon';
 
 const meta: Meta<typeof Icon> = {
-  title: 'Components/Icon',
+  title: 'Components/Icons/Icon',
   component: Icon,
   args: { icon: Search },
   parameters: {
