@@ -16,6 +16,8 @@ it.each([
 it('points aliases at their targets', () => {
   expect(softLight.radius.card).toBe('var(--ds-radius-xl)');
   expect(softLight.radius.control).toBe('var(--ds-radius-md)');
+  expect(softLight.radius.image).toBe('var(--ds-radius-md)');
+  expect(softDark.radius.image).toBe('var(--ds-radius-md)');
   expect(softLight.shadow.card).toBe('var(--ds-shadow-md)');
   expect(softDark.shadow.card).toBe('var(--ds-shadow-sm)');
   expect(softLight.shadow.cardHover).toBe('var(--ds-shadow-lg)');

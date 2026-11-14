@@ -28,8 +28,8 @@ Read these first:
 
 ## Planning workflow
 
-- Specs live in `docs/specs/NN-name.md` and are written one at a time, in index order (00–16). Each one goes: draft → reviewer/builder check → bring the owner only the questions whose answers change what gets built → update → owner approves (Status `Draft` → `Accepted`) → next spec.
-- When a spec is accepted, commit it on a branch, open a PR, squash merge it, delete the branch, then start the next spec. Don't ask first. This covers accepted specs only; other commits and pushes need a request.
+- Specs live in `docs/specs/NN-name.md` and are written one at a time, in index order. Each one goes: draft → reviewer/builder check → bring the owner only the questions whose answers change what gets built → update → owner approves (Status `Draft` → `Accepted`) → next spec.
+- When a spec is accepted, commit it on a branch, open a PR, squash merge it, delete the branch, then start the next spec. Don't ask first. This covers accepted specs only; other commits and pushes need a request. If the spec adds or reorders a milestone, update `docs/HANDOFF.md`'s next steps in the same PR, through the `handoff` skill.
 - Record new architectural decisions as the next ADR (`docs/adr/0005-…`), using the existing ADR format (Status, Date, Context, Decision, Alternatives considered, Consequences).
 - Items marked **(proposed)** in specs are the assistant's calls and not owner-confirmed. Don't treat them as settled.
 - Implementation plans come only after the specs are approved.

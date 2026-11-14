@@ -7,6 +7,8 @@ import { Code } from '../Code';
 import { Heading } from '../Heading';
 import { Link } from '../Link';
 import { Text } from '../Text';
+import { defineTheme } from '../../theme/defineTheme';
+import { ThemeProvider } from '../../theme/ThemeProvider';
 import { NotProse, Prose } from './index';
 
 const css = (el: Element, pseudo?: string) => getComputedStyle(el, pseudo);
@@ -339,4 +341,32 @@ it('list markers are muted and headings have a scroll margin', () => {
     css(byTestId('li')).color,
   );
   expect(parseFloat(css(byTestId('h2')).scrollMarginTop)).toBeGreaterThan(0);
+});
+
+describe('images use radius.image', () => {
+  const image = (
+    <Prose>
+      <img
+        data-testid="img"
+        alt=""
+        src="data:image/gif;base64,R0lGODlhAQABAAAAACw="
+      />
+    </Prose>
+  );
+
+  it('12px by default', () => {
+    render(image);
+    expect(css(byTestId('img')).borderTopLeftRadius).toBe('12px');
+  });
+
+  it('follows a theme that overrides it', () => {
+    render(
+      <ThemeProvider
+        theme={defineTheme({ shared: { radius: { image: '3px' } } })}
+      >
+        {image}
+      </ThemeProvider>,
+    );
+    expect(css(byTestId('img')).borderTopLeftRadius).toBe('3px');
+  });
 });

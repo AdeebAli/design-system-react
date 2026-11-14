@@ -136,7 +136,8 @@ export function Sidebar({
 
   // The menu button is hidden from md up, so the drawer can't stay open there.
   useEffect(() => {
-    if (!open) return;
+    // Without matchMedia, as in jsdom, there's no breakpoint to watch.
+    if (!open || typeof matchMedia !== 'function') return;
     const query = window.matchMedia(md);
     const close = () => {
       if (!query.matches) return;

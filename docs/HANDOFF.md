@@ -1,58 +1,61 @@
 # Handoff: design-system-react
 
-- **Date:** 2026-11-13 (updated after releasing v0.7.0, with the v0.5–v0.7 retro's changes)
+- **Date:** 2026-11-13 (updated after building v0.8, with the v0.8 retro's changes)
 
 ## Goal
 
-Build `@adeebali/design-system-react`, a general-purpose React design system. Specs 00–16 are accepted, and Spec 00 sets the release milestones.
+Build `@adeebali/design-system-react`, a general-purpose React design system. Specs 00–17 are accepted, and Spec 00 sets the release milestones.
 
 ## Status
 
-- **Released:** v0.1 (Specs 01–07), v0.2 (Specs 08–09), v0.3 (Specs 10–11), v0.4 (Specs 12–13), v0.4.1, v0.5.0 (Spec 16), v0.6.0 (Spec 14), and **v0.7.0 (Spec 15), released 2026-11-13**. Storybook is at https://adeebali.github.io/design-system-react/.
-  - v0.7.0 adds `Sidebar`, `Breadcrumbs`, and `Accordion`, and completes Spec 00's v1 scope.
-  - The owner merged PR #33 as `e0be851`. `npm run release -- minor` made `60404cb` and tag `v0.7.0`.
-  - Release: https://github.com/AdeebAli/design-system-react/releases/tag/v0.7.0, with PR #33's notes applied by hand.
-- **Retro (v0.5–v0.7), 2026-11-13:** logged in `~/.claude/retros/2026-11-13-v0-5-to-v0-7-departures-shared-state-fixtures.md`.
-  - The owner accepted P1, P2, P4, P5, and P6, and declined P3 (a global rule 6 sub-bullet).
-  - P1, P2, P4, and P5 ship in this note's PR (thread 13). P6 is a step in the v1.0 plan (next step 3).
-- **Next:** merge this note's PR, then plan v1.0 stabilization (Spec 00).
+- **Released:** v0.1 through v0.7.0, as before. v0.7.0 (Spec 15) was released 2026-11-13. Storybook is at https://adeebali.github.io/design-system-react/.
+- **Merged since v0.7.0:**
+  - PR #34 (`ab1c4f4`): the v0.7.0 handoff and the v0.5–v0.7 retro's P1, P2, P4, and P5.
+  - PR #35 (`4a0b8dc`): the reworded `CLAUDE.md` fixture bullet.
+  - PR #36 (`73d1946`): **Spec 17, `Image`**. It adds a v0.8 milestone before v1.0 and amends Specs 00, 02, 05, and 11.
+- **Built, in review:** v0.8 (Spec 17) on `feat/v0.8-image`, PR #37 (draft), https://github.com/AdeebAli/design-system-react/pull/37.
+  - Built inline from `docs/superpowers/plans/2026-11-13-v0-8-image.md`, with one final Opus review.
+  - The PR body has the release notes draft and the owner's manual checks.
+- **Retro (v0.8), 2026-11-13:** logged in `~/.claude/retros/2026-11-13-v0-8-image.md`. The owner accepted R1–R5, and all five are applied.
+  - **R1–R3:** global `~/.claude/CLAUDE.md`, rules 1 and 4.
+  - **R4:** project `CLAUDE.md` (`486fd23`).
+  - **R5:** the `Sidebar` `matchMedia` guard (`7f1c8e3`).
+- **Next:** the owner's manual checks on PR #37, CI, merge, then `npm run release -- minor`.
 
 ## Decisions
 
 Architecture decisions are in `docs/adr/`.
-- **Earlier rulings:** the decisions and rulings from v0.4 through v0.5 are in `git show c1b6c3d:docs/HANDOFF.md`, and v0.6's are in `git show 5185b8c:docs/HANDOFF.md`. All are unchanged.
-- **Ledgers:** the v0.7 build's ledger, with every ruling and break-check, is `.superpowers/sdd/2026-11-11-v0-7-app-navigation/progress.md` (local, gitignored). v0.6's is in its sibling folder.
+- **Earlier rulings:**
+  - v0.4–v0.5: `git show c1b6c3d:docs/HANDOFF.md`.
+  - v0.6: `git show 5185b8c:docs/HANDOFF.md`.
+  - v0.7: `git show ab1c4f4:docs/HANDOFF.md`.
+  - All are unchanged.
+- **Ledgers (local, gitignored):** v0.8's is `.superpowers/sdd/2026-11-13-v0-8-image/progress.md`, with every ruling and break-check. v0.6's and v0.7's are in sibling folders.
 
-### v0.7 decisions (owner)
+### v0.8 decisions (owner)
 
-- **Execution was inline,** with one final Opus whole-branch review (2026-11-12; rejected: subagent-driven, hybrid). Code changed after it once (`929ab0e`), and that commit got its own fresh read-only Sonnet review.
-- **Spec 15 amended (2026-11-13):**
-  - **`collapsed` and `defaultCollapsed` apply only with `collapsible`** (lines 52, 71, and the test list). Without `collapsible`, nothing could expand the rail. Rejected: following the spec as written with a development warning, which would ship a rail that's stuck. Cost: a project that wants a fixed, non-expandable rail must set `collapsible`.
-  - **The example uses `flexGrow="1"`.** It said `flex="1"`, which isn't a `Box` prop (Spec 04).
-- **PR #31's manual checks** were all reported done by the owner at the start of the session: screen reader, touch and forced colors, `FileUpload` on phones, and v0.5 forced colors.
+- **Execution was inline,** with one final Opus whole-branch review (rejected: subagent-driven).
+- **Departure 1, accepted:** `Box`'s `borderRadius` accepts `image`, because the sprinkle reads every `radius` token. Spec 04's list is amended. Rejected: filtering `image` out of the sprinkle.
+- **`Image` has a `display` prop** (Box display values, responsive, default `block`).
+  - Spec 17 said "Layout props can change `display`", but `LayoutProps` has no `display`. The owner was asked when it was found.
+  - Rejected: no prop, changing it with `className`/`style`.
+  - Spec 17's table and Structure line are amended.
+- **The PR also carries** `7f1c8e3` (R5) and `486fd23` (R4), at the owner's request.
 
-### v0.7 rulings (where Spec 15 is silent; cost if wrong)
+### v0.8 rulings (where Spec 17 is silent; cost if wrong)
 
-- **`Breadcrumbs`:**
-  - The chevron is a CSS mask with a `data:` URI. The CSP fixture's `img-src` allows `data:`. Cost: a stricter consumer `img-src` loses the separators; switch to the internal `ChevronRight`.
-  - A forced-colors rule draws separators in `CanvasText`. A masked background is otherwise painted Canvas and disappears.
-- **`Accordion`:**
-  - Header heights are pinned at exactly 44px (`md`) and 32px (`sm`) for a one-line title, where the spec says "at least".
-  - `AccordionItem` takes native and layout props (Spec 05's convention).
-- **`Sidebar`:**
-  - Layout and native props go on the side `nav`, not the small-screen bar. Cost: a margin on `Sidebar` doesn't apply below `md`, and the bar has no styling hook (thread 6).
-  - The drawer copy uses `Drawer`'s default padding (`space.6`) and its card radius on the open edge.
-  - The plan's `event.button !== 0` check was dropped. Browsers send a middle click as `auxclick`, not `click`.
-  - When the window grows past `md` with the drawer open, focus goes to the side nav's first focusable element (the menu button is hidden there).
-  - Group labels use Spec 13's uppercase style, and Chrome exposes the uppercase text in the list's name (thread 12).
-- **`Drawer` (internal):** the width formula moved to `src/components/Drawer/drawerWidth.ts`, because a `.css.ts` file can only export styles. The Sidebar drawer's width rule uses `&[data-side]`, which outranks Drawer's size class whatever the stylesheet order. That's the same-layer hazard from v0.6.
+- **The `next/image` type tests live in `fixtures/next-app/app/(site)/image/types.test-d.tsx`,** checked by the fixture's `tsc`. Cost: they run in `test:fixtures`/`check`, not `npm test`.
+- **`ratio` is a CSS variable written into the frame's `style`,** with no `@vanilla-extract/dynamic`. Cost: a project's `style={{ aspectRatio }}` wins over it.
+- **The `img` sets its own block size and `border-radius: inherit`,** so `Prose`'s bare `img` rules don't reach it.
+- **Load state** is keyed on `src` identity, so a static import works.
+  - A layout effect keyed on `src` checks `complete`. A width of 0 is confirmed with `decode()`, and with no `decode()` (jsdom) it counts as failed.
+  - The project's `ref` is set by a layout effect keyed on `[ref, as]`, so it isn't called on every render.
+- **`onLoad`/`onError` commit `Image`'s state with `flushSync` first.** `next/image` calls `onLoad` from a `decode()` promise. Cost: a warning if a future `next/image` calls it mid-commit.
+- **The forced-colors frame border uses `:has()`.** Cost: Chrome 105+, Safari 15.4+, Firefox 121+.
 - **Tests:**
-  - Modifier-click tests dispatch synthetic clicks. A real Control click on macOS opens the context menu and sends no click.
-  - Phone stories wait for the drawer to close after `Escape`, because axe runs after `play` and Base UI's focus guards linger.
-  - The fixture's `Sidebar` sits in `app-navigation/layout.tsx`, so a link click doesn't unmount it.
-  - `@base-ui/react/accordion` was added to `vite.config.ts` `optimizeDeps`.
-- **Dead code removed:** a "collapse button hidden below `md`" rule. The whole side nav is hidden below `md`.
-- **Owner approval:** push, the PR, and this handoff waited for the owner's approval (CLAUDE.md). The owner approved the push and PR on 2026-11-13.
+  - A "still loading" state in browser tests is a lazy image 20000px below the fold.
+  - The pre-hydration fixture holds only `/_next/static/chunks/**/*.js`. Holding CSS blocks parsing.
+  - The fixture's console check ignores the deliberate 404.
 
 ## Dependencies
 
@@ -60,7 +63,7 @@ Checked 2026-11-13 against `npm view`. The README's "Dependencies" table is the 
 
 | Package | Range | Installed | Latest | Note |
 | --- | --- | --- | --- | --- |
-| `@base-ui/react` | `^1.9.0` | 1.9.0 | 1.9.0 | Runtime. Plans pin its API names; a newer version goes to the owner before upgrading. |
+| `@base-ui/react` | `^1.9.0` | 1.9.0 | 1.9.0 | Runtime. Plans pin its API names; a newer version goes to the owner before upgrading. `Image` doesn't use it. |
 | `@vanilla-extract/recipes` | `^0.5.7` | 0.5.7 | 0.5.7 | Runtime: `createRuntimeFn`. |
 | `@vanilla-extract/sprinkles` | `^1.7.1` | 1.7.1 | 1.7.1 | Runtime: `createRuntimeSprinkles`. |
 | `react`, `react-dom` | peer `^19` | 19.3.1 | 19.3.1 | Dev install. |
@@ -68,71 +71,85 @@ Checked 2026-11-13 against `npm view`. The README's "Dependencies" table is the 
 | `vite` | dev | 8.3.6 | 8.3.8 | Patch behind. |
 | `storybook` | dev | 10.6.6 | 10.6.7 | Patch behind. |
 | `typescript-eslint` | dev | 8.72.1 | 8.72.2 | Both in the `npm audit` range (thread 3). |
-| `vitest`, `@playwright/test` | dev | 5.1.0, 1.65.0 | same | CI's image is `mcr.microsoft.com/playwright:v1.65.0-noble`; it moves with `@playwright/test`. |
+| `eslint` | dev | 9.39.5 | | New in v0.8: `npm ci` warns "This version is no longer supported" (thread 14). |
+| `vitest`, `@playwright/test` | dev | 5.1.0, 1.65.0 | 5.1.0, **1.65.1** | CI's image is `mcr.microsoft.com/playwright:v1.65.0-noble`; it moves with `@playwright/test`. |
+| `next` (fixture only) | `^16` | 16.4.5 | 16.4.6 | `next/image`'s `image-component.js` still starts with `'use client'` in 16.4.5 (Spec 17 relies on it). |
 | Node | `.nvmrc` 26, `engines` `>=22` | 26.13.0 | | Thread 5. |
 
-- **Trigger:** each plan's setup reruns `npm view` for these packages and updates this table. The v1.0 plan decides on TypeScript 7 and the patch updates.
+- **Trigger:** each plan's setup reruns `npm view` for these packages and updates this table. The v1.0 plan decides on TypeScript 7, ESLint, and the patch updates.
 - **Release ranges:** a runtime dependency's range changes only in a release, with a line in its notes.
 
 ## Changes
 
-**This note's PR** (branch `docs/handoff-v0.7.0-and-retro`, from `main` at `60404cb`): the retro's P1, P2, P4, and P5 (thread 13), the README "Dependencies" table, and this note.
-
-**The v0.7.0 release:**
-- The owner merged PR #33 as `e0be851`, and CI on it passed, `visual` included.
-- `npm run release -- minor` on a clean, up-to-date `main`: all checks passed, then `60404cb` (version 0.7.0), tag `v0.7.0`, push, and the GitHub release.
-- The release notes are PR #33's draft plus the Full Changelog link, applied with `gh release edit v0.7.0`. Read back with `gh release view`, `diff -B` was clean.
-- CI, Publish, and Storybook on `60404cb` all succeeded.
-
-**Branch `feat/v0.7-app-navigation`** (from `main` at `5185b8c`), PR #33 (for reference):
-- `8e12043` `Breadcrumbs` (plus two `verify-dist` server modules).
-- `594055f` `Accordion` (plus `vite.config.ts` `optimizeDeps`).
-- `9f537d3` `Sidebar` from `md` up.
-- `5003e44` `Sidebar` small-screen bar and drawer; `Drawer`'s `drawerWidth.ts`.
-- `8a9b52c` Docs, fixtures, and overview:
-  - `docs/components.md`, `Overview/App navigation`, and `overviewPages.test.ts`.
-  - The Next.js `/app-navigation` route (layout, page, and a second page) and the Vite `Sidebar`, tested in `tests/fixtures/app-navigation.spec.ts`.
-- `929ab0e` Final review fixes: focus on resize-close, and `collapsed` without `collapsible`.
-- `6b57d43` The Spec 15 amendments and the matching JSDoc.
-- `b3bc941` Visual baselines, from the workflow (76 new, 0 changed).
+**Branch `feat/v0.8-image`** (from `main` at `73d1946`), PR #37:
+- `c70c976` `radius.image`, used by `Prose` images and accepted by `Box`, with the Spec 04 amendment and the v0.8 plan.
+- `dd0434b` `Image` (behavior, unit and type tests), the internal `ImageOff` icon, and the Spec 17 `display` amendment.
+- `ce42f6d` `Image` styles, browser tests, and stories with docs.
+- `ee5fb25` Fixtures:
+  - the Next `/image` server page, with `hero.png` and `types.test-d.tsx`;
+  - the Vite `Image`;
+  - `tests/fixtures/image.spec.ts`.
+- `7e997c8` `docs/components.md`.
+- `16ece2d` Final review fixes:
+  - the ref set once;
+  - a warning for a missing ref;
+  - `decode()` confirmation;
+  - the fallback docs.
+- `b9d4fdd` No `decode()` counts as failed (the jsdom crash found by the fix review).
+- `3cb2d4c` Visual baselines from the workflow: 44 new, 2 changed (the Radii docs page).
+- `7f1c8e3` R5: the `Sidebar` drawer opens where `matchMedia` is missing.
+- `486fd23` R4: the project `CLAUDE.md` spec-acceptance step updates this note when the milestones change.
 - This note.
+
+**Outside the repo:** `~/.claude/CLAUDE.md` rules 1 and 4 (R1–R3), and the retro log.
 
 ## Verification
 
-- **Full checks:**
-  - `npm ci && npm run check`, exit 0 on `8a9b52c`: unit 1062, stories and browser 1168 with axe in both modes, `verify-dist: ok`, fixtures 74 passed and 32 skipped.
-  - `npm run check`, exit 0 on `929ab0e`: unit 1063, stories and browser 1169, `verify-dist: ok`, fixtures 74 passed and 32 skipped.
-  - Only the known warnings appeared: npm's install-scripts notice and arethetypeswrong's ignored lines.
-  - `6b57d43` is spec text and JSDoc only. Lint, typecheck, and format pass on it.
-- **Break-checks:** every new assertion was seen failing with the code it checks broken. The ledger lists each one, with its line. Findings:
+- **Full checks:** `npm ci && npm run check`, exit 0, on `7e997c8`, `16ece2d`, and `b9d4fdd`. On `b9d4fdd`:
+  - unit 1113;
+  - stories and browser 1212, with axe in both modes;
+  - `verify-dist: ok`;
+  - fixtures 78 passed and 36 skipped.
+  - The known warnings appeared, plus the new ESLint deprecation warning (thread 14).
+- **After `b9d4fdd`:**
+  - `7f1c8e3`: Sidebar unit 21, Sidebar browser 39, lint, and typecheck pass. A full `check` hasn't run on it; CI on PR #37 will.
+  - `486fd23` is `CLAUDE.md` text only.
+- **Break-checks:** every new assertion was seen failing with its own code broken, and the ledger lists each line. That includes:
+  - each fixture assertion, against a tarball broken in one way;
+  - both server-HTML regexes, against the real served HTML with `data-loading` removed from their own frame;
+  - both fixture type-test lines.
   - **Vacuous tests, fixed:**
-    - Two fixture regexes matched the site NavBar's "Home" and "Blog" links.
-    - The drawer fixture passed with the close broken, because the page unmounted the `Sidebar`.
-    - The Control-click test sent no click on macOS.
-    - The rail's link-name assertion failed on its lookup instead of its own line.
-  - **Order-dependent warning test:** a break used up a `warnOnce` key (thread 6).
-  - **Dead code removed:** see Decisions.
-- **Server HTML:** each `/app-navigation` server-HTML assertion was checked against the real served HTML, with its target removed from its own `nav`.
-- **Broken-tarball runs** proved three fixture tests: client-side navigation (`as` ignored), the drawer closing on a link click (`onNavigate` a no-op), and the Vite width.
-- **Sometimes-failing story, fixed:** the phone stories failed axe `aria-hidden-focus` in about 1 of 3 runs. After the fix, 8 straight runs passed.
+    - "warns once" rerendered one `Image`, which didn't rerun the effect.
+    - The `Prose` guard (`height > 300`) passed with no ratio at all.
+  - **Ineffective breaks, redone:**
+    - the skeleton width (`Skeleton`'s `width="full"` utility wins);
+    - "0 width is always error" (it kept the `then` callbacks).
 - **Reviews:**
-  - Final Opus whole-branch review of `5185b8c..8a9b52c`: ready, 0 Critical, 0 Important, 5 Minor. Two were re-graded Important and fixed in `929ab0e`, with tests seen failing first.
-  - Fresh Sonnet review of `8a9b52c..929ab0e`: no blocking issues. It flagged the `collapsed` gate as a departure from the spec, which the owner resolved by amending the spec. Its three Minors are in thread 6.
-  - **The reviews cover all code up to `929ab0e`.** After it come only spec text and JSDoc (`6b57d43`), the baselines, and this note.
-- **Visual baselines:** reviewed the app layout at desktop and phone widths in both modes, the collapsed rail, the dark default sidebar, and the long breadcrumb trail.
-- **CI on `6b57d43`:** every job passed except `visual`, which failed only because the baselines didn't exist yet.
-- **`npm audit` (thread 3 rerun):** 11 moderate, 0 high, 0 critical, all dev-only, the same as v0.6. `typescript-eslint` 8.72.2, the latest, is still in the affected range, so it wasn't upgraded.
+  - Final Opus whole-branch review of `73d1946..7e997c8`: ready, 0 Critical, 0 Important. Four Minors were re-graded Important by effect and fixed in `16ece2d`.
+  - Fresh Sonnet review of `16ece2d`: one Important (unguarded `decode()`), fixed in `b9d4fdd`.
+  - Fresh Sonnet review of `b9d4fdd`: ready, Minors only.
+  - Fresh Sonnet review of `7f1c8e3`: ready, Minors only (thread 6).
+  - **The reviews cover all code on the branch, up to `7f1c8e3`.** After it come only `CLAUDE.md` text (`486fd23`) and this note.
+- **Visual baselines (`3cb2d4c`):** reviewed ratios, radii, failed (dark), in a card (dark), in Prose, and the Radii docs.
+- **`npm audit`:** 11 moderate, 0 high, 0 critical, all dev-only (`--omit=dev`: 0), the same as v0.7.
 
 **Not verified:**
 
-- **The PR #33 manual checks:** a screen reader pass on all three, forced colors on all three, and swiping the `Sidebar` drawer closed on a real phone. PR #33 was merged, but whether they were done hasn't been reported. Trigger: next step 2.
+- **The PR #37 manual checks:**
+  - a screen reader pass on a loaded, a decorative, and a failed image;
+  - forced colors;
+  - Firefox and Safari with a `viewBox`-only SVG, cached and fresh. Only Chromium was checked; the `decode()` fix covers that case by construction.
+  - Trigger: next step 1.
+- **The PR #33 manual checks** (Sidebar, Breadcrumbs, Accordion: screen reader, forced colors, swiping the drawer on a real phone) haven't been reported done. Trigger: next step 1. (Carried forward.)
 - **Base UI behaviors the wrappers don't own** can't be broken in wrapper code, so they rest on Base UI and its tests:
-  - Carried forward: `Escape`, `Backspace` on chips, and `data-popup-open`/`data-selected` on options.
-  - Added in v0.7: Accordion's `beforematch` opening, the tooltip closing on unhover and opening on focus, and `Drawer`'s focus trap, scroll lock, and focus restore.
-  - Trigger: none; any Base UI upgrade reruns the suite.
-- **The Next fixture's no-console-errors check** wasn't broken separately; that would need a hydration mismatch in the tarball. Trigger: none, as in v0.6.
-- **"A failed image shows initials after hydration" (Spec 16)** is tested with a client render. Trigger: none; the owner can ask for a fixture test. Carried forward.
-- **Installing 0.5.x, 0.6.x, or 0.7.0 from GitHub Packages.** Only the publish job's success was seen. Trigger: none; the v0.1 install proved the pipeline. Carried forward.
+  - `Escape`, `Backspace` on chips, and `data-popup-open`/`data-selected`;
+  - Accordion's `beforematch`;
+  - the tooltip's hover and focus;
+  - `Drawer`'s focus trap, scroll lock, and focus restore.
+  - Trigger: none; any Base UI upgrade reruns the suite. (Carried forward.)
+- **The Next fixture's `/feedback` no-console-errors check** wasn't broken separately. Trigger: none, as before. v0.8's `/image` console check was broken and proven.
+- **"A failed image shows initials after hydration" (Spec 16)** is tested with a client render. Trigger: none; the owner can ask for a fixture test. (Carried forward.) Spec 17's equivalent for `Image` has a fixture test.
+- **Installing 0.5.x–0.7.0 from GitHub Packages.** Only the publish job's success was seen. Trigger: none; the v0.1 install proved the pipeline. (Carried forward.)
 
 ## Open threads
 
@@ -140,60 +157,48 @@ Checked 2026-11-13 against `npm view`. The README's "Dependencies" table is the 
 4. **Inter comes from `inter-ui`,** because Fontsource's files drop `cv05` and `cv08`. Trigger: a test pins the 4.1.1 ranges. (Carried forward.)
 5. **`engines.node` is `>=22`.** Trigger: the release script refuses to release after April 30, 2027, until the floor and CI's Node matrix are raised. (Carried forward.)
 6. **Deferred minor findings.** Trigger: none; pick from this list when convenient, or in v1.0 stabilization.
-   - **v0.7:**
-     - **Resize-close focus target** (`src/components/Sidebar/Sidebar.tsx`, the `close` handler in the media-query effect):
-       - It finds nothing when the side nav has no focusable element, so focus falls to body.
-       - Its selector doesn't skip hidden elements or `tabindex="-1"` elements.
-       - It finds the nav by DOM position (the bar's next sibling) rather than by a ref.
-     - **The small-screen bar has no per-instance styling hook.** `className`, `style`, and layout props go to the side `nav` (`src/components/Sidebar/SidebarBar.tsx`).
-   - **v0.6, v0.5, and v0.4:** unchanged; see `git show 5185b8c:docs/HANDOFF.md` thread 6 for the full lists.
-7. **One intermittent browser test, not diagnosed:** `Table.browser.test.tsx` "scrollable scrolls by keyboard". It failed only on macOS under full-suite load. It passed in both `npm run check` runs this session. Trigger: CI on every PR and each release's `npm run check`. If it fails, find the cause in the CI image before rerunning. (Carried forward.)
-11. **A two-row header still gets the sticky-header `scroll-padding-block-start`** (`src/components/Table/Table.css.ts:44`), so a focused cell stops about one header row below the top. Nothing is hidden. Trigger: none; pick it up when convenient. (Carried forward.)
-13. **The retro's changes ship in this note's PR,** a separate PR, as the owner chose on 2026-11-13. Trigger: next step 1, merging it. The four changes:
-    - **P1:** `resetWarnings()` in `src/utils/warn.ts`, called `afterEach` in `vitest.setup.ts` and `vitest.browser.setup.ts`.
-      - Its test in `warn.test.ts` was seen failing first.
-      - Two pairs of tests prove the hooks: `warn.test.ts` for unit and `warn.browser.test.tsx` for browser. The second test of each pair checks that its project's hook ran after the first.
-      - With its project's hook removed, each pair failed only at `warn.test.ts:41` and `warn.browser.test.tsx:17`. A fresh review asked for these tests.
-      - **Resolved:** thread 6's order-dependent `warnOnce` tests, the v0.4, v0.6, and v0.7 workarounds.
-    - **P4:** `vite.config.ts` derives Base UI's `optimizeDeps` from the source (`baseUiEntryPoints.ts`).
-      - The guard (`src/baseUiDeps.test.ts`) was rewritten. Each of its assertions was break-checked: the helper skipping a folder, a hand-written entry, and the spread removed.
-      - Vite's resolved config lists all 23 entries.
-      - **Not verified:** the mid-run reload it prevents couldn't be reproduced on demand, with either a cold or a warm cache missing `accordion`. Trigger: none; the guard keeps the list complete either way.
-    - **P2 and P5:** two project `CLAUDE.md` "Planning workflow" bullets: the ruling ledger format, and break-checks for fixture assertions.
-    - **Full check:** `npm run check` exit 0 on this branch before the hook tests and the README range fix: unit 1065, stories and browser 1169, `verify-dist: ok`, fixtures 74 passed and 32 skipped.
-    - **Review:** a fresh read-only Sonnet review of the working tree over `60404cb` found no Critical issues. It found one Important gap, the hooks with no test, now covered. Its Minors:
-      - The README's `lucide-react` range said "any", which was unverified; fixed.
-      - The `CLAUDE.md` fixture bullet is hard to parse. It's the owner's approved wording, so it's left for the owner.
-      - The rest needed no change: `resetWarnings` is not in the public API, and the helper matches only `from '…'` imports, which the guard's broader regex backs up.
-    - **The review covers everything in this PR except** the two hook test pairs (written in response to it) and the README range fix.
-12. **Uppercase group labels in accessible names.** Chrome exposes CSS-uppercased `SidebarGroup` labels in list names ("WORKSPACE"), as it does for Spec 13's table headers. Some screen readers spell short all-caps words letter by letter. Trigger: the PR #33 screen reader check; if it's a problem, a spec change for both components.
+   - **v0.8 (`Image`, `src/components/Image/Image.tsx`):**
+     - The `src`-keyed check effect doesn't rerun when only `as` changes. A remounted, already-complete img could stay loading, and the ref warning isn't re-evaluated.
+     - `instanceof HTMLImageElement` fails for an img from another window (an iframe portal or popout). That gives a false warning and no early-complete check.
+     - An `as` component that mounts its img after the first commit gets a false warning, and the project's ref never gets the img.
+     - `next/image` always gets `onError`, so it replays `img.src = img.src` once per mount.
+     - A browser without `decode()` shows an SVG with no intrinsic size, already loaded at mount, as failed.
+     - **Test gaps:**
+       - no real-browser test of a failed `src` swapped for an uncached good one;
+       - no test of a callback ref's unmount and change, or of the decode result being dropped after a `src` change;
+       - the empty-`src` test asserts jsdom has no `decode()`;
+       - `stubDecode` deletes instead of restoring.
+   - **v0.8 (`Sidebar`, `7f1c8e3`):**
+     - The guard checks the bare global `matchMedia` but calls `window.matchMedia`. These are the same everywhere checked; the fix is to call the bare `matchMedia(md)`, as `colorModeStore.ts` does.
+     - The test's precondition reads jsdom's environment. `vi.stubGlobal('matchMedia', undefined)` would make it explicit.
+     - No close-after-open assertion where `matchMedia` is missing.
+   - **v0.7:** unchanged; see `git show ab1c4f4:docs/HANDOFF.md` thread 6 (Sidebar resize-close focus target, and the small-screen bar's styling hook).
+   - **v0.6, v0.5, and v0.4:** unchanged; see `git show 5185b8c:docs/HANDOFF.md` thread 6.
+7. **One intermittent browser test, not diagnosed:** `Table.browser.test.tsx` "scrollable scrolls by keyboard". It passed in all three `npm run check` runs this session. Trigger: CI on every PR and each release's `npm run check`. If it fails, find the cause in the CI image before rerunning. (Carried forward.)
+11. **A two-row header still gets the sticky-header `scroll-padding-block-start`** (`src/components/Table/Table.css.ts:44`). Trigger: none; pick it up when convenient. (Carried forward.)
+12. **Uppercase group labels in accessible names** (`SidebarGroup`, as in Spec 13's table headers). Trigger: the PR #33 screen reader check (next step 1). (Carried forward.)
+14. **`npm ci` warns that `eslint@9.39.5` is no longer supported.** It's new in v0.8's runs, and the dependency isn't new. Trigger: the v1.0 plan's dependency step.
 
 **Resolved this session:**
-- **After v0.7's merge:**
-  - CI on the baselines: CI on `e0be851` passed, `visual` included.
-  - Merging and releasing v0.7.0: `60404cb`, with the notes applied and read back.
-  - The retro stash: popped onto this note's branch, with nothing lost (`git stash list` is empty).
-- **Old "not verified" items:**
-  - The PR #31 manual checks: the owner reported all done on 2026-11-12.
-  - Drag events to a disabled file input: covered by the owner's touch and drop checks in PR #31.
-  - Forced colors on the v0.5 components: the owner reported it done.
-  - The v0.7 plan's independent review: replaced by the whole-branch reviews above.
-- **Thread 10 (v0.7 execution method):** inline plus a final Opus review.
-- **Old next steps:**
-  - Confirming PR #31's checks: done.
-  - Merging the v0.6.0 handoff PR: PR #32 merged as `5185b8c`.
-  - Starting v0.7: built. `npm view @base-ui/react version` still returned 1.9.0.
+- **Thread 13:** the retro's P1, P2, P4, and P5 shipped in PR #34 (`ab1c4f4`). The `CLAUDE.md` fixture bullet was reworded in PR #35 (`4a0b8dc`).
+- **Old next step 1** (merge the handoff PR): done, PR #34.
+- **Old next step 3** (start v1.0): moved after v0.8, which Spec 17 inserted (next step 4).
 
 ## Next steps
 
-1. Merge this note's PR once CI passes (thread 13). Optionally, reword the `CLAUDE.md` fixture bullet.
-2. Owner: confirm which PR #33 manual checks were done, including the uppercase group labels (thread 12). Anything not done goes into the v1.0 plan as a step.
-3. Start v1.0 stabilization (Spec 00: API review, docs, fixes from real use). Write its plan first, and while planning, rerun `npm audit` and `npm view @base-ui/react version`. The plan:
-   - collects thread 6's deferred minors;
-   - includes a step that type-checks every `tsx` example in `docs/specs/*.md` and the README (retro P6; Spec 15's `flex="1"` was one such error);
-   - follows the new `CLAUDE.md` ruling and fixture break-check formats;
-   - updates the Dependencies table above, and decides on TypeScript 7.
+1. **Owner:**
+   - Do PR #37's manual checks: screen reader, forced colors, Firefox and Safari with a `viewBox`-only SVG.
+   - Report PR #33's: the screen reader including thread 12, forced colors, and swiping the drawer on a real phone.
+   - Anything not done goes into the v1.0 plan as a step.
+2. **Before marking PR #37 ready:** CI passes on PR #37, `visual` included.
+3. **Merge and release:** merge PR #37, then `npm run release -- minor` on a clean, up-to-date `main`. Apply the PR's release notes with `gh release edit v0.8.0` and read them back.
+4. **v1.0 stabilization** (Spec 00: API review, docs, fixes from real use). Write its plan first, and while planning, rerun `npm audit` and `npm view` (the table above). The plan:
+   - collects thread 6's deferred minors (v0.4–v0.8);
+   - type-checks every `tsx` example in `docs/specs/*.md` and the README (retro P6; v0.8 did it for Spec 17 only);
+   - follows the `CLAUDE.md` ruling and fixture break-check formats;
+   - decides on TypeScript 7, ESLint (thread 14), and the patch updates;
+   - includes any manual checks still not done.
 
 ## Resume prompt
 
-> Read `docs/HANDOFF.md`. v0.7.0 is released. Ask me whether the handoff and retro PR is merged, and which PR #33 manual checks I did. Then plan v1.0 stabilization from Spec 00, folding in thread 6, the spec-example type-check step (retro P6), the Dependencies table, and any manual checks not done.
+> Read `docs/HANDOFF.md`. v0.8 (`Image`, Spec 17) is built and in review as PR #37. Ask me which manual checks I did on PR #37 and PR #33, check that CI on PR #37 passed, then mark it ready. After I merge it, release v0.8.0 with `npm run release -- minor` and apply the PR's release notes. Then plan v1.0 stabilization from Spec 00, folding in thread 6, the spec-example type-check step (retro P6), the Dependencies table, thread 14, and any manual checks not done.

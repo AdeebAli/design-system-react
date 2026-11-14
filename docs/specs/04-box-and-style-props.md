@@ -110,7 +110,7 @@ Exported as the `LayoutProps` type.
 | `color` | `inherit` and every `color.fg` token except the `avatar` pairs: `default`, `muted`, `accent`, `onAccent`, … |
 | `borderColor` | Every `color.border` token: `subtle`, `control`, `surface`, `danger`, `disabled` |
 | `borderWidth` | `none`, `thin`, `thick`; also sets `border-style: solid` |
-| `borderRadius` | Every `radius` token: `none`, `sm`, `md`, `lg`, `xl`, `full`, `card`, `control` |
+| `borderRadius` | Every `radius` token: `none`, `sm`, `md`, `lg`, `xl`, `full`, `card`, `control`, `image` (added by Spec 17, 2026-11-13) |
 | `boxShadow` | Every `shadow` token: `none`, `sm`, `md`, `lg`, `xl`, `card`, `cardHover`, `raised`, `dialog` |
 | `zIndex` | Every `zIndex` token: `base`, `sticky`, `dropdown`, … |
 

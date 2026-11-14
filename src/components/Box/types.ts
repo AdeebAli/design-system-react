@@ -125,7 +125,7 @@ export type BorderColorToken =
 export type BorderWidthValue = 'none' | 'thin' | 'thick';
 /** `radius` tokens. */
 export type RadiusToken =
-  'none' | 'sm' | 'md' | 'lg' | 'xl' | 'full' | 'card' | 'control';
+  'none' | 'sm' | 'md' | 'lg' | 'xl' | 'full' | 'card' | 'control' | 'image';
 /** `shadow` tokens. */
 export type ShadowToken =
   | 'none'

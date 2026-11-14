@@ -14,6 +14,7 @@ test('tokens compile, and arbitrary values fail', () => {
   // @ts-expect-error tokens are strings
   <Box padding={4} />;
   <Box background="surface" borderRadius="card" boxShadow="card" />;
+  <Box borderRadius="image" />;
   // @ts-expect-error not a bg token
   <Box background="red" />;
   // @ts-expect-error the avatar pairs are for Avatar only (Spec 04)

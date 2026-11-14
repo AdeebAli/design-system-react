@@ -49,6 +49,7 @@ import NextImage from 'next/image';
 | `radius` | `none`, `sm`, `md`, `lg`, `xl`, `full`: `radius.*` | `radius.image` |
 | `skeleton` | boolean: shows a `Skeleton` in the frame until the image loads | `false` |
 | `fallback` | ReactNode shown if the image fails, or `null` for an empty frame | An internal image-off icon |
+| `display` | Box's `display` values, responsive (Spec 04): the frame's display (owner, 2026-11-13) | `block` |
 | `htmlWidth`, `htmlHeight` | number: the image's intrinsic size, passed to the `as` element as `width` and `height` (Spec 04) | none |
 
 Other props go to the `as` element, such as `loading`, `sizes`, `srcSet`, `decoding`, `fetchPriority`, and `next/image`'s `fill`, `preload`, `quality`, and `placeholder`. Their types come from `as`, so `<Image fill />` is a type error and `<Image as={NextImage} fill />` compiles.
@@ -63,7 +64,7 @@ Other props go to the `as` element, such as `loading`, `sizes`, `srcSet`, `decod
 </span>
 ```
 
-- **The frame is a `span`** with `display: block`, so `Image` is valid inside text, such as in a `Link` or a `Prose` paragraph. Layout props can change `display`.
+- **The frame is a `span`** with `display: block`, so `Image` is valid inside text, such as in a `Link` or a `Prose` paragraph. The `display` prop changes it.
 - **Layout props, `className`, and `style` go to the frame.** It sets the size, the ratio, and the corners. **`ref` goes to the `img`,** as it does with `next/image`, so measuring or observing the image works. This is a difference from Spec 05 (below).
 - **The frame is `position: relative`, with `overflow: hidden`,** so `next/image`'s `fill`, which positions the `img` absolutely, fills it, and corners clip the image.
 
