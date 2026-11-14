@@ -13,6 +13,7 @@ export interface PopoverProps {
   defaultOpen?: boolean;
   /** Called with the new open state. To block closing, control `open`. */
   onOpenChange?: (open: boolean) => void;
+  /** A `PopoverTrigger` and a `PopoverContent`. */
   children?: ReactNode;
 }
 

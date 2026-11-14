@@ -1,0 +1,53 @@
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as StackStories from './Stack.stories';
+import { Stack } from '.';
+
+<Meta of={StackStories} />
+
+# Stack
+
+Children from top to bottom, with a gap from the spacing scale.
+
+## Usage
+
+Use `Stack` for most vertical layout: a form's fields, a card's content, a page's sections. Use [`Flex`](?path=/docs/components-layout-flex--docs) to change direction, and [`Inset`](?path=/docs/components-layout-inset--docs) to add padding.
+
+- The gap defaults to `3`. Pick a larger step between groups than inside them.
+- Children stretch to its width unless `align` says otherwise.
+- It works in server components.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Set the space once, with `gap`.
+    <Canvas of={StackStories.Gap} />
+  </Do>
+  <Dont
+    code={`<Stack gap="0">\n  <Text marginBottom="4">…</Text>\n  <Text marginBottom="4">…</Text>\n</Stack>`}
+  />
+</DoDont>
+
+<DoDont>
+  <Do>Nest stacks with different gaps to group related items.</Do>
+  <Dont
+    code={`<Stack>\n  <Heading level={2}>Billing</Heading>\n  <br />\n  <Text>…</Text>\n</Stack>`}
+  />
+</DoDont>
+
+## Accessibility
+
+- `Stack` renders a `div` with no semantics. Use `as="ul"` for a list, or `as="section"` with a heading.
+- Hiding a child with `display="none"` hides it from screen readers too.
+
+## API
+
+<ArgTypes of={Stack} />
+
+<AlsoAccepts element="div" />
+
+## Examples
+
+<Stories title={<></>} />

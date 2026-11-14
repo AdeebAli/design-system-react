@@ -1,0 +1,52 @@
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as Stories_ from './Textarea.stories';
+import { Textarea } from '.';
+
+<Meta of={Stories_} />
+
+# Textarea
+
+A multi-line text input, at least two rows tall.
+
+## Usage
+
+Use `Textarea` for longer text, such as a comment or a description. For one line, use [`Input`](?path=/docs/components-forms-and-actions-input--docs). Label it with a [`Field`](?path=/docs/components-forms-and-actions-field--docs).
+
+- It keeps the native `value` and `onChange`, and works with `register`.
+- `ref` and every other prop go to the `textarea`.
+- `resize` sets whether people can resize it. It's `vertical` by default.
+- It's a client component.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Label it with a `Field`, and say any length limit in the hint.
+    <Canvas of={Stories_.States} />
+  </Do>
+  <Dont code={`<Textarea placeholder="Tell us more (max 500 characters)" />`} />
+</DoDont>
+
+<DoDont>
+  <Do>Leave it resizable, so people can see what they wrote.</Do>
+  <Dont
+    code={`<Textarea resize="none" rows={2} />
+// For a long answer`}
+  />
+</DoDont>
+
+## Accessibility
+
+- It renders a native `textarea`. In a `Field`, it gets the label, hint, error, and `aria-invalid`.
+
+## API
+
+<ArgTypes of={Textarea} />
+
+<AlsoAccepts element="textarea" layout />
+
+## Examples
+
+<Stories title={<></>} />

@@ -1,0 +1,29 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Overview/Accessibility" />
+
+# Accessibility
+
+The target is **WCAG 2.2 AA, in both light and dark modes**.
+
+## What the system guarantees
+
+- **Contrast:** the theme's text, border, and control color pairs are checked against their minimum contrast in both themes, in the test suite. [Colors](?path=/docs/foundations-colors--docs) lists each pair's ratio.
+- **Focus:** every interactive component shows a visible focus ring, in the theme's focus color.
+- **Keyboard:** interactive components get their keyboard behavior, focus management, and ARIA from Base UI, following the WAI-ARIA patterns.
+- **Reduced motion:** under `prefers-reduced-motion: reduce`, every motion duration is `0ms`. See [Motion](?path=/docs/foundations-motion--docs).
+- **Forced colors:** components keep visible edges, focus rings, and states in Windows' forced-colors mode.
+
+## What stays the project's job
+
+- **Accessible names:** `IconButton`'s `aria-label`, `Image`'s `alt`, `Avatar`'s `name`, and a name for each landmark, such as `Sidebar`'s `aria-label`.
+- **Heading order:** one `h1` per page, and levels that follow the document's structure. `Heading`'s `level` sets the tag; `size` only changes the look.
+- **Labels:** every form control gets a visible label, through [`Field`](?path=/docs/components-forms-and-actions-field--docs) or the control's own `label`.
+- **Never only in a Tooltip or a Toast:** a tooltip isn't announced and doesn't show on touch screens, and a toast goes away. Needed information goes in the page.
+- **Color is never the only signal:** say a status in words, as `Badge`, `Alert`, and `Stat` do.
+
+## How it's checked here
+
+- Every story runs [axe](https://github.com/dequelabs/axe-core) in both color modes, and fails on any violation.
+- Interactive components get a manual screen reader check before they ship.
+- Each component page's **Accessibility** section says what that component handles, and what the project must supply.

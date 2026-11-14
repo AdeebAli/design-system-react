@@ -4,17 +4,9 @@ import { Stack } from '../Stack';
 import { Checkbox } from './Checkbox';
 
 const meta: Meta<typeof Checkbox> = {
-  title: 'Components/Checkbox',
+  title: 'Components/Forms and actions/Checkbox',
   component: Checkbox,
   args: { label: 'Include archived' },
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'A checkbox for choices submitted with a form; use `Switch` for settings that apply immediately. Give it a `label`, which makes the whole label clickable. Without one, it needs an `aria-label` or a `Field` label. With React Hook Form, use `Controller` with `checked` and `onCheckedChange`.',
-      },
-    },
-  },
 };
 
 export default meta;

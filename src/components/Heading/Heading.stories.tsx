@@ -4,17 +4,9 @@ import { Text } from '../Text';
 import { Heading } from './Heading';
 
 const meta: Meta<typeof Heading> = {
-  title: 'Components/Heading',
+  title: 'Components/Typography/Heading',
   component: Heading,
   args: { level: 2, children: 'A heading' },
-  parameters: {
-    docs: {
-      description: {
-        component:
-          '`level` sets the tag and describes the document, so keep levels in order. `size` changes only the look.',
-      },
-    },
-  },
 };
 
 export default meta;

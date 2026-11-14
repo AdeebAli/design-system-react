@@ -4,15 +4,8 @@ import { Tile } from '../../utils/Tile';
 import { Inline } from './Inline';
 
 const meta: Meta<typeof Inline> = {
-  title: 'Components/Inline',
+  title: 'Components/Layout/Inline',
   component: Inline,
-  parameters: {
-    docs: {
-      description: {
-        component: 'Children in a row that wraps, such as tags or buttons.',
-      },
-    },
-  },
 };
 
 export default meta;

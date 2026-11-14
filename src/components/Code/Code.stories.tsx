@@ -4,17 +4,9 @@ import { Text } from '../Text';
 import { Code } from './Code';
 
 const meta: Meta<typeof Code> = {
-  title: 'Components/Code',
+  title: 'Components/Typography/Code',
   component: Code,
   args: { children: 'npm run build' },
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'Inline code, sized relative to the surrounding text and never below 12px. Code blocks belong to `Prose`.',
-      },
-    },
-  },
 };
 
 export default meta;

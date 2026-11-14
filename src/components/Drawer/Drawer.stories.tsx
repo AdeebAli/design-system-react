@@ -18,16 +18,8 @@ import {
 } from './index';
 
 const meta: Meta<typeof Drawer> = {
-  title: 'Components/Drawer',
+  title: 'Components/Overlays/Drawer',
   component: Drawer,
-  parameters: {
-    docs: {
-      description: {
-        component:
-          '`DrawerTrigger` takes one element that renders a `button`, such as `Button`. A drawer is modal: focus is trapped, the page behind is inert, and scrolling is locked. `side` is `start` or `end`, which follow text direction and flip in right-to-left languages, or `bottom` for a bottom sheet. A bottom sheet is as tall as its content up to 85% of the screen height and then scrolls inside, fills the width on small screens and is centered from `md` up, and swipes down to close. It keeps a focused input above the on-screen keyboard. Name it with `DrawerTitle` (or `aria-label` on `DrawerContent`). `Escape` and the close button close it, and so does clicking outside unless `closeOnOutsideClick` is `false`. A controlled `Drawer` with no `DrawerTrigger` needs `finalFocus`, so focus has somewhere to return.',
-      },
-    },
-  },
 };
 
 export default meta;

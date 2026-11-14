@@ -1,0 +1,38 @@
+import { Canvas, Meta, Source } from '@storybook/addon-docs/blocks';
+import { asPackage } from '../blocks/asPackage';
+import cardCss from '../examples/usingTokens/card.module.css?raw';
+import * as Stories_ from '../examples/usingTokens/UsingTokens.stories';
+import styleProps from '../examples/usingTokens/StyleProps.tsx?raw';
+import tokenCardCss from '../examples/usingTokens/tokenCard.css.ts?source';
+
+<Meta of={Stories_} />
+
+# Using tokens
+
+Every value in the system is a token. There are four ways to use one, from most to least preferred.
+
+## Style props on `Box` and the layout components
+
+Style props take token names, and most take a responsive object keyed by breakpoint: `base`, `sm`, `md`, `lg`, `xl`. [All style props](?path=/docs/components-layout-box-all-style-props--docs) lists them.
+
+<Source code={asPackage(styleProps)} language="tsx" dark={false} />
+
+<Canvas of={Stories_.StylePropsExample} />
+
+## `vars` in your own vanilla-extract styles
+
+`vars` mirrors the token tree, and each leaf is a CSS variable, so styles follow the theme and the color mode. `breakpoints` holds the breakpoints as static strings, because media queries can't read variables.
+
+<Source code={asPackage(tokenCardCss)} language="ts" dark={false} />
+
+<Canvas of={Stories_.VarsExample} />
+
+## `--ds-*` variables in plain CSS or CSS Modules
+
+Each token is also a `--ds-*` variable, named from its path: `color.bg.surface` is `--ds-color-bg-surface`, and `space.4` is `--ds-space-4`.
+
+<Source code={cardCss} language="css" dark={false} />
+
+## When to reach for `style` or `className`
+
+Use them for one instance that needs something the tokens don't cover, such as a gradient, or a value from data, such as a progress bar's width. Read tokens inside them through `vars` or `var(--ds-*)`. If several places need the same thing, it belongs in a theme override or a component variant, not in many `style`s. See [Themes](?path=/docs/guides-themes--docs#one-off-changes).

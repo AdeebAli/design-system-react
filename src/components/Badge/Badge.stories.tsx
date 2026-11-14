@@ -15,17 +15,9 @@ const TONES: BadgeTone[] = [
 ];
 
 const meta: Meta<typeof Badge> = {
-  title: 'Components/Badge',
+  title: 'Components/Display/Badge',
   component: Badge,
   args: { children: 'Active' },
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'A small, non-interactive status label. The text must carry the meaning, since color alone can’t. For selectable pills, use `ToggleChip`.',
-      },
-    },
-  },
 };
 
 export default meta;

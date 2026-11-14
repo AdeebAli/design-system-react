@@ -1,0 +1,73 @@
+import { Canvas, Meta, Source } from '@storybook/addon-docs/blocks';
+import { asPackage } from '../blocks/asPackage';
+import themeCss from '../examples/themes/overrides.css?raw';
+import * as Stories_ from '../examples/themes/Themes.stories';
+import app from '../examples/themes/App.tsx?raw';
+import accent from '../examples/themes/accentTheme.tsx?raw';
+import full from '../examples/themes/fullTheme.ts?raw';
+import colorMode from '../examples/themes/colorMode.tsx?raw';
+import oneOff from '../examples/themes/oneOff.tsx?raw';
+import oneOffCss from '../examples/themes/oneOff.css.ts?source';
+import invalid from '../examples/themes/invalidValue.ts?raw';
+
+<Meta of={Stories_} />
+
+# Themes
+
+Theming has three levels: token overrides, a full theme, and one-off changes to a single instance. Every level changes tokens or one element; components never need editing.
+
+## The default: Soft
+
+`ThemeProvider` with no props gives the Soft theme, following the OS color mode and remembering the user's choice. Without a provider, `styles.css` still renders Soft, following the OS.
+
+<Source code={asPackage(app)} language="tsx" dark={false} />
+
+## Token overrides with `defineTheme`
+
+Override only the tokens you need, with typed objects. Anything you leave out stays Soft. `shared` applies to both modes; `light` and `dark` beat it.
+
+Changing the accent takes more than one token: `bg.accentHover`, `bg.accentSubtle`, and `fg.onAccent` are separate values, so set those too, and check their contrast in both modes.
+
+<Source code={asPackage(accent)} language="tsx" dark={false} />
+
+## A full theme with `defineFullTheme`
+
+`defineFullTheme` takes every token for both modes, so TypeScript reports anything missing. Spread Soft's values and change what you need.
+
+<Source code={asPackage(full)} language="ts" dark={false} />
+
+## Plain CSS overrides
+
+Every token is a `--ds-*` variable, so plain CSS can override it. The rule must be unlayered, or in a layer declared after `ds.theme`, because the theme's own values live in that layer.
+
+<Source code={themeCss} language="css" dark={false} />
+
+## Color mode
+
+The mode follows the system by default, and a user's choice is stored in `localStorage`. `defaultMode` sets the mode used before anyone chooses, and `forcedMode` locks it, leaving the stored choice untouched. `ColorModeToggle` switches between light and dark; for a three-way choice, build your own control on `useColorMode`. Its `isForced` tells a control to hide itself when the mode is locked, as `ColorModeToggle` does.
+
+<Source code={asPackage(colorMode)} language="tsx" dark={false} />
+
+To avoid a flash of the wrong mode on load, see [Server rendering](?path=/docs/guides-server-rendering--docs).
+
+## One-off changes
+
+`className` and `style` change one instance. They're escape hatches, not a styling API: if every `Card` needs the change, it belongs in the theme. Read tokens through `vars`, so the change still follows the theme and the mode.
+
+<Source code={asPackage(oneOff)} language="tsx" dark={false} />
+
+<Source code={asPackage(oneOffCss)} language="ts" dark={false} />
+
+<Canvas of={Stories_.OneOffChange} />
+
+## Invalid values
+
+Theme values are written into a `style` element, so `defineTheme` and `defineFullTheme` throw for a value that could break out of its CSS rule, or load a resource. This matters when a value comes from user input. TypeScript catches a wrong token name before that.
+
+<Source code={asPackage(invalid)} language="ts" dark={false} />
+
+The messages, from the source:
+
+- A key that isn't a token name: `Invalid theme key "<path>". Keys are token names, such as color.bg.accent.`
+- A value that could break its rule: `Invalid theme value for <path>: "<value>". Values can't contain {, }, ;, <, \, /*, a line break inside quotes, a control character other than a tab or line break, an unclosed quote, or an unclosed ( or [.`
+- A value that loads a resource: `Invalid theme value for <path>: "<value>". Values can't load resources with url() or image-set().`

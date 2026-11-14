@@ -5,17 +5,9 @@ import { Box } from '../Box';
 import { Icon } from './Icon';
 
 const meta: Meta<typeof Icon> = {
-  title: 'Components/Icon',
+  title: 'Components/Icons/Icon',
   component: Icon,
   args: { icon: Search },
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'Sizes, colors, and labels any SVG component. Without `label`, an icon is decorative. For icons, browse [Lucide](https://lucide.dev/icons), install `lucide-react` in your project, and pass the one you need.',
-      },
-    },
-  },
   argTypes: {
     icon: { control: false },
     size: { control: 'select', options: ['sm', 'md', 'lg', 'inherit'] },

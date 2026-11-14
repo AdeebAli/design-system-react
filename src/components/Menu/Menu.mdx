@@ -1,0 +1,139 @@
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts, NoOwnProps } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as Stories_ from './Menu.stories';
+import {
+  Menu,
+  MenuCheckboxItem,
+  MenuContent,
+  MenuItem,
+  MenuLinkItem,
+  MenuRadioGroup,
+  MenuRadioItem,
+  MenuSubmenu,
+  MenuSubmenuTrigger,
+  MenuTrigger,
+} from '.';
+
+<Meta of={Stories_} />
+
+# Menu
+
+A list of actions, with submenus and checkbox or radio items.
+
+## Usage
+
+Use `Menu` for a list of actions, such as a row's edit, duplicate, and delete. It isn't for navigation bars or choosing a form value: use [`NavBar`](?path=/docs/components-navigation-navbar--docs) and [`Select`](?path=/docs/components-forms-and-actions-select--docs).
+
+- `MenuTrigger` takes one element that renders a `button`, such as `Button`.
+- `MenuItem` and `MenuLinkItem` close the menu on click; checkbox and radio items stay open.
+- `MenuLinkItem` takes `as` for a router link.
+- Group items with `MenuGroup` and `MenuGroupLabel`, and split groups with `MenuSeparator`. Nest a menu with `MenuSubmenu`, `MenuSubmenuTrigger`, and `MenuSubmenuContent`.
+- It's a client component.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Start each item with a verb, and put destructive items last.
+    <Canvas of={Stories_.Actions} />
+  </Do>
+  <Dont
+    code={`<MenuContent>
+  <MenuItem tone="danger">Delete</MenuItem>
+  <MenuItem>Edit</MenuItem>
+</MenuContent>`}
+  />
+</DoDont>
+
+<DoDont>
+  <Do>Use `Select` to choose a form value.</Do>
+  <Dont
+    code={`<Menu>
+  <MenuTrigger><Button>{country}</Button></MenuTrigger>
+  <MenuContent>{countries.map(…MenuItem…)}</MenuContent>
+</Menu>`}
+  />
+</DoDont>
+
+## Accessibility
+
+- Arrow keys, Home, End, type-ahead, and `Escape` work as in any menu, and focus returns to the trigger on close.
+- It's non-modal, so the page keeps scrolling.
+- Checkbox and radio items announce their checked state.
+
+## API
+
+<ArgTypes of={Menu} />
+
+### MenuTrigger
+
+<ArgTypes of={MenuTrigger} />
+
+<AlsoAccepts element="button" />
+
+### MenuContent
+
+<ArgTypes of={MenuContent} />
+
+<AlsoAccepts element="div" layout />
+
+### MenuItem
+
+<ArgTypes of={MenuItem} />
+
+<AlsoAccepts element="div" layout />
+
+### MenuLinkItem
+
+<ArgTypes of={MenuLinkItem} />
+
+<AlsoAccepts element="a" layout />
+
+### MenuCheckboxItem
+
+<ArgTypes of={MenuCheckboxItem} />
+
+<AlsoAccepts element="div" layout />
+
+### MenuRadioGroup
+
+<ArgTypes of={MenuRadioGroup} />
+
+<AlsoAccepts element="div" layout />
+
+### MenuRadioItem
+
+<ArgTypes of={MenuRadioItem} />
+
+<AlsoAccepts element="div" layout />
+
+### MenuGroup
+
+<NoOwnProps name="MenuGroup" element="div" layout />
+
+### MenuGroupLabel
+
+<NoOwnProps name="MenuGroupLabel" element="div" layout />
+
+### MenuSeparator
+
+<NoOwnProps name="MenuSeparator" element="div" layout />
+
+### MenuSubmenu
+
+<ArgTypes of={MenuSubmenu} />
+
+### MenuSubmenuTrigger
+
+<ArgTypes of={MenuSubmenuTrigger} />
+
+<AlsoAccepts element="div" layout />
+
+### MenuSubmenuContent
+
+<NoOwnProps name="MenuSubmenuContent" element="div" layout />
+
+## Examples
+
+<Stories title={<></>} />

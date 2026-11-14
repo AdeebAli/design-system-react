@@ -30,16 +30,8 @@ import {
 } from './index';
 
 const meta: Meta<typeof Menu> = {
-  title: 'Components/Menu',
+  title: 'Components/Overlays/Menu',
   component: Menu,
-  parameters: {
-    docs: {
-      description: {
-        component:
-          "A list of actions. `MenuTrigger` takes one element that renders a `button`, such as `Button`. Arrow keys, Home, End, type-ahead, and `Escape` work as in any menu, and focus returns to the trigger on close. It is non-modal, so the page keeps scrolling. `MenuItem` and `MenuLinkItem` close the menu on click; checkbox and radio items stay open. `MenuLinkItem` takes `as` for a router link. It isn't for navigation bars or choosing a form value: use `NavBar` and `Select`.",
-      },
-    },
-  },
 };
 
 export default meta;

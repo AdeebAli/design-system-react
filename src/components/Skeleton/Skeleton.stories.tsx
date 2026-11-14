@@ -7,17 +7,9 @@ import { VisuallyHidden } from '../VisuallyHidden';
 import { Skeleton } from './Skeleton';
 
 const meta: Meta<typeof Skeleton> = {
-  title: 'Components/Skeleton',
+  title: 'Components/Data/Skeleton',
   component: Skeleton,
   args: { height: '10' },
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'A placeholder for content that is loading. It is always hidden from screen readers, so set `aria-busy` on the loading region and add `VisuallyHidden` text or a live region when users need to hear about it. It has no built-in delay, so skip it for very fast loads. With reduced motion it stops pulsing and stays visible.',
-      },
-    },
-  },
 };
 
 export default meta;

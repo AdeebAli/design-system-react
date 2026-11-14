@@ -1,0 +1,51 @@
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as HeadingStories from './Heading.stories';
+import { Heading } from '.';
+
+<Meta of={HeadingStories} />
+
+# Heading
+
+A heading. `level` sets the tag, and `size` sets the look.
+
+## Usage
+
+`level` is required, because it describes the document: `h1` to `h6`. Keep levels in order, without skipping, and use one `h1` per page. `size` changes only how it looks, so a small `h2` is fine.
+
+- The size comes from `level` unless `size` is set.
+- `truncate` and `lineClamp` cut long headings off with an ellipsis.
+- It works in server components.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Pick the level from the document's structure, and the size from the design.
+    <Canvas of={HeadingStories.SizeSeparateFromLevel} />
+  </Do>
+  <Dont
+    code={`<Heading level={4}>Settings</Heading>\n// Picked h4 because it looked the right size`}
+  />
+</DoDont>
+
+<DoDont>
+  <Do>Use `Text` with a weight for bold text that isn't a heading.</Do>
+  <Dont code={`<Heading level={3}>Total: $42.00</Heading>`} />
+</DoDont>
+
+## Accessibility
+
+- Screen reader users move through a page by its headings, so the levels must describe its structure.
+- The tag always matches `level`, so the outline can't drift from the look.
+
+## API
+
+<ArgTypes of={Heading} />
+
+<AlsoAccepts element="h1" layout />
+
+## Examples
+
+<Stories title={<></>} />

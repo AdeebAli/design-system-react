@@ -1,0 +1,61 @@
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as LinkStories from './Link.stories';
+import { Link } from '.';
+
+<Meta of={LinkStories} />
+
+# Link
+
+A link, in the accent color or the surrounding text color.
+
+## Usage
+
+Use `Link` to go somewhere: another page, a section, or another site. For an action on this page, use a [`Button`](?path=/docs/components-forms-and-actions-button--docs).
+
+- It inherits its font size.
+- To use a router, pass its link as `as`, or wrap `Link` once in your project.
+- `external` opens it in a new tab, with an icon and hidden text, "(opens in a new tab)", that says so.
+- `underline="hover"` is only for links that are clear without one, such as in a navigation bar.
+- It works in server components.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Keep the underline for links in text.
+    <Canvas of={LinkStories.InText} />
+  </Do>
+  <Dont
+    code={`<Text>Read the <Link underline="hover">billing guide</Link>.</Text>`}
+  />
+</DoDont>
+
+<DoDont>
+  <Do>Use `external`, so people know a new tab will open.</Do>
+  <Dont code={`<Link href="https://example.com" target="_blank">Docs</Link>`} />
+</DoDont>
+
+<DoDont>
+  <Do>Write link text that makes sense on its own.</Do>
+  <Dont
+    code={`<Text>To see pricing, <Link href="/pricing">click here</Link>.</Text>`}
+  />
+</DoDont>
+
+## Accessibility
+
+- It renders a native `a`, so it works with the keyboard and shows the focus ring.
+- The underline means a link never relies on color alone.
+- Screen readers often list links out of context, so the text must say where it goes.
+
+## API
+
+<ArgTypes of={Link} />
+
+<AlsoAccepts element="a" layout />
+
+## Examples
+
+<Stories title={<></>} />

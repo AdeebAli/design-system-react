@@ -1,0 +1,55 @@
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as Stories_ from './Alert.stories';
+import { Alert } from '.';
+
+<Meta of={Stories_} />
+
+# Alert
+
+A message that stays in the page, such as a warning above a form.
+
+## Usage
+
+Choose by how long the message should last. `Alert` stays in the page until the problem is fixed or the user dismisses it. Use a [`Toast`](?path=/docs/components-overlays-toast--docs) for a brief message that goes away by itself, such as confirming a save. See [Patterns/Feedback](?path=/story/patterns-feedback--choosing-a-message).
+
+- Each tone has its own icon, and the text should say what's wrong, since color is never the only signal.
+- `title` is bold text, not a heading.
+- It has no `"use client"`, so it works in server components; `onDismiss` needs a client parent.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Say what's wrong and how to fix it.
+    <Canvas of={Stories_.Tones} />
+  </Do>
+  <Dont code={`<Alert tone="danger">Error</Alert>`} />
+</DoDont>
+
+<DoDont>
+  <Do>
+    Keep a `live` alert mounted, and change its text after an action.
+    <Canvas of={Stories_.AnnouncedAfterAnAction} />
+  </Do>
+  <Dont
+    code={`{saveFailed && <Alert tone="danger">Couldn't save. Try again.</Alert>}
+// Appears silently`}
+  />
+</DoDont>
+
+## Accessibility
+
+- It isn't a live region by default. `live="polite"` gives `role="status"` and `live="assertive"` gives `role="alert"`. A screen reader reliably announces only a region already on the page, so keep the `Alert` mounted and change its text.
+- The tone's icon is decorative; the text carries the meaning.
+
+## API
+
+<ArgTypes of={Alert} />
+
+<AlsoAccepts element="div" layout />
+
+## Examples
+
+<Stories title={<></>} />

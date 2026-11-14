@@ -19,6 +19,7 @@ export interface DrawerProps {
   onOpenChange?: (open: boolean) => void;
   /** Whether clicking outside closes it. @default true */
   closeOnOutsideClick?: boolean;
+  /** A `DrawerTrigger` and a `DrawerContent`. */
   children?: ReactNode;
 }
 

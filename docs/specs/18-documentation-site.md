@@ -116,6 +116,8 @@ The raw token layer, `tokens` from `src/tokens/primitives.ts`:
 ## Guides
 
 Each guide is an MDX page. **Every code example that uses this package's API is a real `.tsx` or `.ts` file** under `src/docs/examples/`. The files are included in `npm run typecheck` and shown with Storybook's `Source` block, using a `?raw` import. Examples that can render are also stories, so axe and visual tests cover them. CSS-only examples can be inline.
+- An example that needs Next.js (`next/headers`, `next/image`, `next/link`), which the root package doesn't install, is shown from its file in `fixtures/next-app` instead, type-checked by the fixture's `tsc` in `npm run test:fixtures` (owner, 2026-11-13, v0.8.1 plan Departure 4).
+- An example that mounts `ThemeProvider` isn't a story, because a provider sets the whole document's color mode and theme style, which would leak into other stories. It stays a real, type-checked file shown with `Source`. Examples that render without a provider, such as a one-off `className`, are stories (owner, 2026-11-13, v0.8.1 plan Departure 5).
 
 - **Themes:**
   - `ThemeProvider` with no props.
@@ -172,6 +174,7 @@ Every story file under `Components/` gets a sibling MDX file (`Button/Button.mdx
 3. **Do's and don'ts:** at least two pairs. A "Do" may be a live story through `<Canvas of={…} />`. A "Don't" is always a code snippet, never a live render, because a deliberately inaccessible example would fail axe.
 4. **Accessibility:** what the component handles, and what the project must supply.
 5. **API:** a props table through `<ArgTypes of={Component} />` for the component and for each of its public parts (`Tabs`, `TabsList`, `Tab`, `TabsPanel`). Rows show name, description, type, and default. They're built from the TSDoc that Spec 05 requires on every public prop, and from `@default` tags. A prop with a default but no `@default` tag gets one in this change. Under the table, one line names what else it accepts, such as "Also accepts `button` attributes", and links to the style props page for components that accept layout props.
+   - A part that declares no props of its own (`Code`, `Kbd`, `DialogDescription`, `DrawerDescription`, `PopoverDescription`, `MenuGroup`, `MenuGroupLabel`, `MenuSeparator`, `MenuSubmenuContent`, `TableHead`, `TableBody`, `TableFoot`) gets no table. Its API section says so in one line, such as "`DialogDescription` has no props of its own. It accepts `p` attributes." (owner, 2026-11-13, v0.8.1 plan Departure 3).
 6. **Examples:** the component's stories, through `<Stories />`.
 
 A docs page doesn't follow the color mode, as Spec 02 says for MDX pages. Stories keep both modes.
@@ -179,19 +182,20 @@ A docs page doesn't follow the color mode, as Spec 02 says for MDX pages. Storie
 ### Props tables
 
 - Storybook's React docgen is set to `react-docgen-typescript`, with a `propFilter` that keeps the props declared in this package's source. HTML attributes and props declared only in `@types/react` or Base UI are left out. They're covered by the "Also accepts" line.
+- The filter also leaves out the layout props (`LayoutProps` in `src/components/Box/types.ts`) on every component except the layout components (`Box`, `Flex`, `Stack`, `Inline`, `Grid`, `Container`, `Center`, `Inset`). Other pages link to the style props page instead (owner, 2026-11-13, v0.8.1 plan Departure 1).
 - **To check first (plan task 1):** whether that filter drops props this package re-exports from Base UI types, and whether types imported from other files, such as `Responsive<…>` and token unions, show readably. Prove it on `Button`, `Select`, `Box`, and `Tabs` before writing any pages. If `react-docgen-typescript` can't meet this section, the fallback goes to the owner before building on it.
 - A public prop that has no TSDoc is a defect fixed in this change, not a blank cell.
 
 ## Release
 
-The site ships as a release (owner, 2026-11-13). After the PR merges, `npm run release -- patch` makes v0.8.1. Publishing the release deploys Storybook through `storybook-pages`, and publishes a package identical to v0.8.0 apart from its version. The release notes say it's docs only.
+The site ships as a release (owner, 2026-11-13). After the PR merges, `npm run release -- patch` makes v0.8.1. Publishing the release deploys Storybook through `storybook-pages`, and publishes a package whose JS and CSS are identical to v0.8.0's. `index.d.ts` differs only in the doc comments added for the props tables (owner, 2026-11-13, v0.8.1 plan Departure 2). The release notes say it's docs only.
 
 ## Testing
 
 - **Coverage (unit, reads files):**
   - Every `*.stories.tsx` with a `Components/` title has a sibling `.mdx` with `<Meta of=`.
-  - Each such MDX has the headings Usage, Do's and don'ts, Accessibility, and API, in that order, and at least one `<ArgTypes of=`.
-  - Every PascalCase component exported from `src/index.ts`, except the theming exports, appears in some `<ArgTypes of={…}>`.
+  - Each such MDX has the headings Usage, Do's and don'ts, Accessibility, and API, in that order, and at least one `<ArgTypes of=` (or, for `Code` and `Kbd`, the no-own-props line; Departure 3).
+  - Every PascalCase component exported from `src/index.ts`, except the theming exports and the parts with no props of their own (listed under Component pages), appears in some `<ArgTypes of={…}>`.
 - **Sidebar order (Playwright, against the built Storybook manager):** the top-level sections read Overview, Foundations, Components, Patterns, Guides. The Components groups read in the table's order. This checks the real sidebar, not `storySort`.
 - **Docs pages (Playwright, in `tests/visual/stories.spec.ts`):**
   - Every docs page renders an `h1`.
@@ -220,7 +224,7 @@ These change what the earlier specs say. The owner decided them in this spec's p
 - Overview has Welcome, the default page, and Accessibility.
 - Typography shows the three families with their stacks and licenses, plus line height and letter spacing. Motion has working duration and easing demos and examples through real components. Primitives exists.
 - All eight guides exist, and their API examples type-check.
-- Every component has a docs page with Usage, Do's and don'ts (two or more pairs), Accessibility, API (a filled props table for each public part), and Examples.
+- Every component has a docs page with Usage, Do's and don'ts (two or more pairs), Accessibility, API (a filled props table for each public part that has props of its own), and Examples.
 - No `parameters.docs.description.component` is left in a component's story file.
 - `npm run check` passes, and the new and renamed baselines come from the workflow.
 

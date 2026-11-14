@@ -1,0 +1,92 @@
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts, NoOwnProps } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as Stories_ from './Popover.stories';
+import {
+  Popover,
+  PopoverClose,
+  PopoverContent,
+  PopoverTitle,
+  PopoverTrigger,
+} from '.';
+
+<Meta of={Stories_} />
+
+# Popover
+
+A small panel beside its trigger, with the page still usable.
+
+## Usage
+
+Use `Popover` for a small panel, such as quick filters or details, while the page stays usable. For a task that needs full attention, use [`Dialog`](?path=/docs/components-overlays-dialog--docs); for a list of actions, [`Menu`](?path=/docs/components-overlays-menu--docs); for a hint on hover, [`Tooltip`](?path=/docs/components-overlays-tooltip--docs).
+
+- `PopoverTrigger` takes one element that renders a `button`, such as `Button`.
+- Name it with `PopoverTitle` (or `aria-label` on `PopoverContent`).
+- It doesn't open on hover.
+- `arrow` is off by default, since the theme's shadows already separate the popup.
+- A `Dialog` opened from an open popover sits underneath it, so close the popover first.
+- It's a client component.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Name the popover with a title.
+    <Canvas of={Stories_.FiltersPopover} />
+  </Do>
+  <Dont
+    code={`<PopoverContent>
+  <Checkbox label="In stock" />
+</PopoverContent>
+// Unnamed`}
+  />
+</DoDont>
+
+<DoDont>
+  <Do>Close the popover before opening a dialog from it.</Do>
+  <Dont
+    code={`<PopoverContent>
+  <DialogTrigger><Button>Delete</Button></DialogTrigger>
+</PopoverContent>`}
+  />
+</DoDont>
+
+## Accessibility
+
+- It's non-modal: the page stays usable. Focus moves into it and back to the trigger on close, and `Escape` or a click outside closes it.
+
+## API
+
+<ArgTypes of={Popover} />
+
+### PopoverTrigger
+
+<ArgTypes of={PopoverTrigger} />
+
+<AlsoAccepts element="button" />
+
+### PopoverContent
+
+<ArgTypes of={PopoverContent} />
+
+<AlsoAccepts element="div" layout />
+
+### PopoverTitle
+
+<ArgTypes of={PopoverTitle} />
+
+<AlsoAccepts element="h2" />
+
+### PopoverDescription
+
+<NoOwnProps name="PopoverDescription" element="p" />
+
+### PopoverClose
+
+<ArgTypes of={PopoverClose} />
+
+<AlsoAccepts element="button" />
+
+## Examples
+
+<Stories title={<></>} />

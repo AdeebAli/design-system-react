@@ -1,0 +1,64 @@
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as Stories_ from './NavBar.stories';
+import { NavBar, NavBarLink } from '.';
+
+<Meta of={Stories_} />
+
+# NavBar
+
+The site's main navigation bar, with a menu below `md`.
+
+## Usage
+
+Use `NavBar` for links between a site's pages. For switching views within a page, use [`Tabs`](?path=/docs/components-navigation-tabs--docs). For an app with many sections, use [`Sidebar`](?path=/docs/components-app-navigation-sidebar--docs).
+
+- Children must be `NavBarLink`s; anything else goes in `brand` or `actions`.
+- Set `active` on the current page's link: the library doesn't read the URL.
+- Below `md`, links collapse behind a menu button into a panel that pushes content down; it closes on `Escape` and on a link click.
+- Pass a router link through `as`, such as `as={NextLink}`. In a Next.js server component, `next/link` is a server wrapper that can't be passed to `NavBarLink`, so re-export it from a client module first: a file containing `'use client'; export { default } from 'next/link';`.
+- It's a client component.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Mark the current page with `active`.
+    <Canvas of={Stories_.Playground} />
+  </Do>
+  <Dont
+    code={`<NavBarLink href="/pricing" className={isCurrent ? "current" : ""}>Pricing</NavBarLink>`}
+  />
+</DoDont>
+
+<DoDont>
+  <Do>Keep it to a few top-level links.</Do>
+  <Dont
+    code={`<NavBar>
+  {allTwentyPages.map((p) => <NavBarLink key={p.href} href={p.href}>{p.title}</NavBarLink>)}
+</NavBar>`}
+  />
+</DoDont>
+
+## Accessibility
+
+- It renders a `nav` landmark, named with `aria-label`.
+- The active link gets `aria-current="page"`.
+- Below `md`, the menu button is named by `menuLabel`, and the links stay in the same order inside the panel.
+
+## API
+
+<ArgTypes of={NavBar} />
+
+<AlsoAccepts element="nav" layout />
+
+### NavBarLink
+
+<ArgTypes of={NavBarLink} />
+
+<AlsoAccepts element="a" layout />
+
+## Examples
+
+<Stories title={<></>} />

@@ -4,17 +4,9 @@ import { Grid } from '../Grid';
 import { Stat } from './Stat';
 
 const meta: Meta<typeof Stat> = {
-  title: 'Components/Stat',
+  title: 'Components/Display/Stat',
   component: Stat,
   args: { label: 'Revenue', value: '$21.4k', change: '4.1', trend: 'up' },
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'A labeled number. Pass `change` without a sign when using `trend`, so it reads "Down 4.1". `trend` adds an arrow and hidden text, so color is never the only signal. Set `sentiment` when an increase is bad, such as incidents. `Stat` has no surface: put it in a `Card`.',
-      },
-    },
-  },
 };
 
 export default meta;

@@ -1,0 +1,54 @@
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as Stories_ from './Switch.stories';
+import { Switch } from '.';
+
+<Meta of={Stories_} />
+
+# Switch
+
+A switch, for a setting that applies immediately.
+
+## Usage
+
+Use `Switch` for a setting that takes effect at once, such as turning on notifications. For a choice submitted with a form, use [`Checkbox`](?path=/docs/components-forms-and-actions-checkbox--docs).
+
+- It can be controlled (`checked` and `onCheckedChange`) or uncontrolled (`defaultChecked`).
+- Give it a `label`, or name it with a `Field` label or `aria-label`.
+- It's a client component.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Name the setting, not the action.
+    <Canvas of={Stories_.States} />
+  </Do>
+  <Dont code={`<Switch label="Turn on to receive emails" />`} />
+</DoDont>
+
+<DoDont>
+  <Do>Apply the change as soon as it's toggled.</Do>
+  <Dont
+    code={`<form>
+  <Switch label="Newsletter" name="newsletter" />
+  <Button type="submit">Save</Button>
+</form>`}
+  />
+</DoDont>
+
+## Accessibility
+
+- It has the `switch` role, and Space toggles it.
+- The knob's position shows the state, so color isn't the only signal.
+
+## API
+
+<ArgTypes of={Switch} />
+
+<AlsoAccepts element="span" layout />
+
+## Examples
+
+<Stories title={<></>} />

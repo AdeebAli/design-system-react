@@ -1,0 +1,56 @@
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as Stories_ from './Spinner.stories';
+import { Spinner } from '.';
+
+<Meta of={Stories_} />
+
+# Spinner
+
+A short wait with no measure of progress.
+
+## Usage
+
+Use `Spinner` when something is working and its duration is unknown. Use [`Skeleton`](?path=/docs/components-data-skeleton--docs) when the content's shape is known, and [`Progress`](?path=/docs/components-feedback-and-display-progress--docs) when the amount done is known. A [`Button`](?path=/docs/components-forms-and-actions-button--docs) has its own `loading` state.
+
+- It draws in `currentColor`.
+- With reduced motion it stops turning and stays visible.
+- It works in server components.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Give it a `label` when nothing nearby says what's happening.
+    <Canvas of={Stories_.Labeled} />
+  </Do>
+  <Dont
+    code={`<Spinner />
+// Alone in an empty panel, hidden from screen readers`}
+  />
+</DoDont>
+
+<DoDont>
+  <Do>Use `Button`'s `loading` for a button that's working.</Do>
+  <Dont
+    code={`<Button disabled>
+  <Spinner size="sm" /> Saving
+</Button>`}
+  />
+</DoDont>
+
+## Accessibility
+
+- Without `label` it's hidden from screen readers, for when nearby text or `aria-busy` already says what's happening.
+- With `label` it's a `role="status"`, but a status that mounts with its text isn't always announced, so keep a status region mounted when the announcement matters.
+
+## API
+
+<ArgTypes of={Spinner} />
+
+<AlsoAccepts element="span" layout />
+
+## Examples
+
+<Stories title={<></>} />

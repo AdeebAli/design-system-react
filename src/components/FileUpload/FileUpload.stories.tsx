@@ -6,17 +6,9 @@ import { FileUpload, type FileStatus } from './FileUpload';
 import type { FileRejection } from './mergeFiles';
 
 const meta: Meta<typeof FileUpload> = {
-  title: 'Components/FileUpload',
+  title: 'Components/Advanced inputs/FileUpload',
   component: FileUpload,
   args: { 'aria-label': 'Attachments' },
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'Picks files, by browsing or dropping. A real file input, visually hidden over the control, does the picking, so it works by keyboard, before hydration, and with phones’ camera and file pickers. It doesn’t send files: the project uploads them and reports each file’s status through `getFileStatus`. `value` is the source of truth, and the input’s `files` always match it, so a form submits what’s displayed. **Checking `accept` and `maxSize` here is a convenience, not security: the server must check every upload.** `ref` and native attributes, such as `capture`, go to the input; `className`, `style`, and layout props go to the root.',
-      },
-    },
-  },
 };
 
 export default meta;

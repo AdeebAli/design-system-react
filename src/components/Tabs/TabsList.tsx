@@ -11,7 +11,13 @@ import * as styles from './Tabs.css';
 import { useTabsStyle } from './TabsContext';
 
 /** `TabsList`'s props. Name it with `aria-label` or `aria-labelledby`. */
-export type TabsListProps = ComponentProps<'div', { children?: ReactNode }>;
+export type TabsListProps = ComponentProps<
+  'div',
+  {
+    /** The `Tab`s. */
+    children?: ReactNode;
+  }
+>;
 
 /** The row of tabs. It scrolls sideways when the tabs don't fit. */
 export function TabsList({ className, children, ...props }: TabsListProps) {

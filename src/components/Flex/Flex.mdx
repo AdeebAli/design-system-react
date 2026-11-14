@@ -1,0 +1,53 @@
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as FlexStories from './Flex.stories';
+import { Flex } from '.';
+
+<Meta of={FlexStories} />
+
+# Flex
+
+Full flexbox control: direction, wrapping, alignment, and gaps, each responsive.
+
+## Usage
+
+Prefer [`Stack`](?path=/docs/components-layout-stack--docs) for children from top to bottom, and [`Inline`](?path=/docs/components-layout-inline--docs) for a row that wraps. Use `Flex` when the direction changes by screen size, or when you need `justify` and `align` together.
+
+- Children flow in a row and don't wrap, unless `direction` or `wrap` says otherwise.
+- It has no padding props. To pad it, wrap it in [`Inset`](?path=/docs/components-layout-inset--docs).
+- It works in server components.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Change the direction by screen size with a responsive value.
+    <Canvas of={FlexStories.Responsive} />
+  </Do>
+  <Dont
+    code={`// Two components switched by a media query hook\n{isWide ? <Flex>…</Flex> : <Stack>…</Stack>}`}
+  />
+</DoDont>
+
+<DoDont>
+  <Do>Use `gap` for the space between children.</Do>
+  <Dont
+    code={`<Flex>\n  <Button marginEnd="2">Cancel</Button>\n  <Button>Save</Button>\n</Flex>`}
+  />
+</DoDont>
+
+## Accessibility
+
+- `Flex` renders a `div` with no semantics. Use `as` for a landmark or list, such as `as="ul"` with `li` children.
+- Visual order follows the source order. Don't reverse it with `direction="row-reverse"` when the order matters, because keyboard and screen reader order stay in the source order.
+
+## API
+
+<ArgTypes of={Flex} />
+
+<AlsoAccepts element="div" />
+
+## Examples
+
+<Stories title={<></>} />

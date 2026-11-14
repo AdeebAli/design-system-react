@@ -7,7 +7,10 @@ import * as styles from './Prose.css';
 /** `NotProse`'s props. */
 export type NotProseProps<E extends ElementType = 'div'> = PolymorphicProps<
   E,
-  { children?: ReactNode }
+  {
+    /** Content that `Prose` leaves alone. */
+    children?: ReactNode;
+  }
 >;
 
 /**

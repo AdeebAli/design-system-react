@@ -7,16 +7,8 @@ import { Input } from '../Input';
 import { Accordion, AccordionItem } from './index';
 
 const meta: Meta<typeof Accordion> = {
-  title: 'Components/Accordion',
+  title: 'Components/App navigation/Accordion',
   component: Accordion,
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'Sections that expand in place, such as FAQs and settings. Each `AccordionItem` takes a `value`, a `title`, and its content. `Tab` moves between headers, and `Enter` and `Space` toggle. `multiple` lets more than one section stay open. `headingLevel` sets each heading’s tag (default `h3`) without changing its look. Closed content isn’t rendered, unless `keepMounted` is set, which keeps it in the DOM, hidden until found, so form state survives and the browser’s find-in-page can open it. It has no surface of its own: put it on the canvas or in a `Card`.',
-      },
-    },
-  },
 };
 
 export default meta;

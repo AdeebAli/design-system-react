@@ -23,6 +23,7 @@ interface BadgeOwnProps {
   size?: BadgeSize;
   /** An `Icon` element before the text, sized to match it. */
   startIcon?: ReactElement;
+  /** The label. Say the status in words; color alone can't. */
   children?: ReactNode;
 }
 

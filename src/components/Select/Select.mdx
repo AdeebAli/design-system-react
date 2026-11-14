@@ -1,0 +1,57 @@
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as Stories_ from './Select.stories';
+import { Select } from '.';
+
+<Meta of={Stories_} />
+
+# Select
+
+A single choice from a dropdown.
+
+## Usage
+
+Use `Select` for one choice from a short list, roughly up to fifteen options. For a long list found by typing, use [`Combobox`](?path=/docs/components-advanced-inputs-combobox--docs); for a few options that should all be visible, [`RadioGroup`](?path=/docs/components-forms-and-actions-radiogroup--docs); for several choices, [`MultiSelect`](?path=/docs/components-advanced-inputs-multiselect--docs). Label it with a [`Field`](?path=/docs/components-forms-and-actions-field--docs).
+
+- `options` is an array of values and labels, optionally in groups.
+- `null` means nothing is selected and shows the `placeholder`.
+- It can be controlled (`value` and `onValueChange`) or uncontrolled (`defaultValue`). With React Hook Form, use `Controller` and a default of `null`.
+- `ref`, `className`, and layout props go to the trigger. `name` submits the value with a form.
+- It's a client component.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Label it with a `Field`, and group long lists.
+    <Canvas of={Stories_.Groups} />
+  </Do>
+  <Dont
+    code={`<Select options={countries} placeholder="Country" />
+// 200 options, no label`}
+  />
+</DoDont>
+
+<DoDont>
+  <Do>Use `null` for no selection.</Do>
+  <Dont
+    code={`<Select options={[{ value: '', label: 'Choose one' }, ...plans]} />`}
+  />
+</DoDont>
+
+## Accessibility
+
+- Base UI supplies the keyboard behavior: arrow keys move through options, typing jumps to a match, Enter or Space selects, and Escape closes the list.
+- The trigger is a button, so its name comes from the `Field` label or an `aria-label`.
+- Focus returns to the trigger when the list closes.
+
+## API
+
+<ArgTypes of={Select} />
+
+<AlsoAccepts element="button" layout />
+
+## Examples
+
+<Stories title={<></>} />

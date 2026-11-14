@@ -17,16 +17,8 @@ import {
 } from './index';
 
 const meta: Meta<typeof Dialog> = {
-  title: 'Components/Dialog',
+  title: 'Components/Overlays/Dialog',
   component: Dialog,
-  parameters: {
-    docs: {
-      description: {
-        component:
-          '`DialogTrigger` takes one element that renders a `button`, such as `Button`. A dialog is modal: focus is trapped, the page behind is inert, and scrolling is locked. Name it with `DialogTitle` (or `aria-label` on `DialogContent`). `Escape` closes it, and so does clicking outside unless `closeOnOutsideClick` is `false`. Without a close button (`alert`, or `showClose={false}`), add a `DialogClose`. `alert` confirms something destructive and is static: changing it remounts the dialog. A `Dialog` opened from an open `Popover` sits underneath it, so close the popover first.',
-      },
-    },
-  },
 };
 
 export default meta;

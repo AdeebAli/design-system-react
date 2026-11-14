@@ -11,17 +11,9 @@ const plans = [
 ];
 
 const meta: Meta<typeof Select> = {
-  title: 'Components/Select',
+  title: 'Components/Forms and actions/Select',
   component: Select,
   args: { options: plans, placeholder: 'Choose a plan', 'aria-label': 'Plan' },
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'A single-choice dropdown from an `options` array of values and labels, optionally in groups. `null` means nothing is selected and shows the `placeholder`. With React Hook Form, use `Controller` and a default of `null`. `ref`, `className`, and layout props go to the trigger.',
-      },
-    },
-  },
 };
 
 export default meta;

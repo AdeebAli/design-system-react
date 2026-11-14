@@ -9,6 +9,7 @@ interface ButtonOwnProps extends ButtonBaseOwnProps {
   startIcon?: ReactElement;
   /** An `Icon` element after the text. */
   endIcon?: ReactElement;
+  /** The label. Name the action with a verb. */
   children?: ReactNode;
 }
 

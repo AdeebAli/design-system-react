@@ -5,16 +5,8 @@ import { Icon } from '../Icon';
 import { VisuallyHidden } from './VisuallyHidden';
 
 const meta: Meta<typeof VisuallyHidden> = {
-  title: 'Components/VisuallyHidden',
+  title: 'Components/Typography/VisuallyHidden',
   component: VisuallyHidden,
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'Text for screen readers only. `focusable` makes it appear when focused, for skip links, which use `as="a"`.',
-      },
-    },
-  },
 };
 
 export default meta;

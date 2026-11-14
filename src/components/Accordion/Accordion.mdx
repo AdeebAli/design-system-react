@@ -1,0 +1,66 @@
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as Stories_ from './Accordion.stories';
+import { Accordion, AccordionItem } from '.';
+
+<Meta of={Stories_} />
+
+# Accordion
+
+Sections that expand in place, such as FAQs and settings.
+
+## Usage
+
+Use `Accordion` when people need only some sections of a long page. For switching between equal views, use [`Tabs`](?path=/docs/components-navigation-tabs--docs).
+
+- Each `AccordionItem` takes a `value`, a `title`, and its content.
+- `multiple` lets more than one section stay open.
+- `headingLevel` sets each heading's tag (default `h3`) without changing its look.
+- Closed content isn't rendered, unless `keepMounted` is set, which keeps it in the DOM, hidden until found, so form state survives and the browser's find-in-page can open it.
+- It has no surface of its own: put it on the canvas or in a `Card`.
+- It's a client component.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>Set `headingLevel` to fit the page's outline.</Do>
+  <Dont
+    code={`<Heading level={2}>FAQ</Heading>
+<Accordion headingLevel={5}>…</Accordion>
+// Skips h3 and h4`}
+  />
+</DoDont>
+
+<DoDont>
+  <Do>Use `keepMounted` for sections with form fields.</Do>
+  <Dont
+    code={`<Accordion>
+  <AccordionItem value="address" title="Address">
+    <Input name="street" />
+  </AccordionItem>
+</Accordion>
+// Closing it loses what was typed`}
+  />
+</DoDont>
+
+## Accessibility
+
+- Each header is a button inside a heading, with `aria-expanded`. `Tab` moves between headers, and `Enter` and `Space` toggle.
+- With `keepMounted`, find-in-page opens a section that contains a match.
+
+## API
+
+<ArgTypes of={Accordion} />
+
+<AlsoAccepts element="div" layout />
+
+### AccordionItem
+
+<ArgTypes of={AccordionItem} />
+
+<AlsoAccepts element="div" layout />
+
+## Examples
+
+<Stories title={<></>} />

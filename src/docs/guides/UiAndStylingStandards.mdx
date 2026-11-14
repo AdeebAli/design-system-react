@@ -1,0 +1,70 @@
+import { Canvas, Meta, Source } from '@storybook/addon-docs/blocks';
+import { asPackage } from '../blocks/asPackage';
+import * as Stories_ from '../examples/uiStandards/UiAndStylingStandards.stories';
+import form from '../examples/uiStandards/SignUpForm.tsx?raw';
+
+<Meta of={Stories_} />
+
+# UI and styling standards
+
+The house rules for building with the system.
+
+## Layout
+
+- Compose layout from `Box` and the layout components. Use `gap` for the space between things, not margins.
+- Use one `Container` for a page's width, and `Grid` for columns.
+- Pad with `Inset` or a `Card`, not with margins on children.
+
+## Spacing rhythm
+
+- Inside a control or a tight group, such as an icon and its label: `space.1` to `space.2`.
+- Between items in a card or a form's fields: `space.3` to `space.4`.
+- Between cards: `space.4` to `space.6`.
+- Between a page's sections: `space.8` and up.
+- Space between groups is larger than the space inside them.
+
+## Typography
+
+- Heading levels follow the document's structure, not the size wanted: one `h1` per page, then `h2`, `h3` in order. Change the look with `size`.
+- Body text is `md` (14px) in the interface and `lg` (16px) for reading; long-form content goes in `Prose`.
+- Use weight and `tone="muted"` for hierarchy before adding sizes.
+
+## Color
+
+- Choose colors by role (`fg.muted`, `bg.accent`, `border.subtle`), never by hue.
+- Check every screen in both light and dark modes.
+- Color is never the only signal: pair it with text or an icon.
+
+## States
+
+Anything interactive or data-driven has its states designed, not left to chance:
+
+- **Hover and focus:** components handle these. Give your own interactive elements the same focus ring: on `:focus-visible`, an outline of `vars.borderWidth.thick` in `vars.color.focus`, offset by `vars.space['0.5']`.
+- **Disabled:** say why nearby when it isn't obvious.
+- **Loading:** `Button`'s `loading`, `Skeleton` for known shapes, `Spinner` for short waits.
+- **Empty:** an `EmptyState` with the next step.
+- **Error:** an `Alert` or a `Field` error that says how to fix it.
+
+## Motion
+
+Animate only through the motion tokens, so reduced motion turns it off. Don't animate layout properties such as width or height.
+
+## Icons
+
+An icon goes with text, or it has an accessible name: `Icon`'s `label`, or `IconButton`'s `aria-label`.
+
+## Content
+
+- Sentence case for everything: headings, buttons, and labels.
+- Buttons are labeled with a verb that says what happens: "Save changes", not "OK".
+- Error messages say how to fix the problem: "Enter an email address with an @", not "Invalid input".
+
+<Source code={asPackage(form)} language="tsx" dark={false} />
+
+<Canvas of={Stories_.Form} />
+
+## Styling code
+
+- Tokens only: `vars`, style props, or `--ds-*` variables. No hex colors or pixel lengths.
+- Project styles live in `.css.ts` files with vanilla-extract, or in CSS that reads `--ds-*` variables.
+- `className` and `style` are escape hatches for one instance.

@@ -5,17 +5,9 @@ import { Inline } from '../Inline';
 import { ToggleChip } from './ToggleChip';
 
 const meta: Meta<typeof ToggleChip> = {
-  title: 'Components/ToggleChip',
+  title: 'Components/Forms and actions/ToggleChip',
   component: ToggleChip,
   args: { children: 'Archived' },
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'A selectable pill, such as a filter. A pressed chip shows a check, so its state isn’t shown by color alone. Group chips with `ToggleChipGroup`.',
-      },
-    },
-  },
 };
 
 export default meta;

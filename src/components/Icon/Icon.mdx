@@ -1,0 +1,55 @@
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as IconStories from './Icon.stories';
+import { Icon } from '.';
+
+<Meta of={IconStories} />
+
+# Icon
+
+Sizes, colors, and labels any SVG icon component.
+
+## Usage
+
+Pass any component that renders an `svg`. For icons, browse [Lucide](https://lucide.dev/icons), install `lucide-react` in your project, and pass the one you need: `<Icon icon={Plus} />`.
+
+- Without `label`, an icon is decorative and hidden from screen readers.
+- `size="inherit"` matches the surrounding text.
+- With no `tone`, it takes its parent's text color.
+- For a button with only an icon, use [`IconButton`](?path=/docs/components-forms-and-actions-iconbutton--docs).
+- It works in server components.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Give an icon a `label` when it carries meaning on its own.
+    <Canvas of={IconStories.Meaningful} />
+  </Do>
+  <Dont
+    code={`<Icon icon={AlertTriangle} tone="warning" />\n// The only sign of a problem, with no name`}
+  />
+</DoDont>
+
+<DoDont>
+  <Do>
+    Pass the icon component to `Icon`, so size and color come from tokens.
+  </Do>
+  <Dont code={`<Plus size={18} color="#4f46e5" />`} />
+</DoDont>
+
+## Accessibility
+
+- A decorative icon gets `aria-hidden`. An icon with `label` gets `role="img"` and that name.
+- Next to text that says the same thing, leave `label` off, so the name isn't read twice.
+
+## API
+
+<ArgTypes of={Icon} />
+
+<AlsoAccepts element="svg" layout />
+
+## Examples
+
+<Stories title={<></>} />

@@ -4,16 +4,8 @@ import { Tile } from '../../utils/Tile';
 import { Stack } from './Stack';
 
 const meta: Meta<typeof Stack> = {
-  title: 'Components/Stack',
+  title: 'Components/Layout/Stack',
   component: Stack,
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'Children from top to bottom. Use `Flex` to change direction, and `Inset` to add padding.',
-      },
-    },
-  },
 };
 
 export default meta;

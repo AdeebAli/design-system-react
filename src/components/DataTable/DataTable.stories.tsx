@@ -41,21 +41,13 @@ const columns: DataTableColumn<Customer>[] = [
 ];
 
 const meta: Meta<typeof DataTable<Customer>> = {
-  title: 'Components/DataTable',
+  title: 'Components/Data/DataTable',
   component: DataTable,
   args: {
     'aria-label': 'Customers',
     rows: customers,
     columns,
     getRowId: (c: Customer) => c.id,
-  },
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'A table that manages its own sorting, pagination, selection, and loading and empty states. A sortable header cycles ascending, descending, unsorted; `null` sorts last. With `selectionMode`, the row header becomes a toggle button and a click anywhere on a row toggles it. Use `Table` for display and server rendering.',
-      },
-    },
   },
 };
 

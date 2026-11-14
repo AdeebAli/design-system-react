@@ -4,16 +4,8 @@ import { Tile } from '../../utils/Tile';
 import { Inset } from './Inset';
 
 const meta: Meta<typeof Inset> = {
-  title: 'Components/Inset',
+  title: 'Components/Layout/Inset',
   component: Inset,
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'Padding from the spacing scale. Layout components have no padding props, so wrap them in `Inset`.',
-      },
-    },
-  },
 };
 
 export default meta;

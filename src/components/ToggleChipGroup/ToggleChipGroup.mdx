@@ -1,0 +1,56 @@
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as Stories_ from './ToggleChipGroup.stories';
+import { ToggleChipGroup } from '.';
+
+<Meta of={Stories_} />
+
+# ToggleChipGroup
+
+A wrapping row of `ToggleChip`s.
+
+## Usage
+
+Use `ToggleChipGroup` for a set of filters. Name it with `aria-label` or `aria-labelledby`; its types require one.
+
+- One chip is pressed at a time unless `multiple` is set.
+- Pressing the selected chip clears it. To keep one always selected, as with an "All" filter, control `value` and ignore empty changes.
+- It's a client component.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Keep one chip selected when "nothing" isn't a valid state.
+    <Canvas of={Stories_.AlwaysOne} />
+  </Do>
+  <Dont
+    code={`<ToggleChipGroup aria-label="Status" value={status} onValueChange={setStatus}>
+  …
+</ToggleChipGroup>
+// An empty value leaves the list unfiltered with no chip pressed`}
+  />
+</DoDont>
+
+<DoDont>
+  <Do>Use `multiple` when filters combine.</Do>
+  <Dont
+    code={`<ToggleChipGroup aria-label="Topics">{topics}</ToggleChipGroup>
+// Only one topic at a time, when people want several`}
+  />
+</DoDont>
+
+## Accessibility
+
+- The group has the `group` role with its name. Tab moves into it, and arrow keys move between chips.
+
+## API
+
+<ArgTypes of={ToggleChipGroup} />
+
+<AlsoAccepts element="div" layout />
+
+## Examples
+
+<Stories title={<></>} />
