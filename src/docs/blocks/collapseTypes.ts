@@ -36,22 +36,49 @@ function split(union: string, separator: string): string[] {
 
 const members = (union: string) => split(union, '|');
 
+/** Whether `{` at the start closes at the very end: one object, not `{…} & {…}`. */
+function isSingleObject(member: string): boolean {
+  if (!member.startsWith('{') || !member.endsWith('}')) return false;
+  let depth = 0;
+  let quote: string | null = null;
+  for (let i = 0; i < member.length; i++) {
+    const char = member[i]!;
+    if (quote) {
+      if (char === '\\') i++;
+      else if (char === quote) quote = null;
+    } else if (char === '"' || char === "'" || char === '`') {
+      quote = char;
+    } else if (char === '=' && member[i + 1] === '>') {
+      i++;
+    } else if ('<{(['.includes(char)) {
+      depth++;
+    } else if ('>})]'.includes(char)) {
+      depth--;
+      if (depth === 0) return i === member.length - 1;
+    }
+  }
+  return false;
+}
+
+// A plain property, `name: type` or `"quoted-name"?: type`. Index and method
+// signatures don't match, so they're left as they are.
+const PROPERTY = /^(?:readonly\s+)?(?:[\w$]+|"[^"]*"|'[^']*')\??\s*:/;
+
 /**
  * Sorts the unions inside an object member's property types, such as a
  * responsive value's `{ base?: …; sm?: …; }`. Property order stays as
- * declared.
+ * declared, and a member that needs no change is returned as it was.
  */
 function sortObject(member: string): string {
-  const body = /^\{(.*)\}$/s.exec(member)?.[1];
-  if (body === undefined) return member;
-  const properties = split(body, ';')
-    .filter((part) => part !== '')
-    .map((part) => {
-      const colon = part.indexOf(':');
-      if (colon === -1) return part;
-      return `${part.slice(0, colon + 1)} ${sortUnion(part.slice(colon + 1).trim())}`;
-    });
-  return `{ ${properties.join('; ')}; }`;
+  if (!isSingleObject(member)) return member;
+  const parts = split(member.slice(1, -1), ';').filter((part) => part !== '');
+  const sorted = parts.map((part) => {
+    const name = PROPERTY.exec(part)?.[0];
+    if (name === undefined) return part;
+    return `${name} ${sortUnion(part.slice(name.length).trim())}`;
+  });
+  if (sorted.every((part, index) => part === parts[index])) return member;
+  return `{ ${sorted.join('; ')}; }`;
 }
 
 // Numbers (with px between 0 and 0.5) and sizes in their natural order, then

@@ -122,3 +122,16 @@ it('gives one output for arrow members that return generics', () => {
   );
   expect([...outputs]).toEqual(['"a" | "b" | (() => Promise<void>)']);
 });
+
+// Shapes the object sort must leave exactly as they are.
+it.each([
+  ['{ [key: string]: "b" | "a"; }'],
+  ['{ onChange(e: X | "a"): void; }'],
+  ['{ a?: { x: 2 | 1; } & { y: 4 | 3; }; }'],
+  ['{}'],
+  // A colon inside a quoted name stays put (its type is already sorted).
+  ['{ "a:b": 0 | 1; }'],
+  ['{ a: string } & { b: number }'],
+])('leaves %s unchanged', (member) => {
+  expect(collapseTypeSummary(`"0" | ${member}`)).toBe(`"0" | ${member}`);
+});
