@@ -1,10 +1,10 @@
 # Handoff: design-system-react
 
-- **Date:** 2026-11-13 (updated after releasing v0.8.0)
+- **Date:** 2026-11-13 (updated after accepting Spec 18)
 
 ## Goal
 
-Build `@adeebali/design-system-react`, a general-purpose React design system. Specs 00–17 are accepted, and Spec 00 sets the release milestones.
+Build `@adeebali/design-system-react`, a general-purpose React design system. Specs 00–18 are accepted, and Spec 00 sets the release milestones.
 
 ## Status
 
@@ -20,7 +20,12 @@ Build `@adeebali/design-system-react`, a general-purpose React design system. Sp
   - **R1–R3:** global `~/.claude/CLAUDE.md`, rules 1 and 4.
   - **R4:** project `CLAUDE.md` (`486fd23`).
   - **R5:** the `Sidebar` `matchMedia` guard (`7f1c8e3`).
-- **Next:** the owner's manual checks (PR #37 and PR #33), then plan v1.0 stabilization (Spec 00).
+- **Storybook audit and Spec 18, 2026-11-13:** the owner asked for an audit of Storybook and a docs site. Findings, reported to the owner:
+  - No story file has `tags: ['autodocs']`, so no component has a docs page, and every `parameters.docs.description.component` is never shown (Spec 05's "usage guidance on its docs page" was unmet).
+  - Overview held combined-component pages and how-tos, not an overview. `Overview/Typography` repeated `Foundations/Typography`.
+  - Typography had no font families because Spec 02 listed only "scale, weights, Inter features". Motion was a table only.
+- **Spec 18 (Documentation site) accepted** on branch `docs/spec-18-documentation-site`. It adds a **v0.8.1** milestone (a docs-only patch release) before v1.0, and amends Specs 00, 02, 05, 06, and 08–16.
+- **Next:** write the v0.8.1 plan from Spec 18 and build it; the owner's manual checks (PR #37 and PR #33); then plan v1.0 stabilization (Spec 00).
 
 ## Decisions
 
@@ -31,6 +36,17 @@ Architecture decisions are in `docs/adr/`.
   - v0.7: `git show ab1c4f4:docs/HANDOFF.md`.
   - All are unchanged.
 - **Ledgers (local, gitignored):** v0.8's is `.superpowers/sdd/2026-11-13-v0-8-image/progress.md`, with every ruling and break-check. v0.6's and v0.7's are in sibling folders.
+
+### Spec 18 decisions (owner, 2026-11-13)
+
+- Sidebar: Overview, Foundations, Components (grouped as `docs/components.md`), Patterns, Guides. Rejected: Guides between Foundations and Components.
+- The current Overview pages move to **Patterns** (rejected: keep in Overview; delete).
+- One scrolling docs page per component (rejected: tabs, which hide content from Find on page).
+- "Primitives" means the raw `tokens` layer (rejected: `Box` and the layout components).
+- "Migrating to tokens" means moving hard-coded CSS to `vars` and `--ds-*`.
+- The UI and styling standards in Spec 18 are accepted as written.
+- The site ships as release v0.8.1 (rejected: a `workflow_dispatch` deploy with no version bump).
+- A one-off, uncommitted script renames visual baselines from old story IDs to new before the baseline workflow runs (rejected: letting the workflow regenerate all 1,302 as new).
 
 ### v0.8 decisions (owner)
 
@@ -81,7 +97,9 @@ Checked 2026-11-13 against `npm view`. The README's "Dependencies" table is the 
 
 ## Changes
 
-**This note's branch** (`docs/handoff-v0.8.0`, from `main` at `4d1efa4`): this note.
+**This branch** (`docs/spec-18-documentation-site`, from `main` at `cde1a38`): Spec 18, its amendments to Specs 00, 02, 05, 06, and 08–16, and this note.
+
+**The previous note's branch** (`docs/handoff-v0.8.0`): merged as PR #38 (`cde1a38`).
 
 **The v0.8.0 release:**
 - The owner merged PR #37 as `de30412`, and CI on it passed (all six jobs, `visual` included).
@@ -203,7 +221,8 @@ Checked 2026-11-13 against `npm view`. The README's "Dependencies" table is the 
    - Do PR #37's manual checks: screen reader, forced colors, Firefox and Safari with a `viewBox`-only SVG.
    - Report PR #33's: the screen reader including thread 12, forced colors, and swiping the drawer on a real phone.
    - Anything not done goes into the v1.0 plan as a step.
-2. **v1.0 stabilization** (Spec 00: API review, docs, fixes from real use). Write its plan first, and while planning, rerun `npm audit` and `npm view` (the table above). The plan:
+2. **v0.8.1, Spec 18:** write its plan first (`superpowers:writing-plans`). Its first task is the props-table spike on `Button`, `Select`, `Box`, and `Tabs` (Spec 18, "Props tables"); a shortfall goes to the owner before any pages are built. The plan carries the CLAUDE.md ruling and break-check ledger formats. Release with `npm run release -- patch` after merge.
+3. **v1.0 stabilization** (Spec 00: API review, docs, fixes from real use). Write its plan first, and while planning, rerun `npm audit` and `npm view` (the table above). The plan:
    - collects thread 6's deferred minors (v0.4–v0.8);
    - type-checks every `tsx` example in `docs/specs/*.md` and the README (retro P6; v0.8 did it for Spec 17 only);
    - follows the `CLAUDE.md` ruling and fixture break-check formats;
@@ -212,4 +231,4 @@ Checked 2026-11-13 against `npm view`. The README's "Dependencies" table is the 
 
 ## Resume prompt
 
-> Read `docs/HANDOFF.md`. v0.8.0 is released. Ask me whether this handoff PR is merged, and which manual checks I did on PR #37 and PR #33. Then plan v1.0 stabilization from Spec 00, folding in thread 6, the spec-example type-check step (retro P6), the Dependencies table, thread 14, and any manual checks not done.
+> Read `docs/HANDOFF.md` and `docs/specs/18-documentation-site.md`. Spec 18 is accepted. Write the v0.8.1 implementation plan from it, starting with the props-table spike, and bring me any departures before building. Ask which manual checks I did on PR #37 and PR #33. v1.0 stabilization comes after v0.8.1, folding in thread 6, the spec-example type-check step (retro P6), the Dependencies table, thread 14, and any manual checks not done.

@@ -251,7 +251,8 @@ A component is finished when it has:
 - [ ] Stories for every variant and state, plus a Playground, passing axe in both modes.
 - [ ] Behavior tests for its props, refs, events, and keyboard interaction.
 - [ ] Visual baselines.
-- [ ] TSDoc on every public prop, and usage guidance on its docs page.
+- [ ] TSDoc on every public prop, and a docs page as in Spec 18: Usage, Do's and don'ts,
+      Accessibility, API with a props table, and Examples (amended by Spec 18, 2026-11-13).
 - [ ] The accessibility checklist completed, including a manual screen reader check for
       anything interactive.
 - [ ] A render in `fixtures/next-app`, if it's the first of its kind (server or client).

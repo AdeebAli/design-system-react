@@ -372,6 +372,7 @@ Spec 05's definition of done, plus:
 - A **Forms** page with a full form, in both modes, including errors.
 - A **React Hook Form** docs page.
 - A page per component, as in Spec 05.
+- The Forms page is `Patterns/Forms`, and the React Hook Form page is `Guides/React Hook Form` (amended by Spec 18, 2026-11-13).
 
 ## Acceptance criteria
 

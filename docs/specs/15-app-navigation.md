@@ -214,6 +214,7 @@ Spec 05's definition of done, plus:
 - A page per component, in both modes.
 - A full app layout with `Sidebar`, `Breadcrumbs`, and content, at desktop and phone widths.
 - A recipe for keeping `collapsed` in a cookie.
+- The overview page above is `Patterns/App navigation`, and the component pages follow Spec 18's docs page format (amended by Spec 18, 2026-11-13).
 
 ## Acceptance criteria
 

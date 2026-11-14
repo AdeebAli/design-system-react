@@ -317,6 +317,7 @@ Spec 05's definition of done, plus:
 - A page per component, in both modes.
 - A full `DataTable` page, with sorting, selection, pagination, loading, and empty states.
 - A TanStack Table recipe.
+- The overview page above is `Patterns/Data`, and the component pages follow Spec 18's docs page format (amended by Spec 18, 2026-11-13).
 
 ## Acceptance criteria
 

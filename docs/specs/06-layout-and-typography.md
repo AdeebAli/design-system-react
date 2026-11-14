@@ -334,8 +334,8 @@ Everything in Spec 05's definition of done, plus:
 
 ## Storybook
 
-- **A Layout overview:** a page combining these components, with a bento example using `Grid`.
-- **A Typography page:** the type scale through `Text` and `Heading`, in both modes.
+- **A Layout overview:** a page combining these components, with a bento example using `Grid`. It's `Patterns/Layout` (amended by Spec 18, 2026-11-13).
+- ~~**A Typography page:** the type scale through `Text` and `Heading`, in both modes.~~ Removed in favor of `Foundations/Typography` (amended by Spec 18, 2026-11-13).
 - Each component has its own page, as in Spec 05.
 
 ## Acceptance criteria
