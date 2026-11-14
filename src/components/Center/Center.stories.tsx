@@ -6,14 +6,6 @@ import { Center } from './Center';
 const meta: Meta<typeof Center> = {
   title: 'Components/Layout/Center',
   component: Center,
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'Centers its children. Giving it a height is up to the caller, because vertical centering has no visible effect otherwise.',
-      },
-    },
-  },
 };
 
 export default meta;

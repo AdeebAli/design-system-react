@@ -6,14 +6,6 @@ import { Grid } from './Grid';
 const meta: Meta<typeof Grid> = {
   title: 'Components/Layout/Grid',
   component: Grid,
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'Equal columns, and the base for bento layouts. Place children with the `gridColumn` and `gridRow` layout props. `autoRows="equal"` makes every row as tall as the tallest.',
-      },
-    },
-  },
 };
 
 export default meta;

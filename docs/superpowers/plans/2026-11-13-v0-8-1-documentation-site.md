@@ -23,6 +23,10 @@ Found while planning, against the code. Execution is native (owner, 2026-11-13).
    - **Alternative:** keep the line and add the missing TSDoc in v1.0. Cost: tables ship with blank descriptions, which Spec 18 calls a defect.
    - **The owner accepted the recommendation (2026-11-13).** Spec 18 is amended in Task 1's commit.
 
+3. **Parts with no props of their own** (found in Task 4, on the real build): 12 public parts declare no props (`Code`, `Kbd`, `DialogDescription`, `DrawerDescription`, `PopoverDescription`, `MenuGroup`, `MenuGroupLabel`, `MenuSeparator`, `MenuSubmenuContent`, `TableHead`, `TableBody`, `TableFoot`), so their tables show Storybook's empty state. Eleven more (`TabsList`, the three titles, the seven triggers and closes) already declare `children` and get TSDoc on it.
+   - **Owner chose (2026-11-13):** no table for the 12; one line instead ("`X` has no props of its own. It accepts `p` attributes."); the coverage test exempts them by name; `index.d.ts` stays comments-only. Spec 18 is amended in Task 4's commit.
+   - Rejected: a type-identical `children` (and `className` on `MenuSeparator`) with TSDoc, which adds non-comment lines to `index.d.ts`.
+
 ## Global Constraints
 
 - Branch `docs/v0.8.1-documentation-site` from an up-to-date `main`, in the main checkout. One commit per task, one PR. **No co-author or generated-by lines in commits or the PR body** (owner's standing rule). This plan goes in Task 1's commit.

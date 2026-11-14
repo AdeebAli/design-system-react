@@ -7,14 +7,6 @@ const meta: Meta<typeof Kbd> = {
   title: 'Components/Typography/Kbd',
   component: Kbd,
   args: { children: 'K' },
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'A keyboard key. For a shortcut, use one per key: `<Kbd>⌘</Kbd> <Kbd>K</Kbd>`.',
-      },
-    },
-  },
 };
 
 export default meta;

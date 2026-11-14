@@ -1,0 +1,43 @@
+import { Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { NoOwnProps } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as CodeStories from './Code.stories';
+
+<Meta of={CodeStories} />
+
+# Code
+
+Inline code, such as a prop name or a command in a sentence.
+
+## Usage
+
+Use `Code` for short code inside text. It's sized relative to the surrounding text, and never below 12px. Code blocks belong to [`Prose`](?path=/docs/components-typography-prose--docs), which styles `pre`.
+
+- It works in server components.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Use it for names a person might type or search for.
+    <Canvas of={CodeStories.InText} />
+  </Do>
+  <Dont code={`<Code>Remember to save your work</Code>`} />
+</DoDont>
+
+<DoDont>
+  <Do>Use `Kbd` for keys to press.</Do>
+  <Dont code={`<Text>Press <Code>Ctrl</Code> + <Code>S</Code>.</Text>`} />
+</DoDont>
+
+## Accessibility
+
+- It renders a `code` element. Screen readers read it as normal text, so the sentence around it must make sense.
+
+## API
+
+<NoOwnProps name="Code" element="code" layout />
+
+## Examples
+
+<Stories title={<></>} />

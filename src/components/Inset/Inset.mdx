@@ -1,0 +1,50 @@
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as InsetStories from './Inset.stories';
+import { Inset } from '.';
+
+<Meta of={InsetStories} />
+
+# Inset
+
+Padding from the spacing scale.
+
+## Usage
+
+The layout components have no padding props, so wrap them in `Inset`. A `Card` has its own padding, so it doesn't need one.
+
+- `space` pads every side. `x` and `y` pad two sides, and `top`, `bottom`, `start`, and `end` pad one. Each is responsive.
+- `start` and `end` follow the writing direction: `start` is the left in a left-to-right language.
+- It works in server components.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Pad a stack by wrapping it.
+    <Canvas of={InsetStories.Sides} />
+  </Do>
+  <Dont code={`<Stack style={{ padding: 16 }}>…</Stack>`} />
+</DoDont>
+
+<DoDont>
+  <Do>
+    Use `start` and `end`, so the padding flips in a right-to-left language.
+  </Do>
+  <Dont code={`<Inset style={{ paddingLeft: 16 }}>…</Inset>`} />
+</DoDont>
+
+## Accessibility
+
+- `Inset` renders a `div` with no semantics.
+
+## API
+
+<ArgTypes of={Inset} />
+
+<AlsoAccepts element="div" />
+
+## Examples
+
+<Stories title={<></>} />

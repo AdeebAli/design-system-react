@@ -6,14 +6,6 @@ const meta: Meta<typeof Text> = {
   title: 'Components/Typography/Text',
   component: Text,
   args: { children: 'The quick brown fox jumps over the lazy dog.' },
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'Body text. Unset props inherit, so `<Text as="span">` keeps the surrounding style. Use `as="span"` inside a sentence, and `as="label"` for a label.',
-      },
-    },
-  },
 };
 
 export default meta;

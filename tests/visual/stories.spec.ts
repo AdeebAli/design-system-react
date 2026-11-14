@@ -60,7 +60,10 @@ for (const docs of docsPages) {
     await page.goto(`/iframe.html?id=${docs.id}&viewMode=docs`);
     await page.locator('#storybook-docs h1').first().waitFor();
     await settled(page);
-    await expect(page.locator('#storybook-docs h1')).toHaveCount(1);
+    // The page's own title; stories shown on the page may render their own.
+    await expect(
+      page.locator('#storybook-docs h1:not(.docs-story h1)'),
+    ).toHaveCount(1);
     await expect(
       page.locator('#storybook-docs').getByText('This story has no controls'),
     ).toHaveCount(0);

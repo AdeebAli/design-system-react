@@ -1,4 +1,6 @@
-import { ArgTypes, Meta } from '@storybook/addon-docs/blocks';
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
 import * as BoxStories from './Box.stories';
 import { Box } from '.';
 
@@ -6,6 +8,51 @@ import { Box } from '.';
 
 # Box
 
+The primitive every component is built on: an element with style props that accept tokens only.
+
+## Usage
+
+Reach for a layout component first: [`Stack`](?path=/docs/components-layout-stack--docs), [`Inline`](?path=/docs/components-layout-inline--docs), [`Flex`](?path=/docs/components-layout-flex--docs), or [`Grid`](?path=/docs/components-layout-grid--docs). Use `Box` when none of them fits, such as a `main` element that grows to fill a row, or a styled element with no layout of its own.
+
+- Every style prop takes a token, and most are responsive: `padding={{ base: '2', md: '4' }}`. The full list is on [All style props](?path=/docs/components-layout-box-all-style-props--docs).
+- `as` renders another element or component, such as `as="main"` or a router's link.
+- A style prop wins over an HTML attribute of the same name, so `width` is the style prop. Use `htmlWidth` and `htmlHeight` for an `img`'s real `width` and `height` attributes.
+- `box()` returns the same classes as a string, for an element you don't render through `Box`.
+- It works in server components.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Use tokens, with a responsive object where the value changes by screen size.
+    <Canvas of={BoxStories.Responsive} />
+  </Do>
+  <Dont code={`<Box style={{ padding: 13, color: '#4f46e5' }}>…</Box>`} />
+</DoDont>
+
+<DoDont>
+  <Do>
+    Use `Stack` or `Inline` for a list of children, and `gap` for the space
+    between them.
+  </Do>
+  <Dont
+    code={`<Box display="flex" flexDirection="column">\n  <Card marginBottom="4" />\n  <Card marginBottom="4" />\n</Box>`}
+  />
+</DoDont>
+
+## Accessibility
+
+- `Box` adds no semantics: a `div` means nothing to a screen reader. Use `as` for the right element, such as `as="nav"`, `as="main"`, or `as="section"` with a heading.
+- `display="none"` hides content from everyone, screen readers included. To hide text only visually, use [`VisuallyHidden`](?path=/docs/components-typography-visuallyhidden--docs).
+
 ## API
 
 <ArgTypes of={Box} />
+
+`htmlWidth` and `htmlHeight` take the element's own attribute values, such as a number on an `img`. The type column can't show them, because they depend on `as`.
+
+<AlsoAccepts element="div" />
+
+## Examples
+
+<Stories title={<></>} />

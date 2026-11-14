@@ -7,14 +7,6 @@ const meta: Meta<typeof Link> = {
   title: 'Components/Typography/Link',
   component: Link,
   args: { href: '#', children: 'A link' },
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'Inherits its font size. Keep the default underline for links in text, so they never rely on color alone. To use a router, pass its link as `as`, or wrap `Link` once in your project.',
-      },
-    },
-  },
 };
 
 export default meta;

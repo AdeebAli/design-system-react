@@ -5,14 +5,6 @@ import { Flex } from './Flex';
 const meta: Meta<typeof Flex> = {
   title: 'Components/Layout/Flex',
   component: Flex,
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'Full flexbox control. Prefer `Stack` for vertical children and `Inline` for wrapping rows. To pad it, wrap it in `Inset`.',
-      },
-    },
-  },
 };
 
 export default meta;

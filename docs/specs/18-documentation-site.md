@@ -172,6 +172,7 @@ Every story file under `Components/` gets a sibling MDX file (`Button/Button.mdx
 3. **Do's and don'ts:** at least two pairs. A "Do" may be a live story through `<Canvas of={…} />`. A "Don't" is always a code snippet, never a live render, because a deliberately inaccessible example would fail axe.
 4. **Accessibility:** what the component handles, and what the project must supply.
 5. **API:** a props table through `<ArgTypes of={Component} />` for the component and for each of its public parts (`Tabs`, `TabsList`, `Tab`, `TabsPanel`). Rows show name, description, type, and default. They're built from the TSDoc that Spec 05 requires on every public prop, and from `@default` tags. A prop with a default but no `@default` tag gets one in this change. Under the table, one line names what else it accepts, such as "Also accepts `button` attributes", and links to the style props page for components that accept layout props.
+   - A part that declares no props of its own (`Code`, `Kbd`, `DialogDescription`, `DrawerDescription`, `PopoverDescription`, `MenuGroup`, `MenuGroupLabel`, `MenuSeparator`, `MenuSubmenuContent`, `TableHead`, `TableBody`, `TableFoot`) gets no table. Its API section says so in one line, such as "`DialogDescription` has no props of its own. It accepts `p` attributes." (owner, 2026-11-13, v0.8.1 plan Departure 3).
 6. **Examples:** the component's stories, through `<Stories />`.
 
 A docs page doesn't follow the color mode, as Spec 02 says for MDX pages. Stories keep both modes.
@@ -192,7 +193,7 @@ The site ships as a release (owner, 2026-11-13). After the PR merges, `npm run r
 - **Coverage (unit, reads files):**
   - Every `*.stories.tsx` with a `Components/` title has a sibling `.mdx` with `<Meta of=`.
   - Each such MDX has the headings Usage, Do's and don'ts, Accessibility, and API, in that order, and at least one `<ArgTypes of=`.
-  - Every PascalCase component exported from `src/index.ts`, except the theming exports, appears in some `<ArgTypes of={…}>`.
+  - Every PascalCase component exported from `src/index.ts`, except the theming exports and the parts with no props of their own (listed under Component pages), appears in some `<ArgTypes of={…}>`.
 - **Sidebar order (Playwright, against the built Storybook manager):** the top-level sections read Overview, Foundations, Components, Patterns, Guides. The Components groups read in the table's order. This checks the real sidebar, not `storySort`.
 - **Docs pages (Playwright, in `tests/visual/stories.spec.ts`):**
   - Every docs page renders an `h1`.
@@ -221,7 +222,7 @@ These change what the earlier specs say. The owner decided them in this spec's p
 - Overview has Welcome, the default page, and Accessibility.
 - Typography shows the three families with their stacks and licenses, plus line height and letter spacing. Motion has working duration and easing demos and examples through real components. Primitives exists.
 - All eight guides exist, and their API examples type-check.
-- Every component has a docs page with Usage, Do's and don'ts (two or more pairs), Accessibility, API (a filled props table for each public part), and Examples.
+- Every component has a docs page with Usage, Do's and don'ts (two or more pairs), Accessibility, API (a filled props table for each public part that has props of its own), and Examples.
 - No `parameters.docs.description.component` is left in a component's story file.
 - `npm run check` passes, and the new and renamed baselines come from the workflow.
 
