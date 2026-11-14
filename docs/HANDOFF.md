@@ -1,6 +1,6 @@
 # Handoff: design-system-react
 
-- **Date:** 2026-11-13 (updated after building v0.8, with the v0.8 retro's changes)
+- **Date:** 2026-11-13 (updated after releasing v0.8.0)
 
 ## Goal
 
@@ -8,19 +8,19 @@ Build `@adeebali/design-system-react`, a general-purpose React design system. Sp
 
 ## Status
 
-- **Released:** v0.1 through v0.7.0, as before. v0.7.0 (Spec 15) was released 2026-11-13. Storybook is at https://adeebali.github.io/design-system-react/.
+- **Released:** v0.1 through v0.7.0, as before, and **v0.8.0 (Spec 17, `Image`), released 2026-11-13**. Storybook is at https://adeebali.github.io/design-system-react/.
+  - The owner merged PR #37 as `de30412`. `npm run release -- minor` made `4d1efa4` and tag `v0.8.0`.
+  - Release: https://github.com/AdeebAli/design-system-react/releases/tag/v0.8.0, with PR #37's notes applied by hand.
 - **Merged since v0.7.0:**
   - PR #34 (`ab1c4f4`): the v0.7.0 handoff and the v0.5–v0.7 retro's P1, P2, P4, and P5.
   - PR #35 (`4a0b8dc`): the reworded `CLAUDE.md` fixture bullet.
   - PR #36 (`73d1946`): **Spec 17, `Image`**. It adds a v0.8 milestone before v1.0 and amends Specs 00, 02, 05, and 11.
-- **Built, in review:** v0.8 (Spec 17) on `feat/v0.8-image`, PR #37 (draft), https://github.com/AdeebAli/design-system-react/pull/37.
-  - Built inline from `docs/superpowers/plans/2026-11-13-v0-8-image.md`, with one final Opus review.
-  - The PR body has the release notes draft and the owner's manual checks.
+- **v0.8 build:** PR #37, built inline from `docs/superpowers/plans/2026-11-13-v0-8-image.md`, with one final Opus review. Its manual checks are still open (next step 1).
 - **Retro (v0.8), 2026-11-13:** logged in `~/.claude/retros/2026-11-13-v0-8-image.md`. The owner accepted R1–R5, and all five are applied.
   - **R1–R3:** global `~/.claude/CLAUDE.md`, rules 1 and 4.
   - **R4:** project `CLAUDE.md` (`486fd23`).
   - **R5:** the `Sidebar` `matchMedia` guard (`7f1c8e3`).
-- **Next:** the owner's manual checks on PR #37, CI, merge, then `npm run release -- minor`.
+- **Next:** the owner's manual checks (PR #37 and PR #33), then plan v1.0 stabilization (Spec 00).
 
 ## Decisions
 
@@ -81,7 +81,17 @@ Checked 2026-11-13 against `npm view`. The README's "Dependencies" table is the 
 
 ## Changes
 
-**Branch `feat/v0.8-image`** (from `main` at `73d1946`), PR #37:
+**This note's branch** (`docs/handoff-v0.8.0`, from `main` at `4d1efa4`): this note.
+
+**The v0.8.0 release:**
+- The owner merged PR #37 as `de30412`, and CI on it passed (all six jobs, `visual` included).
+- `npm run release -- minor` on a clean, up-to-date `main`: all checks passed (unit 1114, stories and browser 1212, `verify-dist: ok`, fixtures 78 passed and 36 skipped), then `4d1efa4` (version 0.8.0), tag `v0.8.0`, push, and the GitHub release.
+  - The version commit's push printed "Bypassed rule violations for refs/heads/main" (the pull-request rule and required checks), as the release script's own push does.
+- The release notes are PR #37's draft plus the Full Changelog link, applied with `gh release edit v0.8.0`. Read back with `gh release view`, `diff -B` was clean.
+- CI, Publish, and Storybook on `4d1efa4` all succeeded.
+
+**Branch `feat/v0.8-image`** (for reference), squash-merged as `de30412`:
+
 - `c70c976` `radius.image`, used by `Prose` images and accepted by `Box`, with the Spec 04 amendment and the v0.8 plan.
 - `dd0434b` `Image` (behavior, unit and type tests), the internal `ImageOff` icon, and the Spec 17 `display` amendment.
 - `ce42f6d` `Image` styles, browser tests, and stories with docs.
@@ -149,7 +159,7 @@ Checked 2026-11-13 against `npm view`. The README's "Dependencies" table is the 
   - Trigger: none; any Base UI upgrade reruns the suite. (Carried forward.)
 - **The Next fixture's `/feedback` no-console-errors check** wasn't broken separately. Trigger: none, as before. v0.8's `/image` console check was broken and proven.
 - **"A failed image shows initials after hydration" (Spec 16)** is tested with a client render. Trigger: none; the owner can ask for a fixture test. (Carried forward.) Spec 17's equivalent for `Image` has a fixture test.
-- **Installing 0.5.x–0.7.0 from GitHub Packages.** Only the publish job's success was seen. Trigger: none; the v0.1 install proved the pipeline. (Carried forward.)
+- **Installing 0.5.x–0.8.0 from GitHub Packages.** Only the publish job's success was seen. Trigger: none; the v0.1 install proved the pipeline. (Carried forward.)
 
 ## Open threads
 
@@ -182,7 +192,10 @@ Checked 2026-11-13 against `npm view`. The README's "Dependencies" table is the 
 **Resolved this session:**
 - **Thread 13:** the retro's P1, P2, P4, and P5 shipped in PR #34 (`ab1c4f4`). The `CLAUDE.md` fixture bullet was reworded in PR #35 (`4a0b8dc`).
 - **Old next step 1** (merge the handoff PR): done, PR #34.
-- **Old next step 3** (start v1.0): moved after v0.8, which Spec 17 inserted (next step 4).
+- **Old next step 3** (start v1.0): moved after v0.8, which Spec 17 inserted (next step 2).
+- **After v0.8's build:**
+  - CI on PR #37 before ready: passed on `528d546`, all six jobs. The owner marked the PR ready.
+  - Merge and release: PR #37 merged as `de30412`; v0.8.0 released as `4d1efa4`, with the notes applied and read back.
 
 ## Next steps
 
@@ -190,9 +203,7 @@ Checked 2026-11-13 against `npm view`. The README's "Dependencies" table is the 
    - Do PR #37's manual checks: screen reader, forced colors, Firefox and Safari with a `viewBox`-only SVG.
    - Report PR #33's: the screen reader including thread 12, forced colors, and swiping the drawer on a real phone.
    - Anything not done goes into the v1.0 plan as a step.
-2. **Before marking PR #37 ready:** CI passes on PR #37, `visual` included.
-3. **Merge and release:** merge PR #37, then `npm run release -- minor` on a clean, up-to-date `main`. Apply the PR's release notes with `gh release edit v0.8.0` and read them back.
-4. **v1.0 stabilization** (Spec 00: API review, docs, fixes from real use). Write its plan first, and while planning, rerun `npm audit` and `npm view` (the table above). The plan:
+2. **v1.0 stabilization** (Spec 00: API review, docs, fixes from real use). Write its plan first, and while planning, rerun `npm audit` and `npm view` (the table above). The plan:
    - collects thread 6's deferred minors (v0.4–v0.8);
    - type-checks every `tsx` example in `docs/specs/*.md` and the README (retro P6; v0.8 did it for Spec 17 only);
    - follows the `CLAUDE.md` ruling and fixture break-check formats;
@@ -201,4 +212,4 @@ Checked 2026-11-13 against `npm view`. The README's "Dependencies" table is the 
 
 ## Resume prompt
 
-> Read `docs/HANDOFF.md`. v0.8 (`Image`, Spec 17) is built and in review as PR #37. Ask me which manual checks I did on PR #37 and PR #33, check that CI on PR #37 passed, then mark it ready. After I merge it, release v0.8.0 with `npm run release -- minor` and apply the PR's release notes. Then plan v1.0 stabilization from Spec 00, folding in thread 6, the spec-example type-check step (retro P6), the Dependencies table, thread 14, and any manual checks not done.
+> Read `docs/HANDOFF.md`. v0.8.0 is released. Ask me whether this handoff PR is merged, and which manual checks I did on PR #37 and PR #33. Then plan v1.0 stabilization from Spec 00, folding in thread 6, the spec-example type-check step (retro P6), the Dependencies table, thread 14, and any manual checks not done.
