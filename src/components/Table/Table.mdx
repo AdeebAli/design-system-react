@@ -1,0 +1,108 @@
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts, NoOwnProps } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as Stories_ from './Table.stories';
+import {
+  Table,
+  TableCaption,
+  TableCell,
+  TableHeader,
+  TableRow,
+  TableSortHeader,
+} from '.';
+
+<Meta of={Stories_} />
+
+# Table
+
+Styled, semantic table parts, which work in server components.
+
+## Usage
+
+Use `Table` and its parts to display rows of data, especially when the data comes from a server or you need to render on the server. For a table that manages sorting, pagination, selection, and loading and empty states itself, use [`DataTable`](?path=/docs/components-data-datatable--docs).
+
+- The parts hold no state, so sorting, paging, and selection stay in your own state.
+- Pass header text in normal case, since CSS does the uppercase.
+- `stickyHeader` sticks to the wrapper, so give the table a height limit such as `maxHeight="screen"`. Only a one-row header sticks; a header with two or more rows scrolls with the table.
+- A sticky first column has a fixed width (half of `size.dialog.sm`, 12rem in Soft), and its text wraps inside it, so a focused cell is never hidden under it. Don't set a width on its cells.
+- When a first-column cell spans rows (`rowSpan`), mark the rows it covers with `spanned` on `TableRow`.
+- Only one `TableSortHeader` should be sorted at a time. `onSort` needs a client component, and `href` works from a server one.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Name the table with a caption, and use header cells.
+    <Canvas of={Stories_.WithCaption} />
+  </Do>
+  <Dont
+    code={`<Table>
+  <TableBody>
+    <TableRow><TableCell>Name</TableCell><TableCell>Plan</TableCell></TableRow>
+  </TableBody>
+</Table>`}
+  />
+</DoDont>
+
+<DoDont>
+  <Do>Write header text in normal case.</Do>
+  <Dont code={`<TableHeader>CUSTOMER NAME</TableHeader>`} />
+</DoDont>
+
+## Accessibility
+
+- The parts render native table elements, so screen readers announce rows, columns, and headers.
+- `TableSortHeader` sets `aria-sort` on its header cell.
+- A scrollable table is focusable, so keyboard users can scroll it.
+
+## API
+
+<ArgTypes of={Table} />
+
+<AlsoAccepts element="table" layout />
+
+### TableCaption
+
+<ArgTypes of={TableCaption} />
+
+<AlsoAccepts element="caption" />
+
+### TableHead
+
+<NoOwnProps name="TableHead" element="thead" />
+
+### TableBody
+
+<NoOwnProps name="TableBody" element="tbody" />
+
+### TableFoot
+
+<NoOwnProps name="TableFoot" element="tfoot" />
+
+### TableRow
+
+<ArgTypes of={TableRow} />
+
+<AlsoAccepts element="tr" />
+
+### TableHeader
+
+<ArgTypes of={TableHeader} />
+
+<AlsoAccepts element="th" />
+
+### TableSortHeader
+
+<ArgTypes of={TableSortHeader} />
+
+<AlsoAccepts element="th" />
+
+### TableCell
+
+<ArgTypes of={TableCell} />
+
+<AlsoAccepts element="td" />
+
+## Examples
+
+<Stories title={<></>} />

@@ -1,0 +1,57 @@
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as Stories_ from './Divider.stories';
+import { Divider } from '.';
+
+<Meta of={Stories_} />
+
+# Divider
+
+A line between things, horizontal or vertical, optionally with a label.
+
+## Usage
+
+Use `Divider` to separate groups that spacing alone doesn't, such as two kinds of sign-in. Most layouts need only spacing: use `gap` on a [`Stack`](?path=/docs/components-layout-stack--docs).
+
+- It has no margins of its own, so add them with layout props such as `marginY`.
+- With `label`, the text sits in the middle of the line, such as "or" between two buttons.
+- It works in server components.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Set `decorative` when headings, cards, or spacing already separate the
+    content.
+    <Canvas of={Stories_.Decorative} />
+  </Do>
+  <Dont
+    code={`<Stack>
+  <Card>…</Card>
+  <Divider />
+  <Card>…</Card>
+</Stack>
+// Read as a separator between every card`}
+  />
+</DoDont>
+
+<DoDont>
+  <Do>Add space with layout props.</Do>
+  <Dont code={`<Divider style={{ margin: "24px 0" }} />`} />
+</DoDont>
+
+## Accessibility
+
+- By default it's an `hr`, which screen readers announce as a separator. `decorative` defaults to `false` because an extra separator is the safer mistake.
+- With `label`, the text is read like any other text, and the lines aren't announced.
+
+## API
+
+<ArgTypes of={Divider} />
+
+<AlsoAccepts element="div" layout />
+
+## Examples
+
+<Stories title={<></>} />

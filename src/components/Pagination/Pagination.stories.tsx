@@ -9,14 +9,6 @@ const meta: Meta<typeof Pagination> = {
   title: 'Components/Data/Pagination',
   component: Pagination,
   args: { page: 3, totalPages: 10 },
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'Page navigation. With `getHref` it renders links, which work without JavaScript, open in a new tab, and keep the page in the URL; this works from a server component. With `onPageChange` it renders buttons and needs a client parent. Long ranges keep the same number of items while paging, so buttons don’t shift. Below `sm` it shows previous, “Page 3 of 10”, and next. Pass a router link through `as` with `getHref`.',
-      },
-    },
-  },
 };
 
 export default meta;

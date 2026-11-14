@@ -7,14 +7,6 @@ const meta: Meta<typeof Progress> = {
   title: 'Components/Feedback and display/Progress',
   component: Progress,
   args: { label: 'Uploading report.pdf', value: 42, showValue: true },
-  parameters: {
-    docs: {
-      description: {
-        component:
-          "Shows how far along something is. Use `Spinner` when there's no measure of progress, and `Skeleton` when the content's shape is known. `value={null}` is indeterminate: a segment slides across the track, and with reduced motion it's a static partial fill. It needs a visible `label` or an `aria-label`. It's for progress, not scores such as storage used.",
-      },
-    },
-  },
   decorators: [
     (Story) => (
       <div style={{ maxWidth: '24rem' }}>

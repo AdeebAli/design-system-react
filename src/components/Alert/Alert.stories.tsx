@@ -16,14 +16,6 @@ const meta: Meta<typeof Alert> = {
     title: 'Scheduled maintenance',
     children: 'Exports are paused on Sunday from 02:00 to 03:00 UTC.',
   },
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'A message that stays in the page, such as a warning above a form. Use `Toast` for brief messages that go away on their own. Each tone has its own icon, and the text should say what\'s wrong, since color is never the only signal. `title` is bold text, not a heading. It has no `"use client"`, so it works in server components; `onDismiss` needs a client parent.',
-      },
-    },
-  },
 };
 
 export default meta;

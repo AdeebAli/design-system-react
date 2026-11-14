@@ -9,14 +9,6 @@ import { Divider } from './Divider';
 const meta: Meta<typeof Divider> = {
   title: 'Components/Feedback and display/Divider',
   component: Divider,
-  parameters: {
-    docs: {
-      description: {
-        component:
-          "A line between things. By default it's an `hr`, which screen readers announce as a separator. Most lines are decorative: when headings, cards, or spacing already separate the content, set `decorative` so a screen reader doesn't read every line. `decorative` defaults to `false` because an extra separator is the safer mistake. It has no margins of its own, so add them with layout props such as `marginY`. With `label`, the text is read like any other text, such as \"or\" between two buttons, and the lines aren't announced.",
-      },
-    },
-  },
   decorators: [
     (Story) => (
       <div style={{ maxWidth: '28rem' }}>

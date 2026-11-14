@@ -26,36 +26,6 @@ const meta: Meta<typeof Image> = {
     ratio: '16/9',
     maxWidth: 'container.sm',
   },
-  parameters: {
-    docs: {
-      description: {
-        component: `An image in a frame that reserves its space, so nothing shifts as it loads. Its corners come from \`radius.image\`. \`skeleton\` shows a \`Skeleton\` until it loads, and a fallback shows if it fails, while the \`alt\` still names it.
-
-**Size.** Set \`ratio\` (a preset, such as \`"16/9"\`, or any positive number, such as \`{16 / 10}\`), or both \`htmlWidth\` and \`htmlHeight\`, the image's intrinsic size. With neither, the frame takes the image's own shape once it loads, and a skeleton or fallback has no height of its own.
-
-**Writing \`alt\`.** \`alt\` is required. Say what the image shows that matters here, as you would to someone on the phone: "The dashboard on a laptop", not "image of a laptop". Use \`alt=""\` when the image is decorative, or when the text beside it already says the same thing, such as a product photo next to its name. A screen reader then skips it.
-
-**With \`next/image\`.** Pass it as \`as\`, so Next keeps resizing and optimizing the image:
-
-\`\`\`tsx
-import NextImage from 'next/image';
-import hero from './hero.png';
-
-<Image as={NextImage} src={hero} alt="The dashboard on a laptop" ratio="3/2" fill sizes="(min-width: 768px) 50vw, 100vw" />
-
-<Image as={NextImage} src="/team.jpg" alt="The team at the offsite" htmlWidth={1200} htmlHeight={800} />
-\`\`\`
-
-Use \`fill\` and \`sizes\` with a \`ratio\`, or give Next the intrinsic size through \`htmlWidth\` and \`htmlHeight\`. Layout \`width\` and \`height\` are tokens on the frame. \`placeholder="blur"\` paints a blurred preview on the image itself, so use it without \`skeleton\`.
-
-**The fallback is decorative.** It's hidden from screen readers, since the \`alt\` already names the image, so don't put a link or a button in it. Put a retry action beside the image instead.
-
-**Image or Avatar.** Use \`Avatar\` for a person or an organization: it shows initials while it loads or if it fails, and its name is the person's. Use \`Image\` for everything else: photos, screenshots, illustrations, and maps.
-
-**In a \`Card\` with \`clip\`,** use \`radius="none"\`, since the card rounds the corners.`,
-      },
-    },
-  },
 };
 
 export default meta;

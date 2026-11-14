@@ -192,7 +192,7 @@ The site ships as a release (owner, 2026-11-13). After the PR merges, `npm run r
 
 - **Coverage (unit, reads files):**
   - Every `*.stories.tsx` with a `Components/` title has a sibling `.mdx` with `<Meta of=`.
-  - Each such MDX has the headings Usage, Do's and don'ts, Accessibility, and API, in that order, and at least one `<ArgTypes of=`.
+  - Each such MDX has the headings Usage, Do's and don'ts, Accessibility, and API, in that order, and at least one `<ArgTypes of=` (or, for `Code` and `Kbd`, the no-own-props line; Departure 3).
   - Every PascalCase component exported from `src/index.ts`, except the theming exports and the parts with no props of their own (listed under Component pages), appears in some `<ArgTypes of={…}>`.
 - **Sidebar order (Playwright, against the built Storybook manager):** the top-level sections read Overview, Foundations, Components, Patterns, Guides. The Components groups read in the table's order. This checks the real sidebar, not `storySort`.
 - **Docs pages (Playwright, in `tests/visual/stories.spec.ts`):**

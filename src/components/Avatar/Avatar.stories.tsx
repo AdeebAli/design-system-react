@@ -16,14 +16,6 @@ const meta: Meta<typeof Avatar> = {
   title: 'Components/Feedback and display/Avatar',
   component: Avatar,
   args: { name: 'Ada Park' },
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'Represents a person or organization. `name` is required: it\'s the accessible name and the source of the initials, which show until the image loads and if it fails. The image is in the server HTML. A screen reader hears the name once, with the status when set, such as "Ada Park, online". Set `decorative` when the name is already beside it; then say any status nearby too. Status is displayed, not announced when it changes. `colorFromName` picks one of six color pairs from the name, so the same name always gets the same color, but different names can share one.',
-      },
-    },
-  },
 };
 
 export default meta;
