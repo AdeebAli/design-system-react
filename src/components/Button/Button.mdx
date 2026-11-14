@@ -1,4 +1,6 @@
-import { ArgTypes, Meta } from '@storybook/addon-docs/blocks';
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
 import * as ButtonStories from './Button.stories';
 import { Button } from '.';
 
@@ -6,6 +8,59 @@ import { Button } from '.';
 
 # Button
 
+A button that starts an action, such as saving a form or opening a dialog.
+
+## Usage
+
+Use `Button` for actions. For navigation to another page, use a [`Link`](?path=/docs/components-typography-link--docs), or a `Button` with `as="a"` when the link should look like a button. For a button with only an icon, use [`IconButton`](?path=/docs/components-forms-and-actions-iconbutton--docs), which requires an `aria-label`.
+
+- It defaults to `type="button"`, so set `type="submit"` explicitly on a form's submit button.
+- Six variant and tone pairs exist: solid accent, solid danger, soft, outline, ghost, and ghost danger. Use one solid accent button per area for the main action.
+- `loading` keeps the button focusable and its colors, ignores clicks and form submission, and announces "Loading" (change it with `loadingLabel`).
+- `disabled` removes the button from the tab order.
+- `as="a"` renders a real link, and `as={RouterLink}` renders a router's link. `disabled` and `loading` don't work there, because a link can't be disabled.
+- It's a client component.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Label a button with a verb that says what happens.
+    <Canvas of={ButtonStories.WithIcons} />
+  </Do>
+  <Dont code={`<Button>OK</Button>\n<Button>Click here</Button>`} />
+</DoDont>
+
+<DoDont>
+  <Do>
+    Set `type="submit"` on the button that submits a form.
+    <Canvas of={ButtonStories.Loading} />
+  </Do>
+  <Dont
+    code={`<form onSubmit={save}>\n  {/* type defaults to "button", so this never submits */}\n  <Button>Save</Button>\n</form>`}
+  />
+</DoDont>
+
+<DoDont>
+  <Do>Render a link with `as="a"` when the action goes to another page.</Do>
+  <Dont
+    code={`<Button onClick={() => (location.href = '/docs')}>Docs</Button>`}
+  />
+</DoDont>
+
+## Accessibility
+
+- `Button` renders a native `button`, so Enter and Space activate it and it's focusable, with the system's focus ring.
+- While `loading`, it sets `aria-busy` and adds hidden text, so screen readers hear "Save changes Loading". The button stays focusable, so focus isn't lost.
+- An icon in `startIcon` or `endIcon` is decorative. The text is the accessible name, so don't leave a button with only an icon: use `IconButton`.
+- The project supplies a clear label, and `type="submit"` on submit buttons.
+
 ## API
 
 <ArgTypes of={Button} />
+
+<AlsoAccepts element="button" layout />
+
+## Examples
+
+<Stories title={<></>} />

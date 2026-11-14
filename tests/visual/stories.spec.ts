@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs';
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
 interface IndexEntry {
   id: string;
@@ -35,6 +35,60 @@ for (const docs of docsPages) {
     await expect(page).toHaveScreenshot(`${docs.id}.png`, { fullPage: true });
   });
 }
+
+// Props tables render after the page's first paint, so a check for something
+// absent waits until the docs stop changing.
+async function settled(page: Page) {
+  let last = '';
+  await expect
+    .poll(
+      async () => {
+        const now = await page.locator('#storybook-docs').innerHTML();
+        const same = now === last;
+        last = now;
+        return same;
+      },
+      { intervals: [300] },
+    )
+    .toBe(true);
+}
+
+// Docs-page content checks (Spec 18, Testing), apart from the screenshot so
+// they run locally, where baselines for new pages don't exist yet.
+for (const docs of docsPages) {
+  test(`${docs.id} content`, async ({ page }) => {
+    await page.goto(`/iframe.html?id=${docs.id}&viewMode=docs`);
+    await page.locator('#storybook-docs h1').first().waitFor();
+    await settled(page);
+    await expect(page.locator('#storybook-docs h1')).toHaveCount(1);
+    await expect(
+      page.locator('#storybook-docs').getByText('This story has no controls'),
+    ).toHaveCount(0);
+  });
+}
+
+test('the Button page has its sections and own props', async ({ page }) => {
+  await page.goto(
+    '/iframe.html?id=components-forms-and-actions-button--docs&viewMode=docs',
+  );
+  const docs = page.locator('#storybook-docs');
+  await docs.locator('h1').waitFor();
+  for (const id of [
+    'usage',
+    'dos-and-donts',
+    'accessibility',
+    'api',
+    'examples',
+  ]) {
+    await expect(docs.locator(`[id="${id}"]`)).toHaveCount(1);
+  }
+  const names = docs.locator('.docblock-argstable tbody tr td:first-child');
+  for (const prop of ['variant', 'tone', 'loading']) {
+    await expect(
+      names.filter({ hasText: new RegExp(`^${prop}$`) }),
+    ).toHaveCount(1);
+  }
+});
 
 for (const story of stories) {
   for (const mode of ['light', 'dark'] as const) {
