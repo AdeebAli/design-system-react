@@ -1,3 +1,5 @@
+import { readFileSync, readdirSync } from 'node:fs';
+import { join } from 'node:path';
 import { expect, test, type Page } from '@playwright/test';
 
 // The real sidebar in the built Storybook manager, not storySort (Spec 18,
@@ -68,4 +70,33 @@ test('the Layout group starts Box, Flex, Stack', async ({ page }) => {
 test('the default page is Overview/Welcome', async ({ page }) => {
   await page.goto('/');
   await expect(page).toHaveURL(/path=\/docs\/overview-welcome--docs/);
+});
+
+// Every link to another page uses an ID that exists (Review Focus 3): renamed
+// titles change every ID.
+test('every ?path link in the docs points at a real page', () => {
+  const ids = new Set(
+    Object.keys(
+      (
+        JSON.parse(readFileSync('storybook-static/index.json', 'utf8')) as {
+          entries: Record<string, unknown>;
+        }
+      ).entries,
+    ),
+  );
+  const files = readdirSync('src', { recursive: true, encoding: 'utf8' })
+    .filter((file) => /\.mdx$|^docs\/.*\.tsx$/.test(file))
+    .map((file) => join('src', file));
+  const links = files.flatMap((file) =>
+    [
+      ...readFileSync(file, 'utf8').matchAll(
+        /\?path=\/(?:docs|story)\/([a-z0-9-]+)/g,
+      ),
+    ].map((match) => `${file}: ${match[1]}`),
+  );
+  // The scan reaches the pages: Welcome links to every component.
+  expect(links).toContain(
+    'src/docs/overview/Welcome.mdx: components-forms-and-actions-button--docs',
+  );
+  expect(links.filter((link) => !ids.has(link.split(': ')[1]!))).toEqual([]);
 });
