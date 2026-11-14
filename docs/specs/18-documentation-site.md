@@ -179,12 +179,13 @@ A docs page doesn't follow the color mode, as Spec 02 says for MDX pages. Storie
 ### Props tables
 
 - Storybook's React docgen is set to `react-docgen-typescript`, with a `propFilter` that keeps the props declared in this package's source. HTML attributes and props declared only in `@types/react` or Base UI are left out. They're covered by the "Also accepts" line.
+- The filter also leaves out the layout props (`LayoutProps` in `src/components/Box/types.ts`) on every component except the layout components (`Box`, `Flex`, `Stack`, `Inline`, `Grid`, `Container`, `Center`, `Inset`). Other pages link to the style props page instead (owner, 2026-11-13, v0.8.1 plan Departure 1).
 - **To check first (plan task 1):** whether that filter drops props this package re-exports from Base UI types, and whether types imported from other files, such as `Responsive<…>` and token unions, show readably. Prove it on `Button`, `Select`, `Box`, and `Tabs` before writing any pages. If `react-docgen-typescript` can't meet this section, the fallback goes to the owner before building on it.
 - A public prop that has no TSDoc is a defect fixed in this change, not a blank cell.
 
 ## Release
 
-The site ships as a release (owner, 2026-11-13). After the PR merges, `npm run release -- patch` makes v0.8.1. Publishing the release deploys Storybook through `storybook-pages`, and publishes a package identical to v0.8.0 apart from its version. The release notes say it's docs only.
+The site ships as a release (owner, 2026-11-13). After the PR merges, `npm run release -- patch` makes v0.8.1. Publishing the release deploys Storybook through `storybook-pages`, and publishes a package whose JS and CSS are identical to v0.8.0's. `index.d.ts` differs only in the doc comments added for the props tables (owner, 2026-11-13, v0.8.1 plan Departure 2). The release notes say it's docs only.
 
 ## Testing
 
