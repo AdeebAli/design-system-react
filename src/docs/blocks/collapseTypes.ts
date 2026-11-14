@@ -7,7 +7,7 @@ const SIZES = ['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl'];
  * Splits a union on its top-level `|`, leaving nested types, quoted strings,
  * and template literals whole. The `>` of an arrow (`=>`) isn't a closer.
  */
-function members(union: string): string[] {
+function split(union: string, separator: string): string[] {
   const parts: string[] = [];
   let depth = 0;
   let quote: string | null = null;
@@ -25,13 +25,33 @@ function members(union: string): string[] {
       depth++;
     } else if ('>})]'.includes(char!)) {
       depth = Math.max(0, depth - 1);
-    } else if (char === '|' && depth === 0) {
+    } else if (char === separator && depth === 0) {
       parts.push(union.slice(start, i).trim());
       start = i + 1;
     }
   }
   parts.push(union.slice(start).trim());
   return parts;
+}
+
+const members = (union: string) => split(union, '|');
+
+/**
+ * Sorts the unions inside an object member's property types, such as a
+ * responsive value's `{ base?: …; sm?: …; }`. Property order stays as
+ * declared.
+ */
+function sortObject(member: string): string {
+  const body = /^\{(.*)\}$/s.exec(member)?.[1];
+  if (body === undefined) return member;
+  const properties = split(body, ';')
+    .filter((part) => part !== '')
+    .map((part) => {
+      const colon = part.indexOf(':');
+      if (colon === -1) return part;
+      return `${part.slice(0, colon + 1)} ${sortUnion(part.slice(colon + 1).trim())}`;
+    });
+  return `{ ${properties.join('; ')}; }`;
 }
 
 // Numbers (with px between 0 and 0.5) and sizes in their natural order, then
@@ -51,8 +71,8 @@ function rank(member: string): [number, number, string] {
  * would render differently each time.
  */
 function sortUnion(summary: string): string {
-  const parts = members(summary);
-  if (parts.length < 2) return summary;
+  const parts = members(summary).map(sortObject);
+  if (parts.length < 2) return parts[0] ?? summary;
   return parts
     .map((member) => ({ member, key: rank(member) }))
     .sort(

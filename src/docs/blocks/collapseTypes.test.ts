@@ -105,3 +105,20 @@ it('keeps an arrow type inside an object member whole', () => {
     collapseTypeSummary('{ onChange: (e: Event) => void | null; } | "b" | "a"'),
   ).toBe('"a" | "b" | { onChange: (e: Event) => void | null; }');
 });
+
+it.each([
+  [['{ base?: "y" | "x" | undefined; sm?: "b" | "a"; }', '"0"']],
+  [['{ base?: "x" | undefined | "y"; sm?: "a" | "b"; }', '"0"']],
+])('sorts unions inside object members too: %j', (items) => {
+  expect(collapseTypeSummary(items.join(' | '))).toBe(
+    '"0" | { base?: "x" | "y" | undefined; sm?: "a" | "b"; }',
+  );
+});
+
+it('gives one output for arrow members that return generics', () => {
+  const items = ['(() => Promise<void>)', '"b"', '"a"'];
+  const outputs = new Set(
+    permutations(items).map((order) => collapseTypeSummary(order.join(' | '))),
+  );
+  expect([...outputs]).toEqual(['"a" | "b" | (() => Promise<void>)']);
+});
