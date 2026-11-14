@@ -1,0 +1,43 @@
+import { Meta, Source } from '@storybook/addon-docs/blocks';
+import { asPackage } from '../../docs/blocks/asPackage';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import themeExample from '../../docs/examples/primitives/darkerDarkMode.ts?raw';
+import { PrimitiveRamps, PrimitiveScales } from './Tokens';
+
+<Meta title="Foundations/Primitives" />
+
+# Primitives
+
+`tokens` is the raw layer: the palette ramps, font stacks, type sizes, and spacing scale that themes are built from.
+
+## How it relates to `vars`
+
+`vars` is the semantic contract, such as `color.bg.accent` or `space.3`. It names what a value is for. Soft Light and Soft Dark map primitives onto it: Soft Light's `color.bg.accent` is `tokens.indigo[600]`, and its `color.bg.canvas` is `tokens.neutral[75]`. A theme can change that mapping without any component changing.
+
+## The rule
+
+Components never read primitives, and projects shouldn't either. Use `vars` (or the `--ds-*` variables) in styles. Use `tokens` only when building a theme with `defineTheme` or `defineFullTheme`.
+
+<DoDont>
+  <Do>
+    Pick primitives inside a theme.
+    <Source code={asPackage(themeExample)} language="ts" dark={false} />
+  </Do>
+  <Dont
+    code={`// card.css.ts
+export const card = style({
+  background: tokens.neutral[0],
+  color: tokens.indigo[600],
+});
+// Ignores the theme and the color mode`}
+    language="ts"
+  />
+</DoDont>
+
+## Palette
+
+<PrimitiveRamps />
+
+## Fonts, sizes, and space
+
+<PrimitiveScales />
