@@ -1,4 +1,7 @@
+import { readFileSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
 import type { StorybookConfig } from '@storybook/react-vite';
+import type { Plugin } from 'vite';
 import remarkGfm from 'remark-gfm';
 
 const LAYOUT_COMPONENTS = new Set([
@@ -11,6 +14,25 @@ const LAYOUT_COMPONENTS = new Set([
   'Center',
   'Inset',
 ]);
+
+// Guides show `.css.ts` examples as text. vanilla-extract compiles any id
+// whose path ends in `.css.ts`, `?raw` included, so `?source` serves the
+// file's text under an id that doesn't (Spec 18, Guides).
+const SOURCE_PREFIX = '\0example-source:';
+const exampleSource: Plugin = {
+  name: 'example-source',
+  enforce: 'pre',
+  resolveId(source, importer) {
+    if (!source.endsWith('?source') || !importer) return null;
+    const file = resolve(dirname(importer), source.slice(0, -'?source'.length));
+    return `${SOURCE_PREFIX}${file}:text`;
+  },
+  load(id) {
+    if (!id.startsWith(SOURCE_PREFIX)) return null;
+    const file = id.slice(SOURCE_PREFIX.length, -':text'.length);
+    return `export default ${JSON.stringify(readFileSync(file, 'utf8'))};`;
+  },
+};
 
 const config: StorybookConfig = {
   framework: '@storybook/react-vite',
@@ -42,6 +64,10 @@ const config: StorybookConfig = {
     },
   },
   stories: ['../src/**/*.mdx', '../src/**/*.stories.tsx'],
+  viteFinal: (viteConfig) => ({
+    ...viteConfig,
+    plugins: [exampleSource, ...(viteConfig.plugins ?? [])],
+  }),
   addons: [
     {
       name: '@storybook/addon-docs',

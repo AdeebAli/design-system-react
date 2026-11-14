@@ -1,0 +1,53 @@
+import { Meta, Source } from '@storybook/addon-docs/blocks';
+import { asPackage } from '../blocks/asPackage';
+import layout from '../examples/serverRendering/layout.tsx?raw';
+import viteConfig from '../examples/serverRendering/viteConfig.ts?raw';
+import cspLayout from '../../../fixtures/next-app/app/csp/layout.tsx?raw';
+import imagePage from '../../../fixtures/next-app/app/(site)/image/page.tsx?raw';
+import nextLink from '../../../fixtures/next-app/app/(site)/NextLink.tsx?raw';
+
+<Meta title="Guides/Server rendering" />
+
+# Server rendering
+
+The setups on this page are the ones `fixtures/next-app` runs: a Next.js App Router app that installs the packed package and is tested in a real browser. The code shown from it is its own source.
+
+## Server and client components
+
+Components with no state or browser APIs have no `"use client"`, so they render as server components: `Alert`, `Badge`, `Box`, `Breadcrumbs`, `Card`, `Center`, `Code`, `Container`, `Divider`, `EmptyState`, `Flex`, `Grid`, `Heading`, `Icon`, `Inline`, `Inset`, `Kbd`, `Link`, `Pagination`, `Prose`, `Skeleton`, `Spinner`, `Stack`, `Stat`, `Table`, `Text`, and `VisuallyHidden`.
+
+The rest are client components, marked with `"use client"`, and can still be imported straight into a server page: Next renders them on the server and hydrates them. Pass them only serializable props from a server component. A callback, such as `DataTable`'s or `Pagination`'s `onPageChange`, needs a client parent: the fixture's `DataTable` lives in a `"use client"` module. `Pagination` with `getHref` renders links and works from a server page.
+
+The fixture's home page is a server page that renders both kinds side by side.
+
+## The root layout
+
+Put `ColorModeScript` first in `body`, so the stored color mode applies before first paint, and add `suppressHydrationWarning` to `html`, since the script sets `data-ds-mode` on it before React hydrates.
+
+<Source code={asPackage(layout)} language="tsx" dark={false} />
+
+### Under a Content Security Policy
+
+`ColorModeScript` and `ThemeProvider` add an inline `script` and `style`, so pass them the request's nonce. This is the fixture's own `/csp` layout:
+
+<Source code={cspLayout} language="tsx" dark={false} />
+
+The README's [Content Security Policy section](https://github.com/AdeebAli/design-system-react#6-a-strict-content-security-policy) has the matching `proxy.ts`, and why the policy needs `style-src-attr 'unsafe-inline'`.
+
+## Router links
+
+Pass a router link through `as`, such as `as={NextLink}` on `NavBarLink`, `SidebarLink`, or `Link`, as the fixture's navigation does. In a server component, `next/link` resolves to a server wrapper that can't be passed to a client component, so re-export it from a client module first:
+
+<Source code={nextLink} language="tsx" dark={false} />
+
+## `Image` with `next/image`
+
+Pass `next/image` as `as`, so Next keeps resizing and optimizing the image. Use `fill` and `sizes` with a `ratio`, or give Next the intrinsic size through `htmlWidth` and `htmlHeight`. Both `Image` and `next/image` are client components, so both can be passed from a server page. This is the fixture's `/image` page:
+
+<Source code={imagePage} language="tsx" dark={false} />
+
+## Other setups
+
+Outside Next, inject `getColorModeScript()` into the page's `head` before any content. In Vite, a small plugin does it, since React doesn't run script elements it creates on the client. Options such as `storageKey` must match `ThemeProvider`'s, so keep them in one shared object.
+
+<Source code={asPackage(viteConfig)} language="ts" dark={false} />

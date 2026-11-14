@@ -1,0 +1,65 @@
+import { Meta, Source } from '@storybook/addon-docs/blocks';
+import { asPackage } from '../blocks/asPackage';
+import brandFont from '../examples/fonts/brandFont.ts?raw';
+import featuresOff from '../examples/fonts/featuresOff.ts?raw';
+
+<Meta title="Guides/Fonts" />
+
+# Fonts
+
+## What's bundled
+
+`styles.css` includes three families, each in a token. [Typography](?path=/docs/foundations-typography--docs) lists their weights, styles, and uses.
+
+- `font.family.sans`: Inter, for all interface text, from `inter-ui`.
+- `font.family.mono`: IBM Plex Mono, for code, from `@fontsource/ibm-plex-mono`.
+- `font.family.prose`: Source Serif 4, for `Prose`, from `@fontsource-variable/source-serif-4`.
+
+## How they load
+
+The font files ship with the package, and `styles.css` loads them with `font-display: swap`: text shows at once in a fallback and swaps when the font arrives. Each file covers a `unicode-range`, so most pages load only the Latin subset. Your bundler copies the files to your own origin, so there are no requests to other origins.
+
+Each family has a fallback face built from a system font with metric overrides, such as `"Inter Fallback"` from Arial, so the swap barely shifts the layout.
+
+## Replacing a family
+
+Override `font.family.*` in a theme, and load the font with your own `@font-face`. Keep a fallback face with metric overrides, and a system font at the end of the stack.
+
+<Source code={asPackage(brandFont)} language="ts" dark={false} />
+
+<Source
+  language="css"
+  dark={false}
+  code={`@font-face {
+  font-family: 'Brand Sans';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/fonts/brand-sans.woff2') format('woff2');
+}
+
+/* Shaped like Brand Sans, to limit layout shift while it loads.
+   Measure the overrides against your font. */
+@font-face {
+  font-family: 'Brand Sans Fallback';
+  src: local('Arial');
+  size-adjust: 104%;
+  ascent-override: 92%;
+  descent-override: 24%;
+  line-gap-override: 0%;
+}`}
+/>
+
+## Turning Inter's features off
+
+Inter's `cv05` and `cv08` alternates make `I`, `l`, and `1` distinct, and are on by default. Set `font.features.sans` to `normal` to turn them off.
+
+<Source code={asPackage(featuresOff)} language="ts" dark={false} />
+
+## A strict Content Security Policy
+
+The fonts are served from your own origin, so `font-src 'self'` is enough. No font comes from a CDN or a font service. See the README's [Content Security Policy section](https://github.com/AdeebAli/design-system-react#6-a-strict-content-security-policy) for the full policy.
+
+## Licenses
+
+All three families are under the SIL Open Font License 1.1, which allows bundling and self-hosting them, including in commercial products. Keep the license with the font files if you copy them.
