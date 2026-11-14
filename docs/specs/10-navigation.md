@@ -191,6 +191,7 @@ Spec 05's definition of done, plus:
 - A **NavBar** page, with desktop and small-screen views.
 - A **Tabs** page, with both variants.
 - Docs on when to use `Tabs` or links.
+- The combined page is `Patterns/Navigation and prose`, and the `Tabs` or links guidance is on the component pages (amended by Spec 18, 2026-11-13).
 
 ## Acceptance criteria
 

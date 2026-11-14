@@ -182,6 +182,7 @@ Spec 05's definition of done, plus:
 
 - A **Prose** page with a full article, in both modes and at both sizes.
 - Docs on Markdown and MDX setup, including element mapping, `pre` keyboard access, and `NotProse`.
+- The Markdown and MDX docs are `Guides/Markdown and MDX` (amended by Spec 18, 2026-11-13).
 
 ## Acceptance criteria
 

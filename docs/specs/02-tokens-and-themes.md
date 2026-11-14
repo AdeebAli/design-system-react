@@ -475,9 +475,11 @@ How these feed into `ThemeProvider` and overrides is Spec 03.
 ## Storybook
 
 Foundation pages (MDX) under **Foundations/**: Colors (swatches for both
-themes with contrast values), Typography (scale, weights, Inter features on
-and off), Spacing, Radii, Shadows, Motion. These pages are included in visual
-regression.
+themes with contrast values), Typography (families, scale, weights, line
+height, letter spacing, loading, and Inter features on and off), Spacing,
+Radii, Shadows, Motion (tokens plus live duration and easing examples), and
+Primitives (the raw `tokens` layer), as Spec 18 defines them (amended by Spec 18, 2026-11-13). These
+pages are included in visual regression.
 
 ## Acceptance criteria
 

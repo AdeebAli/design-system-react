@@ -210,6 +210,7 @@ Spec 05's definition of done, plus:
 - A page per component, in both modes, with every state.
 - Recipes for debounced search with stale-response handling, and for uploads with progress.
 - A React Hook Form example with every control.
+- The overview page above is `Patterns/Advanced inputs`, and the component pages follow Spec 18's docs page format (amended by Spec 18, 2026-11-13).
 
 ## Acceptance criteria
 

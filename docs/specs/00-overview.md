@@ -249,6 +249,7 @@ published release.
 | **v0.6** | 14: Advanced inputs | Richer forms |
 | **v0.7** | 15: App navigation | App shells |
 | **v0.8** | 17: Image | Images that reserve their space, with loading and failure states, including through `next/image` |
+| **v0.8.1** | 18: Documentation site | A docs site: welcome, foundations, guides, and a docs page with a props table for every component |
 | **v1.0** | Stabilization: API review, docs, fixes from real use | Stability guarantee begins |
 
 **Versioning before 1.0:** following semver convention, minor releases in
@@ -277,6 +278,7 @@ published release.
 | 15 | App navigation: `Sidebar`, `Breadcrumbs`, `Accordion` | Accepted |
 | 16 | Feedback and display: `Alert`, `Spinner`, `Progress`, `Avatar`, `Divider`, `Drawer` | Accepted |
 | 17 | Image | Accepted |
+| 18 | Documentation site | Accepted |
 
 ## Quality gates (proposed)
 

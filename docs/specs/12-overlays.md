@@ -303,6 +303,7 @@ Spec 05's definition of done, plus:
 
 - A page per component, in both modes.
 - Docs on choosing between `Dialog`, `Popover`, `Tooltip`, and `Menu`.
+- The overview page above is `Patterns/Overlays`, and the component pages follow Spec 18's docs page format (amended by Spec 18, 2026-11-13). The choosing guidance moves into each component page's Usage.
 
 ## Acceptance criteria
 

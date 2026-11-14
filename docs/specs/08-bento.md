@@ -219,6 +219,7 @@ Spec 05's definition of done, plus:
 
 - A **Bento** page with a dashboard and a blog home, in both modes.
 - A page per component, as in Spec 05.
+- The overview page above is `Patterns/Bento`, and the component pages follow Spec 18's docs page format (amended by Spec 18, 2026-11-13).
 
 ## Acceptance criteria
 
