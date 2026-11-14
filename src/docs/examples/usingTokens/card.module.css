@@ -1,0 +1,14 @@
+/* card.module.css */
+.card {
+  padding: var(--ds-space-4);
+  border-radius: var(--ds-radius-card);
+  background: var(--ds-color-bg-surface);
+  box-shadow: var(--ds-shadow-card);
+}
+
+/* breakpoints.md, written out: media queries can't read variables */
+@media (min-width: 48rem) {
+  .card {
+    padding: var(--ds-space-6);
+  }
+}

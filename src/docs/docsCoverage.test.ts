@@ -147,3 +147,19 @@ const undocumentedChildren = sources.flatMap((file) => {
 it('every public children prop has TSDoc', () => {
   expect(undocumentedChildren).toEqual([]);
 });
+
+// Prettier formats a template literal in MDX as Markdown, which breaks CSS
+// (`/*` becomes `/_`, indentation goes), so CSS examples live in .css files.
+const docsRoot = join(components, '../docs');
+const docsMdx = readdirSync(docsRoot, { recursive: true, encoding: 'utf8' })
+  .filter((file) => file.endsWith('.mdx'))
+  .map((file) => join(docsRoot, file));
+
+it.each([...docsMdx, ...pages].map((file) => [file]))(
+  '%s keeps CSS examples in .css files',
+  (file) => {
+    expect(readFileSync(file, 'utf8')).not.toMatch(
+      /<Source\b[^>]*language="css"[^>]*code=\{`|<Source\b[^>]*code=\{`[^`]*`\}[^>]*language="css"/,
+    );
+  },
+);

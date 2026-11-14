@@ -1,5 +1,6 @@
 import { Meta, Source } from '@storybook/addon-docs/blocks';
 import { asPackage } from '../blocks/asPackage';
+import fontCss from '../examples/fonts/brandFont.css?raw';
 import brandFont from '../examples/fonts/brandFont.ts?raw';
 import featuresOff from '../examples/fonts/featuresOff.ts?raw';
 
@@ -27,28 +28,7 @@ Override `font.family.*` in a theme, and load the font with your own `@font-face
 
 <Source code={asPackage(brandFont)} language="ts" dark={false} />
 
-<Source
-  language="css"
-  dark={false}
-  code={`@font-face {
-  font-family: 'Brand Sans';
-  font-style: normal;
-  font-weight: 100 900;
-  font-display: swap;
-  src: url('/fonts/brand-sans.woff2') format('woff2');
-}
-
-/_ Shaped like Brand Sans, to limit layout shift while it loads.
-Measure the overrides against your font. _/
-@font-face {
-font-family: 'Brand Sans Fallback';
-src: local('Arial');
-size-adjust: 104%;
-ascent-override: 92%;
-descent-override: 24%;
-line-gap-override: 0%;
-}`}
-/>
+<Source code={fontCss} language="css" dark={false} />
 
 ## Turning Inter's features off
 

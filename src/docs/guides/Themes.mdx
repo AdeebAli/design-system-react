@@ -1,5 +1,6 @@
 import { Canvas, Meta, Source } from '@storybook/addon-docs/blocks';
 import { asPackage } from '../blocks/asPackage';
+import themeCss from '../examples/themes/overrides.css?raw';
 import * as Stories_ from '../examples/themes/Themes.stories';
 import app from '../examples/themes/App.tsx?raw';
 import accent from '../examples/themes/accentTheme.tsx?raw';
@@ -39,24 +40,7 @@ Changing the accent takes more than one token: `bg.accentHover`, `bg.accentSubtl
 
 Every token is a `--ds-*` variable, so plain CSS can override it. The rule must be unlayered, or in a layer declared after `ds.theme`, because the theme's own values live in that layer.
 
-<Source
-  language="css"
-  dark={false}
-  code={`/* Both modes */
-:root {
-  --ds-radius-control: 8px;
-}
-
-/_ Per mode: a plain :root rule would apply to both modes _/
-:root[data-ds-mode='light'] {
---ds-color-bg-accent: #0f766e;
-}
-@media (prefers-color-scheme: light) {
-:root:not([data-ds-mode]) {
---ds-color-bg-accent: #0f766e;
-}
-}`}
-/>
+<Source code={themeCss} language="css" dark={false} />
 
 ## Color mode
 
