@@ -1,0 +1,153 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { version } from '../../../package.json';
+
+<Meta title="Overview/Welcome" />
+
+# Design system
+
+`@adeebali/design-system-react` is a React design system: tokens, themes, and accessible components for React 19. This site documents version <code>{version}</code>.
+
+- Source: [github.com/AdeebAli/design-system-react](https://github.com/AdeebAli/design-system-react)
+- Releases and their notes: [GitHub Releases](https://github.com/AdeebAli/design-system-react/releases)
+
+## Getting started
+
+1. Install the package. It's published to GitHub Packages, so your project first needs the `@adeebali` scope pointed there, with a token: see [Setup in the README](https://github.com/AdeebAli/design-system-react#setup).
+
+   ```sh
+   npm install @adeebali/design-system-react
+   ```
+
+2. Import the stylesheet once, at your app's root. It holds every style, prebuilt, so you don't need a bundler plugin.
+
+   ```ts
+   import '@adeebali/design-system-react/styles.css';
+   ```
+
+3. Wrap the app in `ThemeProvider`.
+
+   ```tsx
+   import { Box, ThemeProvider } from '@adeebali/design-system-react';
+
+   export function App() {
+     return (
+       <ThemeProvider>
+         <Box>Hello</Box>
+       </ThemeProvider>
+     );
+   }
+   ```
+
+The README also covers avoiding a flash of the wrong color mode, and a strict Content Security Policy.
+
+## Rules of the system
+
+These are the contract a project agrees to when it uses the system:
+
+- **Every value comes from a token.** Style props accept tokens only.
+- **Build layout by composing** `Box` and the layout components. Don't add margins to components; use `gap`.
+- **`className` and `style` are escape hatches** for one instance, not a styling API.
+- **Themes change tokens, not components.**
+- **Both color modes and WCAG 2.2 AA are the baseline,** not extras.
+
+## How to read this site
+
+- **Overview:** this page, and how accessibility is handled.
+- **Foundations:** every token family: colors, typography, spacing, radii, shadows, motion, and the raw primitives themes are built from.
+- **Components:** one page per component, in groups. Each page has Usage (when to use it and what to use instead), Do's and don'ts, Accessibility, API (a props table for each part), and Examples.
+- **Patterns:** whole screens built from several components, with no `style` or `className`.
+- **Guides:** themes, fonts, server rendering, using and migrating to tokens, the UI and styling standards, React Hook Form, and Markdown.
+
+## Components at a glance
+
+### Layout
+
+- [`Box`](?path=/docs/components-layout-box--docs): The base element, with token-only style props.
+- [`Flex`](?path=/docs/components-layout-flex--docs): Full flexbox control.
+- [`Stack`](?path=/docs/components-layout-stack--docs): Children top to bottom.
+- [`Inline`](?path=/docs/components-layout-inline--docs): Children in a row that wraps, such as tags or buttons.
+- [`Grid`](?path=/docs/components-layout-grid--docs): CSS grid with equal columns; the base for bento layouts.
+- [`Container`](?path=/docs/components-layout-container--docs): A page's content, centered, with a maximum width and side padding.
+- [`Center`](?path=/docs/components-layout-center--docs): Centering its content on one or both axes.
+- [`Inset`](?path=/docs/components-layout-inset--docs): Padding from the spacing scale.
+
+### Typography
+
+- [`Text`](?path=/docs/components-typography-text--docs): Body text.
+- [`Heading`](?path=/docs/components-typography-heading--docs): Headings; `level` sets the tag.
+- [`Link`](?path=/docs/components-typography-link--docs): Links, in the accent color or the surrounding text color.
+- [`Code`](?path=/docs/components-typography-code--docs): Inline code.
+- [`Kbd`](?path=/docs/components-typography-kbd--docs): A keyboard key.
+- [`VisuallyHidden`](?path=/docs/components-typography-visuallyhidden--docs): Text for screen readers only.
+- [`Prose`](?path=/docs/components-typography-prose--docs): Long-form HTML or MDX.
+
+### Icons
+
+- [`Icon`](?path=/docs/components-icons-icon--docs): Any SVG icon component, such as one from `lucide-react`.
+
+### Display
+
+- [`Card`](?path=/docs/components-display-card--docs): A surface for grouping content.
+- [`Stat`](?path=/docs/components-display-stat--docs): A labeled number.
+- [`Badge`](?path=/docs/components-display-badge--docs): A small, non-interactive status label.
+
+### Forms and actions
+
+- [`Field`](?path=/docs/components-forms-and-actions-field--docs): A label, hint, and error for one control.
+- [`Input`](?path=/docs/components-forms-and-actions-input--docs): Single-line text entry.
+- [`Textarea`](?path=/docs/components-forms-and-actions-textarea--docs): Multi-line text entry.
+- [`Select`](?path=/docs/components-forms-and-actions-select--docs): A single choice from a dropdown.
+- [`Checkbox`](?path=/docs/components-forms-and-actions-checkbox--docs): An on/off choice that's submitted with a form.
+- [`RadioGroup`](?path=/docs/components-forms-and-actions-radiogroup--docs): One choice from a short, visible list.
+- [`Switch`](?path=/docs/components-forms-and-actions-switch--docs): A setting that takes effect immediately.
+- [`ToggleChip`](?path=/docs/components-forms-and-actions-togglechip--docs): A selectable pill, such as a filter.
+- [`ToggleChipGroup`](?path=/docs/components-forms-and-actions-togglechipgroup--docs): A row of toggle chips.
+- [`Button`](?path=/docs/components-forms-and-actions-button--docs): Actions.
+- [`IconButton`](?path=/docs/components-forms-and-actions-iconbutton--docs): A button with only an icon.
+- [`ColorModeToggle`](?path=/docs/components-forms-and-actions-colormodetoggle--docs): Switching between light and dark.
+
+### Advanced inputs
+
+- [`Combobox`](?path=/docs/components-advanced-inputs-combobox--docs): A single choice from a long list, found by typing.
+- [`MultiSelect`](?path=/docs/components-advanced-inputs-multiselect--docs): Several choices, from a short or long list.
+- [`FileUpload`](?path=/docs/components-advanced-inputs-fileupload--docs): Picking files by browsing or dropping.
+
+### Navigation
+
+- [`NavBar`](?path=/docs/components-navigation-navbar--docs): The site's main navigation bar.
+- [`Tabs`](?path=/docs/components-navigation-tabs--docs): Switching between panels on the same page.
+
+### App navigation
+
+- [`Sidebar`](?path=/docs/components-app-navigation-sidebar--docs): An app's main navigation down one side.
+- [`Breadcrumbs`](?path=/docs/components-app-navigation-breadcrumbs--docs): Where a page sits, with links back up.
+- [`Accordion`](?path=/docs/components-app-navigation-accordion--docs): Sections that expand in place.
+
+### Overlays
+
+- [`Dialog`](?path=/docs/components-overlays-dialog--docs): A modal task that needs full attention.
+- [`Popover`](?path=/docs/components-overlays-popover--docs): A small panel beside its trigger.
+- [`Tooltip`](?path=/docs/components-overlays-tooltip--docs): A short, visual-only hint.
+- [`Menu`](?path=/docs/components-overlays-menu--docs): A list of actions.
+- [`Toast`](?path=/docs/components-overlays-toast--docs): A brief message that goes away by itself.
+- [`Drawer`](?path=/docs/components-overlays-drawer--docs): A modal panel from a side, or a bottom sheet.
+
+### Data
+
+- [`Table`](?path=/docs/components-data-table--docs): Styled semantic table parts.
+- [`DataTable`](?path=/docs/components-data-datatable--docs): A table that manages sorting, paging, and selection.
+- [`Pagination`](?path=/docs/components-data-pagination--docs): Page links or buttons.
+- [`Skeleton`](?path=/docs/components-data-skeleton--docs): A placeholder for content that's loading.
+- [`EmptyState`](?path=/docs/components-data-emptystate--docs): What to show when a list has nothing in it.
+
+### Feedback and display
+
+- [`Alert`](?path=/docs/components-feedback-and-display-alert--docs): A message that stays in the page.
+- [`Spinner`](?path=/docs/components-feedback-and-display-spinner--docs): A short wait with no measure of progress.
+- [`Progress`](?path=/docs/components-feedback-and-display-progress--docs): How far along something is.
+- [`Divider`](?path=/docs/components-feedback-and-display-divider--docs): A line between things.
+- [`Avatar`](?path=/docs/components-feedback-and-display-avatar--docs): A person or organization.
+
+### Image
+
+- [`Image`](?path=/docs/components-image-image--docs): An image in a frame that reserves its space.

@@ -64,3 +64,8 @@ test('the Layout group starts Box, Flex, Stack', async ({ page }) => {
     'components-layout-stack',
   ]);
 });
+
+test('the default page is Overview/Welcome', async ({ page }) => {
+  await page.goto('/');
+  await expect(page).toHaveURL(/path=\/docs\/overview-welcome--docs/);
+});
