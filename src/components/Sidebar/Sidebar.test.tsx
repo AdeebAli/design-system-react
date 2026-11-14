@@ -208,3 +208,11 @@ it('accepts layout props', () => {
     withLayout,
   );
 });
+
+it('the menu opens the drawer where matchMedia is missing, as in jsdom', async () => {
+  expect(typeof window.matchMedia).toBe('undefined');
+  const user = userEvent.setup();
+  render(<App />);
+  await user.click(screen.getByRole('button', { name: 'Menu' }));
+  expect(await screen.findByRole('dialog', { name: 'Menu' })).toBeVisible();
+});
