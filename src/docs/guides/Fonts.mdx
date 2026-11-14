@@ -38,15 +38,15 @@ Override `font.family.*` in a theme, and load the font with your own `@font-face
   src: url('/fonts/brand-sans.woff2') format('woff2');
 }
 
-/* Shaped like Brand Sans, to limit layout shift while it loads.
-   Measure the overrides against your font. */
+/_ Shaped like Brand Sans, to limit layout shift while it loads.
+Measure the overrides against your font. _/
 @font-face {
-  font-family: 'Brand Sans Fallback';
-  src: local('Arial');
-  size-adjust: 104%;
-  ascent-override: 92%;
-  descent-override: 24%;
-  line-gap-override: 0%;
+font-family: 'Brand Sans Fallback';
+src: local('Arial');
+size-adjust: 104%;
+ascent-override: 92%;
+descent-override: 24%;
+line-gap-override: 0%;
 }`}
 />
 

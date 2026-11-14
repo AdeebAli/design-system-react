@@ -27,6 +27,11 @@ Found while planning, against the code. Execution is native (owner, 2026-11-13).
    - **Owner chose (2026-11-13):** no table for the 12; one line instead ("`X` has no props of its own. It accepts `p` attributes."); the coverage test exempts them by name; `index.d.ts` stays comments-only. Spec 18 is amended in Task 4's commit.
    - Rejected: a type-identical `children` (and `className` on `MenuSeparator`) with TSDoc, which adds non-comment lines to `index.d.ts`.
 
+4. **Fixture files in the Server rendering guide** (found by the final review): three examples need `next`, which the root package doesn't install, so the guide shows `fixtures/next-app`'s `csp/layout.tsx`, `image/page.tsx`, and `NextLink.tsx`, type-checked in `test:fixtures`.
+   - **Owner chose (2026-11-13):** accept and amend Spec 18. Rejected: copies under `src/docs/examples` with hand-written `next` type stubs, which can drift.
+5. **Guides that mount `ThemeProvider` have no stories** (found by the final review).
+   - **Owner chose (2026-11-13):** those examples stay source-only and Spec 18 is amended; `PromoCard` (Themes, renders without a provider) gets a `Guides/Themes` story. Rejected: keeping `PromoCard` source-only too.
+
 ## Global Constraints
 
 - Branch `docs/v0.8.1-documentation-site` from an up-to-date `main`, in the main checkout. One commit per task, one PR. **No co-author or generated-by lines in commits or the PR body** (owner's standing rule). This plan goes in Task 1's commit.

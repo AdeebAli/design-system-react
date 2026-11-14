@@ -19,6 +19,7 @@ interface BoxOwnProps<E extends ElementType> extends BoxStyleProps {
   htmlWidth?: AttributeValue<E, 'width'>;
   /** The real `height` attribute, for elements that have one, such as `img`. */
   htmlHeight?: AttributeValue<E, 'height'>;
+  /** The content. */
   children?: ReactNode;
 }
 

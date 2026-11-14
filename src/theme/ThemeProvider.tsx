@@ -34,6 +34,7 @@ export interface ThemeProviderProps {
   storageKey?: string;
   /** For strict Content Security Policies. Applied to the theme `style` element. */
   nonce?: string;
+  /** The app. */
   children?: ReactNode;
 }
 

@@ -1,4 +1,5 @@
-const REACT_ELEMENT = 'ReactElement<unknown, string | JSXElementConstructor<any>>';
+const REACT_ELEMENT =
+  'ReactElement<unknown, string | JSXElementConstructor<any>>';
 
 /**
  * Reads three React types back as their names in a props table's type cell,

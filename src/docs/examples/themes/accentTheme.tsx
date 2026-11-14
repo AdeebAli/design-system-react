@@ -7,13 +7,21 @@ export const tealTheme = defineTheme({
   shared: { radius: { control: '8px' } },
   light: {
     color: {
-      bg: { accent: '#0f766e', accentHover: '#115e59', accentSubtle: '#e6f4f1' },
+      bg: {
+        accent: '#0f766e',
+        accentHover: '#115e59',
+        accentSubtle: '#e6f4f1',
+      },
       fg: { onAccent: '#ffffff' },
     },
   },
   dark: {
     color: {
-      bg: { accent: '#2dd4bf', accentHover: '#5eead4', accentSubtle: '#132a27' },
+      bg: {
+        accent: '#2dd4bf',
+        accentHover: '#5eead4',
+        accentSubtle: '#132a27',
+      },
       fg: { onAccent: '#0b1f1c' },
     },
   },

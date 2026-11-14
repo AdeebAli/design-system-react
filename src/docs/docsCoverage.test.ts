@@ -6,9 +6,15 @@ import * as api from '../index';
 // Spec 18, Testing: every component has a docs page with its sections and a
 // props table for each public part.
 
-const components = join(dirname(fileURLToPath(import.meta.url)), '../components');
+const components = join(
+  dirname(fileURLToPath(import.meta.url)),
+  '../components',
+);
 
-const storyFiles = readdirSync(components, { recursive: true, encoding: 'utf8' })
+const storyFiles = readdirSync(components, {
+  recursive: true,
+  encoding: 'utf8',
+})
   .filter((file) => file.endsWith('.stories.tsx'))
   .map((file) => join(components, file));
 
@@ -59,7 +65,12 @@ it.each(pages.map((page) => [page.slice(components.length + 1)]))(
       .filter((line) => line.startsWith('## '))
       .map((line) => line.slice(3));
     expect(headings).toEqual(
-      expect.arrayContaining(["Usage", "Do's and don'ts", 'Accessibility', 'API']),
+      expect.arrayContaining([
+        'Usage',
+        "Do's and don'ts",
+        'Accessibility',
+        'API',
+      ]),
     );
     const order = ['Usage', "Do's and don'ts", 'Accessibility', 'API'].map(
       (heading) => headings.indexOf(heading),
@@ -73,12 +84,11 @@ const exported = Object.keys(api).filter(
   (name) => /^[A-Z]/.test(name) && !THEMING.includes(name),
 );
 
-it.each(exported.filter((name) => !NO_OWN_PROPS.includes(name)).map((name) => [name]))(
-  '%s has a props table',
-  (name) => {
-    expect(allMdx).toContain(`<ArgTypes of={${name}} />`);
-  },
-);
+it.each(
+  exported.filter((name) => !NO_OWN_PROPS.includes(name)).map((name) => [name]),
+)('%s has a props table', (name) => {
+  expect(allMdx).toContain(`<ArgTypes of={${name}} />`);
+});
 
 it.each(NO_OWN_PROPS.map((name) => [name]))(
   '%s says it has no props of its own',
@@ -95,3 +105,45 @@ it.each(componentStories.map((file) => [file.slice(components.length + 1)]))(
     );
   },
 );
+
+// react-docgen-typescript hides a `children` prop with no TSDoc, so an
+// undocumented one leaves a part's props table incomplete (Spec 18).
+const INTERNAL = ['InternalProps', 'SelectButtonProps'];
+const sources = [
+  ...readdirSync(components, { recursive: true, encoding: 'utf8' }).map(
+    (file) => join(components, file),
+  ),
+  join(components, '../theme/ThemeProvider.tsx'),
+].filter(
+  (file) =>
+    /\.tsx?$/.test(file) &&
+    !/\.(test|test-d|stories|css)\.|fixtures/.test(file),
+);
+const undocumentedChildren = sources.flatMap((file) => {
+  const lines = readFileSync(file, 'utf8').split('\n');
+  return lines.flatMap((line, index) => {
+    if (!/\bchildren\??: (React\.)?(ReactNode|ReactElement)/.test(line)) {
+      return [];
+    }
+    // A function's own parameter types, such as an internal helper's.
+    const above = lines.slice(Math.max(0, index - 6), index);
+    if (line.includes('function') || above.some((l) => /^\}: \{$/.test(l))) {
+      return [];
+    }
+    const owner = lines
+      .slice(0, index + 1)
+      .reverse()
+      .find((above) => /^(export )?(interface|type) \w+/.test(above));
+    const name = owner?.match(/(?:interface|type) (\w+)/)?.[1] ?? '';
+    if (INTERNAL.includes(name)) return [];
+    const documented =
+      !line.includes('{ children') && /\*\/\s*$/.test(lines[index - 1] ?? '');
+    return documented
+      ? []
+      : [`${file.slice(components.length + 1)}:${index + 1}`];
+  });
+});
+
+it('every public children prop has TSDoc', () => {
+  expect(undocumentedChildren).toEqual([]);
+});

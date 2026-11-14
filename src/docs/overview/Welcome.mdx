@@ -45,7 +45,7 @@ The README also covers avoiding a flash of the wrong color mode, and a strict Co
 These are the contract a project agrees to when it uses the system:
 
 - **Every value comes from a token.** Style props accept tokens only.
-- **Build layout by composing** `Box` and the layout components. Don't add margins to components; use `gap`.
+- **Build layout by composing** `Box` and the layout components. Don't add margins to components: they have none of their own, and the space between them belongs to the parent's `gap`, or to a layout prop such as `marginY` where `gap` can't reach.
 - **`className` and `style` are escape hatches** for one instance, not a styling API.
 - **Themes change tokens, not components.**
 - **Both color modes and WCAG 2.2 AA are the baseline,** not extras.

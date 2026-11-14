@@ -32,10 +32,7 @@ Use `Button` for actions. For navigation to another page, use a [`Link`](?path=/
 </DoDont>
 
 <DoDont>
-  <Do>
-    Set `type="submit"` on the button that submits a form.
-    <Canvas of={ButtonStories.Loading} />
-  </Do>
+  <Do>Set `type="submit"` on the button that submits a form.</Do>
   <Dont
     code={`<form onSubmit={save}>\n  {/* type defaults to "button", so this never submits */}\n  <Button>Save</Button>\n</form>`}
   />

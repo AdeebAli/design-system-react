@@ -4,7 +4,9 @@ import { collapseTypeSummary } from './collapseTypes';
 // React types into long lists. These read them back as their names.
 it('collapses ElementType to its name', () => {
   expect(
-    collapseTypeSummary('"symbol" | "object" | "a" | "abbr" | "address" | "area"'),
+    collapseTypeSummary(
+      '"symbol" | "object" | "a" | "abbr" | "address" | "area"',
+    ),
   ).toBe('ElementType');
 });
 

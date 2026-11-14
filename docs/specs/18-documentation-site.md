@@ -116,6 +116,8 @@ The raw token layer, `tokens` from `src/tokens/primitives.ts`:
 ## Guides
 
 Each guide is an MDX page. **Every code example that uses this package's API is a real `.tsx` or `.ts` file** under `src/docs/examples/`. The files are included in `npm run typecheck` and shown with Storybook's `Source` block, using a `?raw` import. Examples that can render are also stories, so axe and visual tests cover them. CSS-only examples can be inline.
+- An example that needs Next.js (`next/headers`, `next/image`, `next/link`), which the root package doesn't install, is shown from its file in `fixtures/next-app` instead, type-checked by the fixture's `tsc` in `npm run test:fixtures` (owner, 2026-11-13, v0.8.1 plan Departure 4).
+- An example that mounts `ThemeProvider` isn't a story, because a provider sets the whole document's color mode and theme style, which would leak into other stories. It stays a real, type-checked file shown with `Source`. Examples that render without a provider, such as a one-off `className`, are stories (owner, 2026-11-13, v0.8.1 plan Departure 5).
 
 - **Themes:**
   - `ThemeProvider` with no props.

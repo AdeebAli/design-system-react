@@ -23,6 +23,7 @@ interface LinkOwnProps {
   external?: boolean;
   /** The hidden text on an external link. @default '(opens in a new tab)' */
   externalLabel?: string;
+  /** The link text, which should say where it goes. */
   children?: ReactNode;
 }
 

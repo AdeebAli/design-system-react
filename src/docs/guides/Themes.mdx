@@ -1,5 +1,6 @@
-import { Meta, Source } from '@storybook/addon-docs/blocks';
+import { Canvas, Meta, Source } from '@storybook/addon-docs/blocks';
 import { asPackage } from '../blocks/asPackage';
+import * as Stories_ from '../examples/themes/Themes.stories';
 import app from '../examples/themes/App.tsx?raw';
 import accent from '../examples/themes/accentTheme.tsx?raw';
 import full from '../examples/themes/fullTheme.ts?raw';
@@ -8,7 +9,7 @@ import oneOff from '../examples/themes/oneOff.tsx?raw';
 import oneOffCss from '../examples/themes/oneOff.css.ts?source';
 import invalid from '../examples/themes/invalidValue.ts?raw';
 
-<Meta title="Guides/Themes" />
+<Meta of={Stories_} />
 
 # Themes
 
@@ -46,14 +47,14 @@ Every token is a `--ds-*` variable, so plain CSS can override it. The rule must 
   --ds-radius-control: 8px;
 }
 
-/* Per mode: a plain :root rule would apply to both modes */
+/_ Per mode: a plain :root rule would apply to both modes _/
 :root[data-ds-mode='light'] {
-  --ds-color-bg-accent: #0f766e;
+--ds-color-bg-accent: #0f766e;
 }
 @media (prefers-color-scheme: light) {
-  :root:not([data-ds-mode]) {
-    --ds-color-bg-accent: #0f766e;
-  }
+:root:not([data-ds-mode]) {
+--ds-color-bg-accent: #0f766e;
+}
 }`}
 />
 
@@ -72,6 +73,8 @@ To avoid a flash of the wrong mode on load, see [Server rendering](?path=/docs/g
 <Source code={asPackage(oneOff)} language="tsx" dark={false} />
 
 <Source code={asPackage(oneOffCss)} language="ts" dark={false} />
+
+<Canvas of={Stories_.OneOffChange} />
 
 ## Invalid values
 

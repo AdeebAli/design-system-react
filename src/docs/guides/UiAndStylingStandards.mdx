@@ -39,7 +39,7 @@ The house rules for building with the system.
 
 Anything interactive or data-driven has its states designed, not left to chance:
 
-- **Hover and focus:** components handle these; your own interactive elements use the focus ring.
+- **Hover and focus:** components handle these. Give your own interactive elements the same focus ring: on `:focus-visible`, an outline of `vars.borderWidth.thick` in `vars.color.focus`, offset by `vars.space['0.5']`.
 - **Disabled:** say why nearby when it isn't obvious.
 - **Loading:** `Button`'s `loading`, `Skeleton` for known shapes, `Spinner` for short waits.
 - **Empty:** an `EmptyState` with the next step.
