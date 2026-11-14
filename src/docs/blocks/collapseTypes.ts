@@ -1,6 +1,59 @@
 const REACT_ELEMENT =
   'ReactElement<unknown, string | JSXElementConstructor<any>>';
 
+const SIZES = ['xs', 'sm', 'md', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl'];
+
+/** Splits a union on its top-level `|`, leaving nested types whole. */
+function members(union: string): string[] {
+  const parts: string[] = [];
+  let depth = 0;
+  let start = 0;
+  for (let i = 0; i < union.length; i++) {
+    const char = union[i];
+    if (char === '<' || char === '{' || char === '(' || char === '[') depth++;
+    else if (char === '>' || char === '}' || char === ')' || char === ']')
+      depth--;
+    else if (char === '|' && depth === 0) {
+      parts.push(union.slice(start, i).trim());
+      start = i + 1;
+    }
+  }
+  parts.push(union.slice(start).trim());
+  return parts;
+}
+
+// Numbers (with px between 0 and 0.5) and sizes in their natural order, then
+// other strings alphabetically, then everything that isn't a string literal.
+function rank(member: string): [number, number, string] {
+  const literal = /^"(.*)"$/.exec(member)?.[1];
+  if (literal === undefined) return [3, 0, member];
+  if (literal === 'px') return [0, 0.25, literal];
+  if (literal !== '' && !Number.isNaN(Number(literal)))
+    return [0, Number(literal), literal];
+  if (SIZES.includes(literal)) return [1, SIZES.indexOf(literal), literal];
+  return [2, 0, literal];
+}
+
+/**
+ * Orders a union's members. react-docgen-typescript lists them in the type
+ * checker's internal order, which differs between builds, so the same page
+ * would render differently each time.
+ */
+function sortUnion(summary: string): string {
+  const parts = members(summary);
+  if (parts.length < 2) return summary;
+  return parts
+    .map((member) => ({ member, key: rank(member) }))
+    .sort(
+      (a, b) =>
+        a.key[0] - b.key[0] ||
+        a.key[1] - b.key[1] ||
+        (a.key[2] < b.key[2] ? -1 : a.key[2] > b.key[2] ? 1 : 0),
+    )
+    .map(({ member }) => member)
+    .join(' | ');
+}
+
 /**
  * Reads three React types back as their names in a props table's type cell,
  * after react-docgen-typescript expands unions (Spec 18, Props tables).
@@ -16,5 +69,5 @@ export function collapseTypeSummary(summary: string): string {
   ) {
     return 'ReactNode';
   }
-  return collapsed;
+  return sortUnion(collapsed);
 }
