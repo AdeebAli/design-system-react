@@ -60,3 +60,48 @@ it('sorts only the top level, and keeps object members last', () => {
     '"0" | "4" | { base?: MarginValue | undefined; sm?: MarginValue | undefined; }',
   );
 });
+
+// Every order of the same members gives one output.
+function permutations<T>(items: T[]): T[][] {
+  if (items.length <= 1) return [items];
+  return items.flatMap((item, index) =>
+    permutations([...items.slice(0, index), ...items.slice(index + 1)]).map(
+      (rest) => [item, ...rest],
+    ),
+  );
+}
+
+it.each([
+  [['((e: Event) => void)', '"b"', '"a"', 'undefined']],
+  [['"a|b"', '"a"', '"0"']],
+  [['"["', '"b"', '"a"']],
+  [['`x-${string}`', '"md"', '"sm"']],
+  [['"-1"', '"2"', '""', 'true', 'false']],
+])('gives one output for every order of %j', (items) => {
+  const outputs = new Set(
+    permutations(items).map((order) => collapseTypeSummary(order.join(' | '))),
+  );
+  expect(outputs.size).toBe(1);
+});
+
+it('keeps a quoted | inside its member', () => {
+  expect(collapseTypeSummary('"a|b" | "0"')).toBe('"0" | "a|b"');
+});
+
+it('collapses ElementType whatever order its members come in', () => {
+  expect(
+    collapseTypeSummary('"address" | "a" | "symbol" | "object" | "abbr"'),
+  ).toBe('ElementType');
+});
+
+it('ranks only plain decimals as numbers', () => {
+  expect(collapseTypeSummary('"1e3" | "2" | " " | "0x10"')).toBe(
+    '"2" | " " | "0x10" | "1e3"',
+  );
+});
+
+it('keeps an arrow type inside an object member whole', () => {
+  expect(
+    collapseTypeSummary('{ onChange: (e: Event) => void | null; } | "b" | "a"'),
+  ).toBe('"a" | "b" | { onChange: (e: Event) => void | null; }');
+});
