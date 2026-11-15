@@ -39,7 +39,8 @@ for (const docs of docsPages) {
     await page.evaluate(() =>
       Promise.all(
         Array.from(document.images)
-          .filter((img) => !img.complete)
+          // A lazy image offscreen never fires load, so it isn't waited on.
+          .filter((img) => !img.complete && img.loading !== 'lazy')
           .map(
             (img) =>
               new Promise((done) => {
