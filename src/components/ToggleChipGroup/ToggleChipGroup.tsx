@@ -26,6 +26,7 @@ interface ToggleChipGroupOwnProps {
   disabled?: boolean;
   /** The space between chips. @default '2' */
   gap?: Responsive<SpaceToken>;
+  /** The `ToggleChip`s. */
   children?: ReactNode;
 }
 

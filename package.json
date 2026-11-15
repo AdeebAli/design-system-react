@@ -58,6 +58,7 @@
     "@storybook/addon-a11y": "^10.6.6",
     "@storybook/addon-docs": "^10.6.6",
     "@storybook/addon-vitest": "^10.6.6",
+    "@storybook/react": "^10.6.6",
     "@storybook/react-vite": "^10.6.6",
     "@tanstack/react-table": "9.3.1",
     "@testing-library/jest-dom": "^7.0.1",

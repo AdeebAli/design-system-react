@@ -21,7 +21,7 @@ import { ToggleChip } from './ToggleChip';
 import { ToggleChipGroup } from './ToggleChipGroup';
 
 const meta: Meta = {
-  title: 'Overview/Forms',
+  title: 'Patterns/Forms',
   parameters: {
     layout: 'fullscreen',
     docs: {

@@ -50,6 +50,7 @@ interface RadioGroupOwnProps {
   required?: boolean;
   /** The space between radios. @default '2' */
   gap?: Responsive<SpaceToken>;
+  /** The `Radio`s. */
   children?: ReactNode;
 }
 

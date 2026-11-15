@@ -1,0 +1,57 @@
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as Stories_ from './ToggleChip.stories';
+import { ToggleChip } from '.';
+
+<Meta of={Stories_} />
+
+# ToggleChip
+
+A selectable pill, such as a filter.
+
+## Usage
+
+Use `ToggleChip` for a filter or tag that's on or off. Group chips with [`ToggleChipGroup`](?path=/docs/components-forms-and-actions-togglechipgroup--docs). For a status label that isn't clickable, use [`Badge`](?path=/docs/components-display-badge--docs).
+
+- It can be controlled (`pressed` and `onPressedChange`) or uncontrolled (`defaultPressed`).
+- A pressed chip shows a check, so its state isn't shown by color alone.
+- It's a client component.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Use short labels that name the filter.
+    <Canvas of={Stories_.States} />
+  </Do>
+  <Dont
+    code={`<ToggleChip>Show only items that are in stock right now</ToggleChip>`}
+  />
+</DoDont>
+
+<DoDont>
+  <Do>Group related chips in a `ToggleChipGroup` with a name.</Do>
+  <Dont
+    code={`<Inline>
+  <ToggleChip>Design</ToggleChip>
+  <ToggleChip>Code</ToggleChip>
+</Inline>
+// No group name for screen readers`}
+  />
+</DoDont>
+
+## Accessibility
+
+- It's a toggle button with `aria-pressed`, so screen readers say whether it's pressed.
+- An icon in `startIcon` is decorative.
+
+## API
+
+<ArgTypes of={ToggleChip} />
+
+<AlsoAccepts element="button" layout />
+
+## Examples
+
+<Stories title={<></>} />

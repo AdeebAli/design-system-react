@@ -7,16 +7,8 @@ import { Text } from '../Text';
 import { Spinner } from './Spinner';
 
 const meta: Meta<typeof Spinner> = {
-  title: 'Components/Spinner',
+  title: 'Components/Feedback and display/Spinner',
   component: Spinner,
-  parameters: {
-    docs: {
-      description: {
-        component:
-          "Shows that something is working, when its duration is unknown. Use `Skeleton` when the content's shape is known, and `Progress` when the amount done is known. It draws in `currentColor`. Without `label` it's hidden from screen readers, for when nearby text or `aria-busy` already says what's happening. With `label` it's a `role=\"status\"`, but a status that mounts with its text isn't always announced, so keep a status region mounted when the announcement matters. With reduced motion it stops turning and stays visible.",
-      },
-    },
-  },
 };
 
 export default meta;

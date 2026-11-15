@@ -10,7 +10,10 @@ import { useDrawerContext, useRegisterPart } from './DrawerContext';
 export type DrawerTitleProps = Omit<
   React.ComponentPropsWithRef<'h2'>,
   'children'
-> & { children?: React.ReactNode };
+> & {
+  /** The drawer's title, which also names it. */
+  children?: React.ReactNode;
+};
 
 /** The drawer's name. Always an `h2`, since a drawer starts its own heading structure. */
 export function DrawerTitle({ className, ...props }: DrawerTitleProps) {

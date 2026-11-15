@@ -8,6 +8,7 @@ import { TooltipDelayContext } from './TooltipContext';
 export interface TooltipProviderProps {
   /** The default `delay` for every tooltip inside, in ms. @default 600 */
   delay?: number;
+  /** The tooltips that share its delay. */
   children?: ReactNode;
 }
 

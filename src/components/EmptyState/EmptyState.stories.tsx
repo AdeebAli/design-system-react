@@ -29,21 +29,13 @@ const Search = (props: React.SVGProps<SVGSVGElement>) => (
 );
 
 const meta: Meta<typeof EmptyState> = {
-  title: 'Components/EmptyState',
+  title: 'Components/Data/EmptyState',
   component: EmptyState,
   args: {
     title: 'No results',
     description: 'Try a different search.',
     icon: <Icon icon={Search} size="lg" tone="muted" />,
     action: <Button variant="soft">Clear filters</Button>,
-  },
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'What to show when a list or table has nothing in it. It has no surface, so put it in a `Card` or anywhere else. `headingLevel` only changes the tag. It has no live region, so wrap it in one if it appears after a search.',
-      },
-    },
   },
 };
 

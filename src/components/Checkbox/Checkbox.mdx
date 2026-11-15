@@ -1,0 +1,57 @@
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as Stories_ from './Checkbox.stories';
+import { Checkbox } from '.';
+
+<Meta of={Stories_} />
+
+# Checkbox
+
+A checkbox, for choices submitted with a form.
+
+## Usage
+
+Use `Checkbox` for an on/off choice that's submitted with a form, such as accepting terms. For a setting that applies immediately, use [`Switch`](?path=/docs/components-forms-and-actions-switch--docs). For one choice from a few, use [`RadioGroup`](?path=/docs/components-forms-and-actions-radiogroup--docs).
+
+- Give it a `label`, which makes the whole label clickable. Without one, it needs an `aria-label` or a `Field` label.
+- It can be controlled (`checked` and `onCheckedChange`) or uncontrolled (`defaultChecked`). With React Hook Form, use `Controller` with `checked` and `onCheckedChange`.
+- `indeterminate` shows a dash, such as for a "select all" with some selected.
+- `name` and `value` submit it with a form.
+- It's a client component.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Use the `label` prop, so the text is clickable and names it.
+    <Canvas of={Stories_.States} />
+  </Do>
+  <Dont
+    code={`<Inline>
+  <Checkbox />
+  <Text>Email me updates</Text>
+</Inline>`}
+  />
+</DoDont>
+
+<DoDont>
+  <Do>Use a `Switch` for a setting that takes effect at once.</Do>
+  <Dont code={`<Checkbox label="Dark mode" onCheckedChange={setDarkMode} />`} />
+</DoDont>
+
+## Accessibility
+
+- It has the `checkbox` role, with checked, unchecked, and mixed states, and Space toggles it.
+- The check mark, not only the color, shows the state.
+- `hint` is linked to it as its description.
+
+## API
+
+<ArgTypes of={Checkbox} />
+
+<AlsoAccepts element="span" layout />
+
+## Examples
+
+<Stories title={<></>} />

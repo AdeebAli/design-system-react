@@ -11,6 +11,7 @@ type LinkItemProps<E extends ElementType> = PolymorphicProps<
     /** Where the link goes. */
     href: string;
     current?: never;
+    /** The link text. */
     children?: ReactNode;
   }
 >;
@@ -22,6 +23,7 @@ type CurrentItemProps = ComponentProps<
     current: true;
     href?: never;
     as?: never;
+    /** The current page's name. */
     children?: ReactNode;
   }
 >;

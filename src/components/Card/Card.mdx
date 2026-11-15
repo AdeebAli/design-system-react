@@ -1,0 +1,60 @@
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as Stories_ from './Card.stories';
+import { Card } from '.';
+
+<Meta of={Stories_} />
+
+# Card
+
+A surface for grouping content, sized for bento grids.
+
+## Usage
+
+Use `Card` to group related content on a page, such as a stat, a summary, or a settings section. For a status label, use [`Badge`](?path=/docs/components-display-badge--docs); for a message in the page, use [`Alert`](?path=/docs/components-feedback-and-display-alert--docs).
+
+- Children stack in a column, with a gap of `2`. `marginTop="auto"` on a child pushes it to the bottom.
+- Use `span` to size it in a [`Grid`](?path=/docs/components-layout-grid--docs): a card wider than one column fills the row below `md`.
+- `surface="sunken"` is for a secondary card, or a card inside a card.
+- `clip` clips content to the corners, such as a full-bleed image. It also clips children's focus rings.
+- For a whole-card link, use `as="a"` with `interactive`.
+- It works in server components.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Keep a whole-card link's text short, with no other links or buttons inside.
+    <Canvas of={Stories_.InteractiveLink} />
+  </Do>
+  <Dont
+    code={`<Card as="a" href="/report" interactive>
+  <Heading level={3}>Report</Heading>
+  <Button>Download</Button>
+</Card>`}
+  />
+</DoDont>
+
+<DoDont>
+  <Do>Size cards in a grid with `span`.</Do>
+  <Dont
+    code={`<Card style={{ width: 412, boxShadow: '0 2px 8px #0002' }}>…</Card>`}
+  />
+</DoDont>
+
+## Accessibility
+
+- `Card` is a `div` with no role. Use `as="section"` or `as="article"` with a heading when the card is a region of its own.
+- In a whole-card link, screen readers read all the card's text as the link's name, so keep it short.
+- Its 1px border is drawn even when the theme makes it transparent, so each card keeps a visible edge in forced-colors mode.
+
+## API
+
+<ArgTypes of={Card} />
+
+<AlsoAccepts element="div" layout />
+
+## Examples
+
+<Stories title={<></>} />

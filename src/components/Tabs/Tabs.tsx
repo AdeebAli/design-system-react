@@ -16,6 +16,7 @@ interface TabsSharedProps {
   variant?: TabsVariant;
   /** The size. @default 'md' */
   size?: TabsSize;
+  /** A `TabsList` of `Tab`s, and a `TabsPanel` for each. */
   children?: ReactNode;
 }
 

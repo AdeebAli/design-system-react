@@ -6,15 +6,21 @@ import * as styles from './Divider.css';
 
 type DividerVariant =
   | {
-      /** @default 'horizontal' */
+      /** The direction of the line. @default 'horizontal' */
       orientation?: 'horizontal';
       /** Centered text in the line. Horizontal only. */
       label?: ReactNode;
-      /** Removes it from the accessibility tree. Not with `label`. */
+      /** Removes it from the accessibility tree. Not with `label`. @default false */
       decorative?: false;
     }
   | { orientation?: 'horizontal'; decorative: true; label?: never }
-  | { orientation: 'vertical'; label?: never; decorative?: boolean };
+  | {
+      /** The direction of the line. @default 'horizontal' */
+      orientation: 'vertical';
+      label?: never;
+      /** Removes it from the accessibility tree. @default false */
+      decorative?: boolean;
+    };
 
 /** `Divider`'s props. */
 export type DividerProps = Omit<

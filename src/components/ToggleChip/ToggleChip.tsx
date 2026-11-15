@@ -27,6 +27,7 @@ interface ToggleChipOwnProps {
   disabled?: boolean;
   /** An `Icon` element before the text. A check replaces it while pressed. */
   startIcon?: ReactElement;
+  /** The chip's label. */
   children?: ReactNode;
 }
 

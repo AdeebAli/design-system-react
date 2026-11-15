@@ -1,0 +1,55 @@
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as Stories_ from './Pagination.stories';
+import { Pagination } from '.';
+
+<Meta of={Stories_} />
+
+# Pagination
+
+Page links, or buttons, for a long list split into pages.
+
+## Usage
+
+Use `Pagination` under a list or table split into pages. [`DataTable`](?path=/docs/components-data-datatable--docs) has its own.
+
+- With `getHref` it renders links, which work without JavaScript, open in a new tab, and keep the page in the URL; this works from a server component. Pass a router link through `as`.
+- With `onPageChange` it renders buttons and needs a client parent.
+- Long ranges keep the same number of items while paging, so buttons don't shift.
+- Below `sm` it shows previous, "Page 3 of 10", and next.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Prefer links with `getHref`, so the page is in the URL.
+    <Canvas of={Stories_.Links} />
+  </Do>
+  <Dont
+    code={`<Pagination page={page} pageCount={10} onPageChange={(p) => { setPage(p); history.pushState(null, "", \`?page=\${p}\`) }} />`}
+  />
+</DoDont>
+
+<DoDont>
+  <Do>Translate its labels with `labels`.</Do>
+  <Dont
+    code={`<Pagination page={3} pageCount={10} aria-label="Seiten" />
+// The rest of its names stay in English`}
+  />
+</DoDont>
+
+## Accessibility
+
+- It renders a `nav` landmark with a list. The current page gets `aria-current="page"`.
+- Previous and next have names, which `labels` can translate.
+
+## API
+
+<ArgTypes of={Pagination} />
+
+<AlsoAccepts element="nav" layout />
+
+## Examples
+
+<Stories title={<></>} />

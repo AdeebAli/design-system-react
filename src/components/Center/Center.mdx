@@ -1,0 +1,53 @@
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as CenterStories from './Center.stories';
+import { Center } from '.';
+
+<Meta of={CenterStories} />
+
+# Center
+
+Centers its children, on one axis or both.
+
+## Usage
+
+Use `Center` for an icon in a square, an empty state in a panel, or a loading spinner in an area.
+
+- Vertical centering needs a height, which is up to you: `<Center height="full">`. Without one, it has no visible effect.
+- `axis` centers on one direction only.
+- `inline` shrinks it to its content, so it sits in a line of text.
+- It works in server components.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Give `Center` a height when centering vertically.
+    <Canvas of={CenterStories.Vertical} />
+  </Do>
+  <Dont
+    code={`<Center axis="vertical">\n  <Spinner />\n</Center>\n// No height, so nothing moves`}
+  />
+</DoDont>
+
+<DoDont>
+  <Do>Use `Container` to center a page's content with a maximum width.</Do>
+  <Dont
+    code={`<Center>\n  <Box maxWidth="container.lg">{page}</Box>\n</Center>`}
+  />
+</DoDont>
+
+## Accessibility
+
+- `Center` renders a `div` with no semantics, and doesn't change the reading order.
+
+## API
+
+<ArgTypes of={Center} />
+
+<AlsoAccepts element="div" />
+
+## Examples
+
+<Stories title={<></>} />

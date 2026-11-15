@@ -20,6 +20,7 @@ interface MenuLinkItemOwnProps {
   closeOnClick?: boolean;
   /** Ignores interaction. @default false */
   disabled?: boolean;
+  /** The item's label. */
   children?: ReactNode;
 }
 

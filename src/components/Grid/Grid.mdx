@@ -1,0 +1,53 @@
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as GridStories from './Grid.stories';
+import { Grid } from '.';
+
+<Meta of={GridStories} />
+
+# Grid
+
+A CSS grid with equal columns, and the base for bento layouts.
+
+## Usage
+
+Use `Grid` for cards, tiles, and bento layouts: content in equal columns that collapse on small screens. For a single row or column, use [`Inline`](?path=/docs/components-layout-inline--docs) or [`Stack`](?path=/docs/components-layout-stack--docs).
+
+- `columns` sets the number of equal columns, and is responsive: `columns={{ base: '1', md: '3' }}`.
+- Place children with the `gridColumn` and `gridRow` layout props, such as `gridColumn="span-2"`.
+- `autoRows="equal"` makes every row as tall as the tallest.
+- See [Patterns/Bento](?path=/story/patterns-bento--dashboard) for whole layouts.
+- It works in server components.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Collapse columns on small screens with a responsive value.
+    <Canvas of={GridStories.Responsive} />
+  </Do>
+  <Dont code={`<Grid columns="4">{cards}</Grid>\n// Four columns on a phone`} />
+</DoDont>
+
+<DoDont>
+  <Do>Use `gridColumn` on a child to make it wider.</Do>
+  <Dont
+    code={`<Grid style={{ gridTemplateColumns: '2fr 1fr 1fr' }}>…</Grid>`}
+  />
+</DoDont>
+
+## Accessibility
+
+- `Grid` renders a `div` with no semantics. A grid of cards is often a list: use `as="ul"` with `li` children.
+- Placement doesn't change the reading order. Keep the source order the order a person should read in.
+
+## API
+
+<ArgTypes of={Grid} />
+
+<AlsoAccepts element="div" />
+
+## Examples
+
+<Stories title={<></>} />

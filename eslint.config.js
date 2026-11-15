@@ -74,6 +74,8 @@ export default tseslint.config(
             'tests/**',
             'scripts/**',
             '.storybook/**',
+            // Docs-only blocks and guides, excluded from the library build (Spec 18).
+            'src/docs/**',
             '*.config.*',
             'vitest.setup.ts',
             'vitest.browser.setup.ts',

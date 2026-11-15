@@ -4,16 +4,8 @@ import { Tile } from '../../utils/Tile';
 import { Container } from './Container';
 
 const meta: Meta<typeof Container> = {
-  title: 'Components/Container',
+  title: 'Components/Layout/Container',
   component: Container,
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'Centers the content of a page, with a maximum width and side padding. `paddingX="0"` removes the padding.',
-      },
-    },
-  },
 };
 
 export default meta;

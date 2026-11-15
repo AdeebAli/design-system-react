@@ -27,11 +27,11 @@ interface AvatarOwnProps {
   src?: string;
   /** `size.avatar.*`. @default 'md' */
   size?: 'sm' | 'md' | 'lg' | 'xl';
-  /** @default 'circle' */
+  /** The shape. Use `square` for an organization. @default 'circle' */
   shape?: 'circle' | 'square';
   /** Replaces the initials, such as an `Icon`. It's hidden from screen readers. */
   fallback?: ReactNode;
-  /** Hides it from screen readers, for when the name is already beside it. */
+  /** Hides it from screen readers, for when the name is already beside it. @default false */
   decorative?: boolean;
   /**
    * Adds a status dot, and the status to the name. It's displayed, not
@@ -40,7 +40,7 @@ interface AvatarOwnProps {
   status?: AvatarStatus;
   /** Each status's words in the name, for translation. @default English */
   statusLabels?: Partial<Record<AvatarStatus, string>>;
-  /** Colors the fallback with one of six pairs, picked from `name`. */
+  /** Colors the fallback with one of six pairs, picked from `name`. @default false */
   colorFromName?: boolean;
 }
 

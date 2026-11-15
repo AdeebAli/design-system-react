@@ -1,0 +1,97 @@
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts, NoOwnProps } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as Stories_ from './Dialog.stories';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from '.';
+
+<Meta of={Stories_} />
+
+# Dialog
+
+A modal task that needs full attention, including a confirmation.
+
+## Usage
+
+Choose by what the user must do next: `Dialog` (this page) for a short, focused task or decision; [`Drawer`](?path=/docs/components-overlays-drawer--docs) for a longer task beside the page; [`Popover`](?path=/docs/components-overlays-popover--docs) for a small panel beside its trigger while the page stays usable; [`Menu`](?path=/docs/components-overlays-menu--docs) for a list of actions; [`Tooltip`](?path=/docs/components-overlays-tooltip--docs) for a short, visual-only hint. See [Patterns/Overlays](?path=/story/patterns-overlays--choosing-an-overlay).
+
+- `DialogTrigger` takes one element that renders a `button`, such as `Button`.
+- Name it with `DialogTitle` (or `aria-label` on `DialogContent`).
+- `Escape` closes it, and so does clicking outside unless `closeOnOutsideClick` is `false`.
+- Without a close button (`alert`, or `showClose={false}`), add a `DialogClose`.
+- `alert` confirms something destructive and is static: changing it remounts the dialog.
+- A `Dialog` opened from an open `Popover` sits underneath it, so close the popover first.
+- It's a client component.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Use `alert` to confirm a destructive action, with a clear verb.
+    <Canvas of={Stories_.ConfirmDelete} />
+  </Do>
+  <Dont
+    code={`<DialogContent>
+  <DialogTitle>Are you sure?</DialogTitle>
+  <Button>OK</Button>
+</DialogContent>`}
+  />
+</DoDont>
+
+<DoDont>
+  <Do>
+    Use a `Drawer` for a long form the user may want to see the page beside.
+  </Do>
+  <Dont
+    code={`<Dialog>
+  <DialogContent size="lg">{fortyFieldForm}</DialogContent>
+</Dialog>`}
+  />
+</DoDont>
+
+## Accessibility
+
+- It's modal: focus is trapped, the page behind is inert, and scrolling is locked. Focus returns to the trigger on close.
+- `DialogTitle` names it and `DialogDescription` describes it.
+- `alert` gives it the `alertdialog` role.
+
+## API
+
+<ArgTypes of={Dialog} />
+
+### DialogTrigger
+
+<ArgTypes of={DialogTrigger} />
+
+<AlsoAccepts element="button" />
+
+### DialogContent
+
+<ArgTypes of={DialogContent} />
+
+<AlsoAccepts element="div" />
+
+### DialogTitle
+
+<ArgTypes of={DialogTitle} />
+
+<AlsoAccepts element="h2" />
+
+### DialogDescription
+
+<NoOwnProps name="DialogDescription" element="p" />
+
+### DialogClose
+
+<ArgTypes of={DialogClose} />
+
+<AlsoAccepts element="button" />
+
+## Examples
+
+<Stories title={<></>} />

@@ -26,9 +26,9 @@ type ProgressName =
 interface ProgressOwnProps {
   /** How far along, or `null` when that's unknown. */
   value: number | null;
-  /** @default 100 */
+  /** The value that means done. @default 100 */
   max?: number;
-  /** Shows the percentage beside the label. */
+  /** Shows the percentage beside the label. @default false */
   showValue?: boolean;
   /** `sm` is 4px tall, `md` 8px. @default 'md' */
   size?: 'sm' | 'md';

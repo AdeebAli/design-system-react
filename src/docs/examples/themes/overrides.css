@@ -1,0 +1,14 @@
+/* Both modes */
+:root {
+  --ds-radius-control: 8px;
+}
+
+/* Per mode: a plain :root rule would apply to both modes */
+:root[data-ds-mode='light'] {
+  --ds-color-bg-accent: #0f766e;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-ds-mode]) {
+    --ds-color-bg-accent: #0f766e;
+  }
+}

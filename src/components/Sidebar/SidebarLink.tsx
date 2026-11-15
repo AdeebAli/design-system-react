@@ -19,6 +19,7 @@ interface SidebarLinkOwnProps {
   startIcon?: ReactElement;
   /** An element at the end, such as a `Badge`. A dot on the rail. */
   badge?: ReactElement;
+  /** The link text. */
   children?: ReactNode;
 }
 

@@ -1,0 +1,57 @@
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as Stories_ from './DataTable.stories';
+import { DataTable } from '.';
+
+<Meta of={Stories_} />
+
+# DataTable
+
+A table that manages sorting, pagination, selection, and loading and empty states.
+
+## Usage
+
+Use `DataTable` for client-side data that people sort, page through, and select. Use [`Table`](?path=/docs/components-data-table--docs) for display and server rendering, and see [Patterns/Data](?path=/story/patterns-data--customers-table) for a full page.
+
+- A sortable header cycles ascending, descending, unsorted; `null` sorts last.
+- With `selectionMode`, the row header becomes a toggle button and a click anywhere on a row toggles it.
+- Name it with `aria-label` or `aria-labelledby`; its types require one.
+- It's a client component.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Show an `EmptyState` with a next step when there are no rows.
+    <Canvas of={Stories_.Empty} />
+  </Do>
+  <Dont
+    code={`<DataTable rows={[]} columns={columns} aria-label="Customers" />
+// An empty table with only headers`}
+  />
+</DoDont>
+
+<DoDont>
+  <Do>Use `Table` when the server sorts and pages.</Do>
+  <Dont
+    code={`<DataTable rows={pageFromServer} …/>
+// Sorts only the 25 rows it was given`}
+  />
+</DoDont>
+
+## Accessibility
+
+- It renders a native table, named by `aria-label` or `aria-labelledby`.
+- Sortable headers are buttons, with `aria-sort` on the header cell.
+- While loading, it's marked busy, and skeleton rows hold the place.
+
+## API
+
+<ArgTypes of={DataTable} />
+
+<AlsoAccepts element="table" layout />
+
+## Examples
+
+<Stories title={<></>} />

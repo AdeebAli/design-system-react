@@ -10,7 +10,7 @@ import { Tab, Tabs, TabsList, TabsPanel } from './Tabs';
 import { Text } from './Text';
 
 const meta: Meta = {
-  title: 'Overview/Navigation and prose',
+  title: 'Patterns/Navigation and prose',
   parameters: {
     layout: 'fullscreen',
     docs: {

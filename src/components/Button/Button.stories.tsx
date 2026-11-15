@@ -6,17 +6,9 @@ import { Stack } from '../Stack';
 import { Button } from './Button';
 
 const meta: Meta<typeof Button> = {
-  title: 'Components/Button',
+  title: 'Components/Forms and actions/Button',
   component: Button,
   args: { children: 'Save changes' },
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'Defaults to `type="button"`, so set `type="submit"` explicitly. Six variant and tone pairs exist: solid accent, solid danger, soft, outline, ghost, and ghost danger. `loading` keeps the button focusable and its colors, ignores clicks and form submission, and announces "Loading". `as="a"` renders a real link; `disabled` and `loading` don’t work there.',
-      },
-    },
-  },
 };
 
 export default meta;

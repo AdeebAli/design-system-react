@@ -4,16 +4,8 @@ import { ToggleChip } from '../ToggleChip';
 import { ToggleChipGroup } from './ToggleChipGroup';
 
 const meta: Meta<typeof ToggleChipGroup> = {
-  title: 'Components/ToggleChipGroup',
+  title: 'Components/Forms and actions/ToggleChipGroup',
   component: ToggleChipGroup,
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'A wrapping row of `ToggleChip`s, named with `aria-label` or `aria-labelledby`. One is pressed at a time unless `multiple` is set. Pressing the selected chip clears it; to keep one always selected, as with an "All" filter, control `value` and ignore empty changes.',
-      },
-    },
-  },
 };
 
 export default meta;

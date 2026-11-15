@@ -1,0 +1,57 @@
+import { ArgTypes, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as ProseStories from './Prose.stories';
+import { NotProse, Prose } from '.';
+
+<Meta of={ProseStories} />
+
+# Prose
+
+Styles long-form content, including plain HTML from Markdown or a CMS. `NotProse` opts a part out.
+
+## Usage
+
+Use `Prose` for articles, docs, and help pages: content written as plain elements (`h2`, `p`, `ul`, `pre`, `img`, `table`). For interface text, use [`Text`](?path=/docs/components-typography-text--docs) and [`Heading`](?path=/docs/components-typography-heading--docs).
+
+- Set the width on `Prose` itself, not on a wrapper, since `ch` depends on its own font. Add `marginX="auto"` to center it.
+- Keep a post's date and byline outside, in `Text`.
+- Wrap library components that should keep the interface font, such as a `Card`, in `NotProse`. A `Prose` nested inside `NotProse` is unstyled; close the `NotProse` instead.
+- `Prose` doesn't sanitize HTML from `dangerouslySetInnerHTML`. Sanitize it first.
+- See [Markdown and MDX](?path=/docs/guides-markdown-and-mdx--docs) for setup.
+- It works in server components.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Let `Prose` style plain elements, and set its width on `Prose` itself.
+  </Do>
+  <Dont code={`<Box maxWidth="prose">\n  <Prose>{content}</Prose>\n</Box>`} />
+</DoDont>
+
+<DoDont>
+  <Do>Wrap a component inside an article in `NotProse`.</Do>
+  <Dont code={`<Prose>\n  <h2>Plans</h2>\n  <Card>…</Card>\n</Prose>`} />
+</DoDont>
+
+## Accessibility
+
+- Headings inside it keep their own levels, so the content's outline must follow the page's: start at `h2` under the page's `h1`.
+- Images need `alt` text, and tables need header cells. `Prose` styles them but can't add them.
+
+## API
+
+<ArgTypes of={Prose} />
+
+<AlsoAccepts element="div" layout />
+
+### NotProse
+
+<ArgTypes of={NotProse} />
+
+<AlsoAccepts element="div" layout />
+
+## Examples
+
+<Stories title={<></>} />

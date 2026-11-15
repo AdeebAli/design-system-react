@@ -7,17 +7,9 @@ import { Text } from '../Text';
 import { Card } from './Card';
 
 const meta: Meta<typeof Card> = {
-  title: 'Components/Card',
+  title: 'Components/Display/Card',
   component: Card,
   args: { children: <Text>Card content</Text> },
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'A surface for grouping content. Use `span` to size it in a `Grid`: a card wider than one column fills the row below `md`. Children stack in a column, and `marginTop="auto"` on a child pushes it to the bottom. For a whole-card link, use `as="a"` with `interactive`, keep its text short, since screen readers read all of it as the link name, and don\'t put other links or buttons inside.',
-      },
-    },
-  },
 };
 
 export default meta;

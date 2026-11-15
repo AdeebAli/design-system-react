@@ -11,7 +11,7 @@ import { Inline } from './Inline';
 import { Stack } from './Stack';
 
 const meta: Meta = {
-  title: 'Overview/Data',
+  title: 'Patterns/Data',
   parameters: {
     layout: 'fullscreen',
     docs: {

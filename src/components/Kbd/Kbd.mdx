@@ -1,0 +1,46 @@
+import { Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { NoOwnProps } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as KbdStories from './Kbd.stories';
+
+<Meta of={KbdStories} />
+
+# Kbd
+
+A keyboard key.
+
+## Usage
+
+Use `Kbd` for keys to press. For a shortcut, use one per key: `<Kbd>⌘</Kbd> <Kbd>K</Kbd>`. For code, use [`Code`](?path=/docs/components-typography-code--docs).
+
+- It works in server components.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Wrap each key on its own.
+    <Canvas of={KbdStories.Shortcut} />
+  </Do>
+  <Dont code={`<Kbd>⌘ + Shift + K</Kbd>`} />
+</DoDont>
+
+<DoDont>
+  <Do>
+    Write a symbol's name next to it when it may be unfamiliar, such as "⌘
+    Command".
+  </Do>
+  <Dont code={`<Text>Press <Kbd>⌥</Kbd><Kbd>⇧</Kbd><Kbd>⌫</Kbd>.</Text>`} />
+</DoDont>
+
+## Accessibility
+
+- It renders a `kbd` element. Screen readers may read a symbol such as ⌘ by its name or skip it, so spell out uncommon keys in the text.
+
+## API
+
+<NoOwnProps name="Kbd" element="kbd" layout />
+
+## Examples
+
+<Stories title={<></>} />

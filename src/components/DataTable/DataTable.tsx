@@ -91,8 +91,16 @@ export type DataTableColumn<Row> = ColumnBase<Row> &
   );
 
 type AccessibleName =
-  | { 'aria-label': string; 'aria-labelledby'?: never }
-  | { 'aria-labelledby': string; 'aria-label'?: never };
+  | {
+      /** Names the table. It needs this or `aria-labelledby`. */
+      'aria-label': string;
+      'aria-labelledby'?: never;
+    }
+  | {
+      /** The id of an element that names the table, such as a heading. */
+      'aria-labelledby': string;
+      'aria-label'?: never;
+    };
 
 type Paging =
   | { pageSize?: undefined; totalRows?: never }

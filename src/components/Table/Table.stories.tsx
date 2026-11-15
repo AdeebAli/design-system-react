@@ -16,17 +16,9 @@ import {
 } from './index';
 
 const meta: Meta<typeof Table> = {
-  title: 'Components/Table',
+  title: 'Components/Data/Table',
   component: Table,
   args: { 'aria-label': 'Customers' },
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'Styled, semantic table parts. They hold no state, so sorting, paging, and selection stay in your own state. Pass header text in normal case, since CSS does the uppercase. `stickyHeader` sticks to the wrapper, so give the table a height limit such as `maxHeight="screen"`. A sticky first column has a fixed width (half of `size.dialog.sm`, 12rem in Soft), and its text wraps inside it, so a focused cell is never hidden under it. Do not set a width on its cells, since the scroll reserve assumes the fixed width. When a first-column cell spans rows (`rowSpan`), mark the rows it covers with `spanned` on `TableRow`. The selected bar of a covered row then scrolls under the sticky spanning cell when the table is scrolled sideways, and the spanning cell takes only the hover and selected color of its own row. Only a one-row header sticks; a header with two or more rows scrolls with the table. Only one `TableSortHeader` should be sorted at a time. `onSort` needs a client component, and `href` works from a server one.',
-      },
-    },
-  },
 };
 
 export default meta;

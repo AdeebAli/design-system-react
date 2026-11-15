@@ -26,6 +26,7 @@ export interface DialogProps {
   alert?: boolean;
   /** Whether clicking outside closes it. Ignored with `alert`. @default true */
   closeOnOutsideClick?: boolean;
+  /** A `DialogTrigger` and a `DialogContent`. */
   children?: ReactNode;
 }
 

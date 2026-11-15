@@ -14,7 +14,7 @@ import type { Option } from './Select';
 import { Text } from './Text';
 
 const meta: Meta = {
-  title: 'Overview/Advanced inputs',
+  title: 'Patterns/Advanced inputs',
   parameters: {
     layout: 'fullscreen',
     docs: {

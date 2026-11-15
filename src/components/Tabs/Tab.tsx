@@ -17,6 +17,7 @@ interface TabOwnProps {
   disabled?: boolean;
   /** An `Icon` element before the text. */
   startIcon?: ReactElement;
+  /** The tab's label. */
   children?: ReactNode;
 }
 

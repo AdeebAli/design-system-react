@@ -15,20 +15,12 @@ const topics: Option[] = [
 ];
 
 const meta: Meta<typeof MultiSelect> = {
-  title: 'Components/MultiSelect',
+  title: 'Components/Advanced inputs/MultiSelect',
   component: MultiSelect,
   args: {
     options: topics,
     placeholder: 'Choose topics',
     'aria-label': 'Topics',
-  },
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'Several choices, with `string[]` values and `[]` as the empty value. By default it’s a button like `Select`’s, showing the first label and a count, such as “Design +2”; every selected label is also in its description, so truncation hides nothing from screen readers. The popup stays open while choosing. With `searchable`, it’s chips and a search input instead. `ref`, `className`, and layout props go to the trigger by default, and to the input and chip wrapper with `searchable`.',
-      },
-    },
   },
 };
 

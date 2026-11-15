@@ -8,4 +8,7 @@ import type { ComponentPropsWithRef, ReactElement } from 'react';
 export type OverlayTriggerProps = Omit<
   ComponentPropsWithRef<'button'>,
   'children'
-> & { children: ReactElement };
+> & {
+  /** One element that renders a `button`, such as `Button`. It gets the behavior and keeps its own `onClick`. */
+  children: ReactElement;
+};

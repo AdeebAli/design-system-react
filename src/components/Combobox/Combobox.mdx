@@ -1,0 +1,57 @@
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as Stories_ from './Combobox.stories';
+import { Combobox } from '.';
+
+<Meta of={Stories_} />
+
+# Combobox
+
+A single choice from a long list, found by typing.
+
+## Usage
+
+Use `Combobox` when the list is long enough that people would rather type, such as countries or people. For a short list, use [`Select`](?path=/docs/components-forms-and-actions-select--docs); for several choices, [`MultiSelect`](?path=/docs/components-advanced-inputs-multiselect--docs). Label it with a [`Field`](?path=/docs/components-forms-and-actions-field--docs).
+
+- Only listed options can be chosen. Leaving the input with unmatched text restores the selected label.
+- It takes the same `options` as `Select`, and `null` means nothing is selected. With React Hook Form, use `Controller` and a default of `null`.
+- Results are filtered locally unless `onSearch` is set; then `loading` shows while the project fetches.
+- `ref` and native attributes go to the `input`; `className`, `style`, and layout props go to its wrapper.
+- It's a client component.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Label it, and let typing filter the list.
+    <Canvas of={Stories_.InAField} />
+  </Do>
+  <Dont
+    code={`<Combobox options={countries} placeholder="Search" />
+// No label: the placeholder disappears on typing`}
+  />
+</DoDont>
+
+<DoDont>
+  <Do>Debounce `onSearch` when results come from a server.</Do>
+  <Dont
+    code={`<Combobox options={results} onSearch={(q) => fetch(\`/api?q=\${q}\`)} />
+// A request on every keystroke`}
+  />
+</DoDont>
+
+## Accessibility
+
+- The input has the `combobox` role and controls a listbox. Arrow keys move through results, Enter selects, and Escape closes the list.
+- The number of matches is announced as people type.
+
+## API
+
+<ArgTypes of={Combobox} />
+
+<AlsoAccepts element="input" layout />
+
+## Examples
+
+<Stories title={<></>} />

@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Box } from './Box';
 
 const meta: Meta<typeof Box> = {
-  title: 'Components/Box',
+  title: 'Components/Layout/Box',
   component: Box,
   args: { children: 'Box' },
   argTypes: {

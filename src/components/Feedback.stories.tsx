@@ -11,7 +11,7 @@ import { Text } from './Text';
 import { ToastProvider, useToast } from './Toast';
 
 const meta: Meta = {
-  title: 'Overview/Feedback',
+  title: 'Patterns/Feedback',
   parameters: {
     docs: {
       description: {

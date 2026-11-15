@@ -1,0 +1,53 @@
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as InlineStories from './Inline.stories';
+import { Inline } from '.';
+
+<Meta of={InlineStories} />
+
+# Inline
+
+Children in a row that wraps, such as tags or buttons.
+
+## Usage
+
+Use `Inline` for a row of small things that may wrap onto more lines: badges, chips, a button group. For a row that never wraps and needs full control, use [`Flex`](?path=/docs/components-layout-flex--docs).
+
+- It wraps by default, centers children on the cross axis, and the gap defaults to `2`.
+- `wrap="nowrap"` keeps one line; the content can then overflow.
+- It works in server components.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Let a row of tags wrap on a small screen.
+    <Canvas of={InlineStories.Wrapping} />
+  </Do>
+  <Dont
+    code={`<Inline wrap="nowrap">\n  {tags.map((tag) => <Badge key={tag}>{tag}</Badge>)}\n</Inline>`}
+  />
+</DoDont>
+
+<DoDont>
+  <Do>Use `justify="end"` to push buttons to the end of a row.</Do>
+  <Dont
+    code={`<Inline>\n  <Box flexGrow="1" />\n  <Button>Save</Button>\n</Inline>`}
+  />
+</DoDont>
+
+## Accessibility
+
+- `Inline` renders a `div` with no semantics. For a list of tags, use `as="ul"` with `li` children.
+- Wrapping keeps the source order, so keyboard order matches what's seen.
+
+## API
+
+<ArgTypes of={Inline} />
+
+<AlsoAccepts element="div" />
+
+## Examples
+
+<Stories title={<></>} />

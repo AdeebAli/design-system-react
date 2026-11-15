@@ -1,0 +1,54 @@
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as TextStories from './Text.stories';
+import { Text } from '.';
+
+<Meta of={TextStories} />
+
+# Text
+
+Body text, with sizes, weights, and colors from the type tokens.
+
+## Usage
+
+Use `Text` for any text that isn't a heading. For headings, use [`Heading`](?path=/docs/components-typography-heading--docs), and for long-form content, [`Prose`](?path=/docs/components-typography-prose--docs).
+
+- It renders a `p`. Use `as="span"` inside a sentence, and `as="label"` for a label.
+- Unset props inherit, so `<Text as="span">` keeps the surrounding style.
+- `truncate` keeps one line with an ellipsis, and `lineClamp` keeps several.
+- `numeric` uses tabular numerals, so digits line up in columns.
+- It works in server components.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Use `tone` for meaning, with words that carry the same meaning.
+    <Canvas of={TextStories.Tones} />
+  </Do>
+  <Dont
+    code={`<Text tone="danger">Payment</Text>\n// Red is the only sign something is wrong`}
+  />
+</DoDont>
+
+<DoDont>
+  <Do>Use `size` from the type scale, and `Heading` for a heading.</Do>
+  <Dont code={`<Text size="2xl" weight="bold">Account settings</Text>`} />
+</DoDont>
+
+## Accessibility
+
+- [Colors](?path=/docs/foundations-colors--docs) lists each tone's contrast in both modes. Never use color as the only signal.
+- Truncated text is cut off for everyone. Keep the full text available, such as on the page it links to, or don't truncate.
+- Sizes are in `rem`, so text follows the browser's font size setting.
+
+## API
+
+<ArgTypes of={Text} />
+
+<AlsoAccepts element="p" layout />
+
+## Examples
+
+<Stories title={<></>} />

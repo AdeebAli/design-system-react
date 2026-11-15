@@ -1,0 +1,90 @@
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts, NoOwnProps } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as Stories_ from './Drawer.stories';
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerTitle,
+  DrawerTrigger,
+} from '.';
+
+<Meta of={Stories_} />
+
+# Drawer
+
+A modal panel from a side, or a bottom sheet, for a longer task.
+
+## Usage
+
+Use `Drawer` for a longer task the user may want to see the page beside, such as a filters form or an edit panel. Choose [`Dialog`](?path=/docs/components-overlays-dialog--docs) for a short, focused decision, such as a confirmation or a rename. On a phone, a `Drawer` with `side="bottom"` is a sheet.
+
+- `DrawerTrigger` takes one element that renders a `button`, such as `Button`.
+- `side` is `start` or `end`, which follow text direction and flip in right-to-left languages, or `bottom` for a bottom sheet.
+- A bottom sheet is as tall as its content up to 85% of the screen height and then scrolls inside, fills the width on small screens and is centered from `md` up, and swipes down to close. It keeps a focused input above the on-screen keyboard.
+- Name it with `DrawerTitle` (or `aria-label` on `DrawerContent`).
+- `Escape` and the close button close it, and so does clicking outside unless `closeOnOutsideClick` is `false`.
+- A controlled `Drawer` with no `DrawerTrigger` needs `finalFocus`, so focus has somewhere to return.
+- It's a client component.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Use `start` and `end`, so the drawer follows the text direction.
+    <Canvas of={Stories_.Sides} />
+  </Do>
+  <Dont code={`<DrawerContent style={{ left: 0 }}>…</DrawerContent>`} />
+</DoDont>
+
+<DoDont>
+  <Do>Give a controlled drawer without a trigger a `finalFocus`.</Do>
+  <Dont
+    code={`<Drawer open={open} onOpenChange={setOpen}>
+  <DrawerContent>…</DrawerContent>
+</Drawer>
+// Focus is lost on close`}
+  />
+</DoDont>
+
+## Accessibility
+
+- It's modal: focus is trapped, the page behind is inert, and scrolling is locked.
+- `DrawerTitle` names it and `DrawerDescription` describes it.
+
+## API
+
+<ArgTypes of={Drawer} />
+
+### DrawerTrigger
+
+<ArgTypes of={DrawerTrigger} />
+
+<AlsoAccepts element="button" />
+
+### DrawerContent
+
+<ArgTypes of={DrawerContent} />
+
+<AlsoAccepts element="div" />
+
+### DrawerTitle
+
+<ArgTypes of={DrawerTitle} />
+
+<AlsoAccepts element="h2" />
+
+### DrawerDescription
+
+<NoOwnProps name="DrawerDescription" element="p" />
+
+### DrawerClose
+
+<ArgTypes of={DrawerClose} />
+
+<AlsoAccepts element="button" />
+
+## Examples
+
+<Stories title={<></>} />

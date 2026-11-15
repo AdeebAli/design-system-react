@@ -14,6 +14,7 @@ interface NavBarLinkOwnProps {
   active?: boolean;
   /** An `Icon` element before the text. */
   startIcon?: ReactElement;
+  /** The link text. */
   children?: ReactNode;
 }
 

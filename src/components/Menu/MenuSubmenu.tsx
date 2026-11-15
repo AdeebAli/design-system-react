@@ -13,6 +13,7 @@ export interface MenuSubmenuProps {
   onOpenChange?: (open: boolean) => void;
   /** Ignores interaction and can't be opened. @default false */
   disabled?: boolean;
+  /** A `MenuSubmenuTrigger` and a `MenuSubmenuContent`. */
   children?: ReactNode;
 }
 

@@ -16,6 +16,7 @@ interface TabsPanelOwnProps {
    * preserve form state or scroll position. @default false
    */
   keepMounted?: boolean;
+  /** The panel's content. */
   children?: ReactNode;
 }
 

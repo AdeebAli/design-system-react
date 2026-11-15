@@ -1,0 +1,67 @@
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as Stories_ from './RadioGroup.stories';
+import { Radio } from '../Radio';
+import { RadioGroup } from '.';
+
+<Meta of={Stories_} />
+
+# RadioGroup
+
+One choice from a short, visible list.
+
+## Usage
+
+Use `RadioGroup` with `Radio` children when people should see every option before choosing, roughly up to six. For more, use [`Select`](?path=/docs/components-forms-and-actions-select--docs). Label the group with a [`Field`](?path=/docs/components-forms-and-actions-field--docs); each `Radio` is named by its own `label`.
+
+- It can be controlled (`value` and `onValueChange`) or uncontrolled (`defaultValue`). With React Hook Form, use `Controller` with `value` and `onValueChange`.
+- `invalid`, `disabled`, and `required` come from the `Field` when it has them.
+- It's a client component.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Label the group, and each option.
+    <Canvas of={Stories_.Playground} />
+  </Do>
+  <Dont
+    code={`<RadioGroup>
+  <Radio value="monthly" />
+  <Radio value="yearly" />
+</RadioGroup>`}
+  />
+</DoDont>
+
+<DoDont>
+  <Do>Use radios for choices that exclude each other.</Do>
+  <Dont
+    code={`<RadioGroup>
+  <Radio value="email" label="Email me" />
+  <Radio value="sms" label="Text me" />
+</RadioGroup>
+// People may want both: use checkboxes`}
+  />
+</DoDont>
+
+## Accessibility
+
+- The group has the `radiogroup` role. Tab moves into it, and arrow keys move the selection.
+- Each `Radio`'s `hint` is linked to it as its description.
+
+## API
+
+<ArgTypes of={RadioGroup} />
+
+<AlsoAccepts element="div" layout />
+
+### Radio
+
+<ArgTypes of={Radio} />
+
+<AlsoAccepts element="span" layout />
+
+## Examples
+
+<Stories title={<></>} />

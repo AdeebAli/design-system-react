@@ -1,11 +1,28 @@
 import { Meta } from '@storybook/addon-docs/blocks';
-import { InterFeatures, TypeScale, Weights } from './Tokens';
+import {
+  FontFamilies,
+  InterFeatures,
+  LetterSpacings,
+  LineHeights,
+  TypeScale,
+  Weights,
+} from './Tokens';
 
 <Meta title="Foundations/Typography" />
 
 # Typography
 
 Sizes are in `rem`, so they grow with the browser's font size. In `Text` and `Heading`, each size also sets its line height and letter spacing.
+
+## Families
+
+Three families, each set by a token. All three are under the SIL Open Font License 1.1.
+
+<FontFamilies />
+
+## Loading
+
+The fonts are bundled in `styles.css`, with `font-display: swap`, so text shows at once in a fallback and swaps when the font loads. There are no requests to other origins. Each family has a fallback face, built from a system font with metric overrides, to limit layout shift during the swap. See the [Fonts guide](?path=/docs/guides-fonts--docs) to replace a family or self-host under a strict CSP.
 
 ## Scale
 
@@ -14,6 +31,14 @@ Sizes are in `rem`, so they grow with the browser's font size. In `Text` and `He
 ## Weights
 
 <Weights />
+
+## Line height
+
+<LineHeights />
+
+## Letter spacing
+
+<LetterSpacings />
 
 ## Inter features
 

@@ -1,0 +1,57 @@
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as VisuallyHiddenStories from './VisuallyHidden.stories';
+import { VisuallyHidden } from '.';
+
+<Meta of={VisuallyHiddenStories} />
+
+# VisuallyHidden
+
+Text for screen readers only.
+
+## Usage
+
+Use `VisuallyHidden` for text that the screen shows some other way, such as a heading for a section the layout makes obvious, or extra words on a link.
+
+- `focusable` makes it appear when focused. Use it for skip links, with `as="a"`.
+- For a button with only an icon, use [`IconButton`](?path=/docs/components-forms-and-actions-iconbutton--docs) and its `aria-label` instead.
+- To hide something from everyone, use `display="none"`.
+- It works in server components.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Add a skip link that appears when focused.
+    <Canvas of={VisuallyHiddenStories.SkipLink} />
+  </Do>
+  <Dont
+    code={`<VisuallyHidden>\n  <a href="#main">Skip to content</a>\n</VisuallyHidden>\n// Keyboard users focus it but can't see it`}
+  />
+</DoDont>
+
+<DoDont>
+  <Do>
+    Keep hidden text short, and only where the visible design already says the
+    same thing.
+  </Do>
+  <Dont
+    code={`<VisuallyHidden>Best laptops, cheap laptops, laptop deals</VisuallyHidden>`}
+  />
+</DoDont>
+
+## Accessibility
+
+- The text stays in the accessibility tree, so screen readers read it and it can name a control.
+- A focusable element inside it must use `focusable`, or keyboard users land on something invisible.
+
+## API
+
+<ArgTypes of={VisuallyHidden} />
+
+<AlsoAccepts element="span" layout />
+
+## Examples
+
+<Stories title={<></>} />

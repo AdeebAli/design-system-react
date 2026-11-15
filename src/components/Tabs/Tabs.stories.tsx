@@ -12,7 +12,7 @@ import { TabsList } from './TabsList';
 import { TabsPanel } from './TabsPanel';
 
 const meta: Meta<typeof Tabs> = {
-  title: 'Components/Tabs',
+  title: 'Components/Navigation/Tabs',
   component: Tabs,
   args: { defaultValue: 'overview' },
   render: (args) => (
@@ -32,14 +32,6 @@ const meta: Meta<typeof Tabs> = {
       </TabsPanel>
     </Tabs>
   ),
-  parameters: {
-    docs: {
-      description: {
-        component:
-          '**Tabs or links?** `Tabs` switch between panels in the same page, without changing the URL. For links between pages, use `NavBar`; a URL-driven row of tabs should be links, not `Tab`. Set `value` or `defaultValue`. Arrow keys move focus between tabs, and `Enter` or `Space` selects one, so moving through tabs doesn’t load content by accident. Name the list with `aria-label` or `aria-labelledby`.',
-      },
-    },
-  },
 };
 
 export default meta;

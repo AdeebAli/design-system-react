@@ -1,0 +1,51 @@
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as Stories_ from './Progress.stories';
+import { Progress } from '.';
+
+<Meta of={Stories_} />
+
+# Progress
+
+How far along something is.
+
+## Usage
+
+Use `Progress` when there's a measure, such as an upload's percentage. Use [`Spinner`](?path=/docs/components-feedback-and-display-spinner--docs) when there's no measure, and [`Skeleton`](?path=/docs/components-data-skeleton--docs) when the content's shape is known.
+
+- `value={null}` is indeterminate: a segment slides across the track, and with reduced motion it's a static partial fill.
+- It's for progress, not scores such as storage used.
+- It's a client component.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Give it a visible label.
+    <Canvas of={Stories_.Playground} />
+  </Do>
+  <Dont
+    code={`<Progress value={40} />
+// No label or aria-label`}
+  />
+</DoDont>
+
+<DoDont>
+  <Do>Use text for a measure that isn't progress, such as storage used.</Do>
+  <Dont code={`<Progress value={82} label="Storage used" />`} />
+</DoDont>
+
+## Accessibility
+
+- It has the `progressbar` role with its value. It needs a visible `label` or an `aria-label`.
+
+## API
+
+<ArgTypes of={Progress} />
+
+<AlsoAccepts element="div" layout />
+
+## Examples
+
+<Stories title={<></>} />

@@ -16,6 +16,7 @@ interface TableSortHeaderOwnProps {
   direction: TableSortDirection;
   /** Alignment of the content. @default 'start' */
   align?: TableAlign;
+  /** The column's header text. */
   children?: ReactNode;
 }
 

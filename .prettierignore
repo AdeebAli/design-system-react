@@ -5,7 +5,7 @@ fixtures/*/.next
 fixtures/*/node_modules
 tests/visual/__screenshots__
 package-lock.json
-docs
+/docs
 test-results
 playwright-report
 *.tgz

@@ -1,10 +1,27 @@
 import { Meta } from '@storybook/addon-docs/blocks';
+import { DurationDemo, EasingDemo, MotionInUse } from './MotionDemos';
 import { MotionTokens } from './Tokens';
 
 <Meta title="Foundations/Motion" />
 
 # Motion
 
-When a user prefers reduced motion, every duration becomes `0ms`, in both color modes.
+Components move only through these tokens.
+
+**Reduced motion:** when a user prefers reduced motion, every duration becomes `0ms`, in both color modes, so the demos below jump to their end state.
 
 <MotionTokens />
+
+## Durations
+
+<DurationDemo />
+
+## Easings
+
+Each curve shows progress over time. The dot moves over `duration.slow` with that easing.
+
+<EasingDemo />
+
+## In use
+
+<MotionInUse />

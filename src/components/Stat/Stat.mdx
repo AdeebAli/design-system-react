@@ -1,0 +1,58 @@
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as Stories_ from './Stat.stories';
+import { Stat } from '.';
+
+<Meta of={Stories_} />
+
+# Stat
+
+A labeled number, with an optional change.
+
+## Usage
+
+Use `Stat` for a key number on a dashboard. It has no surface, so put it in a [`Card`](?path=/docs/components-display-card--docs).
+
+- Pass `change` without a sign when using `trend`, so it reads "Down 4.1".
+- `trend` adds an arrow and hidden text, so color is never the only signal.
+- Set `sentiment` when an increase is bad, such as incidents.
+- It works in server components.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Set `trend`, and pass the change without a sign.
+    <Canvas of={Stories_.Trends} />
+  </Do>
+  <Dont
+    code={`<Stat label="Revenue" value="$12,400" change="-4.1%" trend="down" />
+// Reads "Down -4.1%"`}
+  />
+</DoDont>
+
+<DoDont>
+  <Do>
+    Set `sentiment="negative"` when going up is bad, such as error counts.
+  </Do>
+  <Dont
+    code={`<Stat label="Incidents" value="14" change="6" trend="up" />
+// Shown in the success color`}
+  />
+</DoDont>
+
+## Accessibility
+
+- It renders a description list (`dl`), so the label and value are read together.
+- The trend's arrow comes with hidden text, "Up" or "Down", which `trendLabels` can change.
+
+## API
+
+<ArgTypes of={Stat} />
+
+<AlsoAccepts element="dl" layout />
+
+## Examples
+
+<Stories title={<></>} />

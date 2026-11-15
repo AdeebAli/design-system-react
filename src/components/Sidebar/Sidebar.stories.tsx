@@ -15,7 +15,7 @@ import { Text } from '../Text';
 import { Sidebar, SidebarGroup, SidebarLink, type SidebarProps } from './index';
 
 const meta: Meta<typeof Sidebar> = {
-  title: 'Components/Sidebar',
+  title: 'Components/App navigation/Sidebar',
   component: Sidebar,
   args: { 'aria-label': 'Main' },
   decorators: [
@@ -31,12 +31,6 @@ const meta: Meta<typeof Sidebar> = {
   ],
   parameters: {
     layout: 'fullscreen',
-    docs: {
-      description: {
-        component:
-          'An app’s main navigation, down one side of the page. Group links with `SidebarGroup`, whose `label` names its list. Set `active` on the current page’s link: the library doesn’t read the URL. It stays in view at full height (`sticky`, the default) and its links scroll inside it, while `brand` and `footer` stay put. `collapsible` adds a button, from `md` up, that shrinks it to a rail of icons with tooltips; links then need a `startIcon`, and a `badge` becomes a dot. Below `md`, a bar with `brand` and a menu button replaces it, and the button opens the links in a drawer from the start edge; a link click closes it, unless it opens a new tab. Page layout is yours: put it in a `Flex` with `direction={{ base: \'column\', md: \'row\' }}`, beside a `Box as="main" flexGrow="1" minWidth="0"`. Pass a router link through `as`, such as `as={NextLink}`.',
-      },
-    },
   },
 };
 

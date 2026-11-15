@@ -15,16 +15,8 @@ import {
 } from './index';
 
 const meta: Meta<typeof Popover> = {
-  title: 'Components/Popover',
+  title: 'Components/Overlays/Popover',
   component: Popover,
-  parameters: {
-    docs: {
-      description: {
-        component:
-          "`PopoverTrigger` takes one element that renders a `button`, such as `Button`. A popover is non-modal: the page stays usable, focus moves into it and back to the trigger on close, and `Escape` or a click outside closes it. Name it with `PopoverTitle` (or `aria-label` on `PopoverContent`). It does not open on hover, which is what `Tooltip` is for. `arrow` is off by default, since Soft's shadows already separate the popup. A `Dialog` opened from an open popover sits underneath it, so close the popover first.",
-      },
-    },
-  },
 };
 
 export default meta;

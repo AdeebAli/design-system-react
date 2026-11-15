@@ -26,6 +26,7 @@ export interface ToastProviderProps {
   viewportLabel?: string;
   /** A manager from `createToastManager`, for code outside React. */
   manager?: ToastManager;
+  /** The app, or the part of it that shows toasts. */
   children?: ReactNode;
 }
 

@@ -11,6 +11,7 @@
     "src/**/*.test-d.tsx",
     "src/**/testUtils.tsx",
     "src/**/browserTestUtils.ts",
+    "src/docs",
     "fixtures"
   ]
 }

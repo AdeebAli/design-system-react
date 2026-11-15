@@ -1,0 +1,58 @@
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as Stories_ from './FileUpload.stories';
+import { FileUpload } from '.';
+
+<Meta of={Stories_} />
+
+# FileUpload
+
+Picks files, by browsing or dropping.
+
+## Usage
+
+Use `FileUpload` to let people choose files. It doesn't send them: the project uploads them and reports each file's status through `getFileStatus`.
+
+- A real file input, visually hidden over the control, does the picking, so it works by keyboard, before hydration, and with phones' camera and file pickers.
+- `value` is the source of truth, and the input's `files` always match it, so a form submits what's displayed.
+- `variant="button"` is a compact button instead of a drop zone.
+- **Checking `accept` and `maxSize` here is a convenience, not security: the server must check every upload.**
+- `ref` and native attributes, such as `capture`, go to the input; `className`, `style`, and layout props go to the root.
+- It's a client component.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Say which files are accepted, and show each file's status.
+    <Canvas of={Stories_.FileStatuses} />
+  </Do>
+  <Dont
+    code={`<FileUpload accept="image/*" />
+// Trusting accept on the server`}
+  />
+</DoDont>
+
+<DoDont>
+  <Do>Label it with a `Field`, with limits in the hint.</Do>
+  <Dont
+    code={`<FileUpload variant="button" />
+<Text size="xs">PNG only</Text>`}
+  />
+</DoDont>
+
+## Accessibility
+
+- The native file input is the focusable control, so screen readers announce it as a file picker with its label.
+- Each file's status is shown in text, not only by color or an icon.
+
+## API
+
+<ArgTypes of={FileUpload} />
+
+<AlsoAccepts element="input" layout />
+
+## Examples
+
+<Stories title={<></>} />

@@ -1,0 +1,47 @@
+import { Canvas, Meta, Source } from '@storybook/addon-docs/blocks';
+import { asPackage } from '../blocks/asPackage';
+import * as Stories_ from '../examples/migratingToTokens/MigratingToTokens.stories';
+import before from '../examples/migratingToTokens/Before.tsx?raw';
+import after from '../examples/migratingToTokens/After.tsx?raw';
+
+<Meta of={Stories_} />
+
+# Migrating to tokens
+
+Moving an existing app's hard-coded CSS onto tokens: hex colors, pixel lengths, raw shadows, and durations. Do it one screen or component at a time.
+
+## 1. Inventory the raw values
+
+Search the styles for hex and `rgb()` colors, `px` lengths, `box-shadow`, and `transition` values, and list each with where it's used. The list shows which values repeat and which are one-offs.
+
+## 2. Map colors by role, not by hue
+
+Ask what each color is for, then pick the token for that role. A light gray border becomes `color.border.subtle`, not "the nearest gray"; gray secondary text becomes `color.fg.muted`; a brand button background becomes `color.bg.accent`. Roles are what change between light and dark modes, so a color mapped by hue breaks in dark mode.
+
+## 3. Snap lengths to the spacing scale
+
+Round each padding, gap, and margin to the nearest [space](?path=/docs/foundations-spacing--docs) step: 18px becomes `space.4` (16px), and 10px becomes `space.3` (12px) or `space.2` (8px). Corner radii map to `radius.*`, and shadows to `shadow.*`.
+
+## 4. Swap margin-based layout for `Stack`, `Inline`, and `gap`
+
+Margins between siblings become a `gap` on their parent: `Stack` for a column, `Inline` for a wrapping row. Components have no outer margins, so the parent owns the space between them.
+
+## 5. Handle values with no token
+
+Some values don't fit, such as a marketing page's gradient. Keep a true one-off in `style` or `className`, reading tokens where it can. If a value repeats, add it to the theme with `defineTheme`, so it's a token from then on.
+
+## 6. Find the leftovers
+
+Search again for raw values in the migrated files: `#[0-9a-f]{3,8}`, `rgb(`, `\d+px`, `box-shadow:`, and `ms` in transitions. Anything left should be a deliberate one-off.
+
+## Before and after
+
+One card, before:
+
+<Source code={before} language="tsx" dark={false} />
+
+After: the surface, border, and shadow come from `Card` and the theme, the spacing from its `gap`, and the colors from text roles. It now works in dark mode.
+
+<Source code={asPackage(after)} language="tsx" dark={false} />
+
+<Canvas of={Stories_.After} />

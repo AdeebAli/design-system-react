@@ -10,7 +10,10 @@ import { useDialogContext, useRegisterPart } from './DialogContext';
 export type DialogTitleProps = Omit<
   React.ComponentPropsWithRef<'h2'>,
   'children'
-> & { children?: React.ReactNode };
+> & {
+  /** The dialog's title, which also names it. */
+  children?: React.ReactNode;
+};
 
 /** The dialog's name. Always an `h2`, since a dialog starts its own heading structure. */
 export function DialogTitle({ className, ...props }: DialogTitleProps) {

@@ -1,0 +1,56 @@
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as ContainerStories from './Container.stories';
+import { Container } from '.';
+
+<Meta of={ContainerStories} />
+
+# Container
+
+Centers a page's content, with a maximum width and side padding.
+
+## Usage
+
+Use one `Container` per page region, such as the main content, to set its width. Inside it, lay out with [`Stack`](?path=/docs/components-layout-stack--docs) and [`Grid`](?path=/docs/components-layout-grid--docs).
+
+- `size` sets the maximum width: `sm`, `md`, `lg` (the default), `xl`, `prose`, or `full`.
+- The side padding is `4`, and `6` from `md`. `paddingX="0"` removes it.
+- It works in server components.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Use `size="prose"` for a page of reading text.
+    <Canvas of={ContainerStories.Prose} />
+  </Do>
+  <Dont
+    code={`<Box maxWidth="container.lg" marginX="auto" paddingX="4">…</Box>`}
+  />
+</DoDont>
+
+<DoDont>
+  <Do>
+    Put a full-bleed band outside the `Container`, with its content in a
+    `Container` inside it.
+  </Do>
+  <Dont
+    code={`<Container>\n  <Box style={{ marginInline: -24 }}>Full-width banner</Box>\n</Container>`}
+  />
+</DoDont>
+
+## Accessibility
+
+- `Container` renders a `div`. Use `as="main"` for the page's main content, so screen readers can jump to it.
+- The maximum width keeps lines readable at large sizes; text still reflows when zoomed.
+
+## API
+
+<ArgTypes of={Container} />
+
+<AlsoAccepts element="div" />
+
+## Examples
+
+<Stories title={<></>} />

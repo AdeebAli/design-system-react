@@ -1,0 +1,52 @@
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as Stories_ from './EmptyState.stories';
+import { EmptyState } from '.';
+
+<Meta of={Stories_} />
+
+# EmptyState
+
+What to show when a list or table has nothing in it.
+
+## Usage
+
+Use `EmptyState` in place of an empty list or table, to say why it's empty and what to do next.
+
+- It has no surface, so put it in a `Card` or anywhere else.
+- `headingLevel` only changes the tag.
+- It works in server components.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Say why it's empty, and offer the next step.
+    <Canvas of={Stories_.Playground} />
+  </Do>
+  <Dont code={`<EmptyState title="No data" />`} />
+</DoDont>
+
+<DoDont>
+  <Do>Wrap it in a live region when it appears after a search.</Do>
+  <Dont
+    code={`{results.length === 0 && <EmptyState title="No results" />}
+// Screen readers aren't told the search found nothing`}
+  />
+</DoDont>
+
+## Accessibility
+
+- Its title is a heading; set `headingLevel` to fit the page's outline.
+- It has no live region, so wrap it in one if it appears after a search.
+
+## API
+
+<ArgTypes of={EmptyState} />
+
+<AlsoAccepts element="div" layout />
+
+## Examples
+
+<Stories title={<></>} />

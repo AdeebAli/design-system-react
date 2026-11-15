@@ -1,0 +1,58 @@
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as Stories_ from './Skeleton.stories';
+import { Skeleton } from '.';
+
+<Meta of={Stories_} />
+
+# Skeleton
+
+A placeholder for content that's loading.
+
+## Usage
+
+Use `Skeleton` where the shape of the coming content is known, such as text lines or a card. Use [`Spinner`](?path=/docs/components-feedback-and-display-spinner--docs) for a short wait with no known shape, and [`Progress`](?path=/docs/components-feedback-and-display-progress--docs) when the amount done is known.
+
+- It has no built-in delay, so skip it for very fast loads.
+- With reduced motion it stops pulsing and stays visible.
+- It works in server components.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Mark the loading region `aria-busy`, and say what's loading when people need
+    to hear it.
+    <Canvas of={Stories_.LoadingRegion} />
+  </Do>
+  <Dont
+    code={`<Stack>
+  <Skeleton />
+  <Skeleton />
+</Stack>
+// Screen readers hear nothing`}
+  />
+</DoDont>
+
+<DoDont>
+  <Do>Match the skeleton to the content's shape.</Do>
+  <Dont
+    code={`<Skeleton height="screen" />
+// For a three-line card`}
+  />
+</DoDont>
+
+## Accessibility
+
+- It's always hidden from screen readers. Set `aria-busy` on the loading region, and add `VisuallyHidden` text or a live region when users need to hear about it.
+
+## API
+
+<ArgTypes of={Skeleton} />
+
+<AlsoAccepts element="div" layout />
+
+## Examples
+
+<Stories title={<></>} />

@@ -1,0 +1,56 @@
+import { ArgTypes, Canvas, Meta, Stories } from '@storybook/addon-docs/blocks';
+import { AlsoAccepts } from '../../docs/blocks/AlsoAccepts';
+import { Do, DoDont, Dont } from '../../docs/blocks/DoDont';
+import * as Stories_ from './Avatar.stories';
+import { Avatar } from '.';
+
+<Meta of={Stories_} />
+
+# Avatar
+
+A person or organization, with initials until the image loads, and a status.
+
+## Usage
+
+Use `Avatar` for a person or an organization. For any other image, use [`Image`](?path=/docs/components-image-image--docs).
+
+- `name` is required: it's the accessible name and the source of the initials, which show until the image loads and if it fails. The image is in the server HTML.
+- `colorFromName` picks one of six color pairs from the name, so the same name always gets the same color, but different names can share one.
+- It's a client component.
+
+## Do's and don'ts
+
+<DoDont>
+  <Do>
+    Set `decorative` when the name is already beside it, and say any status
+    nearby too.
+    <Canvas of={Stories_.Decorative} />
+  </Do>
+  <Dont
+    code={`<Inline>
+  <Avatar name="Ada Park" />
+  <Text>Ada Park</Text>
+</Inline>
+// Read as "Ada Park Ada Park"`}
+  />
+</DoDont>
+
+<DoDont>
+  <Do>Use `square` for an organization.</Do>
+  <Dont code={`<Avatar name="Acme" shape="circle" src={logo} />`} />
+</DoDont>
+
+## Accessibility
+
+- A screen reader hears the name once, with the status when set, such as "Ada Park, online".
+- Status is displayed, not announced when it changes.
+
+## API
+
+<ArgTypes of={Avatar} />
+
+<AlsoAccepts element="span" layout />
+
+## Examples
+
+<Stories title={<></>} />
