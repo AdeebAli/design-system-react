@@ -208,6 +208,9 @@ const preview: Preview = {
       },
     },
     docs: {
+      // Docgen's row order changes between builds, so props tables sort
+      // required props first, then by name (Spec 18, Props tables).
+      argTypes: { sort: 'requiredFirst' },
       // <ArgTypes of={Component}> reads this, not argTypesEnhancers. Props
       // tables expand unions, so ElementType, ReactNode, and ReactElement are
       // read back as their names (Spec 18, Props tables).
