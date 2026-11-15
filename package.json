@@ -1,6 +1,6 @@
 {
   "name": "@adeebali/design-system-react",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "A personal React design system.",
   "type": "module",
   "sideEffects": [
