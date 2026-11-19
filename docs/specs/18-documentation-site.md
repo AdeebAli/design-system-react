@@ -202,9 +202,10 @@ The site ships as a release (owner, 2026-11-13). After the PR merges, `npm run r
   - Every docs page renders an `h1`.
   - No props table shows Storybook's empty state.
   - No Markdown table is left unparsed (an existing check).
+  - The Welcome page shows `package.json`'s version (added 2026-11-19).
 - **Guide examples:** type-checked through `npm run typecheck`. One example per guide is break-checked: break the API it uses, and see the type error.
 - **Motion:** a browser test that **Play** moves a duration bar, and that under reduced motion its transition duration is `0ms`.
-- **Visual baselines:** every new docs page gets a baseline from the `update-visual-baselines` workflow.
+- **Visual baselines:** only the Foundations pages get docs-page baselines, from the `update-visual-baselines` workflow. Other docs pages have no screenshot: they hold prose, props tables, and stories that already have their own baselines, and the docs-page checks above cover them (owner, 2026-11-19).
   - Renaming titles changes every component story's ID, which renames every baseline file.
   - A one-off script, run before the workflow, renames the existing baseline files from old ID to new ID (owner, 2026-11-13). It maps IDs from `storybook-static/index.json` built before and after the title change, fails if any baseline has no mapping, and is deleted once it has run, so it's never committed. The workflow's diff then shows only real visual changes, not 1,302 "new" files.
 - Every assertion is break-checked and ledgered in the plan's format.
