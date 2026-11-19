@@ -50,7 +50,12 @@ for (const docs of docsPages) {
           ),
       ),
     );
-    await expect(page).toHaveScreenshot(`${docs.id}.png`, { fullPage: true });
+    // The version changes with every release, so it's masked here and checked
+    // by its own test below.
+    await expect(page).toHaveScreenshot(`${docs.id}.png`, {
+      fullPage: true,
+      mask: [page.locator('[data-version]')],
+    });
   });
 }
 
@@ -87,6 +92,16 @@ for (const docs of docsPages) {
     ).toHaveCount(0);
   });
 }
+
+test('the Welcome page shows the package version', async ({ page }) => {
+  const { version } = JSON.parse(readFileSync('package.json', 'utf8')) as {
+    version: string;
+  };
+  await page.goto('/iframe.html?id=overview-welcome--docs&viewMode=docs');
+  await expect(page.locator('#storybook-docs [data-version]')).toHaveText(
+    version,
+  );
+});
 
 test('the Button page has its sections and own props', async ({ page }) => {
   await page.goto(
