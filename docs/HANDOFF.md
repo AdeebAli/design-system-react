@@ -1,6 +1,6 @@
 # Handoff: design-system-react
 
-- **Date:** 2026-11-14 (updated after the second CI fix: PR #40's CI is green on `55de232`)
+- **Date:** 2026-11-19 (updated after fixing the post-release visual failure, PR #42)
 
 ## Goal
 
@@ -8,22 +8,17 @@ Build `@adeebali/design-system-react`, a general-purpose React design system. Sp
 
 ## Status
 
-- **Released:** v0.1 through v0.8.0. v0.8.0 (Spec 17, `Image`) was released 2026-11-13. Storybook: https://adeebali.github.io/design-system-react/.
-- **v0.8.1 (Spec 18, documentation site): built, in draft PR #40** (https://github.com/AdeebAli/design-system-react/pull/40), branch `docs/v0.8.1-documentation-site`.
-  - All 11 plan tasks are done. The plan was executed inline, with a final Opus whole-branch review and two follow-up Sonnet reviews.
-  - The baseline workflow ran and committed `34b3fe6` (150 new, 4 changed).
-  - CI's `visual` job then failed on 46 docs pages: props-table union members came out in a different order on each build. Fixed by sorting them (`d880d34`, then `7dd8be2`, `f6909d5`, `54cee51` after reviews), with baselines regenerated (`e044572`, `6b0f355`).
-  - CI on `34a5f2b` still failed on 18 docs pages, from two causes the union fix didn't cover:
-    - props-table rows came out in a different order on each build;
-    - the docs screenshot test captured pages before they finished rendering.
-  - Both fixed in `74356a0` and `55de232`, with baselines regenerated once (`f38c107`). **CI is green on `55de232`.**
-  - **Waiting on the owner:**
-    1. Look over the regenerated baselines in `f38c107` (119 files). Some earlier ones showed half-rendered pages.
-    2. Do the manual checks in the PR body.
-    3. Merge, then `npm run release -- patch` with the PR body's notes.
-    4. Approve or reject the retro proposals P1–P5 (thread 16).
-- **Owner's earlier manual checks:** PR #37's and PR #33's were reported done on 2026-11-13.
-- **Next:** merge and release v0.8.1, then plan v1.0 stabilization (Spec 00).
+- **Released:** v0.1 through v0.8.0, as before, and **v0.8.1 (Spec 18, documentation site), released 2026-11-14**. Storybook: https://adeebali.github.io/design-system-react/.
+  - The owner merged PR #40 as `983cbe5`. `npm run release -- patch` made `7c12ed5` and tag `v0.8.1`.
+  - Release: https://github.com/AdeebAli/design-system-react/releases/tag/v0.8.1, with the PR body's notes applied by hand.
+- **v0.8.1 build (for reference):** all 11 plan tasks done inline, with a final Opus whole-branch review and follow-up Sonnet reviews. Two CI fixes followed:
+  - unstable union order (`d880d34`…`54cee51`);
+  - unstable row order, and screenshots taken before docs pages finished rendering (`74356a0`, `55de232`).
+- **Retro (v0.8.1), 2026-11-14:** logged in `~/.claude/retros/2026-11-14-v0-8-1-nondeterministic-docs-screenshots.md`. The owner declined all five proposals, P1–P5. Nothing from it is applied (thread 16).
+- **Post-release visual failure, fixed 2026-11-19 (PR #42, `a6db535`):** CI on the release commit `7c12ed5` failed `visual` on `overview-welcome--docs` (desktop and mobile). The page shows `package.json`'s version, and its baseline was taken at 0.8.0. This note's first version (`543af1d`) was written before that CI finished. Owner decision: docs-page screenshots only for the 7 Foundations pages (see Decisions).
+- **Retro (post-release failure), 2026-11-19:** logged in `~/.claude/retros/2026-11-19-v0-8-1-release-broke-welcome-screenshot.md`. Proposals P1–P4 await the owner (thread 19).
+- **Owner's manual checks:** PR #37's and PR #33's were reported done on 2026-11-13. PR #40's weren't reported before the merge.
+- **Next:** plan v1.0 stabilization (Spec 00).
 
 ## Decisions
 
@@ -47,6 +42,7 @@ Spec 18 and the plan are amended for each of these.
 - **Departure 5:** examples that mount `ThemeProvider` stay source-only, and `PromoCard` has a story. Rejected: `PromoCard` source-only too.
 - **Execution:** inline. Type column: expand unions, then collapse `ElementType`, `ReactNode`, and `ReactElement` back to their names.
 
+- **Docs-page screenshots: Foundations only (owner, 2026-11-19, PR #42).** The 7 Foundations pages show every token family. The other 67 docs pages hold prose, props tables, and stories that have their own baselines, and their screenshots caused every v0.8.1 `visual` failure. 134 baselines removed. The unparsed-table check moved to the per-page content test. New test: the Welcome page's `[data-version]` shows `package.json`'s version. Spec 18's Testing section is amended. Rejected: masking the version and keeping all 74 (the first version of #42); dropping all docs screenshots (tokens would lose direct visual coverage).
 - **Props-table row order (2026-11-14):** required props first, then by name (`parameters.docs.argTypes.sort: 'requiredFirst'` in `.storybook/preview.tsx`). Spec 18's Props tables section is amended. Rejected: alphabetical only (required props would no longer lead), and declaration order (docgen doesn't give it reliably).
 
 ### v0.8.1 rulings (where Spec 18 is silent; cost if wrong)
@@ -56,8 +52,8 @@ All are in the ledger. The ones a future change could trip on:
 - **`src/docs/exampleSource.ts`, a Storybook-only Vite plugin.** It serves `.css.ts` examples as text, because vanilla-extract compiles any `.css.ts` import, `?raw` included. It serves only `.css.ts` files under `src/docs/examples`, and it is tested.
 - **Guide examples import `src/index`,** so typecheck checks them. Pages show them through `asPackage()`, which rewrites the import to the package name.
 - **CSS examples live in `.css` files.** Prettier formats an MDX template literal as Markdown and breaks CSS. A test enforces this.
-- **Docs-page checks** run as separate "<id> content" tests, which wait for the page to settle. They count only the page's own `h1`.
-- **The docs screenshot test waits** for the page's own `h1`, for `settled()`, and for non-lazy images to load, before the screenshot (`tests/visual/stories.spec.ts`). Cost if wrong: a page whose layout changes without a markup change could still be captured early. The `settled()` helper compares `innerHTML` only.
+- **Docs-page checks** run as separate "<id> content" tests on all 74 docs pages, which wait for the page to settle. They count only the page's own `h1`, and include the unparsed-table check (moved there in #42).
+- **The docs screenshot test (Foundations pages only, since #42) waits** for the page's own `h1`, for `settled()`, and for non-lazy images to load, before the screenshot (`tests/visual/stories.spec.ts`). Cost if wrong: a page whose layout changes without a markup change could still be captured early. The `settled()` helper compares `innerHTML` only.
 - **ESLint allows devDependencies in `src/docs/**`.** `src/docs` is excluded from `tsconfig.build.json`.
 - **`.prettierignore`'s `docs` is now `/docs`.** The old pattern skipped `src/docs`.
 - **Props tables sort union members** (`collapseTypeSummary`, `src/docs/blocks/collapseTypes.ts`):
@@ -100,7 +96,23 @@ Checked 2026-11-13 against `npm view` (rerun at v0.8.1 setup: unchanged except a
 
 ## Changes
 
-**Branch `docs/v0.8.1-documentation-site`** (from `main` at `aca60b5`; PR #40, draft):
+**This note's branch** (`docs/handoff-after-v0.8.1`, rebased onto `main` at `a6db535`): this note.
+
+**PR #42** (squash-merged as `a6db535`): `tests/visual/stories.spec.ts` (Foundations-only screenshots, table check moved, version test), `src/docs/overview/Welcome.mdx` (`data-version` hook), Spec 18 Testing, and 134 docs baselines deleted. Its branch's intermediate commits (`424f381` version mask, `0e58857` workflow baselines) were superseded by `eeaec22` before the squash.
+
+**The v0.8.1 release:**
+- The owner merged PR #40 as `983cbe5`. CI on it passed (all six jobs, `visual` included).
+- `npm run release -- patch` on a clean, up-to-date `main` exited 0. Its checks passed:
+  - unit: 1,492;
+  - stories and browser: 1,220;
+  - `verify-dist: ok`;
+  - fixtures: 78 passed and 36 skipped.
+- It then made `7c12ed5` (version 0.8.1), tag `v0.8.1`, the push, and the GitHub release.
+  - The push printed "Bypassed rule violations for refs/heads/main", as the release script's own push does.
+- The release notes are the PR body's "Release notes" section plus the Full Changelog link, applied with `gh release edit v0.8.1` and read back with `gh release view`.
+- Publish and Storybook on `7c12ed5` succeeded. The live site's `index.json` lists `overview-welcome--docs`.
+
+**Branch `docs/v0.8.1-documentation-site`** (for reference), squash-merged as `983cbe5`:
 
 | Commit | What |
 | --- | --- |
@@ -135,7 +147,6 @@ Checked 2026-11-13 against `npm view` (rerun at v0.8.1 setup: unchanged except a
 - the guidance wording;
 - Departures 4 and 5.
 
-This note is the last commit.
 
 ## Verification
 
@@ -182,10 +193,19 @@ This note is the last commit.
 - **CI:** on `5ec0e07`, everything passed except `visual`. Its 154 failures are exactly the 154 baselines the workflow then added or changed (298 "snapshot doesn't exist" lines, plus pixel diffs on the 4 changed pages).
   - CI on `34b3fe6` is "action_required": approving a run is the owner's.
 
+- **PR #42:**
+  - Break-checks: the version test (`stories.spec.ts:103`) failed with the shown version hardcoded to 0.0.0 (expected 0.8.1, received 0.0.0). The table check (`stories.spec.ts:94`) failed with an unparsed table line added to the Welcome page. Both files restored from copies.
+  - `--list`: 7 docs screenshot tests per viewport, 74 content tests. Typecheck, lint, and format exit 0.
+  - **CI on `eeaec22`: all six jobs passed.** `visual`: 1,469 passed, 5 skipped (1,601 before; −134 screenshots, +2 version tests).
+  - **Independent review:** fresh Sonnet review of `eeaec22`: ready, one nit (declined: the spec bullet already names the Welcome page). Covers every code commit in #42.
+- **CI on `a6db535` (#42's merge to main): all six jobs passed** (run 44650670987). CI on this note's branch, rebased onto it (`29c64f6`): all six passed.
+- **CI on `7c12ed5` (the release commit) failed `visual`** (run 43691894436, rerun 2026-11-16 with the same result). Resolved by #42.
+
 **Not verified:**
 
-- **The other 118 baselines in `f38c107` weren't viewed.** Trigger: the owner, before merge (Waiting on the owner, 1).
-- **The PR body's manual checks:** the site in both modes and both widths, the motion demos with reduced motion, keyboard and anchors. Trigger: the owner, before merge.
+
+- **The other 118 baselines in `f38c107` weren't viewed.** #42 deleted all but `foundations-primitives--docs` (desktop and mobile), which remain unviewed. Trigger: none. CI compares against them on every PR.
+- **PR #40's manual checks** (the site in both modes and both widths, the motion demos with reduced motion, keyboard and anchors) weren't reported before the merge. Trigger: none; the owner can check the live site.
 - **Contrast of PromoCard's text over its gradient.** Axe reports contrast over a background image as incomplete, so two deliberate contrast breaks didn't trip it. Axe itself is proven to run on the story (an `img` with no `alt` failed). Trigger: none; the visual baseline shows it.
 - **Base UI behaviors the wrappers don't own:**
   - `Escape`, `Backspace` on chips, and `data-popup-open`/`data-selected`;
@@ -195,7 +215,7 @@ This note is the last commit.
   - Trigger: none; any Base UI upgrade reruns the suite. (Carried forward.)
 - **The Next fixture's `/feedback` no-console-errors check** wasn't broken separately. Trigger: none, as before. (Carried forward.)
 - **"A failed image shows initials after hydration" (Spec 16)** is tested with a client render. Trigger: none; the owner can ask for a fixture test. (Carried forward.)
-- **Installing 0.5.x–0.8.0 from GitHub Packages.** Only the publish job's success was seen. Trigger: none; the v0.1 install proved the pipeline. (Carried forward.)
+- **Installing 0.5.x–0.8.1 from GitHub Packages.** Only the publish job's success was seen. For 0.8.1, `gh api` can't list package versions: the token lacks `read:packages`. Trigger: none; the v0.1 install proved the pipeline. (Carried forward.)
 
 ## Open threads
 
@@ -250,15 +270,25 @@ This note is the last commit.
     - P1: the baseline workflow re-runs the comparison against a fresh build before committing.
     - P2–P4: global `CLAUDE.md` additions to rules 3, 4, and 5.
     - P5: one shared docs-page helper.
-    - Trigger: the owner's decision. P1 and P5 can also go into the v1.0 plan.
-17. **The story screenshot test waits only for `#storybook-root` and fonts** (`tests/visual/stories.spec.ts`, story loop). Image's skeleton stories depend on load timing. It isn't failing now. Trigger: P1 would catch it; otherwise none.
+    - **Owner declined all five (2026-11-14).** Kept here as a record only.
+17. **The story screenshot test waits only for `#storybook-root` and fonts** (`tests/visual/stories.spec.ts`, story loop). Image's skeleton stories depend on load timing. It isn't failing now. Trigger: none (P1 was declined).
 18. **Review nits on `74356a0`** (no action needed):
     - the content test's `.first().waitFor()` is unscoped;
     - the row-order test covers Icon only;
     - a lazy image inside the viewport isn't waited on.
     - Trigger: none; fold into thread 6.
+19. **Retro proposals P1–P4** (`~/.claude/retros/2026-11-19-v0-8-1-release-broke-welcome-screenshot.md`), awaiting the owner:
+    - P1 (automated): CI's visual job builds Storybook with `npm pkg set version=0.0.0-ci`, so a version on any screenshotted page fails on the PR.
+    - P2 (automated): the release script waits for CI on the release commit before `gh release create`. Changes ADR 0003's order; needs ADR 0005.
+    - P3 (instruction): global rule 4 sub-bullet: golden outputs mask time-varying values and assert them separately.
+    - P4 (process): the handoff skill records CI's result for every commit pushed in the session.
+    - Trigger: the owner's decision; until then, none applied.
 
-**Resolved this session:**
+**Resolved this session (2026-11-19):**
+- **CI red on main since `7c12ed5`:** fixed by #42 (`a6db535`); CI on `eeaec22` green.
+
+**Resolved earlier (2026-11-14):**
+- **Old next steps 1 and 2 (merge PR #40; release v0.8.1):** done. Merged as `983cbe5`, released as `7c12ed5` and tag `v0.8.1`, with notes applied and read back.
 - **"CI green with the regenerated baselines":** it wasn't (CI on `34a5f2b` failed on 18 docs pages). Fixed in `74356a0` and `55de232`, and CI is green on `55de232`.
 - **Old next step 1, "get CI green":** done.
 - **Old next step 1 (v0.8.1 Tasks 2–11):** done; commits above, PR #40.
@@ -267,13 +297,7 @@ This note is the last commit.
 
 ## Next steps
 
-1. **Owner:**
-   - Look over `f38c107`'s baselines.
-   - Do the PR body's manual checks.
-   - Mark PR #40 ready, and squash merge.
-   - Decide on retro P1–P5 (thread 16).
-2. **After merge:** `npm run release -- patch` (the release script checks a clean, up-to-date `main`). Apply the PR body's "Release notes" section to the GitHub release, and read it back.
-3. **v1.0 stabilization (Spec 00).** Write its plan first, and while planning, rerun `npm audit` and `npm view` (the table above). The plan:
+1. **v1.0 stabilization (Spec 00).** Write its plan first, and while planning, rerun `npm audit` and `npm view` (the table above). The plan:
    - collects thread 6's deferred minors (v0.4–v0.8.1);
    - type-checks every `tsx` example in `docs/specs/*.md` and the README (retro P6);
    - follows the `CLAUDE.md` ruling and fixture break-check formats;
@@ -282,4 +306,4 @@ This note is the last commit.
 
 ## Resume prompt
 
-> Read `docs/HANDOFF.md`. PR #40 (v0.8.1, the documentation site) is built and reviewed, and CI is green on `55de232`. Apply only the retro proposals I've approved (thread 16). If it's merged, run `npm run release -- patch` on a clean, up-to-date `main`, apply the PR body's release notes with `gh release edit v0.8.1`, and read them back. Then start the v1.0 stabilization plan per Next steps 3, rerunning `npm audit` and `npm view` first. Ask me about any departure from a spec when it's found.
+> Read `docs/HANDOFF.md`. v0.8.1 (the documentation site) is released. Start the v1.0 stabilization plan per Next steps 1, rerunning `npm audit` and `npm view` first. Don't apply the declined v0.8.1 retro proposals (thread 16). Ask me about the 2026-11-19 retro's P1–P4 (thread 19) before applying any. Ask me about any departure from a spec when it's found.
