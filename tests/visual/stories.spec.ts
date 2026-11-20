@@ -22,16 +22,19 @@ const docsPages = Object.values(index.entries).filter(
   (entry) => entry.type === 'docs',
 );
 
-for (const docs of docsPages) {
+// Only Foundations pages get screenshots: they show every token family. Other
+// docs pages are prose, props tables, and stories that already have their own
+// screenshots (owner, 2026-11-19).
+const foundationsPages = docsPages.filter((entry) =>
+  entry.id.startsWith('foundations-'),
+);
+
+for (const docs of foundationsPages) {
   test(docs.id, async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.goto(`/iframe.html?id=${docs.id}&viewMode=docs`);
     // The page's own title; stories shown on the page may render their own.
     await page.locator('#storybook-docs h1:not(.docs-story h1)').waitFor();
-    // A Markdown table that MDX didn't parse shows up as a paragraph of pipes.
-    await expect(
-      page.locator('#storybook-docs p', { hasText: /\|\s*-{3,}/ }),
-    ).toHaveCount(0);
     await page.evaluate(() => document.fonts.ready);
     // Props tables and stories render after the h1, so wait for the page to
     // stop changing and for its images to load before the screenshot.
@@ -85,8 +88,22 @@ for (const docs of docsPages) {
     await expect(
       page.locator('#storybook-docs').getByText('This story has no controls'),
     ).toHaveCount(0);
+    // A Markdown table that MDX didn't parse shows up as a paragraph of pipes.
+    await expect(
+      page.locator('#storybook-docs p', { hasText: /\|\s*-{3,}/ }),
+    ).toHaveCount(0);
   });
 }
+
+test('the Welcome page shows the package version', async ({ page }) => {
+  const { version } = JSON.parse(readFileSync('package.json', 'utf8')) as {
+    version: string;
+  };
+  await page.goto('/iframe.html?id=overview-welcome--docs&viewMode=docs');
+  await expect(page.locator('#storybook-docs [data-version]')).toHaveText(
+    version,
+  );
+});
 
 test('the Button page has its sections and own props', async ({ page }) => {
   await page.goto(
