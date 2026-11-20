@@ -198,11 +198,11 @@ Checked 2026-11-13 against `npm view` (rerun at v0.8.1 setup: unchanged except a
   - `--list`: 7 docs screenshot tests per viewport, 74 content tests. Typecheck, lint, and format exit 0.
   - **CI on `eeaec22`: all six jobs passed.** `visual`: 1,469 passed, 5 skipped (1,601 before; −134 screenshots, +2 version tests).
   - **Independent review:** fresh Sonnet review of `eeaec22`: ready, one nit (declined: the spec bullet already names the Welcome page). Covers every code commit in #42.
+- **CI on `a6db535` (#42's merge to main): all six jobs passed** (run 44650670987). CI on this note's branch, rebased onto it (`29c64f6`): all six passed.
 - **CI on `7c12ed5` (the release commit) failed `visual`** (run 43691894436, rerun 2026-11-16 with the same result). Resolved by #42.
 
 **Not verified:**
 
-- **CI on `a6db535` (#42's merge to main)** was in progress when this note was written (run 44650670987). Trigger: this note's PR (#41) runs CI on top of it; if `visual` fails, read its diff artifact first.
 
 - **The other 118 baselines in `f38c107` weren't viewed.** #42 deleted all but `foundations-primitives--docs` (desktop and mobile), which remain unviewed. Trigger: none. CI compares against them on every PR.
 - **PR #40's manual checks** (the site in both modes and both widths, the motion demos with reduced motion, keyboard and anchors) weren't reported before the merge. Trigger: none; the owner can check the live site.
