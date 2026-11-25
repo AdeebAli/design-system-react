@@ -3,9 +3,9 @@
 import { Field as BaseField } from '@base-ui/react/field';
 import { useMemo, useRef, useState, type ReactNode } from 'react';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
-import { box } from '../Box';
 import * as styles from './Field.css';
 import { FieldContext, type FieldControlKind } from './FieldContext';
 
@@ -53,6 +53,7 @@ export function Field({
     [invalid, disabled, required, hasLabel],
   );
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, rest.style, 'Field');
 
   const labelContent = (
     <>
@@ -70,8 +71,9 @@ export function Field({
       <BaseField.Root
         invalid={invalid}
         disabled={disabled}
-        className={cx(box(layout), styles.root, className)}
+        className={cx(grid.className, styles.root, className)}
         {...rest}
+        style={grid.style}
       >
         {hasLabel &&
           (kind === 'native' ? (

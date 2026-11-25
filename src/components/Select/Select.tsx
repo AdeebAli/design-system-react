@@ -3,9 +3,9 @@
 import { Select as BaseSelect } from '@base-ui/react/select';
 import { useMemo } from 'react';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
-import { box } from '../Box';
 import { useFieldControl } from '../Field/FieldContext';
 import { CheckIcon } from '../Icon/internal/Check';
 import { ChevronDownIcon } from '../Icon/internal/ChevronDown';
@@ -66,6 +66,7 @@ export function Select({
   const required = requiredProp ?? field.required;
   const { groups, items } = useMemo(() => normalizeOptions(options), [options]);
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, rest.style, 'Select');
   // Base UI treats an unknown value as selected; show the placeholder instead.
   const known = (v: string | null | undefined) =>
     v == null || Object.hasOwn(items, v) ? v : null;
@@ -83,7 +84,7 @@ export function Select({
     >
       <BaseSelect.Trigger
         className={cx(
-          box(layout),
+          grid.className,
           inputStyles.control,
           inputStyles.size[size],
           styles.trigger,
@@ -93,6 +94,7 @@ export function Select({
         aria-required={required || undefined}
         data-invalid={invalid ? '' : undefined}
         {...rest}
+        style={grid.style}
       >
         <BaseSelect.Value className={styles.value} placeholder={placeholder} />
         <BaseSelect.Icon className={styles.chevron}>

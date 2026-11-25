@@ -3,10 +3,10 @@
 import { Popover as BasePopover } from '@base-ui/react/popover';
 import { useEffect, type ComponentPropsWithRef, type RefObject } from 'react';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
 import { warnOnce } from '../../utils/warn';
-import { box } from '../Box';
 import { gapOffset, toBaseSide } from '../overlays/positioning';
 import type { OverlayAlign, OverlaySide } from '../overlays/positioning';
 import { popupMotion, popupSurface, positioner } from '../overlays/popup.css';
@@ -42,6 +42,7 @@ export function PopoverContent({
   ...props
 }: PopoverContentProps) {
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, rest.style, 'PopoverContent');
   const labelled = Boolean(rest['aria-label'] ?? rest['aria-labelledby']);
   return (
     <BasePopover.Portal>
@@ -53,12 +54,13 @@ export function PopoverContent({
       >
         <BasePopover.Popup
           {...rest}
+          style={grid.style}
           initialFocus={initialFocus}
           className={cx(
             popupSurface,
             popupMotion,
             styles.popup,
-            box(layout),
+            grid.className,
             className,
           )}
         >

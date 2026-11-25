@@ -3,9 +3,9 @@
 import { Toggle } from '@base-ui/react/toggle';
 import type { ReactElement, ReactNode } from 'react';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
-import { box } from '../Box';
 import { CheckIcon } from '../Icon/internal/Check';
 import * as styles from './ToggleChip.css';
 
@@ -44,10 +44,11 @@ export function ToggleChip({
   ...props
 }: ToggleChipProps) {
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, rest.style, 'ToggleChip');
 
   return (
     <Toggle
-      className={cx(box(layout), styles.chip, styles.size[size], className)}
+      className={cx(grid.className, styles.chip, styles.size[size], className)}
       onPressedChange={
         onPressedChange && ((next: boolean) => onPressedChange(next))
       }
@@ -65,6 +66,7 @@ export function ToggleChip({
         </button>
       )}
       {...rest}
+      style={grid.style}
     />
   );
 }

@@ -1,12 +1,19 @@
 'use client';
 
 import { Button as BaseButton } from '@base-ui/react/button';
-import type { ElementType, MouseEvent, ReactElement, ReactNode } from 'react';
+import type {
+  CSSProperties,
+  ElementType,
+  MouseEvent,
+  ReactElement,
+  ReactNode,
+} from 'react';
 import { focusRing } from '../../styles/focus.css';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import { warnOnce } from '../../utils/warn';
-import { Box, box } from '../Box';
+import { Box } from '../Box';
 import { Spinner } from '../Spinner';
 import { VisuallyHidden } from '../VisuallyHidden';
 import * as styles from './Button.css';
@@ -125,14 +132,20 @@ export function ButtonBase({
   }
 
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(
+    layout,
+    rest.style as CSSProperties | undefined,
+    component,
+  );
   return (
     <BaseButton
       type={type ?? 'button'}
       disabled={disabled}
-      className={cx(box(layout), classes, className)}
+      className={cx(grid.className, classes, className)}
       onClick={handleClick}
       {...state}
       {...rest}
+      style={grid.style}
     >
       {content}
     </BaseButton>

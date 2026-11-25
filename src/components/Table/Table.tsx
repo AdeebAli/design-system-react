@@ -1,8 +1,8 @@
 import type { ComponentPropsWithRef } from 'react';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import { warnOnce } from '../../utils/warn';
-import { box } from '../Box';
 import type { LayoutProps } from '../Box/types';
 import { focusRing } from '../../styles/focus.css';
 import * as styles from './Table.css';
@@ -43,6 +43,7 @@ export function Table({
   ...props
 }: TableProps) {
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, undefined, 'Table');
   const label = rest['aria-label'];
   const labelledBy = rest['aria-labelledby'];
   if (scrollable && label == null && labelledBy == null) {
@@ -55,11 +56,12 @@ export function Table({
   return (
     <div
       data-ds-table=""
+      style={grid.style}
       className={cx(
         styles.wrapper,
         stickyHeader && styles.stickyHeaderPad[size],
         stickyFirstColumn && styles.stickyColumnPad,
-        box(layout),
+        grid.className,
         scrollable && focusRing,
       )}
       {...(scrollable && {

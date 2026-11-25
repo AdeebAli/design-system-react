@@ -3,10 +3,10 @@
 import { Tabs as BaseTabs } from '@base-ui/react/tabs';
 import type { ReactNode } from 'react';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
 import { warnOnce } from '../../utils/warn';
-import { box } from '../Box';
 import * as styles from './Tabs.css';
 import { useTabsStyle } from './TabsContext';
 
@@ -23,6 +23,7 @@ export type TabsListProps = ComponentProps<
 export function TabsList({ className, children, ...props }: TabsListProps) {
   const { variant } = useTabsStyle();
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, rest.style, 'TabsList');
   if (rest['aria-label'] == null && rest['aria-labelledby'] == null) {
     warnOnce(
       'TabsList-unnamed',
@@ -33,9 +34,9 @@ export function TabsList({ className, children, ...props }: TabsListProps) {
     <BaseTabs.List
       // Arrow keys move focus only; Enter or Space activates.
       activateOnFocus={false}
-      render={<div {...rest} />}
+      render={<div {...rest} style={grid.style} />}
       className={cx(
-        box(layout),
+        grid.className,
         styles.list,
         styles.listVariant[variant],
         className,

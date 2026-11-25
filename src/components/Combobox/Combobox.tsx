@@ -3,9 +3,9 @@
 import { Combobox as BaseCombobox } from '@base-ui/react/combobox';
 import { useState } from 'react';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
-import { box } from '../Box';
 import { useFieldControl } from '../Field/FieldContext';
 import { ChevronDownIcon } from '../Icon/internal/ChevronDown';
 import { XIcon } from '../Icon/internal/X';
@@ -95,6 +95,7 @@ export function Combobox({
     value: current,
   });
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, style, 'Combobox');
 
   return (
     <OverlayDirection>
@@ -115,13 +116,13 @@ export function Combobox({
       >
         <BaseCombobox.InputGroup
           className={cx(
-            box(layout),
+            grid.className,
             inputStyles.control,
             inputStyles.size[size],
             styles.group,
             className,
           )}
-          style={style}
+          style={grid.style}
           data-invalid={invalid ? '' : undefined}
         >
           <BaseCombobox.Input

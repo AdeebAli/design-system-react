@@ -10,9 +10,10 @@ import {
   type Ref,
 } from 'react';
 import { cx } from '../../utils/cx';
+import { box } from '../Box';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
-import { box } from '../Box';
 import type { Responsive, SpaceToken } from '../Box/types';
 import { useFieldControl } from '../Field/FieldContext';
 import { OverlayDirection } from '../overlays/direction';
@@ -96,6 +97,7 @@ export function RadioGroup({
   const disabled = disabledProp ?? field.disabled;
   const required = requiredProp ?? field.required;
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, rest.style, 'RadioGroup');
 
   return (
     <RadioGroupContext.Provider
@@ -106,7 +108,8 @@ export function RadioGroup({
         <BaseRadioGroup
           ref={setRef}
           className={cx(
-            box({ ...layout, display: 'flex', flexDirection: 'column', gap }),
+            box({ display: 'flex', flexDirection: 'column', gap }),
+            grid.className,
             className,
           )}
           disabled={disabled}
@@ -117,6 +120,7 @@ export function RadioGroup({
             ((value: unknown) => onValueChange(value as string))
           }
           {...rest}
+          style={grid.style}
         >
           {children}
         </BaseRadioGroup>

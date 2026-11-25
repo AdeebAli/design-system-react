@@ -3,9 +3,9 @@
 import { Tabs as BaseTabs } from '@base-ui/react/tabs';
 import type { ReactNode } from 'react';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
-import { box } from '../Box';
 import { OverlayDirection } from '../overlays/direction';
 import { TabsContext, type TabsSize, type TabsVariant } from './TabsContext';
 
@@ -51,13 +51,14 @@ export function Tabs({
   ...props
 }: TabsProps) {
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, rest.style, 'Tabs');
   return (
     <TabsContext.Provider value={{ variant, size }}>
       {/* Base UI maps arrow keys from a React context, not the DOM `dir`. */}
       <OverlayDirection>
         <BaseTabs.Root
           // The root's own props go on the rendered element, so they keep its types.
-          render={<div {...rest} />}
+          render={<div {...rest} style={grid.style} />}
           value={value}
           defaultValue={defaultValue}
           onValueChange={
@@ -67,7 +68,7 @@ export function Tabs({
               if (typeof value === 'string') onValueChange(value);
             })
           }
-          className={cx(box(layout), className)}
+          className={cx(grid.className, className)}
         >
           {children}
         </BaseTabs.Root>

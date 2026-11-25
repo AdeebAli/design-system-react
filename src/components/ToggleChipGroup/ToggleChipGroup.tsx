@@ -3,9 +3,10 @@
 import { ToggleGroup } from '@base-ui/react/toggle-group';
 import type { ReactNode } from 'react';
 import { cx } from '../../utils/cx';
+import { box } from '../Box';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
-import { box } from '../Box';
 import type { Responsive, SpaceToken } from '../Box/types';
 import { OverlayDirection } from '../overlays/direction';
 
@@ -45,6 +46,7 @@ export function ToggleChipGroup({
   ...props
 }: ToggleChipGroupProps) {
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, rest.style, 'ToggleChipGroup');
 
   return (
     // Base UI maps arrow keys from a React context, not the DOM `dir`.
@@ -52,18 +54,19 @@ export function ToggleChipGroup({
       <ToggleGroup
         className={cx(
           box({
-            ...layout,
             display: 'flex',
             flexWrap: 'wrap',
             alignItems: 'center',
             gap,
           }),
+          grid.className,
           className,
         )}
         onValueChange={
           onValueChange && ((next: string[]) => onValueChange(next))
         }
         {...rest}
+        style={grid.style}
       />
     </OverlayDirection>
   );

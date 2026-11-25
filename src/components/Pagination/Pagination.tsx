@@ -1,9 +1,9 @@
 import type { ElementType, SVGProps } from 'react';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import { warnOnce } from '../../utils/warn';
 import type { ComponentProps } from '../../utils/types';
-import { box } from '../Box';
 import { Button } from '../Button';
 import { Icon } from '../Icon';
 import { ChevronLeftIcon } from '../Icon/internal/ChevronLeft';
@@ -82,6 +82,7 @@ export function Pagination<E extends ElementType = 'a'>({
   ...props
 }: PaginationProps<E>) {
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, rest.style, 'Pagination');
   if (totalPages <= 1) return null;
   if (page < 1 || page > totalPages) {
     warnOnce(
@@ -125,8 +126,9 @@ export function Pagination<E extends ElementType = 'a'>({
   return (
     <nav
       aria-label={ariaLabel}
-      className={cx(box(layout), styles.root, className)}
+      className={cx(grid.className, styles.root, className)}
       {...rest}
+      style={grid.style}
     >
       <ol className={styles.full}>
         <li>{previous}</li>

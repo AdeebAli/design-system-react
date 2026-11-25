@@ -10,9 +10,9 @@ import {
   type Ref,
 } from 'react';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
-import { box } from '../Box';
 import * as buttonStyles from '../Button/Button.css';
 import { useFieldControl } from '../Field/FieldContext';
 import { UploadIcon } from '../Icon/internal/Upload';
@@ -159,6 +159,7 @@ export function FileUpload({
   const [dragging, setDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, style, 'FileUpload');
   const dropzone = variant === 'dropzone';
   const listRef = useRef<HTMLUListElement>(null);
   // A removal in progress, so focus can move once the list updates.
@@ -293,8 +294,8 @@ export function FileUpload({
 
   return (
     <div
-      className={cx(box(layout), styles.root, className)}
-      style={style}
+      className={cx(grid.className, styles.root, className)}
+      style={grid.style}
       data-dragging={dragging ? '' : undefined}
       data-invalid={invalid ? '' : undefined}
       data-disabled={disabled ? '' : undefined}

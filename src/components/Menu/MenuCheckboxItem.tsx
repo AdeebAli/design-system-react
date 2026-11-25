@@ -2,9 +2,9 @@
 
 import { Menu as BaseMenu } from '@base-ui/react/menu';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
-import { box } from '../Box';
 import { CheckIcon } from '../Icon/internal/Check';
 import * as styles from './Menu.css';
 
@@ -36,12 +36,19 @@ export function MenuCheckboxItem({
   ...props
 }: MenuCheckboxItemProps) {
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, rest.style, 'MenuCheckboxItem');
   return (
     <BaseMenu.CheckboxItem
       {...rest}
+      style={grid.style}
       onCheckedChange={(checked) => onCheckedChange?.(checked)}
       closeOnClick={closeOnClick}
-      className={cx(styles.menuItem, styles.checkable, box(layout), className)}
+      className={cx(
+        styles.menuItem,
+        styles.checkable,
+        grid.className,
+        className,
+      )}
     >
       <span className={styles.indicatorSlot}>
         <BaseMenu.CheckboxItemIndicator className={styles.indicator}>

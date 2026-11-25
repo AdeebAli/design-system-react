@@ -3,9 +3,9 @@
 import { Accordion as BaseAccordion } from '@base-ui/react/accordion';
 import { useMemo, type ReactNode } from 'react';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
-import { box } from '../Box';
 import * as styles from './Accordion.css';
 import {
   AccordionContext,
@@ -51,6 +51,7 @@ export function Accordion({
   ...props
 }: AccordionProps) {
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, rest.style, 'Accordion');
   const context = useMemo<AccordionContextValue>(
     () => ({ headingLevel, size, keepMounted }),
     [headingLevel, size, keepMounted],
@@ -59,11 +60,12 @@ export function Accordion({
     <AccordionContext.Provider value={context}>
       <BaseAccordion.Root
         {...rest}
+        style={grid.style}
         value={value}
         defaultValue={defaultValue}
         onValueChange={(next) => onValueChange?.(next)}
         multiple={multiple}
-        className={cx(box(layout), styles.root, className)}
+        className={cx(grid.className, styles.root, className)}
       >
         {children}
       </BaseAccordion.Root>

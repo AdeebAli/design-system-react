@@ -1,5 +1,5 @@
 import type { ComponentProps, Ref } from 'react';
-import { Box, type BoxProps } from './Box';
+import { Box, box, type BoxProps } from './Box';
 import type { GRID_COUNT_PROPS } from './gridCounts';
 import type { sprinkles } from './sprinkles.css';
 import type { BoxStyleProps, Responsive, WidthValue } from './types';
@@ -156,4 +156,14 @@ test('the inline width union stays equal to WidthValue', () => {
   expectTypeOf<BoxStyleProps['width']>().toEqualTypeOf<
     Responsive<WidthValue> | undefined
   >();
+});
+
+test('box() takes the style props except the grid counts', () => {
+  box({ padding: '4' });
+  // @ts-expect-error grid counts aren't box() props (ADR 0005)
+  box({ gridColumn: 'span-2' });
+  // @ts-expect-error grid counts aren't box() props (ADR 0005)
+  box({ gridRow: 2 });
+  // @ts-expect-error grid counts aren't box() props (ADR 0005)
+  box({ gridTemplateColumns: 2 });
 });

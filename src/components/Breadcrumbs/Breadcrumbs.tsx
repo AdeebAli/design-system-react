@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
-import { box } from '../Box';
 import * as styles from './Breadcrumbs.css';
 
 interface BreadcrumbsOwnProps {
@@ -29,11 +29,13 @@ export function Breadcrumbs({
   ...props
 }: BreadcrumbsProps) {
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, rest.style, 'Breadcrumbs');
   return (
     <nav
       aria-label={ariaLabel}
-      className={cx(box(layout), styles.root, styles.size[size], className)}
+      className={cx(grid.className, styles.root, styles.size[size], className)}
       {...rest}
+      style={grid.style}
     >
       <ol className={styles.list}>{children}</ol>
     </nav>

@@ -4,9 +4,9 @@ import { Tabs as BaseTabs } from '@base-ui/react/tabs';
 import type { ReactElement, ReactNode } from 'react';
 import { focusRing } from '../../styles/focus.css';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
-import { box } from '../Box';
 import * as styles from './Tabs.css';
 import { useTabsStyle } from './TabsContext';
 
@@ -35,13 +35,14 @@ export function Tab({
 }: TabProps) {
   const { variant, size } = useTabsStyle();
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, rest.style, 'Tab');
   return (
     <BaseTabs.Tab
       value={value}
       disabled={disabled}
-      render={<button type="button" {...rest} />}
+      render={<button type="button" {...rest} style={grid.style} />}
       className={cx(
-        box(layout),
+        grid.className,
         styles.tab,
         styles.tabVariant[variant],
         styles.tabSize[size],

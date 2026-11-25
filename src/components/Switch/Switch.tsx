@@ -61,6 +61,7 @@ export function Switch({
 
   return (
     <ChoiceLabel
+      component="Switch"
       label={label}
       hint={hint}
       layout={layout}
@@ -70,10 +71,10 @@ export function Switch({
       inField={field.inField}
       hintIndent="switch"
     >
-      {(rootClass) => (
+      {(rootClass, rootStyle) => (
         <BaseSwitch.Root
           className={[styles.track, rootClass].filter(Boolean).join(' ')}
-          style={rootClass === undefined ? undefined : style}
+          style={rootClass === undefined ? undefined : rootStyle}
           disabled={disabled}
           aria-invalid={invalid || undefined}
           aria-required={required || undefined}

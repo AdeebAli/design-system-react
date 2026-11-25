@@ -3,9 +3,9 @@
 import { Avatar as BaseAvatar } from '@base-ui/react/avatar';
 import type { ReactNode } from 'react';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
-import { box } from '../Box';
 import * as styles from './Avatar.css';
 import { avatarColorIndex } from './colorFromName';
 import { initials } from './initials';
@@ -65,13 +65,15 @@ export function Avatar({
   ...props
 }: AvatarProps) {
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, rest.style, 'Avatar');
   const label = status
     ? `${name}, ${statusLabels?.[status] ?? defaultStatusLabels[status]}`
     : name;
   return (
     <BaseAvatar.Root
-      className={cx(styles.root, styles.size[size], box(layout), className)}
+      className={cx(styles.root, styles.size[size], grid.className, className)}
       {...rest}
+      style={grid.style}
       data-shape={shape}
       {...(decorative
         ? { 'aria-hidden': true }

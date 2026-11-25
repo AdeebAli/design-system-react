@@ -10,9 +10,9 @@ import {
 } from 'react';
 import { breakpoints } from '../../tokens/breakpoints';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
-import { box } from '../Box';
 import { Drawer, DrawerContent } from '../Drawer';
 import { Icon } from '../Icon';
 import { ChevronLeftIcon } from '../Icon/internal/ChevronLeft';
@@ -97,6 +97,7 @@ export function Sidebar({
   ...props
 }: SidebarProps) {
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, rest.style, 'Sidebar');
   const [uncontrolled, setUncontrolled] = useState(defaultCollapsed);
   // Only with collapsible, which supplies the button to expand it again.
   const collapsed = collapsible && (controlledCollapsed ?? uncontrolled);
@@ -169,10 +170,11 @@ export function Sidebar({
       <SidebarContext.Provider value={context}>
         <nav
           {...rest}
+          style={grid.style}
           aria-label={ariaLabel}
           data-collapsed={collapsed ? '' : undefined}
           className={cx(
-            box(layout),
+            grid.className,
             styles.root,
             sticky && styles.sticky,
             className,

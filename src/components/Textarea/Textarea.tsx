@@ -2,9 +2,9 @@
 
 import { Field as BaseField } from '@base-ui/react/field';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
-import { box } from '../Box';
 import { useFieldControl } from '../Field/FieldContext';
 import * as styles from '../Input/Input.css';
 
@@ -36,6 +36,7 @@ export function Textarea({
   // A disabled Field wins, so the control can't be enabled inside it.
   const disabled = field.disabled || disabledProp === true;
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, rest.style, 'Textarea');
 
   return (
     <BaseField.Control
@@ -50,9 +51,9 @@ export function Textarea({
       autoFocus={autoFocus}
       // It's typed for an input, so the textarea's other props go on the
       // rendered element, which Base UI merges, and keep their types.
-      render={<textarea {...rest} />}
+      render={<textarea {...rest} style={grid.style} />}
       className={cx(
-        box(layout),
+        grid.className,
         styles.control,
         styles.textarea,
         styles.resize[resize],

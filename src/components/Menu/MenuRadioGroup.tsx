@@ -2,9 +2,9 @@
 
 import { Menu as BaseMenu } from '@base-ui/react/menu';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
-import { box } from '../Box';
 import * as styles from './Menu.css';
 
 interface MenuRadioGroupOwnProps {
@@ -26,11 +26,13 @@ export function MenuRadioGroup({
   ...props
 }: MenuRadioGroupProps) {
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, rest.style, 'MenuRadioGroup');
   return (
     <BaseMenu.RadioGroup
       {...rest}
+      style={grid.style}
       onValueChange={(value) => onValueChange?.(value as string)}
-      className={cx(styles.group, box(layout), className)}
+      className={cx(styles.group, grid.className, className)}
     />
   );
 }

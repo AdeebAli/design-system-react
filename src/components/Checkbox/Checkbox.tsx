@@ -67,6 +67,7 @@ export function Checkbox({
 
   return (
     <ChoiceLabel
+      component="Checkbox"
       label={label}
       hint={hint}
       layout={layout}
@@ -76,10 +77,10 @@ export function Checkbox({
       inField={field.inField}
       hintIndent="checkbox"
     >
-      {(rootClass) => (
+      {(rootClass, rootStyle) => (
         <BaseCheckbox.Root
           className={[styles.checkbox, rootClass].filter(Boolean).join(' ')}
-          style={rootClass === undefined ? undefined : style}
+          style={rootClass === undefined ? undefined : rootStyle}
           indeterminate={indeterminate}
           disabled={disabled}
           aria-invalid={invalid || undefined}

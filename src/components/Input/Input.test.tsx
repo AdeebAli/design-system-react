@@ -127,3 +127,19 @@ it('disabled={false} inside a disabled Field stays disabled, with disabled styli
   // The wrapper, not the Field root, which has its own data-disabled.
   expect(input.parentElement).toHaveAttribute('data-disabled');
 });
+
+it('puts a grid count and a consumer style on the wrapper, not the input', () => {
+  render(
+    <Input
+      aria-label="x"
+      gridColumn={14}
+      style={{ color: 'red' }}
+      data-testid="i"
+    />,
+  );
+  const input = screen.getByTestId('i');
+  const wrapper = input.parentElement!;
+  expect(wrapper.style.getPropertyValue('--ds-grid-column-base')).toBe('14');
+  expect(wrapper.style.color).toBe('red');
+  expect(input.hasAttribute('style')).toBe(false);
+});

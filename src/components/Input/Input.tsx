@@ -3,9 +3,9 @@
 import { Field as BaseField } from '@base-ui/react/field';
 import type { ReactElement } from 'react';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
-import { box } from '../Box';
 import { useFieldControl } from '../Field/FieldContext';
 import * as styles from './Input.css';
 
@@ -45,17 +45,18 @@ export function Input({
   // A disabled Field wins, so the control can't be enabled inside it.
   const disabled = field.disabled || disabledProp === true;
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, style, 'Input');
 
   return (
     <div
       className={cx(
-        box(layout),
+        grid.className,
         styles.control,
         styles.wrapper,
         styles.size[size],
         className,
       )}
-      style={style}
+      style={grid.style}
       data-invalid={invalid ? '' : undefined}
       data-disabled={disabled ? '' : undefined}
     >

@@ -11,9 +11,9 @@ import {
 } from 'react';
 import { focusRing } from '../../styles/focus.css';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import { warnOnce } from '../../utils/warn';
-import { box } from '../Box';
 import type { LayoutProps } from '../Box/types';
 import { Icon } from '../Icon';
 import { CheckIcon } from '../Icon/internal/Check';
@@ -266,6 +266,7 @@ export function DataTable<Row>({
 }: DataTableProps<Row>) {
   const [layout, rest] = splitLayoutProps(props);
   const { height, maxHeight, ...outerLayout } = layout;
+  const grid = layoutStyle(outerLayout, undefined, 'DataTable');
 
   const [sortState, setSortState] = useState<DataTableSort>(defaultSort);
   const [pageState, setPageState] = useState(defaultPage);
@@ -411,7 +412,8 @@ export function DataTable<Row>({
   return (
     <div
       aria-busy={loading || undefined}
-      className={cx(styles.root, box(outerLayout))}
+      className={cx(styles.root, grid.className)}
+      style={grid.style}
     >
       {selectionMode === 'multiple' && (
         <SelectionToolbar

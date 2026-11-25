@@ -3,9 +3,9 @@
 import { Progress as BaseProgress } from '@base-ui/react/progress';
 import type { ReactNode } from 'react';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
-import { box } from '../Box';
 import * as styles from './Progress.css';
 
 /** `Progress`'s color meanings. */
@@ -55,13 +55,15 @@ export function Progress({
   ...props
 }: ProgressProps) {
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, rest.style, 'Progress');
   const hasHeader = (label !== undefined && label !== null) || showValue;
   return (
     <BaseProgress.Root
       value={value}
       max={max}
-      className={cx(styles.root, box(layout), className)}
+      className={cx(styles.root, grid.className, className)}
       {...rest}
+      style={grid.style}
     >
       {hasHeader && (
         <div className={styles.header}>

@@ -4,9 +4,9 @@ import { Accordion as BaseAccordion } from '@base-ui/react/accordion';
 import type { ReactNode } from 'react';
 import { focusRing } from '../../styles/focus.css';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
-import { box } from '../Box';
 import { Icon } from '../Icon';
 import { ChevronDownIcon } from '../Icon/internal/ChevronDown';
 import * as styles from './Accordion.css';
@@ -40,14 +40,16 @@ export function AccordionItem({
 }: AccordionItemProps) {
   const accordion = useAccordion();
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, rest.style, 'AccordionItem');
   const Heading = `h${accordion.headingLevel}` as const;
   const keep = keepMounted ?? accordion.keepMounted;
   return (
     <BaseAccordion.Item
       {...rest}
+      style={grid.style}
       value={value}
       disabled={disabled}
-      className={cx(box(layout), styles.item, className)}
+      className={cx(grid.className, styles.item, className)}
     >
       <BaseAccordion.Header render={<Heading />} className={styles.heading}>
         <BaseAccordion.Trigger

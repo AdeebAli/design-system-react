@@ -1,9 +1,11 @@
 import type { ComponentPropsWithRef, ElementType, ReactNode } from 'react';
 import { cx } from '../../utils/cx';
+import { warnOnce } from '../../utils/warn';
 import {
   GRID_COUNT_PROPS,
   gridCountStyle,
   withGridVariables,
+  type GridCountProps,
 } from './gridCounts';
 import { sprinkles } from './sprinkles.css';
 import type { BoxStyleProps } from './types';
@@ -44,12 +46,23 @@ function withoutNullish(value: unknown): unknown {
 
 /**
  * Returns the class string for style props, for when wrapping with `Box` isn't
- * possible. Nullish values add nothing.
+ * possible. Nullish values add nothing. It doesn't take grid counts
+ * (`gridTemplateColumns`, `gridColumn`, `gridRow`): wrap the element in `Box`,
+ * or use `style`.
  */
-export function box(props: BoxStyleProps): string {
+export function box(props: Omit<BoxStyleProps, keyof GridCountProps>): string {
   const defined = Object.fromEntries(
     Object.entries(props)
-      .filter(([name, value]) => value != null && !isGridCount(name))
+      .filter(([name, value]) => {
+        if (value == null) return false;
+        if (!isGridCount(name)) return true;
+        // From untyped code only: the types reject these (ADR 0005).
+        warnOnce(
+          `box-grid-count-${name}`,
+          `box(): ${name} isn't supported, so it's ignored. For grid placement of another component, wrap it in \`Box\` or use \`style\`.`,
+        );
+        return false;
+      })
       .map(([name, value]) => [name, withoutNullish(value)]),
   );
   // The hand-written prop types are kept in sync with sprinkles by Box.test-d.tsx.
