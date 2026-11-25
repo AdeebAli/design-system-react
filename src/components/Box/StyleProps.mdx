@@ -19,7 +19,7 @@ Every component accepts these, and each is responsive: `padding={{ base: '2', md
 | `maxHeight`                                                                             | `none`, `full`, `fit`, `screen`                                                                                                                        |
 | `flexGrow`, `flexShrink`                                                                | `0`, `1`                                                                                                                                               |
 | `alignSelf`, `justifySelf`                                                              | `auto`, `start`, `center`, `end`, `stretch`                                                                                                            |
-| `gridColumn`, `gridRow`                                                                 | `span-1` through `span-12`, `full`                                                                                                                     |
+| `gridColumn`, `gridRow`                                                                 | any positive whole number, as a number or `span-n` (`14`, `span-14`), or `full`                                                                        |
 
 ## Responsive `Box` props
 
@@ -32,7 +32,7 @@ Every component accepts these, and each is responsive: `padding={{ base: '2', md
 | `flexWrap`                                                                                     | `nowrap`, `wrap`                                                                        |
 | `alignItems`                                                                                   | `start`, `center`, `end`, `stretch`, `baseline`                                         |
 | `justifyContent`                                                                               | `start`, `center`, `end`, `between`                                                     |
-| `gridTemplateColumns`                                                                          | `1` through `12`                                                                        |
+| `gridTemplateColumns`                                                                          | any positive whole number, as a number or a string (`16`, `'16'`)                       |
 | `position`                                                                                     | `static`, `relative`, `absolute`, `fixed`, `sticky`                                     |
 | `insetTop`, `insetBottom`, `insetStart`, `insetEnd`                                            | `space` tokens, `auto`, `full`                                                          |
 | `overflow`, `overflowX`, `overflowY`                                                           | `visible`, `hidden`, `auto`, `scroll`                                                   |

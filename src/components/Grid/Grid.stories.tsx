@@ -26,7 +26,7 @@ export const Playground: Story = {
 
 export const Responsive: Story = {
   args: {
-    columns: { base: '2', md: '4' },
+    columns: { base: 2, md: 4 },
     children: (
       <>
         <Tile gridColumn="span-2">Wide</Tile>
@@ -50,6 +50,30 @@ export const EqualRows: Story = {
           lines at this width.
         </Tile>
         <Tile>This row matches the tallest one</Tile>
+      </>
+    ),
+  },
+};
+
+export const SixteenColumns: Story = {
+  args: {
+    columns: 16,
+    gap: '1',
+    children: Array.from({ length: 16 }, (_, index) => (
+      <Tile key={index}>{index + 1}</Tile>
+    )),
+  },
+};
+
+export const WideSpan: Story = {
+  args: {
+    columns: 16,
+    gap: '1',
+    children: (
+      <>
+        <Tile gridColumn={14}>14 of 16</Tile>
+        <Tile gridColumn={2}>2</Tile>
+        <Tile gridColumn="full">Full row</Tile>
       </>
     ),
   },
