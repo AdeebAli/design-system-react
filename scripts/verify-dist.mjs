@@ -2,6 +2,7 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { clientModuleFailures } from './client-modules.mjs';
+import { checkEditorHelp, EDITOR_HELP_STRICT } from './check-editor-help.mjs';
 
 const failures = [];
 const dist = 'dist';
@@ -39,6 +40,14 @@ if (declarations.length !== 1 || declarations[0] !== join(dist, 'index.d.ts')) {
     failures.push('index.d.ts has relative imports');
   if (types.includes('base-ui')) failures.push('index.d.ts mentions base-ui');
   if (/lucide/i.test(types)) failures.push('index.d.ts mentions Lucide');
+  // Hovers and examples as an editor shows them (Spec 19).
+  const editorHelp = checkEditorHelp(types);
+  if (EDITOR_HELP_STRICT) failures.push(...editorHelp);
+  else if (editorHelp.length > 0) {
+    console.warn(
+      `editor help: ${editorHelp.length} problems (not yet fatal):\n  ${editorHelp.join('\n  ')}`,
+    );
+  }
 }
 
 const boxModule = join(dist, 'components/Box/Box.js');

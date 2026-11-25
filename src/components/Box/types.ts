@@ -165,7 +165,38 @@ export interface LayoutProps {
   /** Margin at the inline end. */
   marginEnd?: Responsive<MarginValue>;
   /** Width. */
-  width?: Responsive<WidthValue>;
+  width?: Responsive<
+    | '0'
+    | 'px'
+    | '0.5'
+    | '1'
+    | '1.5'
+    | '2'
+    | '3'
+    | '4'
+    | '5'
+    | '6'
+    | '8'
+    | '10'
+    | '12'
+    | '16'
+    | '20'
+    | '24'
+    | 'container.sm'
+    | 'container.md'
+    | 'container.lg'
+    | 'container.xl'
+    | 'auto'
+    | 'full'
+    | 'fit'
+    | 'min'
+    | 'max'
+    | '1/2'
+    | '1/3'
+    | '2/3'
+    | '1/4'
+    | '3/4'
+  >;
   /** Minimum width. */
   minWidth?: Responsive<WidthValue>;
   /** Height. */

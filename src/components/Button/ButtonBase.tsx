@@ -10,7 +10,7 @@ import { Box, box } from '../Box';
 import { Spinner } from '../Spinner';
 import { VisuallyHidden } from '../VisuallyHidden';
 import * as styles from './Button.css';
-import { resolveTone, type ButtonTone, type ButtonVariant } from './tones';
+import { resolveTone, type ButtonTone } from './tones';
 
 /** Button sizes, at the control heights 28, 36, and 44px. */
 export type ButtonSize = 'sm' | 'md' | 'lg';
@@ -18,7 +18,7 @@ export type ButtonSize = 'sm' | 'md' | 'lg';
 /** Props shared by `Button` and `IconButton`. */
 export interface ButtonBaseOwnProps {
   /** The style. @default 'solid' */
-  variant?: ButtonVariant;
+  variant?: 'solid' | 'soft' | 'outline' | 'ghost';
   /**
    * The color meaning. `solid` supports `accent` and `danger`, `ghost` supports
    * `neutral` and `danger`, and `soft` and `outline` support `neutral`.

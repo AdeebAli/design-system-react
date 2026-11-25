@@ -1,7 +1,7 @@
 import type { ComponentProps, Ref } from 'react';
 import { Box, type BoxProps } from './Box';
 import type { sprinkles } from './sprinkles.css';
-import type { BoxStyleProps } from './types';
+import type { BoxStyleProps, Responsive, WidthValue } from './types';
 
 function Custom(props: { label: string; className?: string }) {
   return <span {...props} />;
@@ -125,4 +125,10 @@ test('hand-written types and sprinkles have the same props and values', () => {
     keyof BoxStyleProps
   >();
   expectTypeOf<Mismatched>().toBeNever();
+});
+
+test('the inline width union stays equal to WidthValue', () => {
+  expectTypeOf<BoxStyleProps['width']>().toEqualTypeOf<
+    Responsive<WidthValue> | undefined
+  >();
 });

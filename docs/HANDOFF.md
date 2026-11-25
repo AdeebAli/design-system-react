@@ -1,6 +1,6 @@
 # Handoff: design-system-react
 
-- **Date:** 2026-11-25 (updated after accepting Spec 19, API ergonomics)
+- **Date:** 2026-11-25 (updated after writing the v0.9 plan)
 
 ## Goal
 
@@ -19,7 +19,8 @@ Build `@adeebali/design-system-react`, a general-purpose React design system. Sp
 - **Retro (post-release failure), 2026-11-19:** logged in `~/.claude/retros/2026-11-19-v0-8-1-release-broke-welcome-screenshot.md`. Proposals P1–P4 await the owner (thread 19).
 - **Owner's manual checks:** PR #37's and PR #33's were reported done on 2026-11-13. PR #40's weren't reported before the merge.
 - **Spec 19 (API ergonomics) and ADR 0005 accepted, 2026-11-25,** for a new milestone **v0.9** before v1.0. Not built yet. It came from the owner asking why `Grid` doesn't accept numbers, and finding the editor help thin (see Decisions).
-- **Next:** plan v0.9 (Spec 19), then v1.0 stabilization (Spec 00).
+- **v0.9 plan written, 2026-11-25:** `docs/superpowers/plans/2026-11-25-v0-9-api-ergonomics.md`, 7 tasks, no departures from the spec. The owner reviewed it and chose **inline execution in a new Sonnet session**. Not started: no code changed, and no branch yet.
+- **Next:** build v0.9 from the plan, then v1.0 stabilization (Spec 00).
 
 ## Decisions
 
@@ -32,6 +33,14 @@ Architecture decisions are in `docs/adr/`.
   - All are unchanged.
 - **Ledgers (local, gitignored):** v0.8.1's is `.superpowers/sdd/2026-11-13-v0-8-1-documentation-site/progress.md`, with every ruling and break-check. Earlier ledgers are in sibling folders.
   - The ledgers are kept, as the earlier releases' were. Rejected: deleting the workspace, as `executing-plans` suggests, which would lose the ruling record this note points to.
+
+### v0.9 plan rulings (2026-11-25)
+
+All six are in the plan's "Rulings made while planning", to be copied into the ledger (`.superpowers/sdd/2026-11-25-v0-9-api-ergonomics/progress.md`). The ones a reader is most likely to need:
+- **`@example`s are type-checked** (Spec 19's proposed item): `scripts/extract-examples.mjs` runs before `tsc` in `npm run typecheck` and writes to a gitignored `.generated/examples/`. Rejected: an in-memory compiler-API test in `npm test`, which isn't `npm run typecheck`.
+- **Grid variable names are fixed strings** (`--ds-grid-columns-md` and so on), not `createVar()` hashes. Cost: projects may rely on them.
+- **The hover and `@example` checks run in `npm run build`**, from `verify-dist`, against `dist/` with the repo's TypeScript (6.0.3).
+- **Execution:** inline, on Sonnet (owner). Rejected: subagent-driven (about 14 agents plus a final review).
 
 ### Spec 19 decisions (owner, 2026-11-25)
 
@@ -82,7 +91,7 @@ Unchanged; see `git show cde1a38:docs/HANDOFF.md` (v0.8) and Spec 18's "Decided 
 
 ## Dependencies
 
-Checked 2026-11-13 against `npm view` (rerun at v0.8.1 setup: unchanged except as noted). The README's "Dependencies" table is the consumer view; this is the maintainer view.
+Checked 2026-11-13 against `npm view` (rerun at v0.8.1 setup: unchanged except as noted; rerun at v0.9 planning, 2026-11-25: see below the table). The README's "Dependencies" table is the consumer view; this is the maintainer view.
 
 | Package | Range | Installed | Latest | Note |
 | --- | --- | --- | --- | --- |
@@ -103,11 +112,15 @@ Checked 2026-11-13 against `npm view` (rerun at v0.8.1 setup: unchanged except a
 - **Trigger:** each plan's setup reruns `npm view` for these packages and updates this table. The v1.0 plan decides on TypeScript 7, ESLint, and the patch updates.
 - **Release ranges:** a runtime dependency's range changes only in a release, with a line in its notes.
 - **Rerun at v0.8.1 Task 1 setup:** no changes from the table above.
+- **Rerun at v0.9 planning (2026-11-25):** the runtime packages are unchanged. Newer latest versions: `storybook` and `@storybook/react` 10.6.9, `typescript-eslint` 8.74.0, `vitest` 5.1.1. Everything else is as the table says. The plan doesn't upgrade anything. Its Task 1 setup reruns these checks.
+- **`npm audit` (2026-11-25, v0.9 planning):** 11 moderate, 0 high, 0 critical. `--omit=dev`: 0.
 - **`npm audit` (2026-11-13, after the build):** 11 moderate, 0 high, 0 critical. `--omit=dev`: 0.
 
 ## Changes
 
-**This note's branch** (`docs/spec-19-api-ergonomics`, from `main` at `5af739e`): Spec 19 and ADR 0005 (new); Specs 00, 04, 05, 06, and 09 and ADR 0001 amended; this note.
+**Uncommitted on `main` (2026-11-25):** the v0.9 plan (new, untracked) and this note. Both go into v0.9 Task 1's commit on `feat/v0.9-api-ergonomics`. Create the branch from `main` with them still in the working tree.
+
+**Spec 19 branch** (`docs/spec-19-api-ergonomics`), squash-merged as `64ee576` (#43): Spec 19 and ADR 0005 (new); Specs 00, 04, 05, 06, and 09 and ADR 0001 amended; the handoff.
 
 **Earlier note branch** (`docs/handoff-after-v0.8.1`): merged as `5af739e` (#41).
 
@@ -221,7 +234,7 @@ Checked 2026-11-13 against `npm view` (rerun at v0.8.1 setup: unchanged except a
 
 **Not verified:**
 
-- **How to make hovers show literal values** for Spec 19 (declaration style versus alias names). Trigger: the v0.9 plan's Task 1, a language-service probe. If no technique works, the fallback is the TSDoc value list, and the owner is asked before building on it.
+- **How to make hovers show literal values** for Spec 19 (declaration style versus alias names). Trigger: v0.9 plan Task 1, Step 1, which probes four candidates. If none works, the fallback is the TSDoc value list, and the owner is asked before building on it.
 
 
 - **The other 118 baselines in `f38c107` weren't viewed.** #42 deleted all but `foundations-primitives--docs` (desktop and mobile), which remain unviewed. Trigger: none. CI compares against them on every PR.
@@ -317,12 +330,14 @@ Checked 2026-11-13 against `npm view` (rerun at v0.8.1 setup: unchanged except a
 
 ## Next steps
 
-1. **v0.9 (Spec 19, API ergonomics).** Write its plan first, rerunning `npm audit` and `npm view`. The plan:
-   - Task 1: the language-service hover probe (see Not verified);
-   - collects the specs' (proposed) item: how `@example` blocks are type-checked;
-   - gives each of the ~38 components that switch from `box()` to the internal helper a test that a layout prop still applies, seen passing before and after;
-   - follows the `CLAUDE.md` ruling and fixture break-check formats (the Next fixture's server HTML for `<Grid columns={16}>`);
-   - notes the release's breaking change (`box()` grid props) and the widened `GridCount`/`GridSpanValue`.
+1. **Build v0.9 (Spec 19)** from `docs/superpowers/plans/2026-11-25-v0-9-api-ergonomics.md`, inline on Sonnet, with `superpowers:executing-plans`. The old step "write the plan" is done. The plan covers each of the old step's items:
+   - the hover probe: Task 1;
+   - how `@example`s are type-checked: a ruling, built in Task 6;
+   - the 37 rerouted `box()` caller files, each tested before and after the switch: Task 3;
+   - the Next fixture's `<Grid columns={16}>`, break-checked: Task 4;
+   - the release notes for the breaking changes: Task 7's PR body.
+   
+   After Task 7, release v0.9.0 with `npm run release -- minor`, once the owner merges.
 2. **v1.0 stabilization (Spec 00).** Write its plan first, and while planning, rerun `npm audit` and `npm view` (the table above). The plan:
    - collects thread 6's deferred minors (v0.4–v0.8.1);
    - type-checks every `tsx` example in `docs/specs/*.md` and the README (retro P6);
@@ -332,4 +347,4 @@ Checked 2026-11-13 against `npm view` (rerun at v0.8.1 setup: unchanged except a
 
 ## Resume prompt
 
-> Read `docs/HANDOFF.md`. v0.8.1 is released, and Spec 19 (API ergonomics, v0.9) and ADR 0005 are accepted. Start the v0.9 plan per Next steps 1, rerunning `npm audit` and `npm view` first and beginning with the hover probe. v1.0 stabilization (Next steps 2) follows. Don't apply the declined v0.8.1 retro proposals (thread 16). Ask me about the 2026-11-19 retro's P1–P4 (thread 19) before applying any. Ask me about any departure from a spec when it's found.
+> Read `docs/HANDOFF.md`, `docs/specs/19-api-ergonomics.md`, and `docs/superpowers/plans/2026-11-25-v0-9-api-ergonomics.md`. v0.8.1 is released, and the v0.9 plan is approved for inline execution. Create `feat/v0.9-api-ergonomics` from `main`, keeping the uncommitted plan and handoff, then execute the plan task by task with `superpowers:executing-plans`, starting with Task 1's setup rerun and hover probe. Stop and ask me if no hover technique works. v1.0 stabilization (Next steps 2) follows. Don't apply the declined v0.8.1 retro proposals (thread 16). Ask me about the 2026-11-19 retro's P1–P4 (thread 19) before applying any. Ask me about any departure from a spec when it's found.
