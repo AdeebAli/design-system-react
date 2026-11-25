@@ -38,6 +38,11 @@ export type DividerProps = Omit<
 /**
  * A line between things. Set `decorative` when the layout already separates
  * them, so a screen reader doesn't read each line.
+ *
+ * @example
+ * ```tsx
+ * <Divider />
+ * ```
  */
 export function Divider({
   orientation = 'horizontal',

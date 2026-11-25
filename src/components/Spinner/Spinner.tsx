@@ -22,7 +22,14 @@ export type SpinnerProps = Omit<
   'as' | 'children'
 >;
 
-/** Shows that something is working, when its duration is unknown. */
+/**
+ * Shows that something is working, when its duration is unknown.
+ *
+ * @example
+ * ```tsx
+ * <Spinner label="Loading" />
+ * ```
+ */
 export function Spinner({
   size = 'md',
   label,

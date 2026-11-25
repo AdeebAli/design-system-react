@@ -34,7 +34,14 @@ interface ToggleChipOwnProps {
 /** `ToggleChip`'s props. */
 export type ToggleChipProps = ComponentProps<'button', ToggleChipOwnProps>;
 
-/** A selectable pill, such as a filter. Pressed chips show a check, so state isn't shown by color alone. */
+/**
+ * A selectable pill, such as a filter. Pressed chips show a check, so state isn't shown by color alone.
+ *
+ * @example
+ * ```tsx
+ * <ToggleChip>Archived</ToggleChip>
+ * ```
+ */
 export function ToggleChip({
   onPressedChange,
   size = 'md',

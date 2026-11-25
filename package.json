@@ -35,7 +35,7 @@
   "license": "PolyForm-Noncommercial-1.0.0",
   "scripts": {
     "build": "vite build --config vite.lib.config.ts && node scripts/build-fonts.mjs && node scripts/verify-dist.mjs",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "node scripts/extract-examples.mjs && tsc --noEmit",
     "lint": "eslint . && node scripts/check-raw-values.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

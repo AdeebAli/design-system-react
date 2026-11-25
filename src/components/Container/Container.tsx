@@ -68,7 +68,14 @@ export type ContainerProps<E extends ElementType = 'div'> = PolymorphicProps<
   ContainerOwnProps
 >;
 
-/** Centers a page's content, with a maximum width and side padding. */
+/**
+ * Centers a page's content, with a maximum width and side padding.
+ *
+ * @example
+ * ```tsx
+ * <Container size="md">Page content</Container>
+ * ```
+ */
 export function Container<E extends ElementType = 'div'>({
   size = 'lg',
   paddingX = { base: '4', md: '6' },

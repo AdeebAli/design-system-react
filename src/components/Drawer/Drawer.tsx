@@ -23,7 +23,25 @@ export interface DrawerProps {
   children?: ReactNode;
 }
 
-/** A modal panel that slides in from a side. Compose it from `DrawerTrigger` and `DrawerContent`. */
+/**
+ * A modal panel that slides in from a side. Compose it from `DrawerTrigger` and `DrawerContent`.
+ *
+ * @example
+ * ```tsx
+ * <Drawer>
+ *   <DrawerTrigger>
+ *     <Button>Filters</Button>
+ *   </DrawerTrigger>
+ *   <DrawerContent>
+ *     <DrawerTitle>Filters</DrawerTitle>
+ *     <DrawerDescription>Narrow the list.</DrawerDescription>
+ *     <DrawerClose>
+ *       <Button>Done</Button>
+ *     </DrawerClose>
+ *   </DrawerContent>
+ * </Drawer>
+ * ```
+ */
 export function Drawer({
   open,
   defaultOpen,

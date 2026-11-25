@@ -15,6 +15,13 @@ export interface TooltipProviderProps {
 /**
  * Optional. Inside one, a second tooltip opens without delay soon after the
  * first closes, so moving along a toolbar feels quick.
+ *
+ * @example
+ * ```tsx
+ * <TooltipProvider>
+ *   <Text>Your app</Text>
+ * </TooltipProvider>
+ * ```
  */
 export function TooltipProvider({ delay, children }: TooltipProviderProps) {
   return (

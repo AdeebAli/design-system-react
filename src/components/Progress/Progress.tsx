@@ -47,7 +47,14 @@ export type ProgressProps = Omit<
 > &
   ProgressName;
 
-/** Shows how far along something is. For scores, such as storage used, it isn't the right fit. */
+/**
+ * Shows how far along something is. For scores, such as storage used, it isn't the right fit.
+ *
+ * @example
+ * ```tsx
+ * <Progress aria-label="Uploading" value={30} />
+ * ```
+ */
 export function Progress({
   value,
   max = 100,

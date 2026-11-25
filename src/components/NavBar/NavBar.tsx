@@ -52,6 +52,13 @@ export type NavBarProps = ComponentProps<'nav', NavBarOwnProps>;
 /**
  * The site's main navigation bar. Below `md`, links collapse behind a menu
  * button into a panel that pushes content down.
+ *
+ * @example
+ * ```tsx
+ * <NavBar aria-label="Main" brand={<a href="/">Acme</a>}>
+ *   <NavBarLink href="/docs">Docs</NavBarLink>
+ * </NavBar>
+ * ```
  */
 export function NavBar({
   brand,

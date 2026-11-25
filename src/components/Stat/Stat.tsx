@@ -68,7 +68,14 @@ interface StatOwnProps {
 /** `Stat`'s props. */
 export type StatProps = ComponentProps<'dl', StatOwnProps>;
 
-/** A labeled number, with an optional change. Put it in a `Card`, or anywhere. */
+/**
+ * A labeled number, with an optional change. Put it in a `Card`, or anywhere.
+ *
+ * @example
+ * ```tsx
+ * <Stat label="Revenue" value="$21.4k" change="4.1" trend="up" />
+ * ```
+ */
 export function Stat({
   label,
   value,

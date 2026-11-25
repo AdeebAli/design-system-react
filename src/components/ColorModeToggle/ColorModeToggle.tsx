@@ -36,6 +36,11 @@ export type ColorModeToggleProps = Omit<
 /**
  * Switches between light and dark, storing the opposite of what's on screen.
  * It renders nothing when a `ThemeProvider` forces the mode.
+ *
+ * @example
+ * ```tsx
+ * <ColorModeToggle />
+ * ```
  */
 export function ColorModeToggle({
   labels,

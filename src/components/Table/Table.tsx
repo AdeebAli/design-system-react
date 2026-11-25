@@ -35,7 +35,25 @@ export type TableProps = TableOwnProps &
   LayoutProps &
   Omit<ComponentPropsWithRef<'table'>, keyof TableOwnProps | keyof LayoutProps>;
 
-/** A styled table inside a scroll wrapper. Compose it from the `Table*` parts. */
+/**
+ * A styled table inside a scroll wrapper. Compose it from the `Table*` parts.
+ *
+ * @example
+ * ```tsx
+ * <Table>
+ *   <TableHead>
+ *     <TableRow>
+ *       <TableHeader>Name</TableHeader>
+ *     </TableRow>
+ *   </TableHead>
+ *   <TableBody>
+ *     <TableRow>
+ *       <TableCell>Ada</TableCell>
+ *     </TableRow>
+ *   </TableBody>
+ * </Table>
+ * ```
+ */
 export function Table({
   size = 'md',
   stickyHeader = false,

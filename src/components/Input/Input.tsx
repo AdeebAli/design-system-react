@@ -29,7 +29,14 @@ interface InputOwnProps {
  */
 export type InputProps = ComponentProps<'input', InputOwnProps>;
 
-/** A text input. It keeps the native `value` and `onChange`, so it works with `register`. */
+/**
+ * A text input. It keeps the native `value` and `onChange`, so it works with `register`.
+ *
+ * @example
+ * ```tsx
+ * <Input aria-label="Name" placeholder="Ada Lovelace" />
+ * ```
+ */
 export function Input({
   size = 'md',
   invalid: invalidProp,

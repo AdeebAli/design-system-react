@@ -37,7 +37,18 @@ interface AccordionOwnProps {
 /** `Accordion`'s props. */
 export type AccordionProps = ComponentProps<'div', AccordionOwnProps>;
 
-/** Sections that expand in place, such as FAQs and settings. */
+/**
+ * Sections that expand in place, such as FAQs and settings.
+ *
+ * @example
+ * ```tsx
+ * <Accordion>
+ *   <AccordionItem value="shipping" title="Shipping">
+ *     Orders ship in two days.
+ *   </AccordionItem>
+ * </Accordion>
+ * ```
+ */
 export function Accordion({
   value,
   defaultValue,

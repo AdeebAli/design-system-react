@@ -69,7 +69,16 @@ export function box(props: Omit<BoxStyleProps, keyof GridCountProps>): string {
   return sprinkles(defined);
 }
 
-/** The primitive every component is built on. */
+/**
+ * The primitive every component is built on.
+ *
+ * @example
+ * ```tsx
+ * <Box padding="4" background="surface" borderRadius="card">
+ *   Content
+ * </Box>
+ * ```
+ */
 export function Box<E extends ElementType = 'div'>(props: BoxProps<E>) {
   // A generic `as` can't be narrowed, so its props are read as a plain record.
   const { as, className, htmlWidth, htmlHeight, ...rest } = props as Record<

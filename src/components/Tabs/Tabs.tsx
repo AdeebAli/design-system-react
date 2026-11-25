@@ -39,7 +39,21 @@ type TabsValueProps =
 /** `Tabs`'s props. */
 export type TabsProps = ComponentProps<'div', TabsSharedProps & TabsValueProps>;
 
-/** Switches between panels in the same page. For links between pages, use `NavBar`. */
+/**
+ * Switches between panels in the same page. For links between pages, use `NavBar`.
+ *
+ * @example
+ * ```tsx
+ * <Tabs defaultValue="overview">
+ *   <TabsList aria-label="Views">
+ *     <Tab value="overview">Overview</Tab>
+ *     <Tab value="activity">Activity</Tab>
+ *   </TabsList>
+ *   <TabsPanel value="overview">Overview</TabsPanel>
+ *   <TabsPanel value="activity">Activity</TabsPanel>
+ * </Tabs>
+ * ```
+ */
 export function Tabs({
   variant = 'underline',
   size = 'md',

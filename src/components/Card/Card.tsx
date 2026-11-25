@@ -102,7 +102,17 @@ export type CardProps<E extends ElementType = 'div'> = PolymorphicProps<
   CardOwnProps
 >;
 
-/** A surface for grouping content, sized for bento grids. */
+/**
+ * A surface for grouping content, sized for bento grids.
+ *
+ * @example
+ * ```tsx
+ * <Card span="2x1">
+ *   <Heading level={3}>Revenue</Heading>
+ *   <Text>$21.4k this month</Text>
+ * </Card>
+ * ```
+ */
 export function Card<E extends ElementType = 'div'>({
   as,
   span,

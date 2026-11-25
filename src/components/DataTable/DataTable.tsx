@@ -243,6 +243,16 @@ function SelectButton({
 /**
  * A table that manages sorting, pagination, and the loading and empty
  * states. Use `Table` for display and server rendering.
+ *
+ * @example
+ * ```tsx
+ * <DataTable
+ *   aria-label="People"
+ *   rows={[{ id: '1', name: 'Ada' }]}
+ *   getRowId={(person) => person.id}
+ *   columns={[{ id: 'name', header: 'Name', cell: (person) => person.name }]}
+ * />
+ * ```
  */
 export function DataTable<Row>({
   rows,

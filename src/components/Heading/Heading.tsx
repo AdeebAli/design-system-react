@@ -62,7 +62,14 @@ interface HeadingOwnProps {
 /** `Heading`'s props. */
 export type HeadingProps = ComponentProps<'h1', HeadingOwnProps>;
 
-/** A heading. `level` sets the tag, and `size` sets the look. */
+/**
+ * A heading. `level` sets the tag, and `size` sets the look.
+ *
+ * @example
+ * ```tsx
+ * <Heading level={2}>Settings</Heading>
+ * ```
+ */
 export function Heading({
   level,
   size,

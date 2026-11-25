@@ -34,7 +34,14 @@ export type LinkProps<E extends ElementType = 'a'> = PolymorphicProps<
   LinkOwnProps
 >;
 
-/** A link. It can wrap a router's link through `as`, and mark external links. */
+/**
+ * A link. It can wrap a router's link through `as`, and mark external links.
+ *
+ * @example
+ * ```tsx
+ * <Link href="/docs">Read the docs</Link>
+ * ```
+ */
 export function Link<E extends ElementType = 'a'>({
   as,
   tone = 'accent',

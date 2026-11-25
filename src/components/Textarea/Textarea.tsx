@@ -21,7 +21,14 @@ interface TextareaOwnProps {
 /** `Textarea`'s props. Everything, including `ref`, goes to the `textarea`. */
 export type TextareaProps = ComponentProps<'textarea', TextareaOwnProps>;
 
-/** A multi-line text input, at least two rows tall. */
+/**
+ * A multi-line text input, at least two rows tall.
+ *
+ * @example
+ * ```tsx
+ * <Textarea aria-label="Notes" rows={4} />
+ * ```
+ */
 export function Textarea({
   resize = 'vertical',
   invalid: invalidProp,

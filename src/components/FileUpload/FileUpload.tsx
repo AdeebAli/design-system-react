@@ -129,6 +129,11 @@ function setRef<T>(ref: Ref<T> | undefined, value: T | null) {
  * uploads them and reports each file's status through `getFileStatus`.
  * Checking `accept` and `maxSize` here is a convenience, not security: the
  * server must check uploads.
+ *
+ * @example
+ * ```tsx
+ * <FileUpload aria-label="Attachments" multiple />
+ * ```
  */
 export function FileUpload({
   value,

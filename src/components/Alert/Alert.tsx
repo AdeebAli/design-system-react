@@ -59,7 +59,16 @@ interface AlertOwnProps {
 /** `Alert`'s props. */
 export type AlertProps = ComponentProps<'div', AlertOwnProps>;
 
-/** A message that stays in the page, such as a warning above a form. */
+/**
+ * A message that stays in the page, such as a warning above a form.
+ *
+ * @example
+ * ```tsx
+ * <Alert tone="info" title="Heads up">
+ *   Your trial ends in three days.
+ * </Alert>
+ * ```
+ */
 export function Alert({
   tone = 'info',
   title,

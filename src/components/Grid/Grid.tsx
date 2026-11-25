@@ -109,7 +109,18 @@ export type GridProps<E extends ElementType = 'div'> = PolymorphicProps<
   GridOwnProps
 >;
 
-/** A CSS grid with equal columns, and the base for bento layouts. */
+/**
+ * A CSS grid with equal columns, and the base for bento layouts.
+ *
+ * @example
+ * ```tsx
+ * <Grid columns={{ base: 1, md: 3 }} gap="4">
+ *   <Card>One</Card>
+ *   <Card>Two</Card>
+ *   <Card>Three</Card>
+ * </Grid>
+ * ```
+ */
 export function Grid<E extends ElementType = 'div'>({
   columns = '1',
   gap = '3',

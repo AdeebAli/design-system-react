@@ -45,7 +45,20 @@ interface SelectOwnProps {
  */
 export type SelectProps = ComponentProps<'button', SelectOwnProps>;
 
-/** A single-choice dropdown. With React Hook Form, use `Controller`, with `null` as the empty value. */
+/**
+ * A single-choice dropdown. With React Hook Form, use `Controller`, with `null` as the empty value.
+ *
+ * @example
+ * ```tsx
+ * <Select
+ *   aria-label="Plan"
+ *   options={[
+ *     { value: 'monthly', label: 'Monthly' },
+ *     { value: 'annual', label: 'Annual' },
+ *   ]}
+ * />
+ * ```
+ */
 export function Select({
   options,
   value,

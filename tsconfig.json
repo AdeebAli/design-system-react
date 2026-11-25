@@ -20,6 +20,12 @@
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true
   },
-  "include": ["src", "*.ts", ".storybook/**/*", "tests/**/*"],
+  "include": [
+    "src",
+    "*.ts",
+    ".storybook/**/*",
+    "tests/**/*",
+    ".generated/examples"
+  ],
   "exclude": ["dist", "fixtures", "storybook-static"]
 }

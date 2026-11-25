@@ -57,6 +57,17 @@ export type ComboboxProps = ComponentProps<'input', ComboboxOwnProps>;
 /**
  * A single choice, found by typing. Only listed options can be chosen. With
  * React Hook Form, use `Controller`, with `null` as the empty value.
+ *
+ * @example
+ * ```tsx
+ * <Combobox
+ *   aria-label="Country"
+ *   options={[
+ *     { value: 'fr', label: 'France' },
+ *     { value: 'jp', label: 'Japan' },
+ *   ]}
+ * />
+ * ```
  */
 export function Combobox({
   options,

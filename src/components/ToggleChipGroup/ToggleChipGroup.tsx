@@ -59,7 +59,17 @@ export type ToggleChipGroupProps = ComponentProps<
 > &
   ({ 'aria-label': string } | { 'aria-labelledby': string });
 
-/** A wrapping row of `ToggleChip`s, with one or several pressed. */
+/**
+ * A wrapping row of `ToggleChip`s, with one or several pressed.
+ *
+ * @example
+ * ```tsx
+ * <ToggleChipGroup aria-label="Topics">
+ *   <ToggleChip value="design">Design</ToggleChip>
+ *   <ToggleChip value="research">Research</ToggleChip>
+ * </ToggleChipGroup>
+ * ```
+ */
 export function ToggleChipGroup({
   onValueChange,
   gap = '2',

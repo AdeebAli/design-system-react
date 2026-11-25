@@ -26,6 +26,14 @@ export type ProseProps<E extends ElementType = 'div'> = PolymorphicProps<
  * doesn't sanitize `dangerouslySetInnerHTML`. Set its width here
  * rather than on a wrapper, since `ch` depends on its own font, and add
  * `marginX="auto"` to center it.
+ *
+ * @example
+ * ```tsx
+ * <Prose>
+ *   <h2>Title</h2>
+ *   <p>Body text in a long-form page.</p>
+ * </Prose>
+ * ```
  */
 export function Prose<E extends ElementType = 'div'>({
   as,

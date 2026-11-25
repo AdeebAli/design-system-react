@@ -20,6 +20,19 @@ export interface MenuProps {
  * A list of actions anchored to its trigger. Compose it from `MenuTrigger` and
  * `MenuContent`. It's non-modal: the page keeps scrolling while it's open.
  * Keyboard direction follows `dir` on the document root; a `dir` on a subtree isn't followed.
+ *
+ * @example
+ * ```tsx
+ * <Menu>
+ *   <MenuTrigger>
+ *     <Button>Actions</Button>
+ *   </MenuTrigger>
+ *   <MenuContent>
+ *     <MenuItem>Edit</MenuItem>
+ *     <MenuItem tone="danger">Delete</MenuItem>
+ *   </MenuContent>
+ * </Menu>
+ * ```
  */
 export function Menu({ open, defaultOpen, onOpenChange, children }: MenuProps) {
   // Without the direction context, ArrowRight would open submenus in RTL too.

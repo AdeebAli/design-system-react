@@ -57,7 +57,14 @@ export type AvatarProps = Omit<
   'children' | 'role' | 'aria-label'
 >;
 
-/** Represents a person or organization, with an image or initials. */
+/**
+ * Represents a person or organization, with an image or initials.
+ *
+ * @example
+ * ```tsx
+ * <Avatar name="Ada Lovelace" />
+ * ```
+ */
 export function Avatar({
   name,
   src,

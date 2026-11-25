@@ -115,7 +115,17 @@ export type FlexProps<E extends ElementType = 'div'> = PolymorphicProps<
   FlexOwnProps
 >;
 
-/** Full flexbox control. */
+/**
+ * Full flexbox control.
+ *
+ * @example
+ * ```tsx
+ * <Flex gap="2" align="center">
+ *   <Avatar name="Ada Lovelace" />
+ *   <Text>Ada</Text>
+ * </Flex>
+ * ```
+ */
 export function Flex<E extends ElementType = 'div'>({
   direction,
   wrap,

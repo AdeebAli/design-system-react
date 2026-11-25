@@ -80,6 +80,17 @@ const opensElsewhere = (event: MouseEvent<HTMLAnchorElement>) =>
  * An app's main navigation, down one side of the page. Below `md`, a bar
  * with `brand` and a menu button replaces it, and the button opens the links
  * in a `Drawer`. Persisting `collapsed`, such as in a cookie, is the project's.
+ *
+ * @example
+ * ```tsx
+ * <Sidebar aria-label="Main">
+ *   <SidebarGroup label="Workspace">
+ *     <SidebarLink href="/dashboard" active>
+ *       Dashboard
+ *     </SidebarLink>
+ *   </SidebarGroup>
+ * </Sidebar>
+ * ```
  */
 export function Sidebar({
   'aria-label': ariaLabel,

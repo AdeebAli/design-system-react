@@ -32,6 +32,13 @@ export type FieldProps = ComponentProps<'div', FieldOwnProps>;
 /**
  * Connects a label, hint, and error to one control. It displays them; it
  * doesn't manage form state or validate.
+ *
+ * @example
+ * ```tsx
+ * <Field label="Email" hint="We never share it.">
+ *   <Input type="email" />
+ * </Field>
+ * ```
  */
 export function Field({
   label,

@@ -23,6 +23,11 @@ export type SkeletonProps<E extends 'div' | 'span' = 'div'> = Omit<
 /**
  * A placeholder for content that's loading. It's always hidden from screen
  * readers: set `aria-busy` on the loading region instead.
+ *
+ * @example
+ * ```tsx
+ * <Skeleton width="full" height="4" />
+ * ```
  */
 export function Skeleton<E extends 'div' | 'span' = 'div'>({
   as,

@@ -22,6 +22,13 @@ export type ButtonProps<E extends ElementType = 'button'> = PolymorphicProps<
 /**
  * A button. It defaults to `type="button"`, so set `type="submit"` explicitly.
  * `as="a"` or a router link renders a real link styled as a button.
+ *
+ * @example
+ * ```tsx
+ * <Button variant="solid" tone="accent">
+ *   Save
+ * </Button>
+ * ```
  */
 export function Button<E extends ElementType = 'button'>(
   props: ButtonProps<E>,

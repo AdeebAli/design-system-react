@@ -67,7 +67,16 @@ function applyMode(mode: ColorMode, nonce: string | undefined) {
   else root.setAttribute(ATTRIBUTE, next);
 }
 
-/** Applies color mode and theme overrides. Place one at the app root. */
+/**
+ * Applies color mode and theme overrides. Place one at the app root.
+ *
+ * @example
+ * ```tsx
+ * <ThemeProvider>
+ *   <Text>Your app</Text>
+ * </ThemeProvider>
+ * ```
+ */
 export function ThemeProvider(props: ThemeProviderProps) {
   const parent = useContext(ThemeContext);
   if (parent) {

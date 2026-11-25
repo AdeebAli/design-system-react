@@ -20,6 +20,14 @@ export type BreadcrumbsProps = ComponentProps<'nav', BreadcrumbsOwnProps>;
 /**
  * Where a page sits, with links back up. Long trails wrap. It has no context
  * or `"use client"`, so it works in a server component.
+ *
+ * @example
+ * ```tsx
+ * <Breadcrumbs>
+ *   <BreadcrumbItem href="/">Home</BreadcrumbItem>
+ *   <BreadcrumbItem current>Settings</BreadcrumbItem>
+ * </Breadcrumbs>
+ * ```
  */
 export function Breadcrumbs({
   'aria-label': ariaLabel = 'Breadcrumbs',

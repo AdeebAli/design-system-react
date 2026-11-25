@@ -34,7 +34,16 @@ export interface ToastProviderProps {
   children?: ReactNode;
 }
 
-/** Mount it once, near the root. Toasts show while it's mounted. */
+/**
+ * Mount it once, near the root. Toasts show while it's mounted.
+ *
+ * @example
+ * ```tsx
+ * <ToastProvider>
+ *   <Text>Your app</Text>
+ * </ToastProvider>
+ * ```
+ */
 export function ToastProvider({
   position = 'bottom-end',
   limit = 3,

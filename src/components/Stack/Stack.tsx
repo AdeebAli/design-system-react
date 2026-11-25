@@ -61,7 +61,17 @@ export type StackProps<E extends ElementType = 'div'> = PolymorphicProps<
   StackOwnProps
 >;
 
-/** Children from top to bottom. */
+/**
+ * Children from top to bottom.
+ *
+ * @example
+ * ```tsx
+ * <Stack gap="3">
+ *   <Heading level={3}>Title</Heading>
+ *   <Text>Body</Text>
+ * </Stack>
+ * ```
+ */
 export function Stack<E extends ElementType = 'div'>({
   gap = '3',
   align,

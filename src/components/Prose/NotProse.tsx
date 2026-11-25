@@ -16,6 +16,16 @@ export type NotProseProps<E extends ElementType = 'div'> = PolymorphicProps<
 /**
  * An area inside `Prose` that it leaves alone, such as a `Card` in an article.
  * It resets the font and color `Prose` sets on its root.
+ *
+ * @example
+ * ```tsx
+ * <Prose>
+ *   <p>Text.</p>
+ *   <NotProse>
+ *     <Button>Keeps its own styles</Button>
+ *   </NotProse>
+ * </Prose>
+ * ```
  */
 export function NotProse<E extends ElementType = 'div'>({
   as,

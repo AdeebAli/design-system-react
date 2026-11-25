@@ -36,7 +36,14 @@ export type CenterProps<E extends ElementType = 'div'> = PolymorphicProps<
   CenterOwnProps
 >;
 
-/** Centers its children. */
+/**
+ * Centers its children.
+ *
+ * @example
+ * ```tsx
+ * <Center height="screen">Centered</Center>
+ * ```
+ */
 export function Center<E extends ElementType = 'div'>({
   axis = 'both',
   inline = false,

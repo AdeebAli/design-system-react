@@ -60,7 +60,16 @@ export type TextProps<E extends ElementType = 'p'> = PolymorphicProps<
   TextOwnProps
 >;
 
-/** Body text. Unset props inherit, so it keeps the surrounding style. */
+/**
+ * Body text. Unset props inherit, so it keeps the surrounding style.
+ *
+ * @example
+ * ```tsx
+ * <Text size="lg" tone="muted">
+ *   Supporting text
+ * </Text>
+ * ```
+ */
 export function Text<E extends ElementType = 'p'>({
   as,
   size,

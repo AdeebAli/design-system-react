@@ -41,7 +41,21 @@ export type IconProps = Omit<
   | keyof BoxOnlyProps
 >;
 
-/** Sizes, colors, and labels an SVG icon. */
+/**
+ * Sizes, colors, and labels an SVG icon.
+ *
+ * @example
+ * ```tsx
+ * <Icon
+ *   icon={(props) => (
+ *     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" {...props}>
+ *       <path d="M12 5v14M5 12h14" />
+ *     </svg>
+ *   )}
+ *   label="Add"
+ * />
+ * ```
+ */
 export function Icon({
   icon,
   size = 'md',

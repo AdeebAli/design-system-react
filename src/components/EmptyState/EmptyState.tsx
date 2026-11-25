@@ -24,7 +24,16 @@ interface EmptyStateOwnProps {
 /** `EmptyState`'s props. */
 export type EmptyStateProps = ComponentProps<'div', EmptyStateOwnProps>;
 
-/** What to show when a list or table has nothing in it. */
+/**
+ * What to show when a list or table has nothing in it.
+ *
+ * @example
+ * ```tsx
+ * <EmptyState title="No projects yet">
+ *   Create one to get started.
+ * </EmptyState>
+ * ```
+ */
 export function EmptyState({
   title,
   description,

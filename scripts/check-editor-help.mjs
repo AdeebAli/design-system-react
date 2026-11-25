@@ -10,7 +10,7 @@ import ts from 'typescript';
  * While the editor-help work lands (Spec 19, plan tasks 1 to 6), failures are
  * printed but don't fail the build. Task 6 sets this to true.
  */
-export const EDITOR_HELP_STRICT = false;
+export const EDITOR_HELP_STRICT = true;
 
 /**
  * Parts of compound components. They get no @example, because the example is

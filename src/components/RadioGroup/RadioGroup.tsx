@@ -79,7 +79,17 @@ interface RadioGroupOwnProps {
 /** `RadioGroup`'s props. Label it with a surrounding `Field`. */
 export type RadioGroupProps = ComponentProps<'div', RadioGroupOwnProps>;
 
-/** A group of `Radio`s, one of which can be selected. */
+/**
+ * A group of `Radio`s, one of which can be selected.
+ *
+ * @example
+ * ```tsx
+ * <RadioGroup aria-label="Billing" defaultValue="monthly">
+ *   <Radio value="monthly" label="Monthly" />
+ *   <Radio value="annual" label="Annual" />
+ * </RadioGroup>
+ * ```
+ */
 export function RadioGroup({
   onValueChange,
   invalid: invalidProp,

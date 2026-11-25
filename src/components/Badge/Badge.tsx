@@ -34,7 +34,14 @@ interface BadgeOwnProps {
 /** `Badge`'s props. */
 export type BadgeProps = ComponentProps<'span', BadgeOwnProps>;
 
-/** A small, non-interactive status label. */
+/**
+ * A small, non-interactive status label.
+ *
+ * @example
+ * ```tsx
+ * <Badge tone="success">Paid</Badge>
+ * ```
+ */
 export function Badge({
   tone = 'neutral',
   variant = 'soft',

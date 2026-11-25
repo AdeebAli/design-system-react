@@ -181,7 +181,14 @@ export type InsetProps<E extends ElementType = 'div'> = PolymorphicProps<
   InsetOwnProps
 >;
 
-/** Padding from the spacing scale. */
+/**
+ * Padding from the spacing scale.
+ *
+ * @example
+ * ```tsx
+ * <Inset x="4">Content</Inset>
+ * ```
+ */
 export function Inset<E extends ElementType = 'div'>({
   space,
   x,

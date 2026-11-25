@@ -42,6 +42,13 @@ export interface TooltipProps {
 /**
  * A short text hint on hover or keyboard focus. It adds no ARIA, so the
  * trigger needs its own name. A natively `disabled` button never opens it.
+ *
+ * @example
+ * ```tsx
+ * <Tooltip content="Copy link">
+ *   <Button>Share</Button>
+ * </Tooltip>
+ * ```
  */
 export function Tooltip({
   content,

@@ -44,7 +44,14 @@ interface CheckboxOwnProps {
  */
 export type CheckboxProps = ComponentProps<'span', CheckboxOwnProps>;
 
-/** A checkbox, for choices submitted with a form. Use `Switch` for settings that apply immediately. */
+/**
+ * A checkbox, for choices submitted with a form. Use `Switch` for settings that apply immediately.
+ *
+ * @example
+ * ```tsx
+ * <Checkbox label="Remember me" />
+ * ```
+ */
 export function Checkbox({
   label,
   hint,

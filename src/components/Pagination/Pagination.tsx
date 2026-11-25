@@ -67,6 +67,15 @@ const fill = (text: string, values: Record<string, number>) =>
  * Page navigation. With `getHref` it renders links, which work without
  * JavaScript. With `onPageChange` it renders buttons. Below `sm` it shows
  * previous, "Page 3 of 10", and next.
+ *
+ * @example
+ * ```tsx
+ * <Pagination
+ *   page={3}
+ *   totalPages={10}
+ *   onPageChange={(page) => console.log(page)}
+ * />
+ * ```
  */
 export function Pagination<E extends ElementType = 'a'>({
   page,

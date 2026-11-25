@@ -99,6 +99,11 @@ function setRef<T>(ref: Ref<T> | undefined, value: T): () => void {
  * An image in a frame that reserves its space, with an optional skeleton while
  * it loads and a fallback if it fails. `as` renders it through a framework's
  * image component, such as `next/image`.
+ *
+ * @example
+ * ```tsx
+ * <Image src="/photo.jpg" alt="A mountain lake" ratio="16/9" />
+ * ```
  */
 export function Image<E extends ElementType = 'img'>({
   as,

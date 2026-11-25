@@ -40,7 +40,14 @@ interface SwitchOwnProps {
  */
 export type SwitchProps = ComponentProps<'span', SwitchOwnProps>;
 
-/** A switch, for a setting that applies immediately. Use `Checkbox` in forms. */
+/**
+ * A switch, for a setting that applies immediately. Use `Checkbox` in forms.
+ *
+ * @example
+ * ```tsx
+ * <Switch label="Notifications" />
+ * ```
+ */
 export function Switch({
   label,
   hint,

@@ -67,7 +67,17 @@ export type InlineProps<E extends ElementType = 'div'> = PolymorphicProps<
   InlineOwnProps
 >;
 
-/** Children in a row that wraps, such as tags or buttons. */
+/**
+ * Children in a row that wraps, such as tags or buttons.
+ *
+ * @example
+ * ```tsx
+ * <Inline gap="2">
+ *   <Badge>New</Badge>
+ *   <Badge tone="success">Paid</Badge>
+ * </Inline>
+ * ```
+ */
 export function Inline<E extends ElementType = 'div'>({
   gap = '2',
   wrap = 'wrap',
