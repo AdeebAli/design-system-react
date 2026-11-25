@@ -2,6 +2,7 @@ import {
   Badge,
   Box,
   Card,
+  Grid,
   Icon,
   Link,
   Prose,
@@ -64,6 +65,12 @@ export default function Page() {
         </TabsPanel>
         <TabsPanel value="activity">Activity panel</TabsPanel>
       </Tabs>
+      {/* A count above 12, set as a class and a variable on the server (Spec 19). */}
+      <Grid data-testid="grid16" columns={16}>
+        {Array.from({ length: 16 }, (_, index) => (
+          <Box key={index}>{index + 1}</Box>
+        ))}
+      </Grid>
       <Prose data-testid="prose">
         <p>Prose in a server page.</p>
       </Prose>

@@ -220,3 +220,21 @@ test('a Select with server-built options shows its label in the server HTML', as
   await page.goto('/');
   await expect(page.getByTestId('server-select')).toHaveText(/Annual/);
 });
+
+test('a 16-column Grid is server-rendered with its class and variable', async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name !== 'next-app', 'Next.js only');
+  const html = await (await page.request.get('/')).text();
+  expect(html).toMatch(
+    /<div[^>]*data-testid="grid16"[^>]*style="[^"]*--ds-grid-columns-base:\s*16/,
+  );
+  const tag = html.match(/<div[^>]*data-testid="grid16"[^>]*>/)?.[0] ?? '';
+  const classes = /class="([^"]*)"/.exec(tag)?.[1] ?? '';
+  expect(classes.split(/\s+/).length).toBeGreaterThanOrEqual(2);
+  await page.goto('/');
+  const tracks = await page
+    .getByTestId('grid16')
+    .evaluate((el) => getComputedStyle(el).gridTemplateColumns.split(' '));
+  expect(tracks).toHaveLength(16);
+});

@@ -76,6 +76,8 @@ failures.push(
 
 // Server-safe components must not become client modules (Spec 08).
 const serverModules = [
+  'components/Box/Box.js',
+  'components/Grid/Grid.js',
   'components/Card/Card.js',
   'components/Stat/Stat.js',
   'components/Badge/Badge.js',
