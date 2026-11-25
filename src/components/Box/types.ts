@@ -48,11 +48,10 @@ export type MaxHeightValue = 'none' | 'full' | 'fit' | 'screen';
 export type FlexFactor = '0' | '1';
 /** Values for `alignSelf` and `justifySelf`. */
 export type SelfAlignValue = 'auto' | 'start' | 'center' | 'end' | 'stretch';
-/** Grid column counts. */
-export type GridCount =
-  '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | '11' | '12';
-/** Values for `gridColumn` and `gridRow`. */
-export type GridSpanValue = `span-${GridCount}` | 'full';
+/** A grid count: a positive whole number, as a number or a string (`16`, `'16'`). */
+export type GridCount = number | `${number}`;
+/** A grid span: a count (`14`), `'span-14'`, or `'full'`. */
+export type GridSpanValue = number | `span-${number}` | 'full';
 /** Values for `display`. */
 export type DisplayValue =
   | 'none'

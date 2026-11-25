@@ -1,5 +1,6 @@
 import type { ComponentProps, Ref } from 'react';
 import { Box, type BoxProps } from './Box';
+import type { GRID_COUNT_PROPS } from './gridCounts';
 import type { sprinkles } from './sprinkles.css';
 import type { BoxStyleProps, Responsive, WidthValue } from './types';
 
@@ -109,8 +110,12 @@ type Equal<A, B> =
 
 type Values<T> = Extract<T, string | number>;
 
+// The grid counts don't come from sprinkles (ADR 0005).
+type GridCountProp = 'gridTemplateColumns' | 'gridColumn' | 'gridRow';
+type SprinkledProps = Exclude<keyof BoxStyleProps, GridCountProp>;
+
 type Mismatched = {
-  [K in keyof BoxStyleProps]-?: K extends keyof Sprinkle
+  [K in SprinkledProps]-?: K extends keyof Sprinkle
     ? Equal<
         `${Values<Sprinkle[K]>}`,
         `${Values<BoxStyleProps[K]>}`
@@ -118,13 +123,33 @@ type Mismatched = {
       ? never
       : K
     : K;
-}[keyof BoxStyleProps];
+}[SprinkledProps];
 
 test('hand-written types and sprinkles have the same props and values', () => {
-  expectTypeOf<Exclude<keyof Sprinkle, Longhand>>().toEqualTypeOf<
-    keyof BoxStyleProps
-  >();
+  expectTypeOf<
+    Exclude<keyof Sprinkle, Longhand>
+  >().toEqualTypeOf<SprinkledProps>();
   expectTypeOf<Mismatched>().toBeNever();
+});
+
+test('the grid count props are the three that bypass sprinkles', () => {
+  expectTypeOf<
+    (typeof GRID_COUNT_PROPS)[number]
+  >().toEqualTypeOf<GridCountProp>();
+  expectTypeOf<GridCountProp>().toExtend<keyof BoxStyleProps>();
+});
+
+test('grid counts take numbers and strings, with no limit of 12', () => {
+  <Box gridColumn={14} />;
+  <Box gridColumn="span-14" />;
+  <Box gridColumn={{ base: 'full', md: 3 }} />;
+  <Box gridRow={20} />;
+  <Box gridTemplateColumns={16} />;
+  <Box gridTemplateColumns="16" />;
+  // @ts-expect-error not a span
+  <Box gridColumn="span-x" />;
+  // @ts-expect-error full is for spans only
+  <Box gridTemplateColumns="full" />;
 });
 
 test('the inline width union stays equal to WidthValue', () => {

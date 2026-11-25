@@ -143,6 +143,17 @@ if (existsSync(stylesPath)) {
   if (!styles.includes('--ds-color-bg-canvas:#f4f2ee')) {
     failures.push('styles.css has no Soft Light variables');
   }
+  // Grid counts come from one class per breakpoint that reads a variable
+  // (ADR 0005), never from a class per count.
+  if (/repeat\(\s*\d/.test(styles)) {
+    failures.push('styles.css has a grid class for an individual count');
+  }
+  const countClasses = styles.split('repeat(var(--ds-grid-columns-').length - 1;
+  if (countClasses !== 5) {
+    failures.push(
+      `styles.css should have 5 grid column classes, found ${countClasses}`,
+    );
+  }
 }
 if (!existsSync(join(dist, 'licenses', 'LICENSE-lucide.txt'))) {
   failures.push('dist/licenses/LICENSE-lucide.txt is missing');

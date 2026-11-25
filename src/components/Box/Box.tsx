@@ -1,5 +1,10 @@
 import type { ComponentPropsWithRef, ElementType, ReactNode } from 'react';
 import { cx } from '../../utils/cx';
+import {
+  GRID_COUNT_PROPS,
+  gridCountStyle,
+  withGridVariables,
+} from './gridCounts';
 import { sprinkles } from './sprinkles.css';
 import type { BoxStyleProps } from './types';
 
@@ -27,6 +32,9 @@ interface BoxOwnProps<E extends ElementType> extends BoxStyleProps {
 export type BoxProps<E extends ElementType = 'div'> = BoxOwnProps<E> &
   Omit<ComponentPropsWithRef<E>, keyof BoxOwnProps<E>>;
 
+const isGridCount = (name: string) =>
+  (GRID_COUNT_PROPS as readonly string[]).includes(name);
+
 function withoutNullish(value: unknown): unknown {
   if (typeof value !== 'object' || value === null) return value;
   return Object.fromEntries(
@@ -41,7 +49,7 @@ function withoutNullish(value: unknown): unknown {
 export function box(props: BoxStyleProps): string {
   const defined = Object.fromEntries(
     Object.entries(props)
-      .filter(([, value]) => value != null)
+      .filter(([name, value]) => value != null && !isGridCount(name))
       .map(([name, value]) => [name, withoutNullish(value)]),
   );
   // The hand-written prop types are kept in sync with sprinkles by Box.test-d.tsx.
@@ -62,20 +70,29 @@ export function Box<E extends ElementType = 'div'>(props: BoxProps<E>) {
   };
 
   const styleProps: Record<string, unknown> = {};
+  const gridProps: Record<string, unknown> = {};
   const forwarded: Record<string, unknown> = {};
   for (const [name, value] of Object.entries(rest)) {
-    (sprinkles.properties.has(name as never) ? styleProps : forwarded)[name] =
-      value;
+    const target = (GRID_COUNT_PROPS as readonly string[]).includes(name)
+      ? gridProps
+      : sprinkles.properties.has(name as never)
+        ? styleProps
+        : forwarded;
+    target[name] = value;
   }
 
   const Element = as ?? 'div';
-  const classes = cx(box(styleProps), className);
+  const grid = gridCountStyle(gridProps, 'Box');
+  const classes = cx(box(styleProps), grid.className, className);
 
   return (
     <Element
       {...forwarded}
       {...(htmlWidth !== undefined && { width: htmlWidth })}
       {...(htmlHeight !== undefined && { height: htmlHeight })}
+      {...(grid.style && {
+        style: withGridVariables(grid.style, forwarded.style),
+      })}
       className={classes || undefined}
     />
   );

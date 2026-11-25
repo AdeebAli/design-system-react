@@ -103,3 +103,20 @@ it('box() returns the same class string as the prop', () => {
 it('box() ignores nullish values', () => {
   expect(box({ padding: undefined, margin: null as never })).toBe('');
 });
+
+it('puts a grid count on the element as a variable, merged with style', () => {
+  render(<Box data-testid="b" gridColumn={14} style={{ color: 'red' }} />);
+  expect(el().style.getPropertyValue('--ds-grid-column-base')).toBe('14');
+  expect(el().style.color).toBe('red');
+});
+
+it('lets a consumer style override a grid variable', () => {
+  render(
+    <Box
+      data-testid="b"
+      style={{ '--ds-grid-column-base': 3 } as never}
+      gridColumn={14}
+    />,
+  );
+  expect(el().style.getPropertyValue('--ds-grid-column-base')).toBe('3');
+});
