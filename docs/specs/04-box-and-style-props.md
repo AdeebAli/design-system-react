@@ -70,7 +70,8 @@ to `padding-inline`.
 ## Style props
 
 All values are strings, matching the token names (`padding="4"`, not
-`padding={4}`).
+`padding={4}`). The exception is the grid count props (`gridTemplateColumns`,
+`gridColumn`, `gridRow`), which also accept numbers (amended by Spec 19, 2026-11-25).
 
 ### Layout props: on every component, responsive
 
@@ -84,7 +85,7 @@ Exported as the `LayoutProps` type.
 | `maxHeight` | `none`, `full`, `fit`, `screen` |
 | `flexGrow`, `flexShrink` | `0`, `1` |
 | `alignSelf`, `justifySelf` | `auto`, `start`, `center`, `end`, `stretch` |
-| `gridColumn`, `gridRow` | `span-1` through `span-12`, `full` (`1 / -1`) |
+| `gridColumn`, `gridRow` | A span count with no upper limit, as a number (`14`) or `span-14`, and `full` (`1 / -1`) (amended by Spec 19, 2026-11-25) |
 
 ### Box-only props: responsive
 
@@ -97,7 +98,7 @@ Exported as the `LayoutProps` type.
 | `flexWrap` | `nowrap`, `wrap` |
 | `alignItems` | `start`, `center`, `end`, `stretch`, `baseline` |
 | `justifyContent` | `start`, `center`, `end`, `between` |
-| `gridTemplateColumns` | `1` through `12` (equal columns, `repeat(n, minmax(0, 1fr))`, so long content can't stretch a column) |
+| `gridTemplateColumns` | Any positive count, as a number (`16`) or a string (`'16'`) (equal columns, `repeat(n, minmax(0, 1fr))`, so long content can't stretch a column) (amended by Spec 19, 2026-11-25) |
 | `position` | `static`, `relative`, `absolute`, `fixed`, `sticky` |
 | `insetTop`, `insetBottom`, `insetStart`, `insetEnd` | `space` tokens, `auto`, `full` |
 | `overflow`, `overflowX`, `overflowY` | `visible`, `hidden`, `auto`, `scroll` |
@@ -217,7 +218,7 @@ have those attributes:
 | `BoxProps<E>` | Full props for a given element |
 | `LayoutProps`, `Responsive<T>` | For typing wrapper components |
 | `SpaceToken` and the other token types | For typing custom props |
-| `box()` | The sprinkles function, which returns a class string: `<NiceThirdParty className={box({ padding: '4' })} />`. Applies when wrapping with `Box` isn't possible |
+| `box()` | Returns a class string for the style props, except `gridTemplateColumns`, `gridColumn`, and `gridRow` (amended by Spec 19, 2026-11-25): `<NiceThirdParty className={box({ padding: '4' })} />`. Applies when wrapping with `Box` isn't possible |
 
 ## Size
 

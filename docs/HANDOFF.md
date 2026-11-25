@@ -1,10 +1,10 @@
 # Handoff: design-system-react
 
-- **Date:** 2026-11-19 (updated after fixing the post-release visual failure, PR #42)
+- **Date:** 2026-11-25 (updated after accepting Spec 19, API ergonomics)
 
 ## Goal
 
-Build `@adeebali/design-system-react`, a general-purpose React design system. Specs 00–18 are accepted, and Spec 00 sets the release milestones.
+Build `@adeebali/design-system-react`, a general-purpose React design system. Specs 00–19 are accepted, and Spec 00 sets the release milestones.
 
 ## Status
 
@@ -18,7 +18,8 @@ Build `@adeebali/design-system-react`, a general-purpose React design system. Sp
 - **Post-release visual failure, fixed 2026-11-19 (PR #42, `a6db535`):** CI on the release commit `7c12ed5` failed `visual` on `overview-welcome--docs` (desktop and mobile). The page shows `package.json`'s version, and its baseline was taken at 0.8.0. This note's first version (`543af1d`) was written before that CI finished. Owner decision: docs-page screenshots only for the 7 Foundations pages (see Decisions).
 - **Retro (post-release failure), 2026-11-19:** logged in `~/.claude/retros/2026-11-19-v0-8-1-release-broke-welcome-screenshot.md`. Proposals P1–P4 await the owner (thread 19).
 - **Owner's manual checks:** PR #37's and PR #33's were reported done on 2026-11-13. PR #40's weren't reported before the merge.
-- **Next:** plan v1.0 stabilization (Spec 00).
+- **Spec 19 (API ergonomics) and ADR 0005 accepted, 2026-11-25,** for a new milestone **v0.9** before v1.0. Not built yet. It came from the owner asking why `Grid` doesn't accept numbers, and finding the editor help thin (see Decisions).
+- **Next:** plan v0.9 (Spec 19), then v1.0 stabilization (Spec 00).
 
 ## Decisions
 
@@ -31,6 +32,16 @@ Architecture decisions are in `docs/adr/`.
   - All are unchanged.
 - **Ledgers (local, gitignored):** v0.8.1's is `.superpowers/sdd/2026-11-13-v0-8-1-documentation-site/progress.md`, with every ruling and break-check. Earlier ledgers are in sibling folders.
   - The ledgers are kept, as the earlier releases' were. Rejected: deleting the workspace, as `executing-plans` suggests, which would lose the ruling record this note points to.
+
+### Spec 19 decisions (owner, 2026-11-25)
+
+All are in Spec 19's "Decided during planning" and Departures, and the amended specs are marked "amended by Spec 19".
+- **Grid counts** (`Grid` `columns`, `gridTemplateColumns`, `gridColumn`, `gridRow`) accept numbers and strings, with **no limit of 12**. Invalid counts log a development warning and are ignored. Rejected: raising the limit; numbers only (the owner kept both forms).
+- **How (ADR 0005):** one static class per prop and breakpoint reads a CSS variable, and the count is set inline as the variable only. Rejected: inline `grid-template-columns` (beats project CSS, no media queries); `@vanilla-extract/dynamic` (a runtime dependency for a few lines).
+- **The public `box()` drops the three grid count props** (breaking, v0.9 release note). About 38 components that apply layout props through `box()` switch to an internal `{ className, style }` helper. Rejected: `box()` returning `{ className, style }` (breaks every call); keeping 1–12 on `box()`.
+- **Editor help:** an `@example` on every component, TSDoc value lists on every union prop (layout props included), and hovers that show literal values. This reverses Spec 05's "so hovers stay short".
+- **Variant/tone pairs stay a development warning,** not type errors. A spike showed a union over `variant` does work through `PolymorphicProps` (with `as="a"` and a router link), but completions don't narrow `tone`, the error prints the whole props type, and wrappers would need casts. Spec 09's note had said the types couldn't express it, and now gives these reasons.
+- **Out of scope:** arbitrary widths and percentages (stay on `style`), numbers for spacing props (`gap={4}` would read as 4px), and `flexGrow`/`flexShrink` numbers.
 
 ### v0.8.1 decisions (owner, 2026-11-13)
 
@@ -96,7 +107,9 @@ Checked 2026-11-13 against `npm view` (rerun at v0.8.1 setup: unchanged except a
 
 ## Changes
 
-**This note's branch** (`docs/handoff-after-v0.8.1`, rebased onto `main` at `a6db535`): this note.
+**This note's branch** (`docs/spec-19-api-ergonomics`, from `main` at `5af739e`): Spec 19 and ADR 0005 (new); Specs 00, 04, 05, 06, and 09 and ADR 0001 amended; this note.
+
+**Earlier note branch** (`docs/handoff-after-v0.8.1`): merged as `5af739e` (#41).
 
 **PR #42** (squash-merged as `a6db535`): `tests/visual/stories.spec.ts` (Foundations-only screenshots, table check moved, version test), `src/docs/overview/Welcome.mdx` (`data-version` hook), Spec 18 Testing, and 134 docs baselines deleted. Its branch's intermediate commits (`424f381` version mask, `0e58857` workflow baselines) were superseded by `eeaec22` before the squash.
 
@@ -201,7 +214,14 @@ Checked 2026-11-13 against `npm view` (rerun at v0.8.1 setup: unchanged except a
 - **CI on `a6db535` (#42's merge to main): all six jobs passed** (run 44650670987). CI on this note's branch, rebased onto it (`29c64f6`): all six passed.
 - **CI on `7c12ed5` (the release commit) failed `visual`** (run 43691894436, rerun 2026-11-16 with the same result). Resolved by #42.
 
+- **Spec 19 evidence (2026-11-25, scratch scripts, not committed):**
+  - A TypeScript language-service probe on the built `dist/`: `<Button ` offered 316 completions, hovers showed `ButtonVariant` and `Responsive<WidthValue>`, `width`'s doc was "Width.", and no component had an `@example`.
+  - Variant/tone spike: `tsc` exit 0 with four `@ts-expect-error` cases, then exit 2 with each failing at its own line once the comments were removed. A second probe showed `tone` completions after `variant="soft"` still list `accent`, `danger`, `neutral`.
+  - `npm run format:check` passed on the spec changes.
+
 **Not verified:**
+
+- **How to make hovers show literal values** for Spec 19 (declaration style versus alias names). Trigger: the v0.9 plan's Task 1, a language-service probe. If no technique works, the fallback is the TSDoc value list, and the owner is asked before building on it.
 
 
 - **The other 118 baselines in `f38c107` weren't viewed.** #42 deleted all but `foundations-primitives--docs` (desktop and mobile), which remain unviewed. Trigger: none. CI compares against them on every PR.
@@ -279,12 +299,12 @@ Checked 2026-11-13 against `npm view` (rerun at v0.8.1 setup: unchanged except a
     - Trigger: none; fold into thread 6.
 19. **Retro proposals P1–P4** (`~/.claude/retros/2026-11-19-v0-8-1-release-broke-welcome-screenshot.md`), awaiting the owner:
     - P1 (automated): CI's visual job builds Storybook with `npm pkg set version=0.0.0-ci`, so a version on any screenshotted page fails on the PR.
-    - P2 (automated): the release script waits for CI on the release commit before `gh release create`. Changes ADR 0003's order; needs ADR 0005.
+    - P2 (automated): the release script waits for CI on the release commit before `gh release create`. Changes ADR 0003's order; needs a new ADR (0005 is now taken by Spec 19, so 0006 or later).
     - P3 (instruction): global rule 4 sub-bullet: golden outputs mask time-varying values and assert them separately.
     - P4 (process): the handoff skill records CI's result for every commit pushed in the session.
     - Trigger: the owner's decision; until then, none applied.
 
-**Resolved this session (2026-11-19):**
+**Resolved 2026-11-19:**
 - **CI red on main since `7c12ed5`:** fixed by #42 (`a6db535`); CI on `eeaec22` green.
 
 **Resolved earlier (2026-11-14):**
@@ -297,7 +317,13 @@ Checked 2026-11-13 against `npm view` (rerun at v0.8.1 setup: unchanged except a
 
 ## Next steps
 
-1. **v1.0 stabilization (Spec 00).** Write its plan first, and while planning, rerun `npm audit` and `npm view` (the table above). The plan:
+1. **v0.9 (Spec 19, API ergonomics).** Write its plan first, rerunning `npm audit` and `npm view`. The plan:
+   - Task 1: the language-service hover probe (see Not verified);
+   - collects the specs' (proposed) item: how `@example` blocks are type-checked;
+   - gives each of the ~38 components that switch from `box()` to the internal helper a test that a layout prop still applies, seen passing before and after;
+   - follows the `CLAUDE.md` ruling and fixture break-check formats (the Next fixture's server HTML for `<Grid columns={16}>`);
+   - notes the release's breaking change (`box()` grid props) and the widened `GridCount`/`GridSpanValue`.
+2. **v1.0 stabilization (Spec 00).** Write its plan first, and while planning, rerun `npm audit` and `npm view` (the table above). The plan:
    - collects thread 6's deferred minors (v0.4–v0.8.1);
    - type-checks every `tsx` example in `docs/specs/*.md` and the README (retro P6);
    - follows the `CLAUDE.md` ruling and fixture break-check formats;
@@ -306,4 +332,4 @@ Checked 2026-11-13 against `npm view` (rerun at v0.8.1 setup: unchanged except a
 
 ## Resume prompt
 
-> Read `docs/HANDOFF.md`. v0.8.1 (the documentation site) is released. Start the v1.0 stabilization plan per Next steps 1, rerunning `npm audit` and `npm view` first. Don't apply the declined v0.8.1 retro proposals (thread 16). Ask me about the 2026-11-19 retro's P1–P4 (thread 19) before applying any. Ask me about any departure from a spec when it's found.
+> Read `docs/HANDOFF.md`. v0.8.1 is released, and Spec 19 (API ergonomics, v0.9) and ADR 0005 are accepted. Start the v0.9 plan per Next steps 1, rerunning `npm audit` and `npm view` first and beginning with the hover probe. v1.0 stabilization (Next steps 2) follows. Don't apply the declined v0.8.1 retro proposals (thread 16). Ask me about the 2026-11-19 retro's P1–P4 (thread 19) before applying any. Ask me about any departure from a spec when it's found.

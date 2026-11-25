@@ -266,7 +266,7 @@ The docs include this, and `fixtures/vite-app` uses React Hook Form to prove it 
 | `ghost` | `neutral` | transparent, `fg.default` | `bg.muted` |
 | `ghost` | `danger` | transparent, `fg.danger` | `bg.dangerSubtle` |
 
-**Only these six combinations exist.** Others, such as `soft` with `danger`, log a development warning and use the variant's default tone. A type-level exclusion doesn't survive `Button`'s polymorphic types (Spec 06).
+**Only these six combinations exist.** Others, such as `soft` with `danger`, log a development warning and use the variant's default tone. They aren't type errors. A union over `variant` can express them through `Button`'s polymorphic types (checked 2026-11-25), but completions still offer every tone after a variant is chosen, the type error prints the whole props type, and a wrapper that passes a `ButtonVariant` and a `ButtonTone` through would need a cast. The warning names the problem and lists the supported tones (owner, 2026-11-25; amended by Spec 19).
 
 **This amends Spec 02** with two tokens and their contrast pairs:
 

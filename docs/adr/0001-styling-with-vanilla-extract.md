@@ -31,7 +31,8 @@ Use [vanilla-extract](https://vanilla-extract.style/) as the styling layer:
 
 - Tokens and themes are defined in TypeScript and compiled to CSS custom
   properties (`createThemeContract` / `createTheme`).
-- The `Box` primitive's style props are generated with `@vanilla-extract/sprinkles`,
+- The `Box` primitive's style props are generated with `@vanilla-extract/sprinkles`
+  (except the grid count props, amended by [ADR 0005](0005-unbounded-grid-counts-with-css-variables.md)),
   producing a finite, typed set of atomic classes constrained to tokens.
 - Component variants are defined with `@vanilla-extract/recipes`.
 - All CSS is compiled at library build time. The package ships JS plus a static
