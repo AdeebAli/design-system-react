@@ -12,7 +12,6 @@ import { XIcon } from '../Icon/internal/X';
 import * as inputStyles from '../Input/Input.css';
 import { OverlayDirection } from '../overlays/direction';
 import type { Option, OptionGroup } from '../Select/options';
-import type { SelectSize } from '../Select/Select';
 import * as styles from './Combobox.css';
 import { SearchPopup } from './SearchPopup';
 import {
@@ -35,8 +34,8 @@ interface ComboboxOwnProps extends SearchProps {
   clearable?: boolean;
   /** Shown in the empty input. */
   placeholder?: string;
-  /** The height. @default 'md' */
-  size?: SelectSize;
+  /** The height. One of `'sm'`, `'md'`, or `'lg'`. @default 'md' */
+  size?: 'sm' | 'md' | 'lg';
   /** Marks it invalid. @default From `Field` */
   invalid?: boolean;
   /** Disables it. @default From `Field` */

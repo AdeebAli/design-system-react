@@ -2,7 +2,13 @@ import type { ComponentProps, Ref } from 'react';
 import { Box, box, type BoxProps } from './Box';
 import type { GRID_COUNT_PROPS } from './gridCounts';
 import type { sprinkles } from './sprinkles.css';
-import type { BoxStyleProps, Responsive, WidthValue } from './types';
+import type {
+  BoxStyleProps,
+  GridCount,
+  GridSpanValue,
+  Responsive,
+  WidthValue,
+} from './types';
 
 function Custom(props: { label: string; className?: string }) {
   return <span {...props} />;
@@ -166,4 +172,16 @@ test('box() takes the style props except the grid counts', () => {
   box({ gridRow: 2 });
   // @ts-expect-error grid counts aren't box() props (ADR 0005)
   box({ gridTemplateColumns: 2 });
+});
+
+test('the written-out grid counts stay equal to GridCount and GridSpanValue', () => {
+  expectTypeOf<
+    NonNullable<BoxStyleProps['gridTemplateColumns']>
+  >().toEqualTypeOf<Responsive<GridCount>>();
+  expectTypeOf<NonNullable<BoxStyleProps['gridColumn']>>().toEqualTypeOf<
+    Responsive<GridSpanValue>
+  >();
+  expectTypeOf<NonNullable<BoxStyleProps['gridRow']>>().toEqualTypeOf<
+    Responsive<GridSpanValue>
+  >();
 });

@@ -6,7 +6,10 @@ import * as styles from './Divider.css';
 
 type DividerVariant =
   | {
-      /** The direction of the line. @default 'horizontal' */
+      /**
+       * The direction of the line. One of `'horizontal'` or `'vertical'`.
+       * @default 'horizontal'
+       */
       orientation?: 'horizontal';
       /** Centered text in the line. Horizontal only. */
       label?: ReactNode;

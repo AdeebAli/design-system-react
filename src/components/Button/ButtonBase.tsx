@@ -17,23 +17,27 @@ import { Box } from '../Box';
 import { Spinner } from '../Spinner';
 import { VisuallyHidden } from '../VisuallyHidden';
 import * as styles from './Button.css';
-import { resolveTone, type ButtonTone } from './tones';
+import { resolveTone } from './tones';
 
 /** Button sizes, at the control heights 28, 36, and 44px. */
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 /** Props shared by `Button` and `IconButton`. */
 export interface ButtonBaseOwnProps {
-  /** The style. @default 'solid' */
+  /**
+   * The style. One of `'solid'`, `'soft'`, `'outline'`, or `'ghost'`.
+   * @default 'solid'
+   */
   variant?: 'solid' | 'soft' | 'outline' | 'ghost';
   /**
    * The color meaning. `solid` supports `accent` and `danger`, `ghost` supports
-   * `neutral` and `danger`, and `soft` and `outline` support `neutral`.
+   * `neutral` and `danger`, and `soft` and `outline` support `neutral`. One of
+   * `'accent'`, `'neutral'`, or `'danger'`.
    * @default 'accent' for solid, otherwise 'neutral'
    */
-  tone?: ButtonTone;
-  /** The size. @default 'md' */
-  size?: ButtonSize;
+  tone?: 'accent' | 'neutral' | 'danger';
+  /** The size. One of `'sm'`, `'md'`, or `'lg'`. @default 'md' */
+  size?: 'sm' | 'md' | 'lg';
   /**
    * Shows a spinner and ignores clicks and form submission, while staying
    * focusable. Not supported on links. @default false

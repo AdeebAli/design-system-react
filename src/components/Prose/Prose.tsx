@@ -9,8 +9,8 @@ import * as styles from './Prose.css';
 export type ProseSize = 'sm' | 'md';
 
 interface ProseOwnProps {
-  /** The reading size. @default 'md' */
-  size?: ProseSize;
+  /** The reading size. One of `'sm'` or `'md'`. @default 'md' */
+  size?: 'sm' | 'md';
   /** The content: elements, MDX, or nothing when `dangerouslySetInnerHTML` sets it. */
   children?: ReactNode;
 }

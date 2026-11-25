@@ -149,21 +149,172 @@ export type ZIndexToken =
 
 /** Layout props, which every component accepts. */
 export interface LayoutProps {
-  /** Margin on all sides. */
-  margin?: Responsive<MarginValue>;
-  /** Margin on the inline axis. */
-  marginX?: Responsive<MarginValue>;
-  /** Margin on the block axis. */
-  marginY?: Responsive<MarginValue>;
-  /** Margin above. */
-  marginTop?: Responsive<MarginValue>;
-  /** Margin below. */
-  marginBottom?: Responsive<MarginValue>;
-  /** Margin at the inline start. */
-  marginStart?: Responsive<MarginValue>;
-  /** Margin at the inline end. */
-  marginEnd?: Responsive<MarginValue>;
-  /** Width. */
+  /**
+   * Margin on all sides. `space` tokens (`'4'` is 16px, `'px'` is 1px), or
+   * `'auto'`. Responsive.
+   */
+  margin?: Responsive<
+    | '0'
+    | 'px'
+    | '0.5'
+    | '1'
+    | '1.5'
+    | '2'
+    | '3'
+    | '4'
+    | '5'
+    | '6'
+    | '8'
+    | '10'
+    | '12'
+    | '16'
+    | '20'
+    | '24'
+    | 'auto'
+  >;
+  /**
+   * Margin on the inline axis. `space` tokens (`'4'` is 16px, `'px'` is 1px), or
+   * `'auto'`. Responsive.
+   */
+  marginX?: Responsive<
+    | '0'
+    | 'px'
+    | '0.5'
+    | '1'
+    | '1.5'
+    | '2'
+    | '3'
+    | '4'
+    | '5'
+    | '6'
+    | '8'
+    | '10'
+    | '12'
+    | '16'
+    | '20'
+    | '24'
+    | 'auto'
+  >;
+  /**
+   * Margin on the block axis. `space` tokens (`'4'` is 16px, `'px'` is 1px), or
+   * `'auto'`. Responsive.
+   */
+  marginY?: Responsive<
+    | '0'
+    | 'px'
+    | '0.5'
+    | '1'
+    | '1.5'
+    | '2'
+    | '3'
+    | '4'
+    | '5'
+    | '6'
+    | '8'
+    | '10'
+    | '12'
+    | '16'
+    | '20'
+    | '24'
+    | 'auto'
+  >;
+  /**
+   * Margin above. `space` tokens (`'4'` is 16px, `'px'` is 1px), or `'auto'`.
+   * Responsive.
+   */
+  marginTop?: Responsive<
+    | '0'
+    | 'px'
+    | '0.5'
+    | '1'
+    | '1.5'
+    | '2'
+    | '3'
+    | '4'
+    | '5'
+    | '6'
+    | '8'
+    | '10'
+    | '12'
+    | '16'
+    | '20'
+    | '24'
+    | 'auto'
+  >;
+  /**
+   * Margin below. `space` tokens (`'4'` is 16px, `'px'` is 1px), or `'auto'`.
+   * Responsive.
+   */
+  marginBottom?: Responsive<
+    | '0'
+    | 'px'
+    | '0.5'
+    | '1'
+    | '1.5'
+    | '2'
+    | '3'
+    | '4'
+    | '5'
+    | '6'
+    | '8'
+    | '10'
+    | '12'
+    | '16'
+    | '20'
+    | '24'
+    | 'auto'
+  >;
+  /**
+   * Margin at the inline start. `space` tokens (`'4'` is 16px, `'px'` is 1px),
+   * or `'auto'`. Responsive.
+   */
+  marginStart?: Responsive<
+    | '0'
+    | 'px'
+    | '0.5'
+    | '1'
+    | '1.5'
+    | '2'
+    | '3'
+    | '4'
+    | '5'
+    | '6'
+    | '8'
+    | '10'
+    | '12'
+    | '16'
+    | '20'
+    | '24'
+    | 'auto'
+  >;
+  /**
+   * Margin at the inline end. `space` tokens (`'4'` is 16px, `'px'` is 1px), or
+   * `'auto'`. Responsive.
+   */
+  marginEnd?: Responsive<
+    | '0'
+    | 'px'
+    | '0.5'
+    | '1'
+    | '1.5'
+    | '2'
+    | '3'
+    | '4'
+    | '5'
+    | '6'
+    | '8'
+    | '10'
+    | '12'
+    | '16'
+    | '20'
+    | '24'
+    | 'auto'
+  >;
+  /**
+   * Width. `space` tokens (`'4'` is 16px), `container` tokens
+   * (`'container.md'`), `'full'` (100%), `'fit'`, `'min'`, `'max'`, `'auto'`, or
+   * a fraction (`'1/2'` is 50%). Responsive.
+   */
   width?: Responsive<
     | '0'
     | 'px'
@@ -196,94 +347,626 @@ export interface LayoutProps {
     | '1/4'
     | '3/4'
   >;
-  /** Minimum width. */
-  minWidth?: Responsive<WidthValue>;
-  /** Height. */
-  height?: Responsive<HeightValue>;
-  /** Minimum height. */
-  minHeight?: Responsive<HeightValue>;
-  /** Maximum width. */
-  maxWidth?: Responsive<MaxWidthValue>;
-  /** Maximum height. */
-  maxHeight?: Responsive<MaxHeightValue>;
-  /** Whether it grows in a flex layout. */
-  flexGrow?: Responsive<FlexFactor>;
-  /** Whether it shrinks in a flex layout. */
-  flexShrink?: Responsive<FlexFactor>;
-  /** Its alignment on the parent's cross axis. */
-  alignSelf?: Responsive<SelfAlignValue>;
-  /** Its alignment on the parent's inline axis, in a grid. */
-  justifySelf?: Responsive<SelfAlignValue>;
-  /** How many grid columns it spans. */
-  gridColumn?: Responsive<GridSpanValue>;
-  /** How many grid rows it spans. */
-  gridRow?: Responsive<GridSpanValue>;
+  /**
+   * Minimum width. `space` tokens (`'4'` is 16px), `container` tokens
+   * (`'container.md'`), `'full'` (100%), `'fit'`, `'min'`, `'max'`, `'auto'`, or
+   * a fraction (`'1/2'` is 50%). Responsive.
+   */
+  minWidth?: Responsive<
+    | '0'
+    | 'px'
+    | '0.5'
+    | '1'
+    | '1.5'
+    | '2'
+    | '3'
+    | '4'
+    | '5'
+    | '6'
+    | '8'
+    | '10'
+    | '12'
+    | '16'
+    | '20'
+    | '24'
+    | 'container.sm'
+    | 'container.md'
+    | 'container.lg'
+    | 'container.xl'
+    | 'auto'
+    | 'full'
+    | 'fit'
+    | 'min'
+    | 'max'
+    | '1/2'
+    | '1/3'
+    | '2/3'
+    | '1/4'
+    | '3/4'
+  >;
+  /**
+   * Height. `space` tokens (`'4'` is 16px), `container` tokens
+   * (`'container.md'`), `'full'` (100%), `'fit'`, `'min'`, `'max'`, `'auto'`,
+   * `'screen'` (100dvh), or a fraction (`'1/2'` is 50%). Responsive.
+   */
+  height?: Responsive<
+    | '0'
+    | 'px'
+    | '0.5'
+    | '1'
+    | '1.5'
+    | '2'
+    | '3'
+    | '4'
+    | '5'
+    | '6'
+    | '8'
+    | '10'
+    | '12'
+    | '16'
+    | '20'
+    | '24'
+    | 'container.sm'
+    | 'container.md'
+    | 'container.lg'
+    | 'container.xl'
+    | 'auto'
+    | 'full'
+    | 'fit'
+    | 'min'
+    | 'max'
+    | '1/2'
+    | '1/3'
+    | '2/3'
+    | '1/4'
+    | '3/4'
+    | 'screen'
+  >;
+  /**
+   * Minimum height. `space` tokens (`'4'` is 16px), `container` tokens
+   * (`'container.md'`), `'full'` (100%), `'fit'`, `'min'`, `'max'`, `'auto'`,
+   * `'screen'` (100dvh), or a fraction (`'1/2'` is 50%). Responsive.
+   */
+  minHeight?: Responsive<
+    | '0'
+    | 'px'
+    | '0.5'
+    | '1'
+    | '1.5'
+    | '2'
+    | '3'
+    | '4'
+    | '5'
+    | '6'
+    | '8'
+    | '10'
+    | '12'
+    | '16'
+    | '20'
+    | '24'
+    | 'container.sm'
+    | 'container.md'
+    | 'container.lg'
+    | 'container.xl'
+    | 'auto'
+    | 'full'
+    | 'fit'
+    | 'min'
+    | 'max'
+    | '1/2'
+    | '1/3'
+    | '2/3'
+    | '1/4'
+    | '3/4'
+    | 'screen'
+  >;
+  /**
+   * Maximum width. One of `'container.sm'`, `'container.md'`, `'container.lg'`,
+   * `'container.xl'`, `'none'`, `'full'`, `'fit'`, or `'prose'`. Responsive.
+   */
+  maxWidth?: Responsive<
+    | 'container.sm'
+    | 'container.md'
+    | 'container.lg'
+    | 'container.xl'
+    | 'none'
+    | 'full'
+    | 'fit'
+    | 'prose'
+  >;
+  /**
+   * Maximum height. One of `'none'`, `'full'`, `'fit'`, or `'screen'`.
+   * Responsive.
+   */
+  maxHeight?: Responsive<'none' | 'full' | 'fit' | 'screen'>;
+  /** Whether it grows in a flex layout. One of `'0'` or `'1'`. Responsive. */
+  flexGrow?: Responsive<'0' | '1'>;
+  /** Whether it shrinks in a flex layout. One of `'0'` or `'1'`. Responsive. */
+  flexShrink?: Responsive<'0' | '1'>;
+  /**
+   * Its alignment on the parent's cross axis. One of `'auto'`, `'start'`,
+   * `'center'`, `'end'`, or `'stretch'`. Responsive.
+   */
+  alignSelf?: Responsive<'auto' | 'start' | 'center' | 'end' | 'stretch'>;
+  /**
+   * Its alignment on the parent's inline axis, in a grid. One of `'auto'`,
+   * `'start'`, `'center'`, `'end'`, or `'stretch'`. Responsive.
+   */
+  justifySelf?: Responsive<'auto' | 'start' | 'center' | 'end' | 'stretch'>;
+  /**
+   * How many grid columns it spans: any positive whole number, as a number or
+   * `'span-14'`, or `'full'` for every column. Responsive.
+   */
+  gridColumn?: Responsive<number | `span-${number}` | 'full'>;
+  /**
+   * How many grid rows it spans: any positive whole number, as a number or
+   * `'span-3'`, or `'full'` for every row. Responsive.
+   */
+  gridRow?: Responsive<number | `span-${number}` | 'full'>;
 }
 
 /** Style props only `Box` accepts. Other components use variants and the theme. */
 export interface BoxOnlyProps {
-  /** Padding on all sides. */
-  padding?: Responsive<SpaceToken>;
-  /** Padding on the inline axis. */
-  paddingX?: Responsive<SpaceToken>;
-  /** Padding on the block axis. */
-  paddingY?: Responsive<SpaceToken>;
-  /** Padding above. */
-  paddingTop?: Responsive<SpaceToken>;
-  /** Padding below. */
-  paddingBottom?: Responsive<SpaceToken>;
-  /** Padding at the inline start. */
-  paddingStart?: Responsive<SpaceToken>;
-  /** Padding at the inline end. */
-  paddingEnd?: Responsive<SpaceToken>;
-  /** Gap between children. */
-  gap?: Responsive<SpaceToken>;
-  /** Gap between rows. */
-  rowGap?: Responsive<SpaceToken>;
-  /** Gap between columns. */
-  columnGap?: Responsive<SpaceToken>;
-  /** CSS display. */
-  display?: Responsive<DisplayValue>;
-  /** The flex main axis. */
-  flexDirection?: Responsive<FlexDirectionValue>;
-  /** Whether flex children wrap. */
-  flexWrap?: Responsive<FlexWrapValue>;
-  /** Children's alignment on the cross axis. */
-  alignItems?: Responsive<AlignItemsValue>;
-  /** Children's alignment on the main axis. */
-  justifyContent?: Responsive<JustifyContentValue>;
-  /** Equal grid columns, so long content can't stretch one. */
-  gridTemplateColumns?: Responsive<GridCount>;
-  /** CSS position. */
-  position?: Responsive<PositionValue>;
-  /** Offset from the top. */
-  insetTop?: Responsive<InsetValue>;
-  /** Offset from the bottom. */
-  insetBottom?: Responsive<InsetValue>;
-  /** Offset from the inline start. */
-  insetStart?: Responsive<InsetValue>;
-  /** Offset from the inline end. */
-  insetEnd?: Responsive<InsetValue>;
-  /** Overflow on both axes. */
-  overflow?: Responsive<OverflowValue>;
-  /** Overflow on the x axis. */
-  overflowX?: Responsive<OverflowValue>;
-  /** Overflow on the y axis. */
-  overflowY?: Responsive<OverflowValue>;
-  /** Background color. Not responsive. */
-  background?: BackgroundToken;
-  /** Text color. Not responsive. */
-  color?: ColorToken;
-  /** Border color. Not responsive. */
-  borderColor?: BorderColorToken;
-  /** Border width. Also sets the border style. Not responsive. */
-  borderWidth?: BorderWidthValue;
-  /** Corner radius. Not responsive. */
-  borderRadius?: RadiusToken;
-  /** Shadow. Not responsive. */
-  boxShadow?: ShadowToken;
-  /** Stacking layer. Not responsive. */
-  zIndex?: ZIndexToken;
+  /**
+   * Padding on all sides. `space` tokens (`'4'` is 16px, `'px'` is 1px).
+   * Responsive.
+   */
+  padding?: Responsive<
+    | '0'
+    | 'px'
+    | '0.5'
+    | '1'
+    | '1.5'
+    | '2'
+    | '3'
+    | '4'
+    | '5'
+    | '6'
+    | '8'
+    | '10'
+    | '12'
+    | '16'
+    | '20'
+    | '24'
+  >;
+  /**
+   * Padding on the inline axis. `space` tokens (`'4'` is 16px, `'px'` is 1px).
+   * Responsive.
+   */
+  paddingX?: Responsive<
+    | '0'
+    | 'px'
+    | '0.5'
+    | '1'
+    | '1.5'
+    | '2'
+    | '3'
+    | '4'
+    | '5'
+    | '6'
+    | '8'
+    | '10'
+    | '12'
+    | '16'
+    | '20'
+    | '24'
+  >;
+  /**
+   * Padding on the block axis. `space` tokens (`'4'` is 16px, `'px'` is 1px).
+   * Responsive.
+   */
+  paddingY?: Responsive<
+    | '0'
+    | 'px'
+    | '0.5'
+    | '1'
+    | '1.5'
+    | '2'
+    | '3'
+    | '4'
+    | '5'
+    | '6'
+    | '8'
+    | '10'
+    | '12'
+    | '16'
+    | '20'
+    | '24'
+  >;
+  /**
+   * Padding above. `space` tokens (`'4'` is 16px, `'px'` is 1px). Responsive.
+   */
+  paddingTop?: Responsive<
+    | '0'
+    | 'px'
+    | '0.5'
+    | '1'
+    | '1.5'
+    | '2'
+    | '3'
+    | '4'
+    | '5'
+    | '6'
+    | '8'
+    | '10'
+    | '12'
+    | '16'
+    | '20'
+    | '24'
+  >;
+  /**
+   * Padding below. `space` tokens (`'4'` is 16px, `'px'` is 1px). Responsive.
+   */
+  paddingBottom?: Responsive<
+    | '0'
+    | 'px'
+    | '0.5'
+    | '1'
+    | '1.5'
+    | '2'
+    | '3'
+    | '4'
+    | '5'
+    | '6'
+    | '8'
+    | '10'
+    | '12'
+    | '16'
+    | '20'
+    | '24'
+  >;
+  /**
+   * Padding at the inline start. `space` tokens (`'4'` is 16px, `'px'` is 1px).
+   * Responsive.
+   */
+  paddingStart?: Responsive<
+    | '0'
+    | 'px'
+    | '0.5'
+    | '1'
+    | '1.5'
+    | '2'
+    | '3'
+    | '4'
+    | '5'
+    | '6'
+    | '8'
+    | '10'
+    | '12'
+    | '16'
+    | '20'
+    | '24'
+  >;
+  /**
+   * Padding at the inline end. `space` tokens (`'4'` is 16px, `'px'` is 1px).
+   * Responsive.
+   */
+  paddingEnd?: Responsive<
+    | '0'
+    | 'px'
+    | '0.5'
+    | '1'
+    | '1.5'
+    | '2'
+    | '3'
+    | '4'
+    | '5'
+    | '6'
+    | '8'
+    | '10'
+    | '12'
+    | '16'
+    | '20'
+    | '24'
+  >;
+  /**
+   * Gap between children. `space` tokens (`'4'` is 16px, `'px'` is 1px).
+   * Responsive.
+   */
+  gap?: Responsive<
+    | '0'
+    | 'px'
+    | '0.5'
+    | '1'
+    | '1.5'
+    | '2'
+    | '3'
+    | '4'
+    | '5'
+    | '6'
+    | '8'
+    | '10'
+    | '12'
+    | '16'
+    | '20'
+    | '24'
+  >;
+  /**
+   * Gap between rows. `space` tokens (`'4'` is 16px, `'px'` is 1px). Responsive.
+   */
+  rowGap?: Responsive<
+    | '0'
+    | 'px'
+    | '0.5'
+    | '1'
+    | '1.5'
+    | '2'
+    | '3'
+    | '4'
+    | '5'
+    | '6'
+    | '8'
+    | '10'
+    | '12'
+    | '16'
+    | '20'
+    | '24'
+  >;
+  /**
+   * Gap between columns. `space` tokens (`'4'` is 16px, `'px'` is 1px).
+   * Responsive.
+   */
+  columnGap?: Responsive<
+    | '0'
+    | 'px'
+    | '0.5'
+    | '1'
+    | '1.5'
+    | '2'
+    | '3'
+    | '4'
+    | '5'
+    | '6'
+    | '8'
+    | '10'
+    | '12'
+    | '16'
+    | '20'
+    | '24'
+  >;
+  /**
+   * CSS display. One of `'none'`, `'block'`, `'inline'`, `'inline-block'`,
+   * `'flex'`, `'inline-flex'`, `'grid'`, or `'inline-grid'`. Responsive.
+   */
+  display?: Responsive<
+    | 'none'
+    | 'block'
+    | 'inline'
+    | 'inline-block'
+    | 'flex'
+    | 'inline-flex'
+    | 'grid'
+    | 'inline-grid'
+  >;
+  /**
+   * The flex main axis. One of `'row'`, `'column'`, `'row-reverse'`, or
+   * `'column-reverse'`. Responsive.
+   */
+  flexDirection?: Responsive<
+    'row' | 'column' | 'row-reverse' | 'column-reverse'
+  >;
+  /** Whether flex children wrap. One of `'nowrap'` or `'wrap'`. Responsive. */
+  flexWrap?: Responsive<'nowrap' | 'wrap'>;
+  /**
+   * Children's alignment on the cross axis. One of `'start'`, `'center'`,
+   * `'end'`, `'stretch'`, or `'baseline'`. Responsive.
+   */
+  alignItems?: Responsive<'start' | 'center' | 'end' | 'stretch' | 'baseline'>;
+  /**
+   * Children's alignment on the main axis. One of `'start'`, `'center'`,
+   * `'end'`, or `'between'`. Responsive.
+   */
+  justifyContent?: Responsive<'start' | 'center' | 'end' | 'between'>;
+  /**
+   * Equal grid columns, so long content can't stretch one: any positive whole
+   * number, as a number or a string (`16`, `'16'`). Responsive.
+   */
+  gridTemplateColumns?: Responsive<number | `${number}`>;
+  /**
+   * CSS position. One of `'static'`, `'relative'`, `'absolute'`, `'fixed'`, or
+   * `'sticky'`. Responsive.
+   */
+  position?: Responsive<
+    'static' | 'relative' | 'absolute' | 'fixed' | 'sticky'
+  >;
+  /**
+   * Offset from the top. `space` tokens (`'4'` is 16px), `'auto'`, or `'full'`
+   * (100%). Responsive.
+   */
+  insetTop?: Responsive<
+    | '0'
+    | 'px'
+    | '0.5'
+    | '1'
+    | '1.5'
+    | '2'
+    | '3'
+    | '4'
+    | '5'
+    | '6'
+    | '8'
+    | '10'
+    | '12'
+    | '16'
+    | '20'
+    | '24'
+    | 'auto'
+    | 'full'
+  >;
+  /**
+   * Offset from the bottom. `space` tokens (`'4'` is 16px), `'auto'`, or
+   * `'full'` (100%). Responsive.
+   */
+  insetBottom?: Responsive<
+    | '0'
+    | 'px'
+    | '0.5'
+    | '1'
+    | '1.5'
+    | '2'
+    | '3'
+    | '4'
+    | '5'
+    | '6'
+    | '8'
+    | '10'
+    | '12'
+    | '16'
+    | '20'
+    | '24'
+    | 'auto'
+    | 'full'
+  >;
+  /**
+   * Offset from the inline start. `space` tokens (`'4'` is 16px), `'auto'`, or
+   * `'full'` (100%). Responsive.
+   */
+  insetStart?: Responsive<
+    | '0'
+    | 'px'
+    | '0.5'
+    | '1'
+    | '1.5'
+    | '2'
+    | '3'
+    | '4'
+    | '5'
+    | '6'
+    | '8'
+    | '10'
+    | '12'
+    | '16'
+    | '20'
+    | '24'
+    | 'auto'
+    | 'full'
+  >;
+  /**
+   * Offset from the inline end. `space` tokens (`'4'` is 16px), `'auto'`, or
+   * `'full'` (100%). Responsive.
+   */
+  insetEnd?: Responsive<
+    | '0'
+    | 'px'
+    | '0.5'
+    | '1'
+    | '1.5'
+    | '2'
+    | '3'
+    | '4'
+    | '5'
+    | '6'
+    | '8'
+    | '10'
+    | '12'
+    | '16'
+    | '20'
+    | '24'
+    | 'auto'
+    | 'full'
+  >;
+  /**
+   * Overflow on both axes. One of `'visible'`, `'hidden'`, `'auto'`, or
+   * `'scroll'`. Responsive.
+   */
+  overflow?: Responsive<'visible' | 'hidden' | 'auto' | 'scroll'>;
+  /**
+   * Overflow on the x axis. One of `'visible'`, `'hidden'`, `'auto'`, or
+   * `'scroll'`. Responsive.
+   */
+  overflowX?: Responsive<'visible' | 'hidden' | 'auto' | 'scroll'>;
+  /**
+   * Overflow on the y axis. One of `'visible'`, `'hidden'`, `'auto'`, or
+   * `'scroll'`. Responsive.
+   */
+  overflowY?: Responsive<'visible' | 'hidden' | 'auto' | 'scroll'>;
+  /**
+   * Background color. Not responsive. `color.bg` tokens, such as `'surface'`,
+   * `'raised'`, and `'accent'`, or `'transparent'`.
+   */
+  background?:
+    | 'transparent'
+    | 'canvas'
+    | 'surface'
+    | 'raised'
+    | 'sunken'
+    | 'muted'
+    | 'mutedHover'
+    | 'accent'
+    | 'accentHover'
+    | 'accentSubtle'
+    | 'success'
+    | 'warning'
+    | 'danger'
+    | 'info'
+    | 'successSubtle'
+    | 'warningSubtle'
+    | 'dangerSubtle'
+    | 'infoSubtle'
+    | 'dangerHover'
+    | 'inverse'
+    | 'disabled';
+  /**
+   * Text color. Not responsive. `color.fg` tokens, such as `'default'`,
+   * `'muted'`, and `'accent'`, or `'inherit'`.
+   */
+  color?:
+    | 'inherit'
+    | 'default'
+    | 'muted'
+    | 'subtle'
+    | 'accent'
+    | 'onAccent'
+    | 'success'
+    | 'warning'
+    | 'danger'
+    | 'info'
+    | 'onStatus'
+    | 'inverse'
+    | 'disabled';
+  /**
+   * Border color. Not responsive. One of `'subtle'`, `'control'`, `'surface'`,
+   * `'danger'`, or `'disabled'`.
+   */
+  borderColor?: 'subtle' | 'control' | 'surface' | 'danger' | 'disabled';
+  /**
+   * Border width. Also sets the border style. Not responsive. One of `'none'`,
+   * `'thin'`, or `'thick'`.
+   */
+  borderWidth?: 'none' | 'thin' | 'thick';
+  /**
+   * Corner radius. Not responsive. `radius` tokens, from `'none'` to `'full'`,
+   * plus `'card'`, `'control'`, and `'image'`.
+   */
+  borderRadius?:
+    'none' | 'sm' | 'md' | 'lg' | 'xl' | 'full' | 'card' | 'control' | 'image';
+  /**
+   * Shadow. Not responsive. `shadow` tokens, from `'none'` to `'xl'`, plus
+   * `'card'`, `'cardHover'`, `'raised'`, and `'dialog'`.
+   */
+  boxShadow?:
+    | 'none'
+    | 'sm'
+    | 'md'
+    | 'lg'
+    | 'xl'
+    | 'card'
+    | 'cardHover'
+    | 'raised'
+    | 'dialog';
+  /**
+   * Stacking layer. Not responsive. One of `'base'`, `'sticky'`, `'dropdown'`,
+   * `'overlay'`, `'modal'`, `'popover'`, `'toast'`, or `'tooltip'`.
+   */
+  zIndex?:
+    | 'base'
+    | 'sticky'
+    | 'dropdown'
+    | 'overlay'
+    | 'modal'
+    | 'popover'
+    | 'toast'
+    | 'tooltip';
 }
 
 /** Every style prop `Box` accepts. */

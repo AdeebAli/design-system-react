@@ -24,10 +24,17 @@ export type { ColorMode, ResolvedColorMode };
 const ThemeContext = createContext<ColorModeStore | null>(null);
 
 export interface ThemeProviderProps {
-  /** Used only when no choice is stored. @default 'system' */
-  defaultMode?: ColorMode;
-  /** Locks the mode. The stored choice is left untouched. */
-  forcedMode?: ResolvedColorMode;
+  /**
+   * Used only when no choice is stored. One of `'system'`, `'light'`, or
+   * `'dark'`.
+   * @default 'system'
+   */
+  defaultMode?: 'system' | 'light' | 'dark';
+  /**
+   * Locks the mode. The stored choice is left untouched. One of `'light'` or
+   * `'dark'`.
+   */
+  forcedMode?: 'light' | 'dark';
   /** Token overrides or a full theme, from `defineTheme` or `defineFullTheme`. */
   theme?: Theme;
   /** The `localStorage` key. Must match `ColorModeScript`. @default 'ds-color-mode' */

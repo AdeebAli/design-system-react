@@ -46,17 +46,21 @@ interface StatOwnProps {
   value: ReactNode;
   /** The change, without a sign when `trend` is set, so it reads "Down 4.1". */
   change?: ReactNode;
-  /** The direction of the change, shown with an arrow and hidden text. */
-  trend?: StatTrend;
   /**
-   * Colors the change. An increase isn't always good.
+   * The direction of the change, shown with an arrow and hidden text. One of
+   * `'up'`, `'down'`, or `'flat'`.
+   */
+  trend?: 'up' | 'down' | 'flat';
+  /**
+   * Colors the change. An increase isn't always good. One of `'positive'`,
+   * `'negative'`, or `'neutral'`.
    * @default From `trend`: up is positive, down is negative, flat is neutral
    */
-  sentiment?: StatSentiment;
+  sentiment?: 'positive' | 'negative' | 'neutral';
   /** A line below the value. */
   hint?: ReactNode;
-  /** The value's size. @default 'md' */
-  size?: StatSize;
+  /** The value's size. One of `'sm'`, `'md'`, or `'lg'`. @default 'md' */
+  size?: 'sm' | 'md' | 'lg';
   /** Hidden text for each trend. @default { up: 'Up', down: 'Down', flat: 'No change' } */
   trendLabels?: StatTrendLabels;
 }

@@ -25,19 +25,26 @@ interface AvatarOwnProps {
   name: string;
   /** The image. Until it loads, and if it fails, the initials show. */
   src?: string;
-  /** `size.avatar.*`. @default 'md' */
+  /**
+   * `size.avatar.*`. One of `'sm'`, `'md'`, `'lg'`, or `'xl'`.
+   * @default 'md'
+   */
   size?: 'sm' | 'md' | 'lg' | 'xl';
-  /** The shape. Use `square` for an organization. @default 'circle' */
+  /**
+   * The shape. Use `square` for an organization. One of `'circle'` or
+   * `'square'`.
+   * @default 'circle'
+   */
   shape?: 'circle' | 'square';
   /** Replaces the initials, such as an `Icon`. It's hidden from screen readers. */
   fallback?: ReactNode;
   /** Hides it from screen readers, for when the name is already beside it. @default false */
   decorative?: boolean;
   /**
-   * Adds a status dot, and the status to the name. It's displayed, not
-   * announced when it changes.
+   * Adds a status dot, and the status to the name. It's displayed, not announced
+   * when it changes. One of `'online'`, `'away'`, `'busy'`, or `'offline'`.
    */
-  status?: AvatarStatus;
+  status?: 'online' | 'away' | 'busy' | 'offline';
   /** Each status's words in the name, for translation. @default English */
   statusLabels?: Partial<Record<AvatarStatus, string>>;
   /** Colors the fallback with one of six pairs, picked from `name`. @default false */

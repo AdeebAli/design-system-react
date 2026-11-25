@@ -9,13 +9,17 @@ import {
 } from './createToastManager';
 import * as styles from './Toast.css';
 import { ToastList } from './ToastList';
-import type { ToastPosition } from './toastOptions';
 import { ToastScope } from './useToast';
 
 /** `ToastProvider`'s props. */
 export interface ToastProviderProps {
-  /** Where the toasts sit. @default 'bottom-end' */
-  position?: ToastPosition;
+  /**
+   * Where the toasts sit. One of `'bottom-end'`, `'bottom-start'`, `'bottom'`,
+   * `'top-end'`, `'top-start'`, or `'top'`.
+   * @default 'bottom-end'
+   */
+  position?:
+    'bottom-end' | 'bottom-start' | 'bottom' | 'top-end' | 'top-start' | 'top';
   /** How many show at once. @default 3 */
   limit?: number;
   /** How long an ordinary toast stays, in ms. @default 5000 */

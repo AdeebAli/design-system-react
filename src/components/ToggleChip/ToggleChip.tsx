@@ -21,8 +21,8 @@ interface ToggleChipOwnProps {
   onPressedChange?: (pressed: boolean) => void;
   /** Its value inside a `ToggleChipGroup`. */
   value?: string;
-  /** The size. @default 'md' */
-  size?: ToggleChipSize;
+  /** The size. One of `'sm'` or `'md'`. @default 'md' */
+  size?: 'sm' | 'md';
   /** Disables it. @default false */
   disabled?: boolean;
   /** An `Icon` element before the text. A check replaces it while pressed. */

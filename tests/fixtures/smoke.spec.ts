@@ -229,7 +229,7 @@ test('a 16-column Grid is server-rendered with its class and variable', async ({
   expect(html).toMatch(
     /<div[^>]*data-testid="grid16"[^>]*style="[^"]*--ds-grid-columns-base:\s*16/,
   );
-  const tag = html.match(/<div[^>]*data-testid="grid16"[^>]*>/)?.[0] ?? '';
+  const tag = /<div[^>]*data-testid="grid16"[^>]*>/.exec(html)?.[0] ?? '';
   const classes = /class="([^"]*)"/.exec(tag)?.[1] ?? '';
   expect(classes.split(/\s+/).length).toBeGreaterThanOrEqual(2);
   await page.goto('/');

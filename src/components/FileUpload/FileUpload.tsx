@@ -80,7 +80,11 @@ interface FileUploadOwnProps {
   onReject?: (rejections: FileRejection[]) => void;
   /** Each file's upload state, which the project reports. */
   getFileStatus?: (file: File) => FileStatus | undefined;
-  /** `dropzone` adds a large drop target; `button` is compact. @default 'dropzone' */
+  /**
+   * `dropzone` adds a large drop target; `button` is compact. One of
+   * `'dropzone'` or `'button'`.
+   * @default 'dropzone'
+   */
   variant?: 'dropzone' | 'button';
   /** Hides the file list, for a project rendering its own from `value`. @default false */
   hideFileList?: boolean;

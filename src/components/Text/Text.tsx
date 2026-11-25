@@ -19,22 +19,39 @@ export type TextAlign = 'start' | 'center' | 'end';
 export type LineClamp = '2' | '3' | '4' | '5' | '6';
 
 interface TextOwnProps {
-  /** The font size. Unset, it inherits. */
-  size?: Responsive<FontSizeToken>;
-  /** The font weight. Unset, it inherits. */
+  /**
+   * The font size. Unset, it inherits. `fontSize` tokens, from `'xs'` to
+   * `'5xl'`. Responsive.
+   */
+  size?: Responsive<
+    'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl'
+  >;
+  /**
+   * The font weight. Unset, it inherits. One of `'regular'`, `'medium'`,
+   * `'semibold'`, or `'bold'`.
+   */
   weight?: 'regular' | 'medium' | 'semibold' | 'bold';
-  /** The color meaning. Never the only signal. Unset, it inherits. */
-  tone?: TextTone;
-  /** Text alignment. */
-  align?: Responsive<TextAlign>;
-  /** The font family, with its font features. Unset, it inherits. */
+  /**
+   * The color meaning. Never the only signal. Unset, it inherits. One of
+   * `'muted'`, `'accent'`, `'success'`, `'warning'`, `'danger'`, or `'info'`.
+   */
+  tone?: 'muted' | 'accent' | 'success' | 'warning' | 'danger' | 'info';
+  /** Text alignment. One of `'start'`, `'center'`, or `'end'`. Responsive. */
+  align?: Responsive<'start' | 'center' | 'end'>;
+  /**
+   * The font family, with its font features. Unset, it inherits. One of
+   * `'sans'`, `'mono'`, or `'prose'`.
+   */
   family?: 'sans' | 'mono' | 'prose';
   /** Uses tabular numerals, so digits line up in columns. @default false */
   numeric?: boolean;
   /** One line with an ellipsis. Makes the text a block. @default false */
   truncate?: boolean;
-  /** That many lines with an ellipsis. Wins over `truncate`. */
-  lineClamp?: LineClamp;
+  /**
+   * That many lines with an ellipsis. Wins over `truncate`. One of `'2'`, `'3'`,
+   * `'4'`, `'5'`, or `'6'`.
+   */
+  lineClamp?: '2' | '3' | '4' | '5' | '6';
 }
 
 /** `Text`'s props. */

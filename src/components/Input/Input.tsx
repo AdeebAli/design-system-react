@@ -13,8 +13,8 @@ import * as styles from './Input.css';
 export type InputSize = 'sm' | 'md' | 'lg';
 
 interface InputOwnProps {
-  /** The height. @default 'md' */
-  size?: InputSize;
+  /** The height. One of `'sm'`, `'md'`, or `'lg'`. @default 'md' */
+  size?: 'sm' | 'md' | 'lg';
   /** Marks the input invalid. @default From `Field` */
   invalid?: boolean;
   /** A decorative `Icon` element before the text. */

@@ -3,12 +3,7 @@ import type { ComponentProps } from '../../utils/types';
 import { warnOnce } from '../../utils/warn';
 import { Box } from '../Box';
 import type { Responsive } from '../Box/types';
-import type {
-  FontSizeToken,
-  LineClamp,
-  TextAlign,
-  TextTone,
-} from '../Text/Text';
+import type { FontSizeToken } from '../Text/Text';
 import * as styles from '../Text/Text.css';
 import { typography } from '../Text/typography.css';
 
@@ -36,18 +31,32 @@ function withDefaultSize(
 interface HeadingOwnProps {
   /** The heading level, which sets the tag. Required. */
   level: HeadingLevel;
-  /** The visual size. Doesn't change the tag. Unset, it comes from `level`. */
-  size?: Responsive<FontSizeToken>;
-  /** The font weight. @default 'semibold' */
+  /**
+   * The visual size. Doesn't change the tag. Unset, it comes from `level`.
+   * `fontSize` tokens, from `'xs'` to `'5xl'`. Responsive.
+   */
+  size?: Responsive<
+    'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl'
+  >;
+  /**
+   * The font weight. One of `'medium'`, `'semibold'`, or `'bold'`.
+   * @default 'semibold'
+   */
   weight?: 'medium' | 'semibold' | 'bold';
-  /** The color meaning. Never the only signal. Unset, it inherits. */
-  tone?: TextTone;
-  /** Text alignment. */
-  align?: Responsive<TextAlign>;
+  /**
+   * The color meaning. Never the only signal. Unset, it inherits. One of
+   * `'muted'`, `'accent'`, `'success'`, `'warning'`, `'danger'`, or `'info'`.
+   */
+  tone?: 'muted' | 'accent' | 'success' | 'warning' | 'danger' | 'info';
+  /** Text alignment. One of `'start'`, `'center'`, or `'end'`. Responsive. */
+  align?: Responsive<'start' | 'center' | 'end'>;
   /** One line with an ellipsis. @default false */
   truncate?: boolean;
-  /** That many lines with an ellipsis. Wins over `truncate`. */
-  lineClamp?: LineClamp;
+  /**
+   * That many lines with an ellipsis. Wins over `truncate`. One of `'2'`, `'3'`,
+   * `'4'`, `'5'`, or `'6'`.
+   */
+  lineClamp?: '2' | '3' | '4' | '5' | '6';
 }
 
 /** `Heading`'s props. */

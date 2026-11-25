@@ -11,13 +11,18 @@ import * as styles from './Table.css';
 export type TableSize = 'sm' | 'md';
 
 interface TableOwnProps {
-  /** The cell padding. @default 'md' */
-  size?: TableSize;
+  /** The cell padding. One of `'sm'` or `'md'`. @default 'md' */
+  size?: 'sm' | 'md';
   /** Keeps the header rows in view while the wrapper scrolls. Needs a height limit, such as `maxHeight="screen"`. @default false */
   stickyHeader?: boolean;
   /** Keeps each row's first cell in view while the table scrolls sideways. @default false */
   stickyFirstColumn?: boolean;
-  /** The background of sticky cells, matching what the table sits on. Has no effect without a sticky prop. @default 'surface' */
+  /**
+   * The background of sticky cells, matching what the table sits on. Has no
+   * effect without a sticky prop. One of `'canvas'`, `'surface'`, `'raised'`, or
+   * `'sunken'`.
+   * @default 'surface'
+   */
   stickyBackground?: 'canvas' | 'surface' | 'raised' | 'sunken';
   /** Highlights a body row on hover. @default true */
   hoverable?: boolean;

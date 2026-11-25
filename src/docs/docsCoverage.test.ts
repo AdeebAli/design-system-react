@@ -2,6 +2,7 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as api from '../index';
+import { valueUnionProps } from './valueUnions';
 
 // Spec 18, Testing: every component has a docs page with its sections and a
 // props table for each public part.
@@ -163,3 +164,44 @@ it.each([...docsMdx, ...pages].map((file) => [file]))(
     );
   },
 );
+
+// Spec 19, Editor help: a prop with a value union lists its values in its
+// TSDoc. Up to 8 values are each listed in backticks. A longer list (a token
+// family) names the family with "tokens" and shows at least two values.
+const root = join(dirname(fileURLToPath(import.meta.url)), '../..');
+const listed = (doc: string, member: string) => doc.includes(`\`'${member}'\``);
+
+it('every value-union prop lists its values in its TSDoc', () => {
+  const props = valueUnionProps(root);
+  // A detector that finds nothing would pass the check below, so it must find
+  // a plain union, a Responsive one, and one with a long token list.
+  const has = (component: string, prop: string, members: number) =>
+    props.some(
+      (found) =>
+        found.component === component &&
+        found.prop === prop &&
+        found.members.length === members,
+    );
+  expect(has('Button', 'variant', 4)).toBe(true);
+  expect(has('Box', 'width', 30)).toBe(true);
+  expect(has('Flex', 'gap', 16)).toBe(true);
+  const failures = props.flatMap(
+    ({ component, prop, members, doc, declaredAt }) => {
+      if (members.length <= 8) {
+        const missing = members.filter((member) => !listed(doc, member));
+        return missing.length === 0
+          ? []
+          : [
+              `${component}.${prop} (${declaredAt}) doesn't list ${missing.join(', ')}`,
+            ];
+      }
+      const shown = members.filter((member) => listed(doc, member)).length;
+      return shown >= 2 && doc.includes('tokens')
+        ? []
+        : [
+            `${component}.${prop} (${declaredAt}) needs "tokens" and two or more listed values`,
+          ];
+    },
+  );
+  expect(failures).toEqual([]);
+}, 120_000);

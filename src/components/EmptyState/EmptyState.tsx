@@ -17,7 +17,7 @@ interface EmptyStateOwnProps {
   action?: ReactNode;
   /** The heading's level, which sets the tag only. @default 3 */
   headingLevel?: HeadingLevel;
-  /** The padding and title size. @default 'md' */
+  /** The padding and title size. One of `'sm'` or `'md'`. @default 'md' */
   size?: 'sm' | 'md';
 }
 

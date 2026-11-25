@@ -15,7 +15,6 @@ import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
 import { Icon } from '../Icon';
 import { MenuIcon } from '../Icon/internal/Menu';
-import type { ButtonVariant } from '../Button';
 import { IconButton } from '../IconButton';
 import * as styles from './NavBar.css';
 import { NavBarContext, type NavBarContextValue } from './NavBarContext';
@@ -31,9 +30,17 @@ interface NavBarOwnProps {
   sticky?: boolean;
   /** The menu button's accessible name. @default 'Menu' */
   menuLabel?: string;
-  /** The menu button's style, as an `IconButton` variant. @default 'ghost' */
-  menuVariant?: ButtonVariant;
-  /** Where the menu button sits below `md`: after the actions, or before the brand. @default 'end' */
+  /**
+   * The menu button's style, as an `IconButton` variant. One of `'solid'`,
+   * `'soft'`, `'outline'`, or `'ghost'`.
+   * @default 'ghost'
+   */
+  menuVariant?: 'solid' | 'soft' | 'outline' | 'ghost';
+  /**
+   * Where the menu button sits below `md`: after the actions, or before the
+   * brand. One of `'start'` or `'end'`.
+   * @default 'end'
+   */
   menuPosition?: 'start' | 'end';
   /** `NavBarLink`s, or components rendering them. */
   children?: ReactNode;

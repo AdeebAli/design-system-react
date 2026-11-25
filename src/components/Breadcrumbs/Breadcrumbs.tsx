@@ -8,7 +8,7 @@ import * as styles from './Breadcrumbs.css';
 interface BreadcrumbsOwnProps {
   /** The landmark's name. @default 'Breadcrumbs' */
   'aria-label'?: string;
-  /** The text size. @default 'sm' */
+  /** The text size. One of `'sm'` or `'md'`. @default 'sm' */
   size?: 'sm' | 'md';
   /** `BreadcrumbItem`s, the current page last. */
   children?: ReactNode;

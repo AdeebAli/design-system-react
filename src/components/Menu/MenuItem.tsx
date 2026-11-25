@@ -11,7 +11,10 @@ import * as styles from './Menu.css';
 interface MenuItemOwnProps {
   /** An `Icon` element before the label. */
   startIcon?: ReactElement;
-  /** `danger` marks a destructive action. @default 'neutral' */
+  /**
+   * `danger` marks a destructive action. One of `'neutral'` or `'danger'`.
+   * @default 'neutral'
+   */
   tone?: 'neutral' | 'danger';
   /** Whether the menu closes when the item is clicked. @default true */
   closeOnClick?: boolean;

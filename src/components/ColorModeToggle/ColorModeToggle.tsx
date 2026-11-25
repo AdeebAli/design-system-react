@@ -3,7 +3,6 @@
 import type { MouseEvent } from 'react';
 
 import { useColorMode } from '../../theme/ThemeProvider';
-import type { ButtonVariant } from '../Button';
 import { Box } from '../Box';
 import { Icon } from '../Icon';
 import { MoonIcon } from '../Icon/internal/Moon';
@@ -27,8 +26,11 @@ export type ColorModeToggleProps = Omit<
 > & {
   /** The names for each state. */
   labels?: ColorModeToggleLabels;
-  /** The button style. @default 'ghost' */
-  variant?: Exclude<ButtonVariant, 'solid'>;
+  /**
+   * The button style. One of `'soft'`, `'outline'`, or `'ghost'`.
+   * @default 'ghost'
+   */
+  variant?: 'soft' | 'outline' | 'ghost';
 };
 
 /**

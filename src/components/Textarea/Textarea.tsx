@@ -9,7 +9,10 @@ import { useFieldControl } from '../Field/FieldContext';
 import * as styles from '../Input/Input.css';
 
 interface TextareaOwnProps {
-  /** Whether people can resize it. @default 'vertical' */
+  /**
+   * Whether people can resize it. One of `'vertical'` or `'none'`.
+   * @default 'vertical'
+   */
   resize?: 'vertical' | 'none';
   /** Marks the textarea invalid. @default From `Field` */
   invalid?: boolean;

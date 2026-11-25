@@ -30,10 +30,14 @@ interface ProgressOwnProps {
   max?: number;
   /** Shows the percentage beside the label. @default false */
   showValue?: boolean;
-  /** `sm` is 4px tall, `md` 8px. @default 'md' */
+  /** `sm` is 4px tall, `md` 8px. One of `'sm'` or `'md'`. @default 'md' */
   size?: 'sm' | 'md';
-  /** The fill's color meaning. @default 'accent' */
-  tone?: ProgressTone;
+  /**
+   * The fill's color meaning. One of `'accent'`, `'success'`, `'warning'`, or
+   * `'danger'`.
+   * @default 'accent'
+   */
+  tone?: 'accent' | 'success' | 'warning' | 'danger';
 }
 
 /** `Progress`'s props. */

@@ -7,7 +7,7 @@ import { box } from '../Box';
 import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
-import type { Responsive, SpaceToken } from '../Box/types';
+import type { Responsive } from '../Box/types';
 import { OverlayDirection } from '../overlays/direction';
 
 interface ToggleChipGroupOwnProps {
@@ -25,8 +25,29 @@ interface ToggleChipGroupOwnProps {
   multiple?: boolean;
   /** Disables every chip. @default false */
   disabled?: boolean;
-  /** The space between chips. @default '2' */
-  gap?: Responsive<SpaceToken>;
+  /**
+   * The space between chips. `space` tokens (`'4'` is 16px, `'px'` is 1px).
+   * Responsive.
+   * @default '2'
+   */
+  gap?: Responsive<
+    | '0'
+    | 'px'
+    | '0.5'
+    | '1'
+    | '1.5'
+    | '2'
+    | '3'
+    | '4'
+    | '5'
+    | '6'
+    | '8'
+    | '10'
+    | '12'
+    | '16'
+    | '20'
+    | '24'
+  >;
   /** The `ToggleChip`s. */
   children?: ReactNode;
 }

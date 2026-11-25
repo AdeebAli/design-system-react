@@ -27,8 +27,8 @@ interface SelectOwnProps {
   onValueChange?: (value: string | null) => void;
   /** Shown when nothing is selected. */
   placeholder?: string;
-  /** The height. @default 'md' */
-  size?: SelectSize;
+  /** The height. One of `'sm'`, `'md'`, or `'lg'`. @default 'md' */
+  size?: 'sm' | 'md' | 'lg';
   /** Marks it invalid. @default From `Field` */
   invalid?: boolean;
   /** Disables it. @default From `Field` */

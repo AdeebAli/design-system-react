@@ -130,7 +130,11 @@ interface DataTableOwnProps<Row> {
   defaultPage?: number;
   /** Called with the next page. */
   onPageChange?: (page: number) => void;
-  /** Lets rows be selected: one, or many with a toolbar. @default 'none' */
+  /**
+   * Lets rows be selected: one, or many with a toolbar. One of `'none'`,
+   * `'single'`, or `'multiple'`.
+   * @default 'none'
+   */
   selectionMode?: 'none' | 'single' | 'multiple';
   /** The selected row ids, when controlled. */
   selectedKeys?: string[];

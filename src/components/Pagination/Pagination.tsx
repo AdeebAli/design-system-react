@@ -32,7 +32,7 @@ interface PaginationOwnProps {
   totalPages: number;
   /** Pages shown beside the current one. @default 1 */
   siblingCount?: 0 | 1 | 2;
-  /** The button size. @default 'md' */
+  /** The button size. One of `'sm'` or `'md'`. @default 'md' */
   size?: 'sm' | 'md';
   /** The landmark's name. @default 'Pagination' */
   'aria-label'?: string;

@@ -15,12 +15,16 @@ export type BadgeVariant = 'soft' | 'solid';
 export type BadgeSize = 'sm' | 'md';
 
 interface BadgeOwnProps {
-  /** The color meaning. The text must carry the meaning too. @default 'neutral' */
-  tone?: BadgeTone;
-  /** The style. @default 'soft' */
-  variant?: BadgeVariant;
-  /** The size. @default 'md' */
-  size?: BadgeSize;
+  /**
+   * The color meaning. The text must carry the meaning too. One of `'neutral'`,
+   * `'accent'`, `'success'`, `'warning'`, `'danger'`, or `'info'`.
+   * @default 'neutral'
+   */
+  tone?: 'neutral' | 'accent' | 'success' | 'warning' | 'danger' | 'info';
+  /** The style. One of `'soft'` or `'solid'`. @default 'soft' */
+  variant?: 'soft' | 'solid';
+  /** The size. One of `'sm'` or `'md'`. @default 'md' */
+  size?: 'sm' | 'md';
   /** An `Icon` element before the text, sized to match it. */
   startIcon?: ReactElement;
   /** The label. Say the status in words; color alone can't. */

@@ -14,10 +14,13 @@ export type IconTone =
 interface IconOwnProps {
   /** Any component that passes SVG props to its root `svg`. */
   icon: ElementType<SVGProps<SVGSVGElement>>;
-  /** The size. @default 'md' */
-  size?: IconSize;
-  /** The color meaning. Never the only signal. Unset, it inherits. */
-  tone?: IconTone;
+  /** The size. One of `'sm'`, `'md'`, `'lg'`, or `'inherit'`. @default 'md' */
+  size?: 'sm' | 'md' | 'lg' | 'inherit';
+  /**
+   * The color meaning. Never the only signal. Unset, it inherits. One of
+   * `'muted'`, `'accent'`, `'success'`, `'warning'`, `'danger'`, or `'info'`.
+   */
+  tone?: 'muted' | 'accent' | 'success' | 'warning' | 'danger' | 'info';
   /** The accessible name. Without one, the icon is decorative. */
   label?: string;
 }

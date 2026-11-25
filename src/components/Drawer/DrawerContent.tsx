@@ -17,7 +17,7 @@ import { IconButton } from '../IconButton';
 import type { Direction } from '../overlays/direction';
 import { useDrawerContext, useRegisterPart } from './DrawerContext';
 import * as styles from './Drawer.css';
-import { toSwipeDirection, type DrawerSide } from './swipeDirection';
+import { toSwipeDirection } from './swipeDirection';
 
 /** Side panel widths: 20, 28, and 40rem, capped to the viewport less `space.8`. */
 export type DrawerSize = 'sm' | 'md' | 'lg';
@@ -33,19 +33,24 @@ type Shared = Omit<ComponentPropsWithRef<'div'>, 'dir'> & {
   finalFocus?: RefObject<HTMLElement | null>;
   /**
    * The text direction, when the drawer's isn't the document's. Unset, it
-   * follows the document root, since the portal is outside any local `dir`.
+   * follows the document root, since the portal is outside any local `dir`. One
+   * of `'ltr'` or `'rtl'`.
    */
-  dir?: Direction;
+  dir?: 'ltr' | 'rtl';
 };
 
 /** `DrawerContent`'s props. `size` applies to the side panels, not `bottom`. */
 export type DrawerContentProps = Shared &
   (
     | {
-        /** The edge it opens from. `start` and `end` follow text direction. @default 'end' */
-        side?: Exclude<DrawerSide, 'bottom'>;
-        /** The width. @default 'md' */
-        size?: DrawerSize;
+        /**
+         * The edge it opens from. `start` and `end` follow text direction. One
+         * of `'start'`, `'end'`, or `'bottom'`.
+         * @default 'end'
+         */
+        side?: 'start' | 'end';
+        /** The width. One of `'sm'`, `'md'`, or `'lg'`. @default 'md' */
+        size?: 'sm' | 'md' | 'lg';
       }
     | { side: 'bottom'; size?: never }
   );

@@ -23,7 +23,7 @@ interface AccordionOwnProps {
   multiple?: boolean;
   /** The tag of each item's heading. It doesn't change the look. @default 3 */
   headingLevel?: 1 | 2 | 3 | 4 | 5 | 6;
-  /** The header size. @default 'md' */
+  /** The header size. One of `'sm'` or `'md'`. @default 'md' */
   size?: 'sm' | 'md';
   /**
    * Keeps closed content in the DOM, such as for form state, hidden until

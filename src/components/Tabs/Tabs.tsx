@@ -7,15 +7,15 @@ import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
 import { OverlayDirection } from '../overlays/direction';
-import { TabsContext, type TabsSize, type TabsVariant } from './TabsContext';
+import { TabsContext } from './TabsContext';
 
 interface TabsSharedProps {
   /** Called with the newly selected tab's value. */
   onValueChange?: (value: string) => void;
-  /** The style. @default 'underline' */
-  variant?: TabsVariant;
-  /** The size. @default 'md' */
-  size?: TabsSize;
+  /** The style. One of `'underline'` or `'pill'`. @default 'underline' */
+  variant?: 'underline' | 'pill';
+  /** The size. One of `'sm'` or `'md'`. @default 'md' */
+  size?: 'sm' | 'md';
   /** A `TabsList` of `Tab`s, and a `TabsPanel` for each. */
   children?: ReactNode;
 }

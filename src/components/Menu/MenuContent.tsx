@@ -6,15 +6,22 @@ import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
 import { gapOffset, toBaseSide } from '../overlays/positioning';
-import type { OverlayAlign, OverlaySide } from '../overlays/positioning';
 import { popupMotion, popupSurface, positioner } from '../overlays/popup.css';
 import * as styles from './Menu.css';
 
 interface MenuContentOwnProps {
-  /** Which side of the trigger it opens on. It flips near the viewport edge. @default 'bottom' */
-  side?: OverlaySide;
-  /** How it lines up with the trigger along that side. @default 'start' */
-  align?: OverlayAlign;
+  /**
+   * Which side of the trigger it opens on. It flips near the viewport edge. One
+   * of `'top'`, `'bottom'`, `'start'`, or `'end'`.
+   * @default 'bottom'
+   */
+  side?: 'top' | 'bottom' | 'start' | 'end';
+  /**
+   * How it lines up with the trigger along that side. One of `'start'`,
+   * `'center'`, or `'end'`.
+   * @default 'start'
+   */
+  align?: 'start' | 'center' | 'end';
 }
 
 /** `MenuContent`'s props. */
