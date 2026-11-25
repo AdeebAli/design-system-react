@@ -169,6 +169,7 @@ This section fixes the contract those specs must honor.
 | [0002](../adr/0002-headless-primitives-with-base-ui.md) | Base UI for interactive behavior, wrapped behind our own API |
 | [0003](../adr/0003-distribution-and-release.md) | GitHub Packages; manual tag-driven release via script + GitHub Releases |
 | [0004](../adr/0004-npm-as-package-manager.md) | npm as the package manager |
+| [0005](../adr/0005-unbounded-grid-counts-with-css-variables.md) | Grid counts set through CSS variables, so they have no upper limit |
 
 ## Technology summary
 
@@ -250,6 +251,7 @@ published release.
 | **v0.7** | 15: App navigation | App shells |
 | **v0.8** | 17: Image | Images that reserve their space, with loading and failure states, including through `next/image` |
 | **v0.8.1** | 18: Documentation site | A docs site: welcome, foundations, guides, and a docs page with a props table for every component |
+| **v0.9** | 19: API ergonomics | Grid counts as numbers with no limit of 12, values in hovers, and an example on every component |
 | **v1.0** | Stabilization: API review, docs, fixes from real use | Stability guarantee begins |
 
 **Versioning before 1.0:** following semver convention, minor releases in
@@ -279,6 +281,7 @@ published release.
 | 16 | Feedback and display: `Alert`, `Spinner`, `Progress`, `Avatar`, `Divider`, `Drawer` | Accepted |
 | 17 | Image | Accepted |
 | 18 | Documentation site | Accepted |
+| 19 | API ergonomics | Accepted |
 
 ## Quality gates (proposed)
 

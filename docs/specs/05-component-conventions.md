@@ -204,8 +204,13 @@ Each component spec lists anything beyond these. Every interactive component mus
 ## Types
 
 - **Every public component exports `<Name>Props`.**
-- **Every public prop has a TSDoc comment, with `@default` where one applies.**
-- **Value unions are named and exported**, such as `BadgeTone`, so hovers stay short.
+- **Every public prop has a TSDoc comment, with `@default` where one applies.** A prop that
+  takes a value union lists its values, with units where a token stands for a length
+  (amended by Spec 19, 2026-11-25).
+- **Every public component's TSDoc has an `@example`**, and the examples type-check
+  (amended by Spec 19, 2026-11-25).
+- **Value unions are named and exported**, such as `BadgeTone`, for typing consumers' own
+  code. A prop's hover shows the literal values, not only the alias name (amended by Spec 19, 2026-11-25).
 - **No `any` in public types.** Inside the library, a cast needs a comment explaining why.
 - **Invalid combinations are type errors when that's simple to express.** Otherwise, they
   log a development warning.
@@ -251,7 +256,7 @@ A component is finished when it has:
 - [ ] Stories for every variant and state, plus a Playground, passing axe in both modes.
 - [ ] Behavior tests for its props, refs, events, and keyboard interaction.
 - [ ] Visual baselines.
-- [ ] TSDoc on every public prop, and a docs page as in Spec 18: Usage, Do's and don'ts,
+- [ ] TSDoc on every public prop, an `@example` on the component (amended by Spec 19), and a docs page as in Spec 18: Usage, Do's and don'ts,
       Accessibility, API with a props table, and Examples (amended by Spec 18, 2026-11-13).
 - [ ] The accessibility checklist completed, including a manual screen reader check for
       anything interactive.

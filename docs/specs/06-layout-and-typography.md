@@ -36,7 +36,8 @@ Everything follows [Spec 05](05-component-conventions.md). In addition:
 - **Layout components only compose `Box`,** so they add almost nothing to `styles.css`. The one
   exception is `Grid`'s `autoRows`, a small recipe in `Grid.css.ts`, because `Box` has no prop for it.
   An inline style would beat a project's CSS, so it isn't used.
-- **Values are strings, like all style props** (`gap="3"`, `columns="4"`).
+- **Values are strings, like all style props** (`gap="3"`, `columns="4"`), except grid counts,
+  which also accept numbers (`columns={16}`) (amended by Spec 19, 2026-11-25).
 
 ### Differences from Spec 05
 
@@ -121,7 +122,7 @@ CSS grid with equal columns. It's the base for bento layouts.
 
 | Prop | Maps to | Default |
 |---|---|---|
-| `columns` | `gridTemplateColumns`, `1`–`12` | `1` |
+| `columns` | `gridTemplateColumns`, any positive count, as a number or a string (amended by Spec 19, 2026-11-25) | `1` |
 | `gap`, `rowGap`, `columnGap` | same names | `gap` of `3` (12px) |
 | `autoRows` | `grid-auto-rows` | `auto` |
 
@@ -135,8 +136,8 @@ CSS grid with equal columns. It's the base for bento layouts.
 - `autoRows` isn't responsive. Its values are `auto` and `equal` (`1fr`). `equal`
   makes every row as tall as the tallest, which is what makes a bento grid look even.
 - Children are placed with the `gridColumn` and `gridRow` layout props, which every component has.
-- Spec 00's example (`columns={4}`) was illustrative. Values are strings, for consistency with every
-  other style prop.
+- ~~Spec 00's example (`columns={4}`) was illustrative. Values are strings, for consistency with every
+  other style prop.~~ `columns={4}` works, and there's no limit of 12 (amended by Spec 19, 2026-11-25).
 
 ### `Container`
 
