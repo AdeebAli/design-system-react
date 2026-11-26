@@ -1,8 +1,8 @@
 import type { ComponentPropsWithRef } from 'react';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import { warnOnce } from '../../utils/warn';
-import { box } from '../Box';
 import type { LayoutProps } from '../Box/types';
 import { focusRing } from '../../styles/focus.css';
 import * as styles from './Table.css';
@@ -11,13 +11,18 @@ import * as styles from './Table.css';
 export type TableSize = 'sm' | 'md';
 
 interface TableOwnProps {
-  /** The cell padding. @default 'md' */
-  size?: TableSize;
+  /** The cell padding. One of `'sm'` or `'md'`. @default 'md' */
+  size?: 'sm' | 'md';
   /** Keeps the header rows in view while the wrapper scrolls. Needs a height limit, such as `maxHeight="screen"`. @default false */
   stickyHeader?: boolean;
   /** Keeps each row's first cell in view while the table scrolls sideways. @default false */
   stickyFirstColumn?: boolean;
-  /** The background of sticky cells, matching what the table sits on. Has no effect without a sticky prop. @default 'surface' */
+  /**
+   * The background of sticky cells, matching what the table sits on. Has no
+   * effect without a sticky prop. One of `'canvas'`, `'surface'`, `'raised'`, or
+   * `'sunken'`.
+   * @default 'surface'
+   */
   stickyBackground?: 'canvas' | 'surface' | 'raised' | 'sunken';
   /** Highlights a body row on hover. @default true */
   hoverable?: boolean;
@@ -30,7 +35,25 @@ export type TableProps = TableOwnProps &
   LayoutProps &
   Omit<ComponentPropsWithRef<'table'>, keyof TableOwnProps | keyof LayoutProps>;
 
-/** A styled table inside a scroll wrapper. Compose it from the `Table*` parts. */
+/**
+ * A styled table inside a scroll wrapper. Compose it from the `Table*` parts.
+ *
+ * @example
+ * ```tsx
+ * <Table>
+ *   <TableHead>
+ *     <TableRow>
+ *       <TableHeader>Name</TableHeader>
+ *     </TableRow>
+ *   </TableHead>
+ *   <TableBody>
+ *     <TableRow>
+ *       <TableCell>Ada</TableCell>
+ *     </TableRow>
+ *   </TableBody>
+ * </Table>
+ * ```
+ */
 export function Table({
   size = 'md',
   stickyHeader = false,
@@ -43,6 +66,7 @@ export function Table({
   ...props
 }: TableProps) {
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, undefined, 'Table');
   const label = rest['aria-label'];
   const labelledBy = rest['aria-labelledby'];
   if (scrollable && label == null && labelledBy == null) {
@@ -55,11 +79,12 @@ export function Table({
   return (
     <div
       data-ds-table=""
+      style={grid.style}
       className={cx(
         styles.wrapper,
         stickyHeader && styles.stickyHeaderPad[size],
         stickyFirstColumn && styles.stickyColumnPad,
-        box(layout),
+        grid.className,
         scrollable && focusRing,
       )}
       {...(scrollable && {

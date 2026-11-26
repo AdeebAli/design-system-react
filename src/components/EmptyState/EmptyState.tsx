@@ -17,14 +17,23 @@ interface EmptyStateOwnProps {
   action?: ReactNode;
   /** The heading's level, which sets the tag only. @default 3 */
   headingLevel?: HeadingLevel;
-  /** The padding and title size. @default 'md' */
+  /** The padding and title size. One of `'sm'` or `'md'`. @default 'md' */
   size?: 'sm' | 'md';
 }
 
 /** `EmptyState`'s props. */
 export type EmptyStateProps = ComponentProps<'div', EmptyStateOwnProps>;
 
-/** What to show when a list or table has nothing in it. */
+/**
+ * What to show when a list or table has nothing in it.
+ *
+ * @example
+ * ```tsx
+ * <EmptyState title="No projects yet">
+ *   Create one to get started.
+ * </EmptyState>
+ * ```
+ */
 export function EmptyState({
   title,
   description,

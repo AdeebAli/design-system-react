@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { createRef, type ComponentProps } from 'react';
+import { vi } from 'vitest';
 import { Box, box } from './index';
 
 const el = () => screen.getByTestId('b');
@@ -102,4 +103,51 @@ it('box() returns the same class string as the prop', () => {
 
 it('box() ignores nullish values', () => {
   expect(box({ padding: undefined, margin: null as never })).toBe('');
+});
+
+it('puts a grid count on the element as a variable, merged with style', () => {
+  render(<Box data-testid="b" gridColumn={14} style={{ color: 'red' }} />);
+  expect(el().style.getPropertyValue('--ds-grid-column-base')).toBe('14');
+  expect(el().style.color).toBe('red');
+});
+
+it('lets a consumer style override a grid variable', () => {
+  render(
+    <Box
+      data-testid="b"
+      style={{ '--ds-grid-column-base': 3 } as never}
+      gridColumn={14}
+    />,
+  );
+  expect(el().style.getPropertyValue('--ds-grid-column-base')).toBe('3');
+});
+
+it('box() ignores a grid count from untyped code, and warns once', () => {
+  const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+  expect(box({ gridColumn: 'span-2' } as never)).toBe('');
+  expect(box({ gridColumn: 'span-2' } as never)).toBe('');
+  expect(warn).toHaveBeenCalledTimes(1);
+  const message = String(warn.mock.calls[0]?.[0]);
+  expect(message).toContain('box()');
+  expect(message).toContain('gridColumn');
+  expect(message).toContain('wrap it in `Box` or use `style`');
+  warn.mockRestore();
+});
+
+it.each(['gridTemplateColumns', 'gridRow'])(
+  'box() warns about %s too',
+  (prop) => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+    box({ [prop]: 2 });
+    expect(String(warn.mock.calls[0]?.[0])).toContain(prop);
+    warn.mockRestore();
+  },
+);
+
+it('box() keeps the other props beside an ignored grid count', () => {
+  const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+  expect(box({ padding: '4', gridColumn: 3 } as never)).toBe(
+    box({ padding: '4' }),
+  );
+  warn.mockRestore();
 });

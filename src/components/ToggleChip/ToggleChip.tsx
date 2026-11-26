@@ -3,9 +3,9 @@
 import { Toggle } from '@base-ui/react/toggle';
 import type { ReactElement, ReactNode } from 'react';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
-import { box } from '../Box';
 import { CheckIcon } from '../Icon/internal/Check';
 import * as styles from './ToggleChip.css';
 
@@ -21,8 +21,8 @@ interface ToggleChipOwnProps {
   onPressedChange?: (pressed: boolean) => void;
   /** Its value inside a `ToggleChipGroup`. */
   value?: string;
-  /** The size. @default 'md' */
-  size?: ToggleChipSize;
+  /** The size. One of `'sm'` or `'md'`. @default 'md' */
+  size?: 'sm' | 'md';
   /** Disables it. @default false */
   disabled?: boolean;
   /** An `Icon` element before the text. A check replaces it while pressed. */
@@ -34,7 +34,14 @@ interface ToggleChipOwnProps {
 /** `ToggleChip`'s props. */
 export type ToggleChipProps = ComponentProps<'button', ToggleChipOwnProps>;
 
-/** A selectable pill, such as a filter. Pressed chips show a check, so state isn't shown by color alone. */
+/**
+ * A selectable pill, such as a filter. Pressed chips show a check, so state isn't shown by color alone.
+ *
+ * @example
+ * ```tsx
+ * <ToggleChip>Archived</ToggleChip>
+ * ```
+ */
 export function ToggleChip({
   onPressedChange,
   size = 'md',
@@ -44,10 +51,11 @@ export function ToggleChip({
   ...props
 }: ToggleChipProps) {
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, rest.style, 'ToggleChip');
 
   return (
     <Toggle
-      className={cx(box(layout), styles.chip, styles.size[size], className)}
+      className={cx(grid.className, styles.chip, styles.size[size], className)}
       onPressedChange={
         onPressedChange && ((next: boolean) => onPressedChange(next))
       }
@@ -65,6 +73,7 @@ export function ToggleChip({
         </button>
       )}
       {...rest}
+      style={grid.style}
     />
   );
 }

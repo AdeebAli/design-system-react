@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { page } from 'vitest/browser';
 import { Box } from './index';
-import { componentPadding } from './Box.browser.css';
+import { componentPadding, projectThreeColumns } from './Box.browser.css';
 
 const el = () => screen.getByTestId('b');
 const css = () => getComputedStyle(el());
@@ -66,4 +66,89 @@ it('sides use logical properties', () => {
   render(<Box data-testid="b" paddingStart="4" />);
   expect(css().paddingRight).toBe('16px');
   document.documentElement.dir = '';
+});
+
+describe('grid counts', () => {
+  const trackWidth = (count: number) =>
+    screen.getByTestId('grid').getBoundingClientRect().width / count;
+  const childColumns = () =>
+    Math.round(
+      screen.getByTestId('child').getBoundingClientRect().width /
+        trackWidth(16),
+    );
+
+  it.each([14, 'span-14'] as const)('gridColumn=%s spans 14 of 16', (span) => {
+    render(
+      <Box data-testid="grid" display="grid" gridTemplateColumns={16}>
+        <Box data-testid="child" gridColumn={span} />
+      </Box>,
+    );
+    expect(childColumns()).toBe(14);
+  });
+
+  it('gridColumn="full" spans every column', () => {
+    render(
+      <Box data-testid="grid" display="grid" gridTemplateColumns={16}>
+        <Box data-testid="child" gridColumn="full" />
+      </Box>,
+    );
+    expect(childColumns()).toBe(16);
+  });
+
+  it('gridRow={3} spans three rows', () => {
+    render(
+      <Box data-testid="grid" display="grid" gridTemplateColumns={2}>
+        <Box data-testid="child" gridRow={3} />
+        <div style={{ height: 10 }} />
+        <div style={{ height: 10 }} />
+        <div style={{ height: 10 }} />
+      </Box>,
+    );
+    // The first child covers three auto rows of 10px each.
+    expect(screen.getByTestId('child').getBoundingClientRect().height).toBe(30);
+  });
+
+  it('a project class that sets grid-template-columns beats the count', () => {
+    render(
+      <Box
+        data-testid="grid"
+        display="grid"
+        gridTemplateColumns={16}
+        className={projectThreeColumns}
+      />,
+    );
+    expect(
+      getComputedStyle(screen.getByTestId('grid')).gridTemplateColumns.split(
+        ' ',
+      ),
+    ).toHaveLength(3);
+  });
+
+  it("a nested box's own span wins, and it doesn't inherit the parent's", async () => {
+    await page.viewport(500, 600);
+    render(
+      <Box data-testid="grid" display="grid" gridTemplateColumns={16}>
+        <Box
+          data-testid="parent"
+          gridColumn={14}
+          display="grid"
+          gridTemplateColumns={16}
+        >
+          <Box data-testid="child" gridColumn={{ md: 3 }} />
+        </Box>
+      </Box>,
+    );
+    const parent = () => screen.getByTestId('parent').getBoundingClientRect();
+    const child = screen.getByTestId('child');
+    // Below md the child has no span class, so it takes one track of the parent.
+    expect(child.getBoundingClientRect().width).toBeCloseTo(
+      parent().width / 16,
+      0,
+    );
+    await page.viewport(900, 600);
+    expect(child.getBoundingClientRect().width).toBeCloseTo(
+      (parent().width / 16) * 3,
+      0,
+    );
+  });
 });

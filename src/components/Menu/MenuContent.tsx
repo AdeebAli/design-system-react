@@ -2,19 +2,26 @@
 
 import { Menu as BaseMenu } from '@base-ui/react/menu';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
-import { box } from '../Box';
 import { gapOffset, toBaseSide } from '../overlays/positioning';
-import type { OverlayAlign, OverlaySide } from '../overlays/positioning';
 import { popupMotion, popupSurface, positioner } from '../overlays/popup.css';
 import * as styles from './Menu.css';
 
 interface MenuContentOwnProps {
-  /** Which side of the trigger it opens on. It flips near the viewport edge. @default 'bottom' */
-  side?: OverlaySide;
-  /** How it lines up with the trigger along that side. @default 'start' */
-  align?: OverlayAlign;
+  /**
+   * Which side of the trigger it opens on. It flips near the viewport edge. One
+   * of `'top'`, `'bottom'`, `'start'`, or `'end'`.
+   * @default 'bottom'
+   */
+  side?: 'top' | 'bottom' | 'start' | 'end';
+  /**
+   * How it lines up with the trigger along that side. One of `'start'`,
+   * `'center'`, or `'end'`.
+   * @default 'start'
+   */
+  align?: 'start' | 'center' | 'end';
 }
 
 /** `MenuContent`'s props. */
@@ -29,6 +36,7 @@ export function MenuContent({
   ...props
 }: MenuContentProps) {
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, rest.style, 'MenuContent');
   return (
     <BaseMenu.Portal>
       <BaseMenu.Positioner
@@ -39,11 +47,12 @@ export function MenuContent({
       >
         <BaseMenu.Popup
           {...rest}
+          style={grid.style}
           className={cx(
             popupSurface,
             popupMotion,
             styles.popup,
-            box(layout),
+            grid.className,
             className,
           )}
         >

@@ -1,15 +1,17 @@
 import type { ComponentPropsWithRef } from 'react';
 import { cx } from '../../utils/cx';
 import * as styles from './Table.css';
-import type { TableAlign } from './TableHeader';
 
 /** `TableCell`'s props. */
 export interface TableCellProps extends Omit<
   ComponentPropsWithRef<'td'>,
   'align'
 > {
-  /** Alignment of the content. @default 'start' */
-  align?: TableAlign;
+  /**
+   * Alignment of the content. One of `'start'`, `'center'`, or `'end'`.
+   * @default 'start'
+   */
+  align?: 'start' | 'center' | 'end';
 }
 
 /** A data cell. */

@@ -2,6 +2,7 @@
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { clientModuleFailures } from './client-modules.mjs';
+import { checkEditorHelp, EDITOR_HELP_STRICT } from './check-editor-help.mjs';
 
 const failures = [];
 const dist = 'dist';
@@ -39,6 +40,14 @@ if (declarations.length !== 1 || declarations[0] !== join(dist, 'index.d.ts')) {
     failures.push('index.d.ts has relative imports');
   if (types.includes('base-ui')) failures.push('index.d.ts mentions base-ui');
   if (/lucide/i.test(types)) failures.push('index.d.ts mentions Lucide');
+  // Hovers and examples as an editor shows them (Spec 19).
+  const editorHelp = checkEditorHelp(types);
+  if (EDITOR_HELP_STRICT) failures.push(...editorHelp);
+  else if (editorHelp.length > 0) {
+    console.warn(
+      `editor help: ${editorHelp.length} problems (not yet fatal):\n  ${editorHelp.join('\n  ')}`,
+    );
+  }
 }
 
 const boxModule = join(dist, 'components/Box/Box.js');
@@ -67,6 +76,8 @@ failures.push(
 
 // Server-safe components must not become client modules (Spec 08).
 const serverModules = [
+  'components/Box/Box.js',
+  'components/Grid/Grid.js',
   'components/Card/Card.js',
   'components/Stat/Stat.js',
   'components/Badge/Badge.js',
@@ -133,6 +144,17 @@ if (existsSync(stylesPath)) {
   }
   if (!styles.includes('--ds-color-bg-canvas:#f4f2ee')) {
     failures.push('styles.css has no Soft Light variables');
+  }
+  // Grid counts come from one class per breakpoint that reads a variable
+  // (ADR 0005), never from a class per count.
+  if (/repeat\(\s*\d/.test(styles)) {
+    failures.push('styles.css has a grid class for an individual count');
+  }
+  const countClasses = styles.split('repeat(var(--ds-grid-columns-').length - 1;
+  if (countClasses !== 5) {
+    failures.push(
+      `styles.css should have 5 grid column classes, found ${countClasses}`,
+    );
   }
 }
 if (!existsSync(join(dist, 'licenses', 'LICENSE-lucide.txt'))) {

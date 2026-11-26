@@ -40,7 +40,14 @@ interface SwitchOwnProps {
  */
 export type SwitchProps = ComponentProps<'span', SwitchOwnProps>;
 
-/** A switch, for a setting that applies immediately. Use `Checkbox` in forms. */
+/**
+ * A switch, for a setting that applies immediately. Use `Checkbox` in forms.
+ *
+ * @example
+ * ```tsx
+ * <Switch label="Notifications" />
+ * ```
+ */
 export function Switch({
   label,
   hint,
@@ -61,6 +68,7 @@ export function Switch({
 
   return (
     <ChoiceLabel
+      component="Switch"
       label={label}
       hint={hint}
       layout={layout}
@@ -70,10 +78,10 @@ export function Switch({
       inField={field.inField}
       hintIndent="switch"
     >
-      {(rootClass) => (
+      {(rootClass, rootStyle) => (
         <BaseSwitch.Root
           className={[styles.track, rootClass].filter(Boolean).join(' ')}
-          style={rootClass === undefined ? undefined : style}
+          style={rootClass === undefined ? undefined : rootStyle}
           disabled={disabled}
           aria-invalid={invalid || undefined}
           aria-required={required || undefined}

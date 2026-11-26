@@ -2,9 +2,9 @@
 
 import { Menu as BaseMenu } from '@base-ui/react/menu';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
-import { box } from '../Box';
 import { CheckIcon } from '../Icon/internal/Check';
 import * as styles from './Menu.css';
 
@@ -28,11 +28,18 @@ export function MenuRadioItem({
   ...props
 }: MenuRadioItemProps) {
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, rest.style, 'MenuRadioItem');
   return (
     <BaseMenu.RadioItem
       {...rest}
+      style={grid.style}
       closeOnClick={closeOnClick}
-      className={cx(styles.menuItem, styles.checkable, box(layout), className)}
+      className={cx(
+        styles.menuItem,
+        styles.checkable,
+        grid.className,
+        className,
+      )}
     >
       <span className={styles.indicatorSlot}>
         <BaseMenu.RadioItemIndicator className={styles.indicator}>

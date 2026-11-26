@@ -55,6 +55,7 @@ A finite list of classes can't cover every count, so these three props stop comi
 - No new runtime dependency is added. The variable names come from the `.css.ts` file.
 - `styles.css` gets smaller, because the 12 classes per breakpoint for each prop go away.
 - A consumer's own `style` is merged after the variables, so it can override them.
+  - Exception (owner, 2026-11-25): `Table` and `DataTable` put the variables on their outer wrapper, while `style` goes to the inner `<table>` as before, so `style` can't override a count there. Use `className`.
 
 ### Internal helper, and `box()`
 

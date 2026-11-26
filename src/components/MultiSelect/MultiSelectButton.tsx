@@ -3,8 +3,8 @@
 import { Select as BaseSelect } from '@base-ui/react/select';
 import { useId, useMemo, useState } from 'react';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
-import { box } from '../Box';
 import { useFieldControl } from '../Field/FieldContext';
 import { CheckIcon } from '../Icon/internal/Check';
 import { ChevronDownIcon } from '../Icon/internal/ChevronDown';
@@ -47,6 +47,7 @@ export function MultiSelectButton({
   const labelFor = (v: string) => items[v] ?? v;
   const summaryId = useId();
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, rest.style, 'MultiSelect');
   const describedByIds =
     [describedBy, current.length > 0 ? summaryId : undefined]
       .filter(Boolean)
@@ -68,7 +69,7 @@ export function MultiSelectButton({
       >
         <BaseSelect.Trigger
           className={cx(
-            box(layout),
+            grid.className,
             inputStyles.control,
             inputStyles.size[size],
             selectStyles.trigger,
@@ -79,6 +80,7 @@ export function MultiSelectButton({
           aria-describedby={describedByIds}
           data-invalid={invalid ? '' : undefined}
           {...rest}
+          style={grid.style}
         >
           <BaseSelect.Value className={selectStyles.value}>
             {(selected: readonly string[]) =>

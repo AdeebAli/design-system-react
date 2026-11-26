@@ -3,15 +3,18 @@
 import { Menu as BaseMenu } from '@base-ui/react/menu';
 import type { ReactElement } from 'react';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
-import { box } from '../Box';
 import * as styles from './Menu.css';
 
 interface MenuItemOwnProps {
   /** An `Icon` element before the label. */
   startIcon?: ReactElement;
-  /** `danger` marks a destructive action. @default 'neutral' */
+  /**
+   * `danger` marks a destructive action. One of `'neutral'` or `'danger'`.
+   * @default 'neutral'
+   */
   tone?: 'neutral' | 'danger';
   /** Whether the menu closes when the item is clicked. @default true */
   closeOnClick?: boolean;
@@ -32,14 +35,16 @@ export function MenuItem({
   ...props
 }: MenuItemProps) {
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, rest.style, 'MenuItem');
   return (
     <BaseMenu.Item
       {...rest}
+      style={grid.style}
       closeOnClick={closeOnClick}
       className={cx(
         styles.menuItem,
         tone === 'danger' && styles.danger,
-        box(layout),
+        grid.className,
         className,
       )}
     >

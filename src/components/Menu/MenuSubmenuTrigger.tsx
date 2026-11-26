@@ -3,9 +3,9 @@
 import { Menu as BaseMenu } from '@base-ui/react/menu';
 import type { ReactElement } from 'react';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
-import { box } from '../Box';
 import { ChevronRightIcon } from '../Icon/internal/ChevronRight';
 import * as styles from './Menu.css';
 
@@ -30,10 +30,12 @@ export function MenuSubmenuTrigger({
   ...props
 }: MenuSubmenuTriggerProps) {
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, rest.style, 'MenuSubmenuTrigger');
   return (
     <BaseMenu.SubmenuTrigger
       {...rest}
-      className={cx(styles.menuItem, box(layout), className)}
+      style={grid.style}
+      className={cx(styles.menuItem, grid.className, className)}
     >
       {startIcon && <span className={styles.itemIcon}>{startIcon}</span>}
       <span className={styles.submenuLabel}>{children}</span>

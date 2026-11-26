@@ -1,7 +1,6 @@
 import type { ComponentProps } from '../../utils/types';
 import type { SearchLabels, SearchProps } from '../Combobox/useOptionSearch';
 import type { Option, OptionGroup } from '../Select/options';
-import type { SelectSize } from '../Select/Select';
 
 /** Strings for translation. */
 export interface MultiSelectLabels extends SearchLabels {
@@ -33,8 +32,11 @@ interface MultiSelectSharedProps {
   onValueChange?: (value: string[]) => void;
   /** Shown when nothing is selected. */
   placeholder?: string;
-  /** The height of the control. @default 'md' */
-  size?: SelectSize;
+  /**
+   * The height of the control. One of `'sm'`, `'md'`, or `'lg'`.
+   * @default 'md'
+   */
+  size?: 'sm' | 'md' | 'lg';
   /** Marks it invalid. @default From `Field` */
   invalid?: boolean;
   /** Disables it. @default From `Field` */

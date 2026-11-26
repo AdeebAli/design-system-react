@@ -6,16 +6,21 @@ import { ArrowDownIcon } from '../Icon/internal/ArrowDown';
 import { ArrowUpIcon } from '../Icon/internal/ArrowUp';
 import { ArrowUpDownIcon } from '../Icon/internal/ArrowUpDown';
 import * as styles from './Table.css';
-import type { TableAlign } from './TableHeader';
 
 /** A column's sort state. */
 export type TableSortDirection = 'ascending' | 'descending' | 'none';
 
 interface TableSortHeaderOwnProps {
-  /** The column's current sort state. */
-  direction: TableSortDirection;
-  /** Alignment of the content. @default 'start' */
-  align?: TableAlign;
+  /**
+   * The column's current sort state. One of `'ascending'`, `'descending'`, or
+   * `'none'`.
+   */
+  direction: 'ascending' | 'descending' | 'none';
+  /**
+   * Alignment of the content. One of `'start'`, `'center'`, or `'end'`.
+   * @default 'start'
+   */
+  align?: 'start' | 'center' | 'end';
   /** The column's header text. */
   children?: ReactNode;
 }

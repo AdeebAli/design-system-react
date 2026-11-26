@@ -17,7 +17,7 @@ import type { PolymorphicProps } from '../../utils/types';
 import { warnOnce } from '../../utils/warn';
 import { withDefaultDisplay } from '../../utils/withDefaultDisplay';
 import { Box } from '../Box';
-import type { DisplayValue, Responsive } from '../Box/types';
+import type { Responsive } from '../Box/types';
 import { Icon } from '../Icon';
 import { ImageOffIcon } from '../Icon/internal/ImageOff';
 import { Skeleton } from '../Skeleton';
@@ -35,9 +35,16 @@ interface ImageOwnProps {
    * @default the `htmlWidth` / `htmlHeight` ratio when both are set
    */
   ratio?: ImageRatio | number;
-  /** How the image fills a `ratio` frame. @default 'cover' */
+  /**
+   * How the image fills a `ratio` frame. One of `'cover'` or `'contain'`.
+   * @default 'cover'
+   */
   fit?: 'cover' | 'contain';
-  /** The corners, from `radius.*`. @default `radius.image` */
+  /**
+   * The corners, from `radius.*`. One of `'none'`, `'sm'`, `'md'`, `'lg'`,
+   * `'xl'`, or `'full'`.
+   * @default `radius.image`
+   */
   radius?: 'none' | 'sm' | 'md' | 'lg' | 'xl' | 'full';
   /** Shows a `Skeleton` in the frame until the image loads. @default false */
   skeleton?: boolean;
@@ -47,8 +54,22 @@ interface ImageOwnProps {
   htmlWidth?: number;
   /** The image's intrinsic height, passed to the `as` element as `height`. */
   htmlHeight?: number;
-  /** The frame's display. @default 'block' */
-  display?: Responsive<DisplayValue>;
+  /**
+   * The frame's display. One of `'none'`, `'block'`, `'inline'`,
+   * `'inline-block'`, `'flex'`, `'inline-flex'`, `'grid'`, or `'inline-grid'`.
+   * Responsive.
+   * @default 'block'
+   */
+  display?: Responsive<
+    | 'none'
+    | 'block'
+    | 'inline'
+    | 'inline-block'
+    | 'flex'
+    | 'inline-flex'
+    | 'grid'
+    | 'inline-grid'
+  >;
 }
 
 /** `Image`'s props. `src` and the other native props come from `as`. */
@@ -78,6 +99,11 @@ function setRef<T>(ref: Ref<T> | undefined, value: T): () => void {
  * An image in a frame that reserves its space, with an optional skeleton while
  * it loads and a fallback if it fails. `as` renders it through a framework's
  * image component, such as `next/image`.
+ *
+ * @example
+ * ```tsx
+ * <Image src="/photo.jpg" alt="A mountain lake" ratio="16/9" />
+ * ```
  */
 export function Image<E extends ElementType = 'img'>({
   as,

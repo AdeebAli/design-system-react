@@ -24,6 +24,7 @@ export default tseslint.config(
       'playwright-report',
       'test-results',
       '.superpowers',
+      '.generated',
       'docs',
     ],
   },

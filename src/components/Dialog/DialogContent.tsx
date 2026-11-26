@@ -16,8 +16,8 @@ export type DialogSize = 'sm' | 'md' | 'lg';
 
 /** `DialogContent`'s props. */
 export type DialogContentProps = ComponentPropsWithRef<'div'> & {
-  /** The width. @default 'md' */
-  size?: DialogSize;
+  /** The width. One of `'sm'`, `'md'`, or `'lg'`. @default 'md' */
+  size?: 'sm' | 'md' | 'lg';
   /** Shows the close button. Always `false` with `alert`. @default true */
   showClose?: boolean;
   /** The close button's name. @default 'Close' */

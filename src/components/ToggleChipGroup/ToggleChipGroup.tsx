@@ -3,10 +3,11 @@
 import { ToggleGroup } from '@base-ui/react/toggle-group';
 import type { ReactNode } from 'react';
 import { cx } from '../../utils/cx';
+import { box } from '../Box';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
-import { box } from '../Box';
-import type { Responsive, SpaceToken } from '../Box/types';
+import type { Responsive } from '../Box/types';
 import { OverlayDirection } from '../overlays/direction';
 
 interface ToggleChipGroupOwnProps {
@@ -24,8 +25,29 @@ interface ToggleChipGroupOwnProps {
   multiple?: boolean;
   /** Disables every chip. @default false */
   disabled?: boolean;
-  /** The space between chips. @default '2' */
-  gap?: Responsive<SpaceToken>;
+  /**
+   * The space between chips. `space` tokens (`'4'` is 16px, `'px'` is 1px).
+   * Responsive.
+   * @default '2'
+   */
+  gap?: Responsive<
+    | '0'
+    | 'px'
+    | '0.5'
+    | '1'
+    | '1.5'
+    | '2'
+    | '3'
+    | '4'
+    | '5'
+    | '6'
+    | '8'
+    | '10'
+    | '12'
+    | '16'
+    | '20'
+    | '24'
+  >;
   /** The `ToggleChip`s. */
   children?: ReactNode;
 }
@@ -37,7 +59,17 @@ export type ToggleChipGroupProps = ComponentProps<
 > &
   ({ 'aria-label': string } | { 'aria-labelledby': string });
 
-/** A wrapping row of `ToggleChip`s, with one or several pressed. */
+/**
+ * A wrapping row of `ToggleChip`s, with one or several pressed.
+ *
+ * @example
+ * ```tsx
+ * <ToggleChipGroup aria-label="Topics">
+ *   <ToggleChip value="design">Design</ToggleChip>
+ *   <ToggleChip value="research">Research</ToggleChip>
+ * </ToggleChipGroup>
+ * ```
+ */
 export function ToggleChipGroup({
   onValueChange,
   gap = '2',
@@ -45,6 +77,7 @@ export function ToggleChipGroup({
   ...props
 }: ToggleChipGroupProps) {
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, rest.style, 'ToggleChipGroup');
 
   return (
     // Base UI maps arrow keys from a React context, not the DOM `dir`.
@@ -52,18 +85,19 @@ export function ToggleChipGroup({
       <ToggleGroup
         className={cx(
           box({
-            ...layout,
             display: 'flex',
             flexWrap: 'wrap',
             alignItems: 'center',
             gap,
           }),
+          grid.className,
           className,
         )}
         onValueChange={
           onValueChange && ((next: string[]) => onValueChange(next))
         }
         {...rest}
+        style={grid.style}
       />
     </OverlayDirection>
   );

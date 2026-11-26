@@ -3,14 +3,15 @@
 import { Menu as BaseMenu } from '@base-ui/react/menu';
 import {
   createElement,
+  type CSSProperties,
   type ElementType,
   type ReactElement,
   type ReactNode,
 } from 'react';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { PolymorphicProps } from '../../utils/types';
-import { box } from '../Box';
 import * as styles from './Menu.css';
 
 interface MenuLinkItemOwnProps {
@@ -44,12 +45,18 @@ export function MenuLinkItem<E extends ElementType = 'a'>({
 }: MenuLinkItemProps<E>) {
   // The rest depends on the generic `as`, which the layout split can't infer through.
   const [layout, rest] = splitLayoutProps(props as Record<string, unknown>);
+  const grid = layoutStyle(
+    layout,
+    rest.style as CSSProperties | undefined,
+    'MenuLinkItem',
+  );
   return (
     <BaseMenu.LinkItem
       {...rest}
+      style={grid.style}
       render={as ? createElement(as) : undefined}
       closeOnClick={closeOnClick}
-      className={cx(styles.menuItem, box(layout), className)}
+      className={cx(styles.menuItem, grid.className, className)}
     >
       {startIcon && <span className={styles.itemIcon}>{startIcon}</span>}
       {children}

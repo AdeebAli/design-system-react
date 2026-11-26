@@ -1,4 +1,12 @@
+import type { ButtonBaseOwnProps } from './ButtonBase';
 import { Button } from './index';
+import type { ButtonVariant } from './tones';
+
+test('the inline variant union stays equal to ButtonVariant', () => {
+  expectTypeOf<ButtonBaseOwnProps['variant']>().toEqualTypeOf<
+    ButtonVariant | undefined
+  >();
+});
 
 test('tone and variant take their named values', () => {
   <Button variant="ghost" tone="danger" />;

@@ -3,9 +3,9 @@
 import { Field as BaseField } from '@base-ui/react/field';
 import type { ReactElement } from 'react';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
-import { box } from '../Box';
 import { useFieldControl } from '../Field/FieldContext';
 import * as styles from './Input.css';
 
@@ -13,8 +13,8 @@ import * as styles from './Input.css';
 export type InputSize = 'sm' | 'md' | 'lg';
 
 interface InputOwnProps {
-  /** The height. @default 'md' */
-  size?: InputSize;
+  /** The height. One of `'sm'`, `'md'`, or `'lg'`. @default 'md' */
+  size?: 'sm' | 'md' | 'lg';
   /** Marks the input invalid. @default From `Field` */
   invalid?: boolean;
   /** A decorative `Icon` element before the text. */
@@ -29,7 +29,14 @@ interface InputOwnProps {
  */
 export type InputProps = ComponentProps<'input', InputOwnProps>;
 
-/** A text input. It keeps the native `value` and `onChange`, so it works with `register`. */
+/**
+ * A text input. It keeps the native `value` and `onChange`, so it works with `register`.
+ *
+ * @example
+ * ```tsx
+ * <Input aria-label="Name" placeholder="Ada Lovelace" />
+ * ```
+ */
 export function Input({
   size = 'md',
   invalid: invalidProp,
@@ -45,17 +52,18 @@ export function Input({
   // A disabled Field wins, so the control can't be enabled inside it.
   const disabled = field.disabled || disabledProp === true;
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, style, 'Input');
 
   return (
     <div
       className={cx(
-        box(layout),
+        grid.className,
         styles.control,
         styles.wrapper,
         styles.size[size],
         className,
       )}
-      style={style}
+      style={grid.style}
       data-invalid={invalid ? '' : undefined}
       data-disabled={disabled ? '' : undefined}
     >

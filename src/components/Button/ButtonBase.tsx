@@ -1,32 +1,43 @@
 'use client';
 
 import { Button as BaseButton } from '@base-ui/react/button';
-import type { ElementType, MouseEvent, ReactElement, ReactNode } from 'react';
+import type {
+  CSSProperties,
+  ElementType,
+  MouseEvent,
+  ReactElement,
+  ReactNode,
+} from 'react';
 import { focusRing } from '../../styles/focus.css';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import { warnOnce } from '../../utils/warn';
-import { Box, box } from '../Box';
+import { Box } from '../Box';
 import { Spinner } from '../Spinner';
 import { VisuallyHidden } from '../VisuallyHidden';
 import * as styles from './Button.css';
-import { resolveTone, type ButtonTone, type ButtonVariant } from './tones';
+import { resolveTone } from './tones';
 
 /** Button sizes, at the control heights 28, 36, and 44px. */
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 /** Props shared by `Button` and `IconButton`. */
 export interface ButtonBaseOwnProps {
-  /** The style. @default 'solid' */
-  variant?: ButtonVariant;
+  /**
+   * The style. One of `'solid'`, `'soft'`, `'outline'`, or `'ghost'`.
+   * @default 'solid'
+   */
+  variant?: 'solid' | 'soft' | 'outline' | 'ghost';
   /**
    * The color meaning. `solid` supports `accent` and `danger`, `ghost` supports
-   * `neutral` and `danger`, and `soft` and `outline` support `neutral`.
+   * `neutral` and `danger`, and `soft` and `outline` support `neutral`. One of
+   * `'accent'`, `'neutral'`, or `'danger'`.
    * @default 'accent' for solid, otherwise 'neutral'
    */
-  tone?: ButtonTone;
-  /** The size. @default 'md' */
-  size?: ButtonSize;
+  tone?: 'accent' | 'neutral' | 'danger';
+  /** The size. One of `'sm'`, `'md'`, or `'lg'`. @default 'md' */
+  size?: 'sm' | 'md' | 'lg';
   /**
    * Shows a spinner and ignores clicks and form submission, while staying
    * focusable. Not supported on links. @default false
@@ -125,14 +136,20 @@ export function ButtonBase({
   }
 
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(
+    layout,
+    rest.style as CSSProperties | undefined,
+    component,
+  );
   return (
     <BaseButton
       type={type ?? 'button'}
       disabled={disabled}
-      className={cx(box(layout), classes, className)}
+      className={cx(grid.className, classes, className)}
       onClick={handleClick}
       {...state}
       {...rest}
+      style={grid.style}
     >
       {content}
     </BaseButton>

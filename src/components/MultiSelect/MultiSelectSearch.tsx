@@ -3,8 +3,8 @@
 import { Combobox as BaseCombobox } from '@base-ui/react/combobox';
 import { useState } from 'react';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
-import { box } from '../Box';
 import { SearchPopup } from '../Combobox/SearchPopup';
 import { useOptionSearch } from '../Combobox/useOptionSearch';
 import { useFieldControl } from '../Field/FieldContext';
@@ -55,6 +55,7 @@ export function MultiSelectSearch({
     value: current,
   });
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, style, 'MultiSelect');
 
   return (
     <OverlayDirection>
@@ -83,13 +84,13 @@ export function MultiSelectSearch({
       >
         <BaseCombobox.Chips
           className={cx(
-            box(layout),
+            grid.className,
             inputStyles.control,
             styles.chips,
             styles.minHeight[size],
             className,
           )}
-          style={style}
+          style={grid.style}
           data-invalid={invalid ? '' : undefined}
           data-disabled={disabled ? '' : undefined}
           data-popup-open={open ? '' : undefined}

@@ -11,3 +11,4 @@ fixtures/*/next-env.d.ts
 fixtures/*/tsconfig.tsbuildinfo
 .vitest
 debug-storybook.log
+.generated

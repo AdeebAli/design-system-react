@@ -27,8 +27,12 @@ const hasContent = (node: ReactNode) =>
 const roles = { off: undefined, polite: 'status', assertive: 'alert' } as const;
 
 interface AlertOwnProps {
-  /** The color meaning. Each tone also has its own icon. @default 'info' */
-  tone?: AlertTone;
+  /**
+   * The color meaning. Each tone also has its own icon. One of `'info'`,
+   * `'success'`, `'warning'`, or `'danger'`.
+   * @default 'info'
+   */
+  tone?: 'info' | 'success' | 'warning' | 'danger';
   /** Bold text before the body. It isn't a heading. */
   title?: ReactNode;
   /** An `Icon` element, or `null` for none. @default an icon per tone */
@@ -44,8 +48,10 @@ interface AlertOwnProps {
   dismissLabel?: string;
   /**
    * `polite` gives `role="status"` and `assertive` gives `role="alert"`. A
-   * screen reader reliably announces only a region already on the page, so
-   * this suits an `Alert` that's mounted and changes its text. @default 'off'
+   * screen reader reliably announces only a region already on the page, so this
+   * suits an `Alert` that's mounted and changes its text. One of `'off'`,
+   * `'polite'`, or `'assertive'`.
+   * @default 'off'
    */
   live?: 'off' | 'polite' | 'assertive';
 }
@@ -53,7 +59,16 @@ interface AlertOwnProps {
 /** `Alert`'s props. */
 export type AlertProps = ComponentProps<'div', AlertOwnProps>;
 
-/** A message that stays in the page, such as a warning above a form. */
+/**
+ * A message that stays in the page, such as a warning above a form.
+ *
+ * @example
+ * ```tsx
+ * <Alert tone="info" title="Heads up">
+ *   Your trial ends in three days.
+ * </Alert>
+ * ```
+ */
 export function Alert({
   tone = 'info',
   title,

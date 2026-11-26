@@ -10,10 +10,11 @@ import {
   type Ref,
 } from 'react';
 import { cx } from '../../utils/cx';
+import { box } from '../Box';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
-import { box } from '../Box';
-import type { Responsive, SpaceToken } from '../Box/types';
+import type { Responsive } from '../Box/types';
 import { useFieldControl } from '../Field/FieldContext';
 import { OverlayDirection } from '../overlays/direction';
 
@@ -48,8 +49,29 @@ interface RadioGroupOwnProps {
   disabled?: boolean;
   /** Sets `aria-required`. It doesn't validate. @default From `Field` */
   required?: boolean;
-  /** The space between radios. @default '2' */
-  gap?: Responsive<SpaceToken>;
+  /**
+   * The space between radios. `space` tokens (`'4'` is 16px, `'px'` is 1px).
+   * Responsive.
+   * @default '2'
+   */
+  gap?: Responsive<
+    | '0'
+    | 'px'
+    | '0.5'
+    | '1'
+    | '1.5'
+    | '2'
+    | '3'
+    | '4'
+    | '5'
+    | '6'
+    | '8'
+    | '10'
+    | '12'
+    | '16'
+    | '20'
+    | '24'
+  >;
   /** The `Radio`s. */
   children?: ReactNode;
 }
@@ -57,7 +79,17 @@ interface RadioGroupOwnProps {
 /** `RadioGroup`'s props. Label it with a surrounding `Field`. */
 export type RadioGroupProps = ComponentProps<'div', RadioGroupOwnProps>;
 
-/** A group of `Radio`s, one of which can be selected. */
+/**
+ * A group of `Radio`s, one of which can be selected.
+ *
+ * @example
+ * ```tsx
+ * <RadioGroup aria-label="Billing" defaultValue="monthly">
+ *   <Radio value="monthly" label="Monthly" />
+ *   <Radio value="annual" label="Annual" />
+ * </RadioGroup>
+ * ```
+ */
 export function RadioGroup({
   onValueChange,
   invalid: invalidProp,
@@ -96,6 +128,7 @@ export function RadioGroup({
   const disabled = disabledProp ?? field.disabled;
   const required = requiredProp ?? field.required;
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, rest.style, 'RadioGroup');
 
   return (
     <RadioGroupContext.Provider
@@ -106,7 +139,8 @@ export function RadioGroup({
         <BaseRadioGroup
           ref={setRef}
           className={cx(
-            box({ ...layout, display: 'flex', flexDirection: 'column', gap }),
+            box({ display: 'flex', flexDirection: 'column', gap }),
+            grid.className,
             className,
           )}
           disabled={disabled}
@@ -117,6 +151,7 @@ export function RadioGroup({
             ((value: unknown) => onValueChange(value as string))
           }
           {...rest}
+          style={grid.style}
         >
           {children}
         </BaseRadioGroup>

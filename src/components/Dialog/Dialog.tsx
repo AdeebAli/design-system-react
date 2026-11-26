@@ -30,7 +30,25 @@ export interface DialogProps {
   children?: ReactNode;
 }
 
-/** A modal dialog. Compose it from `DialogTrigger` and `DialogContent`. */
+/**
+ * A modal dialog. Compose it from `DialogTrigger` and `DialogContent`.
+ *
+ * @example
+ * ```tsx
+ * <Dialog>
+ *   <DialogTrigger>
+ *     <Button>Delete</Button>
+ *   </DialogTrigger>
+ *   <DialogContent>
+ *     <DialogTitle>Delete this project?</DialogTitle>
+ *     <DialogDescription>This cannot be undone.</DialogDescription>
+ *     <DialogClose>
+ *       <Button>Cancel</Button>
+ *     </DialogClose>
+ *   </DialogContent>
+ * </Dialog>
+ * ```
+ */
 export function Dialog({
   open,
   defaultOpen,

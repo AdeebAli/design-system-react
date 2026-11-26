@@ -3,9 +3,9 @@
 import { Progress as BaseProgress } from '@base-ui/react/progress';
 import type { ReactNode } from 'react';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
-import { box } from '../Box';
 import * as styles from './Progress.css';
 
 /** `Progress`'s color meanings. */
@@ -30,10 +30,14 @@ interface ProgressOwnProps {
   max?: number;
   /** Shows the percentage beside the label. @default false */
   showValue?: boolean;
-  /** `sm` is 4px tall, `md` 8px. @default 'md' */
+  /** `sm` is 4px tall, `md` 8px. One of `'sm'` or `'md'`. @default 'md' */
   size?: 'sm' | 'md';
-  /** The fill's color meaning. @default 'accent' */
-  tone?: ProgressTone;
+  /**
+   * The fill's color meaning. One of `'accent'`, `'success'`, `'warning'`, or
+   * `'danger'`.
+   * @default 'accent'
+   */
+  tone?: 'accent' | 'success' | 'warning' | 'danger';
 }
 
 /** `Progress`'s props. */
@@ -43,7 +47,14 @@ export type ProgressProps = Omit<
 > &
   ProgressName;
 
-/** Shows how far along something is. For scores, such as storage used, it isn't the right fit. */
+/**
+ * Shows how far along something is. For scores, such as storage used, it isn't the right fit.
+ *
+ * @example
+ * ```tsx
+ * <Progress aria-label="Uploading" value={30} />
+ * ```
+ */
 export function Progress({
   value,
   max = 100,
@@ -55,13 +66,15 @@ export function Progress({
   ...props
 }: ProgressProps) {
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, rest.style, 'Progress');
   const hasHeader = (label !== undefined && label !== null) || showValue;
   return (
     <BaseProgress.Root
       value={value}
       max={max}
-      className={cx(styles.root, box(layout), className)}
+      className={cx(styles.root, grid.className, className)}
       {...rest}
+      style={grid.style}
     >
       {hasHeader && (
         <div className={styles.header}>

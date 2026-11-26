@@ -5,7 +5,6 @@ import { useContext, type ReactElement, type ReactNode } from 'react';
 import { cx } from '../../utils/cx';
 import { OverlayDirection } from '../overlays/direction';
 import { gapOffset, toBaseSide } from '../overlays/positioning';
-import type { OverlayAlign, OverlaySide } from '../overlays/positioning';
 import { popupMotion, positioner } from '../overlays/popup.css';
 import { TooltipDelayContext } from './TooltipContext';
 import * as styles from './Tooltip.css';
@@ -16,10 +15,18 @@ export interface TooltipProps {
   content: ReactNode;
   /** The one element it describes. Any focusable element, such as a `Link`. */
   children: ReactElement;
-  /** Which side of the trigger it opens on. It flips near the viewport edge. @default 'top' */
-  side?: OverlaySide;
-  /** How it lines up with the trigger along that side. @default 'center' */
-  align?: OverlayAlign;
+  /**
+   * Which side of the trigger it opens on. It flips near the viewport edge. One
+   * of `'top'`, `'bottom'`, `'start'`, or `'end'`.
+   * @default 'top'
+   */
+  side?: 'top' | 'bottom' | 'start' | 'end';
+  /**
+   * How it lines up with the trigger along that side. One of `'start'`,
+   * `'center'`, or `'end'`.
+   * @default 'center'
+   */
+  align?: 'start' | 'center' | 'end';
   /** Hover delay in ms. Keyboard focus opens it immediately. @default `TooltipProvider`'s `delay`, otherwise 600 */
   delay?: number;
   /** Whether it's open, when controlled. */
@@ -35,6 +42,13 @@ export interface TooltipProps {
 /**
  * A short text hint on hover or keyboard focus. It adds no ARIA, so the
  * trigger needs its own name. A natively `disabled` button never opens it.
+ *
+ * @example
+ * ```tsx
+ * <Tooltip content="Copy link">
+ *   <Button>Share</Button>
+ * </Tooltip>
+ * ```
  */
 export function Tooltip({
   content,

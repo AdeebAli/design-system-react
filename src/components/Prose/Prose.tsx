@@ -9,8 +9,8 @@ import * as styles from './Prose.css';
 export type ProseSize = 'sm' | 'md';
 
 interface ProseOwnProps {
-  /** The reading size. @default 'md' */
-  size?: ProseSize;
+  /** The reading size. One of `'sm'` or `'md'`. @default 'md' */
+  size?: 'sm' | 'md';
   /** The content: elements, MDX, or nothing when `dangerouslySetInnerHTML` sets it. */
   children?: ReactNode;
 }
@@ -26,6 +26,14 @@ export type ProseProps<E extends ElementType = 'div'> = PolymorphicProps<
  * doesn't sanitize `dangerouslySetInnerHTML`. Set its width here
  * rather than on a wrapper, since `ch` depends on its own font, and add
  * `marginX="auto"` to center it.
+ *
+ * @example
+ * ```tsx
+ * <Prose>
+ *   <h2>Title</h2>
+ *   <p>Body text in a long-form page.</p>
+ * </Prose>
+ * ```
  */
 export function Prose<E extends ElementType = 'div'>({
   as,

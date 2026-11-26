@@ -10,12 +10,11 @@ import {
   type ReactNode,
 } from 'react';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
-import { box } from '../Box';
 import { Icon } from '../Icon';
 import { MenuIcon } from '../Icon/internal/Menu';
-import type { ButtonVariant } from '../Button';
 import { IconButton } from '../IconButton';
 import * as styles from './NavBar.css';
 import { NavBarContext, type NavBarContextValue } from './NavBarContext';
@@ -31,9 +30,17 @@ interface NavBarOwnProps {
   sticky?: boolean;
   /** The menu button's accessible name. @default 'Menu' */
   menuLabel?: string;
-  /** The menu button's style, as an `IconButton` variant. @default 'ghost' */
-  menuVariant?: ButtonVariant;
-  /** Where the menu button sits below `md`: after the actions, or before the brand. @default 'end' */
+  /**
+   * The menu button's style, as an `IconButton` variant. One of `'solid'`,
+   * `'soft'`, `'outline'`, or `'ghost'`.
+   * @default 'ghost'
+   */
+  menuVariant?: 'solid' | 'soft' | 'outline' | 'ghost';
+  /**
+   * Where the menu button sits below `md`: after the actions, or before the
+   * brand. One of `'start'` or `'end'`.
+   * @default 'end'
+   */
   menuPosition?: 'start' | 'end';
   /** `NavBarLink`s, or components rendering them. */
   children?: ReactNode;
@@ -45,6 +52,13 @@ export type NavBarProps = ComponentProps<'nav', NavBarOwnProps>;
 /**
  * The site's main navigation bar. Below `md`, links collapse behind a menu
  * button into a panel that pushes content down.
+ *
+ * @example
+ * ```tsx
+ * <NavBar aria-label="Main" brand={<a href="/">Acme</a>}>
+ *   <NavBarLink href="/docs">Docs</NavBarLink>
+ * </NavBar>
+ * ```
  */
 export function NavBar({
   brand,
@@ -61,6 +75,7 @@ export function NavBar({
   const [open, setOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, rest.style, 'NavBar');
 
   // The link it was on is now hidden, so focus goes to the menu button, unless
   // the button is hidden too because the window has widened past md.
@@ -103,10 +118,10 @@ export function NavBar({
         render={
           // Delegates Escape from the links and the menu button inside it.
           // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
-          <nav onKeyDown={handleKeyDown} {...rest} />
+          <nav onKeyDown={handleKeyDown} {...rest} style={grid.style} />
         }
         className={cx(
-          box(layout),
+          grid.className,
           styles.root,
           menuPosition === 'start' && styles.menuStart,
           sticky && styles.sticky,

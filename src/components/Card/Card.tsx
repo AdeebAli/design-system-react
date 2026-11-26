@@ -5,9 +5,9 @@ import type { PolymorphicProps } from '../../utils/types';
 import { warnOnce } from '../../utils/warn';
 import { withDefaultDisplay } from '../../utils/withDefaultDisplay';
 import { Box } from '../Box';
-import type { DisplayValue, Responsive, SpaceToken } from '../Box/types';
+import type { Responsive, SpaceToken } from '../Box/types';
 import * as styles from './Card.css';
-import { spanToGrid, type CardSpan } from './span';
+import { spanToGrid } from './span';
 
 export type { CardSpan } from './span';
 
@@ -35,17 +35,43 @@ function toSpace(padding: Responsive<CardPadding>): Responsive<SpaceToken> {
 
 interface CardOwnProps {
   /**
-   * Columns × rows in a `Grid`. A fixed span wider than one column fills the
-   * row below `md`. A responsive span is taken literally. An explicit
-   * `gridColumn` or `gridRow` replaces it on that axis. @default '1x1'
+   * Columns × rows in a `Grid`. A fixed span wider than one column fills the row
+   * below `md`. A responsive span is taken literally. An explicit `gridColumn`
+   * or `gridRow` replaces it on that axis. One of `'1x1'`, `'2x1'`, `'1x2'`,
+   * `'2x2'`, `'3x1'`, `'4x1'`, or `'full'`.
+   * @default '1x1'
    */
-  span?: Responsive<CardSpan>;
-  /** Inner padding. @default 'md' */
-  padding?: Responsive<CardPadding>;
-  /** The space between children, which stack in a column. @default '2' */
-  gap?: Responsive<SpaceToken>;
-  /** The background. @default 'default' */
-  surface?: CardSurface;
+  span?: Responsive<'1x1' | '2x1' | '1x2' | '2x2' | '3x1' | '4x1' | 'full'>;
+  /**
+   * Inner padding. One of `'none'`, `'sm'`, `'md'`, or `'lg'`. Responsive.
+   * @default 'md'
+   */
+  padding?: Responsive<'none' | 'sm' | 'md' | 'lg'>;
+  /**
+   * The space between children, which stack in a column. `space` tokens (`'4'`
+   * is 16px, `'px'` is 1px). Responsive.
+   * @default '2'
+   */
+  gap?: Responsive<
+    | '0'
+    | 'px'
+    | '0.5'
+    | '1'
+    | '1.5'
+    | '2'
+    | '3'
+    | '4'
+    | '5'
+    | '6'
+    | '8'
+    | '10'
+    | '12'
+    | '16'
+    | '20'
+    | '24'
+  >;
+  /** The background. One of `'default'` or `'sunken'`. @default 'default' */
+  surface?: 'default' | 'sunken';
   /** Clips content to the card's corners, such as a full-bleed image. It also clips children's focus rings. @default false */
   clip?: boolean;
   /**
@@ -53,8 +79,21 @@ interface CardOwnProps {
    * link, and don't put other links or buttons inside. @default false
    */
   interactive?: boolean;
-  /** Overrides `flex`. A missing `base` keeps `flex`. */
-  display?: Responsive<DisplayValue>;
+  /**
+   * Overrides `flex`. A missing `base` keeps `flex`. One of `'none'`, `'block'`,
+   * `'inline'`, `'inline-block'`, `'flex'`, `'inline-flex'`, `'grid'`, or
+   * `'inline-grid'`. Responsive.
+   */
+  display?: Responsive<
+    | 'none'
+    | 'block'
+    | 'inline'
+    | 'inline-block'
+    | 'flex'
+    | 'inline-flex'
+    | 'grid'
+    | 'inline-grid'
+  >;
 }
 
 /** `Card`'s props. */
@@ -63,7 +102,17 @@ export type CardProps<E extends ElementType = 'div'> = PolymorphicProps<
   CardOwnProps
 >;
 
-/** A surface for grouping content, sized for bento grids. */
+/**
+ * A surface for grouping content, sized for bento grids.
+ *
+ * @example
+ * ```tsx
+ * <Card span="2x1">
+ *   <Heading level={3}>Revenue</Heading>
+ *   <Text>$21.4k this month</Text>
+ * </Card>
+ * ```
+ */
 export function Card<E extends ElementType = 'div'>({
   as,
   span,

@@ -17,7 +17,22 @@ export interface PopoverProps {
   children?: ReactNode;
 }
 
-/** A non-modal popup anchored to its trigger. Compose it from `PopoverTrigger` and `PopoverContent`. */
+/**
+ * A non-modal popup anchored to its trigger. Compose it from `PopoverTrigger` and `PopoverContent`.
+ *
+ * @example
+ * ```tsx
+ * <Popover>
+ *   <PopoverTrigger>
+ *     <Button>Filters</Button>
+ *   </PopoverTrigger>
+ *   <PopoverContent>
+ *     <PopoverTitle>Filters</PopoverTitle>
+ *     <PopoverDescription>Narrow the list.</PopoverDescription>
+ *   </PopoverContent>
+ * </Popover>
+ * ```
+ */
 export function Popover({
   open,
   defaultOpen,

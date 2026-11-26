@@ -11,9 +11,9 @@ import {
 } from 'react';
 import { focusRing } from '../../styles/focus.css';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import { warnOnce } from '../../utils/warn';
-import { box } from '../Box';
 import type { LayoutProps } from '../Box/types';
 import { Icon } from '../Icon';
 import { CheckIcon } from '../Icon/internal/Check';
@@ -130,7 +130,11 @@ interface DataTableOwnProps<Row> {
   defaultPage?: number;
   /** Called with the next page. */
   onPageChange?: (page: number) => void;
-  /** Lets rows be selected: one, or many with a toolbar. @default 'none' */
+  /**
+   * Lets rows be selected: one, or many with a toolbar. One of `'none'`,
+   * `'single'`, or `'multiple'`.
+   * @default 'none'
+   */
   selectionMode?: 'none' | 'single' | 'multiple';
   /** The selected row ids, when controlled. */
   selectedKeys?: string[];
@@ -239,6 +243,16 @@ function SelectButton({
 /**
  * A table that manages sorting, pagination, and the loading and empty
  * states. Use `Table` for display and server rendering.
+ *
+ * @example
+ * ```tsx
+ * <DataTable
+ *   aria-label="People"
+ *   rows={[{ id: '1', name: 'Ada' }]}
+ *   getRowId={(person) => person.id}
+ *   columns={[{ id: 'name', header: 'Name', cell: (person) => person.name }]}
+ * />
+ * ```
  */
 export function DataTable<Row>({
   rows,
@@ -266,6 +280,7 @@ export function DataTable<Row>({
 }: DataTableProps<Row>) {
   const [layout, rest] = splitLayoutProps(props);
   const { height, maxHeight, ...outerLayout } = layout;
+  const grid = layoutStyle(outerLayout, undefined, 'DataTable');
 
   const [sortState, setSortState] = useState<DataTableSort>(defaultSort);
   const [pageState, setPageState] = useState(defaultPage);
@@ -411,7 +426,8 @@ export function DataTable<Row>({
   return (
     <div
       aria-busy={loading || undefined}
-      className={cx(styles.root, box(outerLayout))}
+      className={cx(styles.root, grid.className)}
+      style={grid.style}
     >
       {selectionMode === 'multiple' && (
         <SelectionToolbar

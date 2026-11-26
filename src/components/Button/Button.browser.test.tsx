@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { userEvent } from 'vitest/browser';
+import { Grid } from '../Grid';
 import { Button } from './index';
 
 it('loading blocks implicit submission in a real browser', async () => {
@@ -86,4 +87,28 @@ it('shows the focus ring on keyboard focus', async () => {
   expect(getComputedStyle(screen.getByRole('button')).outlineStyle).toBe(
     'solid',
   );
+});
+
+describe('grid counts', () => {
+  const tracks = (span: 14 | 'span-14' | 'full') => {
+    render(
+      <Grid data-testid="grid" columns={16} gap="0">
+        <Button data-testid="button" gridColumn={span}>
+          x
+        </Button>
+      </Grid>,
+    );
+    const grid = screen.getByTestId('grid').getBoundingClientRect().width;
+    return Math.round(
+      (screen.getByTestId('button').getBoundingClientRect().width / grid) * 16,
+    );
+  };
+
+  it.each([14, 'span-14'] as const)('gridColumn=%s spans 14 of 16', (span) => {
+    expect(tracks(span)).toBe(14);
+  });
+
+  it('gridColumn="full" spans all 16', () => {
+    expect(tracks('full')).toBe(16);
+  });
 });

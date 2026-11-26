@@ -14,10 +14,13 @@ export type IconTone =
 interface IconOwnProps {
   /** Any component that passes SVG props to its root `svg`. */
   icon: ElementType<SVGProps<SVGSVGElement>>;
-  /** The size. @default 'md' */
-  size?: IconSize;
-  /** The color meaning. Never the only signal. Unset, it inherits. */
-  tone?: IconTone;
+  /** The size. One of `'sm'`, `'md'`, `'lg'`, or `'inherit'`. @default 'md' */
+  size?: 'sm' | 'md' | 'lg' | 'inherit';
+  /**
+   * The color meaning. Never the only signal. Unset, it inherits. One of
+   * `'muted'`, `'accent'`, `'success'`, `'warning'`, `'danger'`, or `'info'`.
+   */
+  tone?: 'muted' | 'accent' | 'success' | 'warning' | 'danger' | 'info';
   /** The accessible name. Without one, the icon is decorative. */
   label?: string;
 }
@@ -38,7 +41,21 @@ export type IconProps = Omit<
   | keyof BoxOnlyProps
 >;
 
-/** Sizes, colors, and labels an SVG icon. */
+/**
+ * Sizes, colors, and labels an SVG icon.
+ *
+ * @example
+ * ```tsx
+ * <Icon
+ *   icon={(props) => (
+ *     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" {...props}>
+ *       <path d="M12 5v14M5 12h14" />
+ *     </svg>
+ *   )}
+ *   label="Add"
+ * />
+ * ```
+ */
 export function Icon({
   icon,
   size = 'md',

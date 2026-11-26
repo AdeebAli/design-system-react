@@ -1,5 +1,12 @@
 import type { ComponentPropsWithRef, ElementType, ReactNode } from 'react';
 import { cx } from '../../utils/cx';
+import { warnOnce } from '../../utils/warn';
+import {
+  GRID_COUNT_PROPS,
+  gridCountStyle,
+  withGridVariables,
+  type GridCountProps,
+} from './gridCounts';
 import { sprinkles } from './sprinkles.css';
 import type { BoxStyleProps } from './types';
 
@@ -27,6 +34,9 @@ interface BoxOwnProps<E extends ElementType> extends BoxStyleProps {
 export type BoxProps<E extends ElementType = 'div'> = BoxOwnProps<E> &
   Omit<ComponentPropsWithRef<E>, keyof BoxOwnProps<E>>;
 
+const isGridCount = (name: string) =>
+  (GRID_COUNT_PROPS as readonly string[]).includes(name);
+
 function withoutNullish(value: unknown): unknown {
   if (typeof value !== 'object' || value === null) return value;
   return Object.fromEntries(
@@ -36,19 +46,39 @@ function withoutNullish(value: unknown): unknown {
 
 /**
  * Returns the class string for style props, for when wrapping with `Box` isn't
- * possible. Nullish values add nothing.
+ * possible. Nullish values add nothing. It doesn't take grid counts
+ * (`gridTemplateColumns`, `gridColumn`, `gridRow`): wrap the element in `Box`,
+ * or use `style`.
  */
-export function box(props: BoxStyleProps): string {
+export function box(props: Omit<BoxStyleProps, keyof GridCountProps>): string {
   const defined = Object.fromEntries(
     Object.entries(props)
-      .filter(([, value]) => value != null)
+      .filter(([name, value]) => {
+        if (value == null) return false;
+        if (!isGridCount(name)) return true;
+        // From untyped code only: the types reject these (ADR 0005).
+        warnOnce(
+          `box-grid-count-${name}`,
+          `box(): ${name} isn't supported, so it's ignored. For grid placement of another component, wrap it in \`Box\` or use \`style\`.`,
+        );
+        return false;
+      })
       .map(([name, value]) => [name, withoutNullish(value)]),
   );
   // The hand-written prop types are kept in sync with sprinkles by Box.test-d.tsx.
   return sprinkles(defined);
 }
 
-/** The primitive every component is built on. */
+/**
+ * The primitive every component is built on.
+ *
+ * @example
+ * ```tsx
+ * <Box padding="4" background="surface" borderRadius="card">
+ *   Content
+ * </Box>
+ * ```
+ */
 export function Box<E extends ElementType = 'div'>(props: BoxProps<E>) {
   // A generic `as` can't be narrowed, so its props are read as a plain record.
   const { as, className, htmlWidth, htmlHeight, ...rest } = props as Record<
@@ -62,20 +92,29 @@ export function Box<E extends ElementType = 'div'>(props: BoxProps<E>) {
   };
 
   const styleProps: Record<string, unknown> = {};
+  const gridProps: Record<string, unknown> = {};
   const forwarded: Record<string, unknown> = {};
   for (const [name, value] of Object.entries(rest)) {
-    (sprinkles.properties.has(name as never) ? styleProps : forwarded)[name] =
-      value;
+    const target = (GRID_COUNT_PROPS as readonly string[]).includes(name)
+      ? gridProps
+      : sprinkles.properties.has(name as never)
+        ? styleProps
+        : forwarded;
+    target[name] = value;
   }
 
   const Element = as ?? 'div';
-  const classes = cx(box(styleProps), className);
+  const grid = gridCountStyle(gridProps, 'Box');
+  const classes = cx(box(styleProps), grid.className, className);
 
   return (
     <Element
       {...forwarded}
       {...(htmlWidth !== undefined && { width: htmlWidth })}
       {...(htmlHeight !== undefined && { height: htmlHeight })}
+      {...(grid.style && {
+        style: withGridVariables(grid.style, forwarded.style),
+      })}
       className={classes || undefined}
     />
   );

@@ -14,8 +14,9 @@ A CSS grid with equal columns, and the base for bento layouts.
 
 Use `Grid` for cards, tiles, and bento layouts: content in equal columns that collapse on small screens. For a single row or column, use [`Inline`](?path=/docs/components-layout-inline--docs) or [`Stack`](?path=/docs/components-layout-stack--docs).
 
-- `columns` sets the number of equal columns, and is responsive: `columns={{ base: '1', md: '3' }}`.
-- Place children with the `gridColumn` and `gridRow` layout props, such as `gridColumn="span-2"`.
+- `columns` sets the number of equal columns, with no upper limit. It takes a number or a string, and is responsive: `columns={16}`, `columns="16"`, `columns={{ base: 1, md: 3 }}`.
+- Place children with the `gridColumn` and `gridRow` layout props: a span as a number or `'span-n'`, or `'full'`. `gridColumn={14}` and `gridColumn="span-14"` are the same.
+- The count is set as a CSS variable (`--ds-grid-columns-base`, then `-sm`, `-md`, `-lg`, `-xl`) and read by a class, so a project's own `grid-template-columns` rule still wins.
 - `autoRows="equal"` makes every row as tall as the tallest.
 - See [Patterns/Bento](?path=/story/patterns-bento--dashboard) for whole layouts.
 - It works in server components.
@@ -27,7 +28,7 @@ Use `Grid` for cards, tiles, and bento layouts: content in equal columns that co
     Collapse columns on small screens with a responsive value.
     <Canvas of={GridStories.Responsive} />
   </Do>
-  <Dont code={`<Grid columns="4">{cards}</Grid>\n// Four columns on a phone`} />
+  <Dont code={`<Grid columns={4}>{cards}</Grid>\n// Four columns on a phone`} />
 </DoDont>
 
 <DoDont>

@@ -1,14 +1,14 @@
 import type { ReactNode } from 'react';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
-import { box } from '../Box';
 import * as styles from './Breadcrumbs.css';
 
 interface BreadcrumbsOwnProps {
   /** The landmark's name. @default 'Breadcrumbs' */
   'aria-label'?: string;
-  /** The text size. @default 'sm' */
+  /** The text size. One of `'sm'` or `'md'`. @default 'sm' */
   size?: 'sm' | 'md';
   /** `BreadcrumbItem`s, the current page last. */
   children?: ReactNode;
@@ -20,6 +20,14 @@ export type BreadcrumbsProps = ComponentProps<'nav', BreadcrumbsOwnProps>;
 /**
  * Where a page sits, with links back up. Long trails wrap. It has no context
  * or `"use client"`, so it works in a server component.
+ *
+ * @example
+ * ```tsx
+ * <Breadcrumbs>
+ *   <BreadcrumbItem href="/">Home</BreadcrumbItem>
+ *   <BreadcrumbItem current>Settings</BreadcrumbItem>
+ * </Breadcrumbs>
+ * ```
  */
 export function Breadcrumbs({
   'aria-label': ariaLabel = 'Breadcrumbs',
@@ -29,11 +37,13 @@ export function Breadcrumbs({
   ...props
 }: BreadcrumbsProps) {
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, rest.style, 'Breadcrumbs');
   return (
     <nav
       aria-label={ariaLabel}
-      className={cx(box(layout), styles.root, styles.size[size], className)}
+      className={cx(grid.className, styles.root, styles.size[size], className)}
       {...rest}
+      style={grid.style}
     >
       <ol className={styles.list}>{children}</ol>
     </nav>

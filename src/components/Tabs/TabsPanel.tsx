@@ -4,9 +4,9 @@ import { Tabs as BaseTabs } from '@base-ui/react/tabs';
 import type { ReactNode } from 'react';
 import { focusRing } from '../../styles/focus.css';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
-import { box } from '../Box';
 
 interface TabsPanelOwnProps {
   /** Matches a `Tab`'s `value`. */
@@ -32,12 +32,13 @@ export function TabsPanel({
   ...props
 }: TabsPanelProps) {
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, rest.style, 'TabsPanel');
   return (
     <BaseTabs.Panel
       value={value}
       keepMounted={keepMounted}
-      render={<div {...rest} />}
-      className={cx(box(layout), focusRing, className)}
+      render={<div {...rest} style={grid.style} />}
+      className={cx(grid.className, focusRing, className)}
     >
       {children}
     </BaseTabs.Panel>

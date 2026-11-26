@@ -14,7 +14,14 @@ interface VisuallyHiddenOwnProps {
 export type VisuallyHiddenProps<E extends ElementType = 'span'> =
   PolymorphicProps<E, VisuallyHiddenOwnProps>;
 
-/** Text for screen readers only. */
+/**
+ * Text for screen readers only.
+ *
+ * @example
+ * ```tsx
+ * <VisuallyHidden>Opens in a new tab</VisuallyHidden>
+ * ```
+ */
 export function VisuallyHidden<E extends ElementType = 'span'>({
   as,
   focusable = false,

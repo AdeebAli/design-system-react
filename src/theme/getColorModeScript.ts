@@ -1,10 +1,12 @@
-import type { ColorMode, ResolvedColorMode } from './colorModeStore';
-
 export interface ColorModeScriptOptions {
-  /** Used only when no choice is stored. @default 'system' */
-  defaultMode?: ColorMode;
-  /** Locks the mode. */
-  forcedMode?: ResolvedColorMode;
+  /**
+   * Used only when no choice is stored. One of `'system'`, `'light'`, or
+   * `'dark'`.
+   * @default 'system'
+   */
+  defaultMode?: 'system' | 'light' | 'dark';
+  /** Locks the mode. One of `'light'` or `'dark'`. */
+  forcedMode?: 'light' | 'dark';
   /** The `localStorage` key. Must match `ThemeProvider`. @default 'ds-color-mode' */
   storageKey?: string;
 }

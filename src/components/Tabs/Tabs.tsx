@@ -3,19 +3,19 @@
 import { Tabs as BaseTabs } from '@base-ui/react/tabs';
 import type { ReactNode } from 'react';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
-import { box } from '../Box';
 import { OverlayDirection } from '../overlays/direction';
-import { TabsContext, type TabsSize, type TabsVariant } from './TabsContext';
+import { TabsContext } from './TabsContext';
 
 interface TabsSharedProps {
   /** Called with the newly selected tab's value. */
   onValueChange?: (value: string) => void;
-  /** The style. @default 'underline' */
-  variant?: TabsVariant;
-  /** The size. @default 'md' */
-  size?: TabsSize;
+  /** The style. One of `'underline'` or `'pill'`. @default 'underline' */
+  variant?: 'underline' | 'pill';
+  /** The size. One of `'sm'` or `'md'`. @default 'md' */
+  size?: 'sm' | 'md';
   /** A `TabsList` of `Tab`s, and a `TabsPanel` for each. */
   children?: ReactNode;
 }
@@ -39,7 +39,21 @@ type TabsValueProps =
 /** `Tabs`'s props. */
 export type TabsProps = ComponentProps<'div', TabsSharedProps & TabsValueProps>;
 
-/** Switches between panels in the same page. For links between pages, use `NavBar`. */
+/**
+ * Switches between panels in the same page. For links between pages, use `NavBar`.
+ *
+ * @example
+ * ```tsx
+ * <Tabs defaultValue="overview">
+ *   <TabsList aria-label="Views">
+ *     <Tab value="overview">Overview</Tab>
+ *     <Tab value="activity">Activity</Tab>
+ *   </TabsList>
+ *   <TabsPanel value="overview">Overview</TabsPanel>
+ *   <TabsPanel value="activity">Activity</TabsPanel>
+ * </Tabs>
+ * ```
+ */
 export function Tabs({
   variant = 'underline',
   size = 'md',
@@ -51,13 +65,14 @@ export function Tabs({
   ...props
 }: TabsProps) {
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, rest.style, 'Tabs');
   return (
     <TabsContext.Provider value={{ variant, size }}>
       {/* Base UI maps arrow keys from a React context, not the DOM `dir`. */}
       <OverlayDirection>
         <BaseTabs.Root
           // The root's own props go on the rendered element, so they keep its types.
-          render={<div {...rest} />}
+          render={<div {...rest} style={grid.style} />}
           value={value}
           defaultValue={defaultValue}
           onValueChange={
@@ -67,7 +82,7 @@ export function Tabs({
               if (typeof value === 'string') onValueChange(value);
             })
           }
-          className={cx(box(layout), className)}
+          className={cx(grid.className, className)}
         >
           {children}
         </BaseTabs.Root>

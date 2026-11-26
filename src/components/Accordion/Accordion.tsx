@@ -3,9 +3,9 @@
 import { Accordion as BaseAccordion } from '@base-ui/react/accordion';
 import { useMemo, type ReactNode } from 'react';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
-import { box } from '../Box';
 import * as styles from './Accordion.css';
 import {
   AccordionContext,
@@ -23,7 +23,7 @@ interface AccordionOwnProps {
   multiple?: boolean;
   /** The tag of each item's heading. It doesn't change the look. @default 3 */
   headingLevel?: 1 | 2 | 3 | 4 | 5 | 6;
-  /** The header size. @default 'md' */
+  /** The header size. One of `'sm'` or `'md'`. @default 'md' */
   size?: 'sm' | 'md';
   /**
    * Keeps closed content in the DOM, such as for form state, hidden until
@@ -37,7 +37,18 @@ interface AccordionOwnProps {
 /** `Accordion`'s props. */
 export type AccordionProps = ComponentProps<'div', AccordionOwnProps>;
 
-/** Sections that expand in place, such as FAQs and settings. */
+/**
+ * Sections that expand in place, such as FAQs and settings.
+ *
+ * @example
+ * ```tsx
+ * <Accordion>
+ *   <AccordionItem value="shipping" title="Shipping">
+ *     Orders ship in two days.
+ *   </AccordionItem>
+ * </Accordion>
+ * ```
+ */
 export function Accordion({
   value,
   defaultValue,
@@ -51,6 +62,7 @@ export function Accordion({
   ...props
 }: AccordionProps) {
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, rest.style, 'Accordion');
   const context = useMemo<AccordionContextValue>(
     () => ({ headingLevel, size, keepMounted }),
     [headingLevel, size, keepMounted],
@@ -59,11 +71,12 @@ export function Accordion({
     <AccordionContext.Provider value={context}>
       <BaseAccordion.Root
         {...rest}
+        style={grid.style}
         value={value}
         defaultValue={defaultValue}
         onValueChange={(next) => onValueChange?.(next)}
         multiple={multiple}
-        className={cx(box(layout), styles.root, className)}
+        className={cx(grid.className, styles.root, className)}
       >
         {children}
       </BaseAccordion.Root>

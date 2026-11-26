@@ -17,7 +17,7 @@ Reach for a layout component first: [`Stack`](?path=/docs/components-layout-stac
 - Every style prop takes a token, and most are responsive: `padding={{ base: '2', md: '4' }}`. The full list is on [All style props](?path=/docs/components-layout-box-all-style-props--docs).
 - `as` renders another element or component, such as `as="main"` or a router's link.
 - A style prop wins over an HTML attribute of the same name, so `width` is the style prop. Use `htmlWidth` and `htmlHeight` for an `img`'s real `width` and `height` attributes.
-- `box()` returns the same classes as a string, for an element you don't render through `Box`.
+- `box()` returns the same classes as a string, for an element you don't render through `Box`. It doesn't take the grid counts (`gridTemplateColumns`, `gridColumn`, `gridRow`): wrap the element in `Box`, or use `style`.
 - It works in server components.
 
 ## Do's and don'ts

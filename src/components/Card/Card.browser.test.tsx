@@ -114,3 +114,19 @@ it('an interactive card lifts on hover', async () => {
     .poll(() => getComputedStyle(el).transform)
     .toBe('matrix(1, 0, 0, 1, 0, -1)');
 });
+
+it('a number gridColumn replaces span on that axis', async () => {
+  await page.viewport(1280, 800);
+  render(
+    <Grid data-testid="g" columns={8} gap="0">
+      <Card data-testid="card" span="2x1" gridColumn={5}>
+        Card
+      </Card>
+    </Grid>,
+  );
+  const width = screen.getByTestId('g').getBoundingClientRect().width;
+  expect(screen.getByTestId('card').getBoundingClientRect().width).toBeCloseTo(
+    (width / 8) * 5,
+    0,
+  );
+});

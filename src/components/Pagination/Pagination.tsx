@@ -1,9 +1,9 @@
 import type { ElementType, SVGProps } from 'react';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import { warnOnce } from '../../utils/warn';
 import type { ComponentProps } from '../../utils/types';
-import { box } from '../Box';
 import { Button } from '../Button';
 import { Icon } from '../Icon';
 import { ChevronLeftIcon } from '../Icon/internal/ChevronLeft';
@@ -32,7 +32,7 @@ interface PaginationOwnProps {
   totalPages: number;
   /** Pages shown beside the current one. @default 1 */
   siblingCount?: 0 | 1 | 2;
-  /** The button size. @default 'md' */
+  /** The button size. One of `'sm'` or `'md'`. @default 'md' */
   size?: 'sm' | 'md';
   /** The landmark's name. @default 'Pagination' */
   'aria-label'?: string;
@@ -67,6 +67,15 @@ const fill = (text: string, values: Record<string, number>) =>
  * Page navigation. With `getHref` it renders links, which work without
  * JavaScript. With `onPageChange` it renders buttons. Below `sm` it shows
  * previous, "Page 3 of 10", and next.
+ *
+ * @example
+ * ```tsx
+ * <Pagination
+ *   page={3}
+ *   totalPages={10}
+ *   onPageChange={(page) => console.log(page)}
+ * />
+ * ```
  */
 export function Pagination<E extends ElementType = 'a'>({
   page,
@@ -82,6 +91,7 @@ export function Pagination<E extends ElementType = 'a'>({
   ...props
 }: PaginationProps<E>) {
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, rest.style, 'Pagination');
   if (totalPages <= 1) return null;
   if (page < 1 || page > totalPages) {
     warnOnce(
@@ -125,8 +135,9 @@ export function Pagination<E extends ElementType = 'a'>({
   return (
     <nav
       aria-label={ariaLabel}
-      className={cx(box(layout), styles.root, className)}
+      className={cx(grid.className, styles.root, className)}
       {...rest}
+      style={grid.style}
     >
       <ol className={styles.full}>
         <li>{previous}</li>

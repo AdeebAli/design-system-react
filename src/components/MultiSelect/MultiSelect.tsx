@@ -11,6 +11,17 @@ import type {
 /**
  * Several choices. By default a button like `Select`'s; with `searchable`,
  * chips and a search input. The empty value is `[]`.
+ *
+ * @example
+ * ```tsx
+ * <MultiSelect
+ *   aria-label="Topics"
+ *   options={[
+ *     { value: 'design', label: 'Design' },
+ *     { value: 'research', label: 'Research' },
+ *   ]}
+ * />
+ * ```
  */
 export function MultiSelect(props: MultiSelectProps) {
   // `searchable` is taken off here, so it never reaches the DOM.

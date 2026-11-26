@@ -6,7 +6,10 @@ import * as styles from './Divider.css';
 
 type DividerVariant =
   | {
-      /** The direction of the line. @default 'horizontal' */
+      /**
+       * The direction of the line. One of `'horizontal'` or `'vertical'`.
+       * @default 'horizontal'
+       */
       orientation?: 'horizontal';
       /** Centered text in the line. Horizontal only. */
       label?: ReactNode;
@@ -35,6 +38,11 @@ export type DividerProps = Omit<
 /**
  * A line between things. Set `decorative` when the layout already separates
  * them, so a screen reader doesn't read each line.
+ *
+ * @example
+ * ```tsx
+ * <Divider />
+ * ```
  */
 export function Divider({
   orientation = 'horizontal',

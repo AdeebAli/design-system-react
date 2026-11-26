@@ -60,3 +60,21 @@ it('renders as another element', () => {
   render(<Grid as="section" data-testid="g" />);
   expect(screen.getByTestId('g').tagName).toBe('SECTION');
 });
+
+it('takes a number or a numeric string for columns', () => {
+  const { unmount } = render(<Grid data-testid="c" columns={4} />);
+  const number = screen.getByTestId('c').cloneNode() as HTMLElement;
+  unmount();
+  render(<Grid data-testid="c" columns="4" />);
+  const string = screen.getByTestId('c');
+  expect(string.className).toBe(number.className);
+  expect(string.getAttribute('style')).toBe(number.getAttribute('style'));
+  expect(string.style.getPropertyValue('--ds-grid-columns-base')).toBe('4');
+});
+
+it('sets the count as a variable', () => {
+  render(<Grid data-testid="g" columns={16} />);
+  expect(
+    screen.getByTestId('g').style.getPropertyValue('--ds-grid-columns-base'),
+  ).toBe('16');
+});

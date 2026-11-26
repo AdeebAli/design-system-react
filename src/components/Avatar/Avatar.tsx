@@ -3,9 +3,9 @@
 import { Avatar as BaseAvatar } from '@base-ui/react/avatar';
 import type { ReactNode } from 'react';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
-import { box } from '../Box';
 import * as styles from './Avatar.css';
 import { avatarColorIndex } from './colorFromName';
 import { initials } from './initials';
@@ -25,19 +25,26 @@ interface AvatarOwnProps {
   name: string;
   /** The image. Until it loads, and if it fails, the initials show. */
   src?: string;
-  /** `size.avatar.*`. @default 'md' */
+  /**
+   * `size.avatar.*`. One of `'sm'`, `'md'`, `'lg'`, or `'xl'`.
+   * @default 'md'
+   */
   size?: 'sm' | 'md' | 'lg' | 'xl';
-  /** The shape. Use `square` for an organization. @default 'circle' */
+  /**
+   * The shape. Use `square` for an organization. One of `'circle'` or
+   * `'square'`.
+   * @default 'circle'
+   */
   shape?: 'circle' | 'square';
   /** Replaces the initials, such as an `Icon`. It's hidden from screen readers. */
   fallback?: ReactNode;
   /** Hides it from screen readers, for when the name is already beside it. @default false */
   decorative?: boolean;
   /**
-   * Adds a status dot, and the status to the name. It's displayed, not
-   * announced when it changes.
+   * Adds a status dot, and the status to the name. It's displayed, not announced
+   * when it changes. One of `'online'`, `'away'`, `'busy'`, or `'offline'`.
    */
-  status?: AvatarStatus;
+  status?: 'online' | 'away' | 'busy' | 'offline';
   /** Each status's words in the name, for translation. @default English */
   statusLabels?: Partial<Record<AvatarStatus, string>>;
   /** Colors the fallback with one of six pairs, picked from `name`. @default false */
@@ -50,7 +57,14 @@ export type AvatarProps = Omit<
   'children' | 'role' | 'aria-label'
 >;
 
-/** Represents a person or organization, with an image or initials. */
+/**
+ * Represents a person or organization, with an image or initials.
+ *
+ * @example
+ * ```tsx
+ * <Avatar name="Ada Lovelace" />
+ * ```
+ */
 export function Avatar({
   name,
   src,
@@ -65,13 +79,15 @@ export function Avatar({
   ...props
 }: AvatarProps) {
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, rest.style, 'Avatar');
   const label = status
     ? `${name}, ${statusLabels?.[status] ?? defaultStatusLabels[status]}`
     : name;
   return (
     <BaseAvatar.Root
-      className={cx(styles.root, styles.size[size], box(layout), className)}
+      className={cx(styles.root, styles.size[size], grid.className, className)}
       {...rest}
+      style={grid.style}
       data-shape={shape}
       {...(decorative
         ? { 'aria-hidden': true }

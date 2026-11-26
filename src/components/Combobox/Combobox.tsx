@@ -3,16 +3,15 @@
 import { Combobox as BaseCombobox } from '@base-ui/react/combobox';
 import { useState } from 'react';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
-import { box } from '../Box';
 import { useFieldControl } from '../Field/FieldContext';
 import { ChevronDownIcon } from '../Icon/internal/ChevronDown';
 import { XIcon } from '../Icon/internal/X';
 import * as inputStyles from '../Input/Input.css';
 import { OverlayDirection } from '../overlays/direction';
 import type { Option, OptionGroup } from '../Select/options';
-import type { SelectSize } from '../Select/Select';
 import * as styles from './Combobox.css';
 import { SearchPopup } from './SearchPopup';
 import {
@@ -35,8 +34,8 @@ interface ComboboxOwnProps extends SearchProps {
   clearable?: boolean;
   /** Shown in the empty input. */
   placeholder?: string;
-  /** The height. @default 'md' */
-  size?: SelectSize;
+  /** The height. One of `'sm'`, `'md'`, or `'lg'`. @default 'md' */
+  size?: 'sm' | 'md' | 'lg';
   /** Marks it invalid. @default From `Field` */
   invalid?: boolean;
   /** Disables it. @default From `Field` */
@@ -58,6 +57,17 @@ export type ComboboxProps = ComponentProps<'input', ComboboxOwnProps>;
 /**
  * A single choice, found by typing. Only listed options can be chosen. With
  * React Hook Form, use `Controller`, with `null` as the empty value.
+ *
+ * @example
+ * ```tsx
+ * <Combobox
+ *   aria-label="Country"
+ *   options={[
+ *     { value: 'fr', label: 'France' },
+ *     { value: 'jp', label: 'Japan' },
+ *   ]}
+ * />
+ * ```
  */
 export function Combobox({
   options,
@@ -95,6 +105,7 @@ export function Combobox({
     value: current,
   });
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, style, 'Combobox');
 
   return (
     <OverlayDirection>
@@ -115,13 +126,13 @@ export function Combobox({
       >
         <BaseCombobox.InputGroup
           className={cx(
-            box(layout),
+            grid.className,
             inputStyles.control,
             inputStyles.size[size],
             styles.group,
             className,
           )}
-          style={style}
+          style={grid.style}
           data-invalid={invalid ? '' : undefined}
         >
           <BaseCombobox.Input

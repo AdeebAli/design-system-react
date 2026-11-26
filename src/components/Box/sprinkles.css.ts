@@ -36,31 +36,6 @@ const inset = { ...space, auto: 'auto', full: '100%' };
 const overflow = ['visible', 'hidden', 'auto', 'scroll'] as const;
 const margin = { ...space, auto: 'auto' };
 
-function range<T>(build: (n: number) => T) {
-  const n = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] as const;
-  return n.map((value) => [value, build(value)] as const);
-}
-
-const gridSpan = {
-  ...(Object.fromEntries(
-    range((n) => `span ${n} / span ${n}`).map(([n, value]) => [
-      `span-${n}`,
-      value,
-    ]),
-  ) as Record<
-    `span-${1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12}`,
-    string
-  >),
-  full: '1 / -1',
-};
-
-const gridColumns = Object.fromEntries(
-  range((n) => `repeat(${n}, minmax(0, 1fr))`).map(([n, value]) => [
-    String(n),
-    value,
-  ]),
-) as Record<`${1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12}`, string>;
-
 const responsive = defineProperties({
   '@layer': utilitiesLayer,
   conditions: {
@@ -109,8 +84,6 @@ const responsive = defineProperties({
     flexShrink: ['0', '1'],
     alignSelf: selfAlign,
     justifySelf: selfAlign,
-    gridColumn: gridSpan,
-    gridRow: gridSpan,
     gap: space,
     rowGap: space,
     columnGap: space,
@@ -139,7 +112,6 @@ const responsive = defineProperties({
       end: 'flex-end',
       between: 'space-between',
     },
-    gridTemplateColumns: gridColumns,
     position: ['static', 'relative', 'absolute', 'fixed', 'sticky'],
     insetBlockStart: inset,
     insetBlockEnd: inset,

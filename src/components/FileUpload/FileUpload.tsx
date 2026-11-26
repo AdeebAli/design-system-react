@@ -10,9 +10,9 @@ import {
   type Ref,
 } from 'react';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
-import { box } from '../Box';
 import * as buttonStyles from '../Button/Button.css';
 import { useFieldControl } from '../Field/FieldContext';
 import { UploadIcon } from '../Icon/internal/Upload';
@@ -80,7 +80,11 @@ interface FileUploadOwnProps {
   onReject?: (rejections: FileRejection[]) => void;
   /** Each file's upload state, which the project reports. */
   getFileStatus?: (file: File) => FileStatus | undefined;
-  /** `dropzone` adds a large drop target; `button` is compact. @default 'dropzone' */
+  /**
+   * `dropzone` adds a large drop target; `button` is compact. One of
+   * `'dropzone'` or `'button'`.
+   * @default 'dropzone'
+   */
   variant?: 'dropzone' | 'button';
   /** Hides the file list, for a project rendering its own from `value`. @default false */
   hideFileList?: boolean;
@@ -125,6 +129,11 @@ function setRef<T>(ref: Ref<T> | undefined, value: T | null) {
  * uploads them and reports each file's status through `getFileStatus`.
  * Checking `accept` and `maxSize` here is a convenience, not security: the
  * server must check uploads.
+ *
+ * @example
+ * ```tsx
+ * <FileUpload aria-label="Attachments" multiple />
+ * ```
  */
 export function FileUpload({
   value,
@@ -159,6 +168,7 @@ export function FileUpload({
   const [dragging, setDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, style, 'FileUpload');
   const dropzone = variant === 'dropzone';
   const listRef = useRef<HTMLUListElement>(null);
   // A removal in progress, so focus can move once the list updates.
@@ -293,8 +303,8 @@ export function FileUpload({
 
   return (
     <div
-      className={cx(box(layout), styles.root, className)}
-      style={style}
+      className={cx(grid.className, styles.root, className)}
+      style={grid.style}
       data-dragging={dragging ? '' : undefined}
       data-invalid={invalid ? '' : undefined}
       data-disabled={disabled ? '' : undefined}

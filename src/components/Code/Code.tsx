@@ -6,7 +6,14 @@ import * as styles from './Code.css';
 /** `Code`'s props. */
 export type CodeProps = ComponentProps<'code'>;
 
-/** Inline code. */
+/**
+ * Inline code.
+ *
+ * @example
+ * ```tsx
+ * <Code>npm install</Code>
+ * ```
+ */
 export function Code({ className, ...props }: CodeProps) {
   return <Box as="code" className={cx(styles.code, className)} {...props} />;
 }

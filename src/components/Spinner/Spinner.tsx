@@ -5,7 +5,7 @@ import { VisuallyHidden } from '../VisuallyHidden';
 import * as styles from './Spinner.css';
 
 interface SpinnerOwnProps {
-  /** `size.icon.*`. @default 'md' */
+  /** `size.icon.*`. One of `'sm'`, `'md'`, or `'lg'`. @default 'md' */
   size?: 'sm' | 'md' | 'lg';
   /**
    * Announced as `role="status"`. Without it, the spinner is hidden from
@@ -22,7 +22,14 @@ export type SpinnerProps = Omit<
   'as' | 'children'
 >;
 
-/** Shows that something is working, when its duration is unknown. */
+/**
+ * Shows that something is working, when its duration is unknown.
+ *
+ * @example
+ * ```tsx
+ * <Spinner label="Loading" />
+ * ```
+ */
 export function Spinner({
   size = 'md',
   label,

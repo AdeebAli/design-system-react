@@ -15,7 +15,25 @@ interface IconButtonOwnProps extends ButtonBaseOwnProps {
 export type IconButtonProps<E extends ElementType = 'button'> =
   PolymorphicProps<E, IconButtonOwnProps>;
 
-/** A square button with only an icon. */
+/**
+ * A square button with only an icon.
+ *
+ * @example
+ * ```tsx
+ * <IconButton
+ *   aria-label="Add item"
+ *   icon={
+ *     <Icon
+ *       icon={(props) => (
+ *         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" {...props}>
+ *           <path d="M12 5v14M5 12h14" />
+ *         </svg>
+ *       )}
+ *     />
+ *   }
+ * />
+ * ```
+ */
 export function IconButton<E extends ElementType = 'button'>({
   icon,
   ...props

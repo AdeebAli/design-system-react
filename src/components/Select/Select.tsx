@@ -3,9 +3,9 @@
 import { Select as BaseSelect } from '@base-ui/react/select';
 import { useMemo } from 'react';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
-import { box } from '../Box';
 import { useFieldControl } from '../Field/FieldContext';
 import { CheckIcon } from '../Icon/internal/Check';
 import { ChevronDownIcon } from '../Icon/internal/ChevronDown';
@@ -27,8 +27,8 @@ interface SelectOwnProps {
   onValueChange?: (value: string | null) => void;
   /** Shown when nothing is selected. */
   placeholder?: string;
-  /** The height. @default 'md' */
-  size?: SelectSize;
+  /** The height. One of `'sm'`, `'md'`, or `'lg'`. @default 'md' */
+  size?: 'sm' | 'md' | 'lg';
   /** Marks it invalid. @default From `Field` */
   invalid?: boolean;
   /** Disables it. @default From `Field` */
@@ -45,7 +45,20 @@ interface SelectOwnProps {
  */
 export type SelectProps = ComponentProps<'button', SelectOwnProps>;
 
-/** A single-choice dropdown. With React Hook Form, use `Controller`, with `null` as the empty value. */
+/**
+ * A single-choice dropdown. With React Hook Form, use `Controller`, with `null` as the empty value.
+ *
+ * @example
+ * ```tsx
+ * <Select
+ *   aria-label="Plan"
+ *   options={[
+ *     { value: 'monthly', label: 'Monthly' },
+ *     { value: 'annual', label: 'Annual' },
+ *   ]}
+ * />
+ * ```
+ */
 export function Select({
   options,
   value,
@@ -66,6 +79,7 @@ export function Select({
   const required = requiredProp ?? field.required;
   const { groups, items } = useMemo(() => normalizeOptions(options), [options]);
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, rest.style, 'Select');
   // Base UI treats an unknown value as selected; show the placeholder instead.
   const known = (v: string | null | undefined) =>
     v == null || Object.hasOwn(items, v) ? v : null;
@@ -83,7 +97,7 @@ export function Select({
     >
       <BaseSelect.Trigger
         className={cx(
-          box(layout),
+          grid.className,
           inputStyles.control,
           inputStyles.size[size],
           styles.trigger,
@@ -93,6 +107,7 @@ export function Select({
         aria-required={required || undefined}
         data-invalid={invalid ? '' : undefined}
         {...rest}
+        style={grid.style}
       >
         <BaseSelect.Value className={styles.value} placeholder={placeholder} />
         <BaseSelect.Icon className={styles.chevron}>

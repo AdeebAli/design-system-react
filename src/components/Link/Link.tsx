@@ -12,11 +12,12 @@ import * as styles from './Link.css';
 export type LinkTone = 'accent' | 'neutral';
 
 interface LinkOwnProps {
-  /** The color. @default 'accent' */
-  tone?: LinkTone;
+  /** The color. One of `'accent'` or `'neutral'`. @default 'accent' */
+  tone?: 'accent' | 'neutral';
   /**
    * When to underline. `hover` is only for links that are identifiable without
-   * one, such as in a navigation bar. @default 'always'
+   * one, such as in a navigation bar. One of `'always'` or `'hover'`.
+   * @default 'always'
    */
   underline?: 'always' | 'hover';
   /** Opens in a new tab, with an icon and hidden text saying so. @default false */
@@ -33,7 +34,14 @@ export type LinkProps<E extends ElementType = 'a'> = PolymorphicProps<
   LinkOwnProps
 >;
 
-/** A link. It can wrap a router's link through `as`, and mark external links. */
+/**
+ * A link. It can wrap a router's link through `as`, and mark external links.
+ *
+ * @example
+ * ```tsx
+ * <Link href="/docs">Read the docs</Link>
+ * ```
+ */
 export function Link<E extends ElementType = 'a'>({
   as,
   tone = 'accent',

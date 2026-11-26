@@ -12,6 +12,11 @@ export interface ColorModeScriptProps extends ColorModeScriptOptions {
  * Applies a stored choice or lock before first paint. Server rendering only:
  * place it at the start of `body`, or in `head`. Client-rendered apps use
  * `getColorModeScript`.
+ *
+ * @example
+ * ```tsx
+ * <ColorModeScript />
+ * ```
  */
 export function ColorModeScript({ nonce, ...options }: ColorModeScriptProps) {
   return (

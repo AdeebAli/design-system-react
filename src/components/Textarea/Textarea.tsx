@@ -2,14 +2,17 @@
 
 import { Field as BaseField } from '@base-ui/react/field';
 import { cx } from '../../utils/cx';
+import { layoutStyle } from '../../utils/layoutStyle';
 import { splitLayoutProps } from '../../utils/splitLayoutProps';
 import type { ComponentProps } from '../../utils/types';
-import { box } from '../Box';
 import { useFieldControl } from '../Field/FieldContext';
 import * as styles from '../Input/Input.css';
 
 interface TextareaOwnProps {
-  /** Whether people can resize it. @default 'vertical' */
+  /**
+   * Whether people can resize it. One of `'vertical'` or `'none'`.
+   * @default 'vertical'
+   */
   resize?: 'vertical' | 'none';
   /** Marks the textarea invalid. @default From `Field` */
   invalid?: boolean;
@@ -18,7 +21,14 @@ interface TextareaOwnProps {
 /** `Textarea`'s props. Everything, including `ref`, goes to the `textarea`. */
 export type TextareaProps = ComponentProps<'textarea', TextareaOwnProps>;
 
-/** A multi-line text input, at least two rows tall. */
+/**
+ * A multi-line text input, at least two rows tall.
+ *
+ * @example
+ * ```tsx
+ * <Textarea aria-label="Notes" rows={4} />
+ * ```
+ */
 export function Textarea({
   resize = 'vertical',
   invalid: invalidProp,
@@ -36,6 +46,7 @@ export function Textarea({
   // A disabled Field wins, so the control can't be enabled inside it.
   const disabled = field.disabled || disabledProp === true;
   const [layout, rest] = splitLayoutProps(props);
+  const grid = layoutStyle(layout, rest.style, 'Textarea');
 
   return (
     <BaseField.Control
@@ -50,9 +61,9 @@ export function Textarea({
       autoFocus={autoFocus}
       // It's typed for an input, so the textarea's other props go on the
       // rendered element, which Base UI merges, and keep their types.
-      render={<textarea {...rest} />}
+      render={<textarea {...rest} style={grid.style} />}
       className={cx(
-        box(layout),
+        grid.className,
         styles.control,
         styles.textarea,
         styles.resize[resize],

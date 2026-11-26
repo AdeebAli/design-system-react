@@ -10,10 +10,13 @@ export interface TableHeaderProps extends Omit<
   ComponentPropsWithRef<'th'>,
   'align'
 > {
-  /** What the header labels. @default 'col' */
+  /** What the header labels. One of `'col'` or `'row'`. @default 'col' */
   scope?: 'col' | 'row';
-  /** Alignment of the content. @default 'start' */
-  align?: TableAlign;
+  /**
+   * Alignment of the content. One of `'start'`, `'center'`, or `'end'`.
+   * @default 'start'
+   */
+  align?: 'start' | 'center' | 'end';
 }
 
 /** A header cell. Use `scope="row"` for the first cell of a body row. */

@@ -45,6 +45,7 @@ export function Radio({
 
   return (
     <ChoiceLabel
+      component="Radio"
       label={label}
       hint={hint}
       layout={layout}
@@ -54,10 +55,10 @@ export function Radio({
       inField={group?.inField ?? false}
       hintIndent="checkbox"
     >
-      {(rootClass) => (
+      {(rootClass, rootStyle) => (
         <BaseRadio.Root
           className={[styles.radio, rootClass].filter(Boolean).join(' ')}
-          style={rootClass === undefined ? undefined : style}
+          style={rootClass === undefined ? undefined : rootStyle}
           disabled={disabled}
           data-invalid={invalid ? '' : undefined}
           {...rest}
