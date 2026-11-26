@@ -57,7 +57,7 @@ export const EqualRows: Story = {
 
 export const SixteenColumns: Story = {
   args: {
-    columns: 16,
+    columns: { base: 4, md: 16 },
     gap: '1',
     children: Array.from({ length: 16 }, (_, index) => (
       <Tile key={index}>{index + 1}</Tile>
