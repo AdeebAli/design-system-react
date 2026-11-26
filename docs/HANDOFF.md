@@ -1,10 +1,10 @@
 # Handoff: design-system-react
 
-- **Date:** 2026-11-25 (updated after writing the v0.9 plan)
+- **Date:** 2026-11-25 (updated after building v0.9; PR #44 open)
 
 ## Goal
 
-Build `@adeebali/design-system-react`, a general-purpose React design system. Specs 00–19 are accepted, and Spec 00 sets the release milestones.
+Build `@adeebali/design-system-react`, a general-purpose React design system. Specs 00–19 are accepted, and Spec 00 sets the release milestones. v0.9 (Spec 19) is built and in PR #44, awaiting the owner's merge.
 
 ## Status
 
@@ -18,9 +18,9 @@ Build `@adeebali/design-system-react`, a general-purpose React design system. Sp
 - **Post-release visual failure, fixed 2026-11-19 (PR #42, `a6db535`):** CI on the release commit `7c12ed5` failed `visual` on `overview-welcome--docs` (desktop and mobile). The page shows `package.json`'s version, and its baseline was taken at 0.8.0. This note's first version (`543af1d`) was written before that CI finished. Owner decision: docs-page screenshots only for the 7 Foundations pages (see Decisions).
 - **Retro (post-release failure), 2026-11-19:** logged in `~/.claude/retros/2026-11-19-v0-8-1-release-broke-welcome-screenshot.md`. Proposals P1–P4 await the owner (thread 19).
 - **Owner's manual checks:** PR #37's and PR #33's were reported done on 2026-11-13. PR #40's weren't reported before the merge.
-- **Spec 19 (API ergonomics) and ADR 0005 accepted, 2026-11-25,** for a new milestone **v0.9** before v1.0. Not built yet. It came from the owner asking why `Grid` doesn't accept numbers, and finding the editor help thin (see Decisions).
-- **v0.9 plan written, 2026-11-25:** `docs/superpowers/plans/2026-11-25-v0-9-api-ergonomics.md`, 7 tasks, no departures from the spec. The owner reviewed it and chose **inline execution in a new Sonnet session**. Not started: no code changed, and no branch yet.
-- **Next:** build v0.9 from the plan, then v1.0 stabilization (Spec 00).
+- **Spec 19 (API ergonomics) and ADR 0005 accepted, 2026-11-25,** for a new milestone **v0.9** before v1.0. It came from the owner asking why `Grid` doesn't accept numbers, and finding the editor help thin (see Decisions).
+- **v0.9 built, 2026-11-25, PR #44** (`feat/v0.9-api-ergonomics`, latest commit is the handoff note, https://github.com/AdeebAli/design-system-react/pull/44): all 7 plan tasks done inline on Sonnet from `docs/superpowers/plans/2026-11-25-v0-9-api-ergonomics.md`, then a fresh Opus whole-branch review. **CI on `a1000e2`: all six jobs passed** (run 45717807873); that was before the story change below. The PR body holds the v0.9.0 release notes, including the two breaking changes. Not merged, not released.
+- **Next:** the owner merges #44, then `npm run release -- minor`; then v1.0 stabilization (Spec 00).
 
 ## Decisions
 
@@ -51,6 +51,17 @@ All are in Spec 19's "Decided during planning" and Departures, and the amended s
 - **Editor help:** an `@example` on every component, TSDoc value lists on every union prop (layout props included), and hovers that show literal values. This reverses Spec 05's "so hovers stay short".
 - **Variant/tone pairs stay a development warning,** not type errors. A spike showed a union over `variant` does work through `PolymorphicProps` (with `as="a"` and a router link), but completions don't narrow `tone`, the error prints the whole props type, and wrappers would need casts. Spec 09's note had said the types couldn't express it, and now gives these reasons.
 - **Out of scope:** arbitrary widths and percentages (stay on `style`), numbers for spacing props (`gap={4}` would read as 4px), and `flexGrow`/`flexShrink` numbers.
+
+### v0.9 build decisions (2026-11-25)
+
+All are in the ledger (`.superpowers/sdd/2026-11-25-v0-9-api-ergonomics/progress.md`, kept like the earlier ledgers).
+- **Hover technique C** (Task 1 probe, TS 6.0.3): the union is written inline in the prop, the named alias stays exported, and an `expectTypeOf` equality test (`src/valueUnions.test-d.ts`, 139 lines, plus `Box.test-d.tsx` and `Grid.test-d.tsx`) keeps them equal. Rejected: an identity conditional (collapses back to the alias) and a distributive `Responsive` (explodes the object member into 17+ members). Cost: a new alias member needs the inline copy too, or the type test fails.
+- **Departure, owner accepted ("Accept, amend spec"):** on `Table` and `DataTable`, `style` goes to the inner `<table>`, so it can't override a grid variable. Spec 19 is amended (`abdbf84`). Rejected: moving `style` to the layout element, which changes where those components' `style` lands today.
+- **Count classes are in `utilitiesLayer`** (not `layered()`), so a project's CSS still wins. Classes are declared breakpoint by breakpoint, so `{ base: 'full', md: 3 }` picks the right one at `md`.
+- **Valid counts:** safe positive integers, digit strings, `span-N`, or `'full'` for spans. Invalid input gets one `warnOnce`. A function `style` stays a function.
+- **`@example`s that need an icon use an inline SVG,** not `lucide-react`: `verify-dist` forbids "lucide" anywhere in `index.d.ts` (Spec 07).
+- **`ChoiceLabel` takes a `component` prop** and hands its render function `(rootClass, rootStyle)`. Its old "style dropped when the root has no class" behavior is unchanged (see thread 6).
+- **Doc-list rule** (`src/docs/docsCoverage.test.ts`): up to 8 values, each backticked as `'x'`; more than 8 needs the word "tokens" and two or more listed values. Cost: units aren't asserted.
 
 ### v0.8.1 decisions (owner, 2026-11-13)
 
@@ -118,7 +129,24 @@ Checked 2026-11-13 against `npm view` (rerun at v0.8.1 setup: unchanged except a
 
 ## Changes
 
-**Uncommitted on `main` (2026-11-25):** the v0.9 plan (new, untracked) and this note. Both go into v0.9 Task 1's commit on `feat/v0.9-api-ergonomics`. Create the branch from `main` with them still in the working tree.
+**Branch `feat/v0.9-api-ergonomics`** (PR #44, from `64ee576`):
+
+| Commit | What |
+| --- | --- |
+| `69c6d5a` | Task 1: editor-help check (`scripts/check-editor-help.mjs`), hover technique C, the v0.9 plan and handoff |
+| `132091d` | Task 2: any positive grid count on `Box` and `Grid` (`gridCounts.css.ts`, `gridCounts.ts`) |
+| `411afb6` | Task 3: `layoutStyle()` replaces `box(layout)` in 39 files; `box()` drops the three grid props |
+| `26aee56` | Task 4: Next fixture renders `<Grid columns={16}>` on the server |
+| `448cf8a` | Task 5: TSDoc value lists on every union prop; literal hovers |
+| `3e22aa8` | Task 6: `@example` on 60 components, type-checked by `scripts/extract-examples.mjs` |
+| `c6376f1` | Task 7: docs for unbounded counts, new Grid stories |
+| `abdbf84` | Spec 19 amendment (Table and DataTable) |
+| `a1000e2` | Baselines for the 8 new Grid story screenshots, from the workflow |
+| `295fac5` | `SixteenColumns` story: `columns={{ base: 4, md: 16 }}`, because 16 tracks at 390px were about 20px wide (owner's request) |
+| `a130e24` | Baselines for its two mobile screenshots, from the workflow (run 45761408434); both viewed: 4 columns by 4 rows, light and dark |
+| (this note) | Handoff |
+
+**Earlier on `main`:** the v0.9 plan and the previous handoff were committed in `69c6d5a`.
 
 **Spec 19 branch** (`docs/spec-19-api-ergonomics`), squash-merged as `64ee576` (#43): Spec 19 and ADR 0005 (new); Specs 00, 04, 05, 06, and 09 and ADR 0001 amended; the handoff.
 
@@ -232,10 +260,16 @@ Checked 2026-11-13 against `npm view` (rerun at v0.8.1 setup: unchanged except a
   - Variant/tone spike: `tsc` exit 0 with four `@ts-expect-error` cases, then exit 2 with each failing at its own line once the comments were removed. A second probe showed `tone` completions after `variant="soft"` still list `accent`, `danger`, `neutral`.
   - `npm run format:check` passed on the spec changes.
 
+- **v0.9 (PR #44), 2026-11-25:**
+  - `npm ci && npm run check` exit 0 locally before the PR: unit 1,702; scripts 34; stories and browser 1,238; `verify-dist: ok`; fixtures 79 passed, 37 skipped.
+  - **CI on `a1000e2`: all six jobs passed** (`static`, `unit`, `stories`, `visual`, `package` on the `.nvmrc` Node and on 22). CI on `abdbf84` failed `visual` only: the 8 new Grid story baselines were missing (1,469 existing passed). The `update-visual-baselines` workflow (run 45716594415) added them as `a1000e2`. Its token doesn't start CI, so the green run is from a push made afterward.
+  - **Break-checks:** every new assertion was seen failing at its own line; the ledger has each `<file:line>: broke <what>, failed at <file:line>` entry, including the fixture checks on real served HTML (`tests/fixtures/smoke.spec.ts:229` and `:234`).
+  - **Independent review:** fresh Opus review of `64ee576..c6376f1`: 0 Critical, 0 Important, five Minors (thread 6). **It covers every code commit.** After it: `abdbf84` (a spec line), `a1000e2` and `a130e24` (PNGs), and `295fac5` (one story argument, `columns={{ base: 4, md: 16 }}`; typecheck, lint, and the Grid story tests passed). `295fac5` isn't independently reviewed.
+
 **Not verified:**
 
-- **How to make hovers show literal values** for Spec 19 (declaration style versus alias names). Trigger: v0.9 plan Task 1, Step 1, which probes four candidates. If none works, the fallback is the TSDoc value list, and the owner is asked before building on it.
-
+- **4 of the 8 new Grid story baselines weren't viewed** (desktop dark ×2, mobile light ×2; the mobile `SixteenColumns` pair was replaced and viewed in `a130e24`, so 2 of the original 4 remain: desktop dark `SixteenColumns` and `WideSpan`, and mobile `WideSpan` light). The 4 viewed render correctly: 16 equal tracks; 14 of 16 plus 2; a full row. Trigger: none; CI compares against them on every PR.
+- **`npm view` and `npm audit` reruns at v0.9 setup:** the ledger has no result for the dependency rerun. Trigger: the v1.0 plan's dependency step reruns both.
 
 - **The other 118 baselines in `f38c107` weren't viewed.** #42 deleted all but `foundations-primitives--docs` (desktop and mobile), which remain unviewed. Trigger: none. CI compares against them on every PR.
 - **PR #40's manual checks** (the site in both modes and both widths, the motion demos with reduced motion, keyboard and anchors) weren't reported before the merge. Trigger: none; the owner can check the live site.
@@ -256,6 +290,12 @@ Checked 2026-11-13 against `npm view` (rerun at v0.8.1 setup: unchanged except a
 4. **Inter comes from `inter-ui`,** because Fontsource's files drop `cv05` and `cv08`. Trigger: a test pins the 4.1.1 ranges. (Carried forward.)
 5. **`engines.node` is `>=22`.** Trigger: the release script refuses to release after April 30, 2027, until the floor and CI's Node matrix are raised. (Carried forward.)
 6. **Deferred minor findings.** Trigger: none; pick from this list when convenient, or in v1.0 stabilization.
+   - **v0.9 (`64ee576..c6376f1`, from the final review):**
+     - Checkbox, Radio, and Switch drop a consumer `style` when the root has no class (`ChoiceLabel` callers; pre-existing; `style={rootStyle}` would fix it).
+     - `check-editor-help.mjs` and `src/docs/valueUnions.ts` silently skip non-function exports (`forwardRef`, `memo`), and `checkEditorHelp` has no minimum count.
+     - `valueUnions.ts` reads only props common to every branch of a union props type.
+     - The `Grid.columns` hover check (`mustShow ['number']`) also passes on `${number}` alone.
+     - An array or unknown-key responsive object for a grid count adds nothing and doesn't warn.
    - **v0.8.1 (docs):**
      - Duplicate DOM ids when a story is in a Do `<Canvas>` and again under Examples (Storybook behavior).
      - Divider's vertical `orientation` member says `@default 'horizontal'` (`src/components/Divider/Divider.tsx`).
@@ -317,6 +357,12 @@ Checked 2026-11-13 against `npm view` (rerun at v0.8.1 setup: unchanged except a
     - P4 (process): the handoff skill records CI's result for every commit pushed in the session.
     - Trigger: the owner's decision; until then, none applied.
 
+**Resolved 2026-11-25:**
+- **Old next step 1, "build v0.9":** done, PR #44 (`64ee576..a1000e2`), CI green on `a1000e2`.
+- **"How to make hovers show literal values":** technique C, probed in Task 1 (`69c6d5a`); the ledger has all four candidates' output.
+- **"Uncommitted plan and handoff on `main`":** committed in `69c6d5a`.
+- **"New Grid stories need baselines":** added by the workflow in `a1000e2`.
+
 **Resolved 2026-11-19:**
 - **CI red on main since `7c12ed5`:** fixed by #42 (`a6db535`); CI on `eeaec22` green.
 
@@ -330,14 +376,7 @@ Checked 2026-11-13 against `npm view` (rerun at v0.8.1 setup: unchanged except a
 
 ## Next steps
 
-1. **Build v0.9 (Spec 19)** from `docs/superpowers/plans/2026-11-25-v0-9-api-ergonomics.md`, inline on Sonnet, with `superpowers:executing-plans`. The old step "write the plan" is done. The plan covers each of the old step's items:
-   - the hover probe: Task 1;
-   - how `@example`s are type-checked: a ruling, built in Task 6;
-   - the 37 rerouted `box()` caller files, each tested before and after the switch: Task 3;
-   - the Next fixture's `<Grid columns={16}>`, break-checked: Task 4;
-   - the release notes for the breaking changes: Task 7's PR body.
-   
-   After Task 7, release v0.9.0 with `npm run release -- minor`, once the owner merges.
+1. **Merge PR #44 and release v0.9.0** (the owner's call). CI on `a1000e2` is green. Then `npm run release -- minor` from a clean, up-to-date `main`, and apply the PR body's "Release notes" section to the GitHub release by hand with `gh release edit`, as for v0.8.1. After the release, read CI on the release commit before calling it done (the 2026-11-19 failure came from skipping this).
 2. **v1.0 stabilization (Spec 00).** Write its plan first, and while planning, rerun `npm audit` and `npm view` (the table above). The plan:
    - collects thread 6's deferred minors (v0.4–v0.8.1);
    - type-checks every `tsx` example in `docs/specs/*.md` and the README (retro P6);
@@ -347,4 +386,4 @@ Checked 2026-11-13 against `npm view` (rerun at v0.8.1 setup: unchanged except a
 
 ## Resume prompt
 
-> Read `docs/HANDOFF.md`, `docs/specs/19-api-ergonomics.md`, and `docs/superpowers/plans/2026-11-25-v0-9-api-ergonomics.md`. v0.8.1 is released, and the v0.9 plan is approved for inline execution. Create `feat/v0.9-api-ergonomics` from `main`, keeping the uncommitted plan and handoff, then execute the plan task by task with `superpowers:executing-plans`, starting with Task 1's setup rerun and hover probe. Stop and ask me if no hover technique works. v1.0 stabilization (Next steps 2) follows. Don't apply the declined v0.8.1 retro proposals (thread 16). Ask me about the 2026-11-19 retro's P1–P4 (thread 19) before applying any. Ask me about any departure from a spec when it's found.
+> Read `docs/HANDOFF.md`. v0.9 (Spec 19) is built and in PR #44 (`feat/v0.9-api-ergonomics`, head `a1000e2`, CI green). If the owner has merged it, run `npm run release -- minor` from a clean, up-to-date `main`, apply the PR body's release notes with `gh release edit`, and check CI on the release commit. Then write the v1.0 stabilization plan (Next steps 2), rerunning `npm audit` and `npm view` first. Don't apply the declined v0.8.1 retro proposals (thread 16). Ask me about the 2026-11-19 retro's P1–P4 (thread 19) before applying any. Ask me about any departure from a spec when it's found.
